@@ -1,0 +1,15 @@
+add_omega_wtk_lib(
+    STATIC
+    NAME 
+    "Widgets"
+    SOURCES 
+    "Widget.cpp"
+    "Label.cpp"
+    "Button.cpp"
+    HEADERS 
+    "Widget.h"
+    "Label.h"
+    "Button.h"
+    LINK_LIBS 
+    "omegaWTKCore"
+)

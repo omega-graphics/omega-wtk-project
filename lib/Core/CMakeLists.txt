@@ -1,0 +1,9 @@
+add_omega_wtk_lib(
+    STATIC
+    NAME 
+    "Core"
+    SOURCES 
+    "Core.cpp"
+    HEADERS
+    "Core.h"
+)
