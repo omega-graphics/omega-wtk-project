@@ -1,13 +1,14 @@
-#include <vector>
-#include "omegaWTK/Composition/Compositor.h"
+#include "omegaWTK/Core/Core.h"
 
 #ifndef OMEGAWTK_WIDGETS_WIDGET_H
 #define OMEGAWTK_WIDGETS_WIDGET_H
 
 namespace OmegaWTK {
 
+    class Compositor;
+
     class Widget {
-        std::vector<Widget *> children;
+        Core::Vector<Widget *> children;
         Compositor *comp;
         bool isEnabled;
         bool isRoot;

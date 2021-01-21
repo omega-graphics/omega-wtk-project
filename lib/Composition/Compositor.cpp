@@ -8,7 +8,8 @@
 #include "macos/Compositor_macOS.h"
 #endif
 
-namespace OmegaWTK {
+namespace OmegaWTK::Composition {
+    
     Compositor * make_compositor(){
         #ifdef TARGET_WIN32
         return new WinCompositor();

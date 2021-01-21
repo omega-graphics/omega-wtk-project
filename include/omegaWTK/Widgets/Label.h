@@ -6,10 +6,10 @@
 
 namespace OmegaWTK {
     class Label : Widget {
-        std::string text;
+        Core::String text;
         void render();
         public:
-        Label(std::string text_to_draw,Widget *parent,bool isEnabled = true);
+        Label(Core::String text_to_draw,Widget *parent,bool isEnabled = true);
         ~Label();
     };
 };
