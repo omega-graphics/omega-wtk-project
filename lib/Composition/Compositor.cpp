@@ -10,7 +10,7 @@
 
 namespace OmegaWTK::Composition {
     
-    Compositor * make_compositor(){
+    CompPtr make_compositor(){
         #ifdef TARGET_WIN32
         return new WinCompositor();
         #endif
@@ -18,5 +18,9 @@ namespace OmegaWTK::Composition {
         #ifdef TARGET_MACOS 
         return new CocoaCompositor();
         #endif
+    };
+
+    CanvasPtr make_canvas(Native::NativeItemPtr native_item){
+
     };
 };

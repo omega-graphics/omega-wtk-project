@@ -1,28 +1,26 @@
 #include "omegaWTK/Core/Core.h"
-#include <memory>
+#include "omegaWTK/Composition/Compositor.h"
 
 #ifndef OMEGAWTK_WIDGETS_WIDGET_H
 #define OMEGAWTK_WIDGETS_WIDGET_H
 
 namespace OmegaWTK {
 
-    class Compositor;
-    //Null Object Placeholder for native object!
-    class NativeItem {};
-
     class Widget {
         Core::Vector<Widget *> children;
-        Compositor * comp;
-        NativeItem * native;
+        Composition::CompPtr comp;
+        Native::NativeItemPtr native;
         bool isEnabled;
         bool isRoot;
-        Compositor *getCompositorPtr();
+        protected: 
+        Native::NativeItemPtr getNativeItemPtr();
+        Composition::CompPtr getCompositorPtr();
         public:
         Widget(Widget * parent,bool enabled = true);
         /// NOTE: Only Call this Function on the Root Widget!
-        void setCompositor(Compositor *_comp);
+        void setCompositor(Composition::CompPtr _comp);
         void addChild(Widget * child);
-        virtual void render();
+        virtual Composition::CanvasPtr render();
         virtual ~Widget();
     };
 };
