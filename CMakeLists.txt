@@ -38,10 +38,12 @@ endfunction()
 
 if(WIN32)
     add_compile_definitions("TARGET_WIN32")
+    set("TARGET_WIN32")
 endif()
 
 if(CMAKE_HOST_APPLE)
     add_compile_definitions("TARGET_MACOS")
+    set("TARGET_MACOS")
 endif()
 
 add_subdirectory("lib")

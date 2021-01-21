@@ -13,3 +13,11 @@ add_omega_wtk_lib(
     LINK_LIBS 
     "omegaWTKCore"
 )
+
+if(TARGET_WIN32)
+    target_sources("omegaWTKWidgets" PRIVATE "NativeItem_Win.h" "NativeItem_Win.cpp")
+endif()
+
+if(TARGET_MACOS)
+    target_sources("omegaWTKWidgets" PRIVATE "NativeItem_Mac.h" "NativeItem_Mac.mm")
+endif()
