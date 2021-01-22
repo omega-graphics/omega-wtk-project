@@ -10,9 +10,9 @@ namespace OmegaWTK {
         typedef NativeItem *NativeItemPtr;
         
         enum : OPT_PARAM {
-            Default = 0,
-            PushButton = 1,
-            TextInput = 2
+            Default,
+            PushButton,
+            TextInput 
         };
 
         NativeItemPtr make_native_item(Core::Rect rect,OPT_PARAM type = Native::Default);

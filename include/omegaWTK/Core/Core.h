@@ -41,6 +41,41 @@ namespace OmegaWTK {
             Dimensions dimen;
             Rect(Position _pos,Dimensions _dimen):pos(_pos),dimen(_dimen){};
         };
+        class Text {
+            String text_val;
+            public:
+            struct Font {
+                enum : OPT_PARAM {
+                    Regular,
+                    Italic,
+                    Bold,
+                    BoldAndItalic
+                };
+                String family;
+                OPT_PARAM style;
+                Font(String _family,OPT_PARAM _style):family(_family),style(_style){};
+                ~Font(){};
+
+            };
+            private:
+            Font font;
+            unsigned fontSize;
+            public:
+            const Font & getFont() noexcept{
+                return font;
+            };
+            const unsigned getFontSize() noexcept{
+                return fontSize;
+            };
+            void setFontSize(const unsigned & new_size){
+                fontSize = new_size;
+            };
+            void setFont(const Font & new_font){
+                font = new_font;
+            };
+            
+            Text(String _val,unsigned size,const Font & _font = Font("Arial",Font::Regular)):text_val(_val),font(std::move(_font)),fontSize(size){};
+        };
         /// A basic reimplementation of the std::string class!
         // CORE_CLASS(String) {
         //     char * data;

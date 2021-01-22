@@ -1,7 +1,7 @@
 #include "omegaWTK/Widgets/Label.h"
 
 namespace OmegaWTK {
-    Label::Label(Core::String text_to_draw,Widget * parent,Core::Rect _rect,bool isEnabled):Widget(parent,_rect,isEnabled),text(std::move(text_to_draw)){
+    Label::Label(Core::Text text_to_draw,Widget * parent,Core::Rect _rect,bool isEnabled):Widget(parent,_rect,isEnabled),text(std::move(text_to_draw)){
         setNativeItemPtr(Native::make_native_item(_rect));
         canvas = Composition::make_canvas(getNativeItemPtr());
     };

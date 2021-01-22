@@ -6,4 +6,5 @@ add_omega_wtk_lib(
     "Core.cpp"
     HEADERS
     "Core.h"
+    "Math.h"
 )

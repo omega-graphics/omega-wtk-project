@@ -7,6 +7,7 @@ Native::NativeItemPtr CocoaCanvas::getNativeItem(){
 };
 
 void CocoaCompositor::setCanvas(Canvas * canvas){
-    current_canvas = canvas;
+    current_canvas = (CocoaCanvas *)canvas;
 };
 
+};
