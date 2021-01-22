@@ -36,6 +36,11 @@ function(add_omega_wtk_lib)
 
 endfunction()
 
+# function(add_omega_wtk_app)
+#     cmake_parse_arguments("_ARG" "" "NAME;SOURCES")
+
+# endfunction()
+
 if(WIN32)
     add_compile_definitions("TARGET_WIN32")
     set(TARGET_WIN32 TRUE)
@@ -44,7 +49,7 @@ endif()
 if(CMAKE_HOST_APPLE)
     add_compile_definitions("TARGET_MACOS")
     set(TARGET_MACOS TRUE)
+    enable_language(OBJCXX)
 endif()
 
 add_subdirectory("lib")
-add_subdirectory("test")

@@ -23,13 +23,16 @@ namespace OmegaWTK {
 
         /// A specified area on the screen that can be drawn on by a parent Compositor
         class Canvas {
-
+        public:
+            Canvas(){};
+            virtual Native::NativeItemPtr getNativeItem();
         };
         /// The visuals renderer!
         class Compositor {
             public:
             Compositor(){};
-            virtual void DrawRect(Core::Rect rect,Core::Rect::Type type);
+            virtual void setCanvas(Canvas *canvas);
+            virtual void drawRect(Core::Rect rect,OPT_PARAM type);
             // virtual void DoAnimation(Animation & anim);
             virtual ~Compositor();
         };

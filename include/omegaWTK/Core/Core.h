@@ -15,9 +15,9 @@ namespace OmegaWTK {
     #define CORE_CLASS(name) class OWTK##name
 
     namespace Core {
-
+    
         typedef std::string String;
-        
+    
         template<class _Ty>
         using Vector = std::vector<_Ty>;
 
@@ -33,10 +33,11 @@ namespace OmegaWTK {
             unsigned minHeight;
         };
         struct Rect {
-            ENUM(Type,
+            enum : OPT_PARAM {
                 Regular,
                 Rounded
-            )
+            };
+            Position pos;
             Dimensions dimen;
         
         };

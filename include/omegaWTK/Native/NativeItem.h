@@ -8,12 +8,14 @@ namespace OmegaWTK {
         /// Null Object Placeholder for native object!
         class NativeItem {};
         typedef NativeItem *NativeItemPtr;
+        
+        enum : OPT_PARAM {
+            Default = 0,
+            PushButton = 1,
+            TextInput = 2
+        };
 
-        STATIC_OPT Default = 0;
-        STATIC_OPT PushButton = 1;
-        STATIC_OPT TextInput = 2;
-
-        NativeItemPtr make_native_item(Core::Dimensions dimen,OPT_PARAM type = Native::Default);
+        NativeItemPtr make_native_item(Core::Rect rect,OPT_PARAM type = Native::Default);
     }
 };
 

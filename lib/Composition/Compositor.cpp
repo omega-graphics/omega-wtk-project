@@ -21,6 +21,8 @@ namespace OmegaWTK::Composition {
     };
 
     CanvasPtr make_canvas(Native::NativeItemPtr native_item){
-
+        #ifdef TARGET_MACOS
+        return new CocoaCanvas();
+        #endif
     };
 };
