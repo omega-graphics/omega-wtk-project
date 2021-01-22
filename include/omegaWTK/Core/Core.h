@@ -39,7 +39,7 @@ namespace OmegaWTK {
             };
             Position pos;
             Dimensions dimen;
-        
+            Rect(Position _pos,Dimensions _dimen):pos(_pos),dimen(_dimen){};
         };
         /// A basic reimplementation of the std::string class!
         // CORE_CLASS(String) {

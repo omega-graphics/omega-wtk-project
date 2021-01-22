@@ -1,10 +1,14 @@
 #include "omegaWTK/Widgets/Label.h"
 
 namespace OmegaWTK {
-    Label::Label(Core::String text_to_draw,Widget * parent,bool isEnabled):Widget(parent,isEnabled),text(text_to_draw){};
+    Label::Label(Core::String text_to_draw,Widget * parent,Core::Rect _rect,bool isEnabled):Widget(parent,_rect,isEnabled),text(std::move(text_to_draw)){
+        setNativeItemPtr(Native::make_native_item(_rect));
+        canvas = Composition::make_canvas(getNativeItemPtr());
+    };
 
-    Composition::CanvasPtr Label::render(){
-        Composition::CanvasPtr canvas = Composition::make_canvas(getNativeItemPtr());
-        return canvas;
+    void Label::render(){
+        Composition::CompPtr comp = getCompositorPtr();
+        comp->setCanvas(canvas);
+        comp->drawText(text);
     };
 }

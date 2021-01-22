@@ -10,17 +10,20 @@ namespace OmegaWTK {
         Core::Vector<Widget *> children;
         Composition::CompPtr comp;
         Native::NativeItemPtr native;
+        Core::Rect rect;
         bool isEnabled;
         bool isRoot;
         protected: 
         Native::NativeItemPtr getNativeItemPtr();
+        void setNativeItemPtr(Native::NativeItemPtr ptr);
         Composition::CompPtr getCompositorPtr();
+        Composition::CanvasPtr canvas;
         public:
-        Widget(Widget * parent,bool enabled = true);
+        Widget(Widget * parent,Core::Rect _rect,bool enabled = true);
         /// NOTE: Only Call this Function on the Root Widget!
         void setCompositor(Composition::CompPtr _comp);
         void addChild(Widget * child);
-        virtual Composition::CanvasPtr render();
+        virtual void render();
         virtual ~Widget();
     };
 };

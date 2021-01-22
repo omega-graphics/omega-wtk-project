@@ -2,29 +2,34 @@
 
 namespace OmegaWTK {
 
-    Widget::Widget(Widget * parent,bool enabled):isEnabled(enabled){
-        if(parent){
-            parent->addChild(this);
-            isRoot = false;
-            comp = parent->getCompositorPtr();
-        }
-        else 
-            isRoot = true;
-    };
+Widget::Widget(Widget * parent,Core::Rect _rect,bool enabled):isEnabled(enabled),rect(_rect){
+    if(parent){
+        parent->addChild(this);
+        isRoot = false;
+        comp = parent->getCompositorPtr();
+    }
+    else
+        isRoot = true;
+};
 
-    Composition::CompPtr Widget::getCompositorPtr(){
-        return comp;
-    };
+void Widget::setNativeItemPtr(Native::NativeItemPtr ptr){
+    native = ptr;
+};
 
-    Native::NativeItemPtr Widget::getNativeItemPtr(){
-        return native;
-    };
+Composition::CompPtr Widget::getCompositorPtr(){
+    return comp;
+};
 
-    void Widget::setCompositor(Composition::CompPtr _comp){
-        comp = _comp;
-    };
+Native::NativeItemPtr Widget::getNativeItemPtr(){
+    return native;
+};
 
-    void Widget::addChild(Widget *child){
-        children.push_back(child);
-    };
+void Widget::setCompositor(Composition::CompPtr _comp){
+    comp = _comp;
+};
+
+void Widget::addChild(Widget *child){
+    children.push_back(child);
+};
+
 }

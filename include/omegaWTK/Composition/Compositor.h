@@ -32,7 +32,8 @@ namespace OmegaWTK {
             public:
             Compositor(){};
             virtual void setCanvas(Canvas *canvas);
-            virtual void drawRect(Core::Rect rect,OPT_PARAM type);
+            virtual void drawRect(Core::Rect & rect,OPT_PARAM type);
+            virtual void drawText(Core::String & str);
             // virtual void DoAnimation(Animation & anim);
             virtual ~Compositor();
         };

@@ -7,9 +7,9 @@
 namespace OmegaWTK {
     class Label : Widget {
         Core::String text;
-        Composition::CanvasPtr render();
+        void render();
         public:
-        Label(Core::String text_to_draw,Widget *parent,bool isEnabled = true);
+        Label(Core::String text_to_draw,Widget *parent,Core::Rect _rect,bool isEnabled = true);
         ~Label();
     };
 };
