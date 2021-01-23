@@ -1,5 +1,4 @@
 #import <Cocoa/Cocoa.h>
-
 #include "omegaWTK/Native/NativeItem.h"
 
 #ifndef OMEGAWTK_NATIVE_MACOS_COCOA_ITEM_H
@@ -12,8 +11,8 @@ namespace Cocoa {
 class CocoaItem : public NativeItem {
     NSView * _ptr;
 public:
-    enum class : OPT_PARAM {
-        View
+    enum : OPT_PARAM {
+        View,
         Button
     };
 private:
