@@ -4,6 +4,12 @@
 #ifndef OMEGAWTK_NATIVE_MACOS_COCOA_ITEM_H
 #define OMEGAWTK_NATIVE_MACOS_COCOA_ITEM_H
 
+@interface OmegaWTKCocoaView : NSView
+@end
+
+@interface OmegaWTKCocoaButton : NSButton
+@end
+
 namespace OmegaWTK::Native {
 
 namespace Cocoa {

@@ -1,0 +1,7 @@
+# include(FindPackageHandleStandardArgs)
+set(OMEGAWTK_VERSION @OMEGAWTK_VERSION@)
+
+set(OMEGAWTK_LIBS @OmegaWTKLibs@)
+
+
+include("${CMAKE_CURRENT_LIST_DIR}/OmegaWTKTargets.cmake")

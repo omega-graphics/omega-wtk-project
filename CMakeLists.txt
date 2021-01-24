@@ -4,10 +4,19 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
 project("OmegaWTK" C CXX)
+set(OMEGAWTK_VERSION "0.1")
 
 include_directories("include")
 
-include(CMakeParseArguments)
+set(OmegaWTKLibs "" CACHE INTERNAL "OmegaWTK Libs")
+
+if(XCODE OR MSVC_IDE)
+    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+endif()
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+include(OmegaWTKUtils)
 
 function(add_omega_wtk_lib)
     cmake_parse_arguments("_ARG" "STATIC;SHARED" "NAME" "SOURCES;HEADERS;LINK_LIBS" ${ARGN})
@@ -25,6 +34,15 @@ function(add_omega_wtk_lib)
         add_library(${_ARG_NAME} SHARED ${_ARG_SOURCES} ${_ARG_HEADERS})
     endif()
 
+
+    set(OmegaWTKLibs ${OmegaWTKLibs} ${_ARG_NAME} CACHE INTERNAL "OmegaWTK Libs")
+
+    set_target_properties(${_ARG_NAME} PROPERTIES
+     VERSION ${OMEGAWTK_VERSION}
+     INTERFACE_${_ARG_NAME}_MAJOR_VERSION ${OMEGAWTK_VERSION}
+     ARCHIVE_OUTPUT_DIRECTORY "lib"
+     FOLDER "OmegaWTK Libraries")
+
     if(NOT TARGET ${_ARG_NAME})
         message(FATAL_ERROR "OmegaWTK Lib:${_ARG_NAME}, does not have a type!")
     endif()
@@ -36,31 +54,11 @@ function(add_omega_wtk_lib)
 
 endfunction()
 
-# function(add_omega_wtk_app)
-#     cmake_parse_arguments("_ARG" "" "NAME;SOURCES")
-
-# endfunction()
-
 if(WIN32)
-    add_compile_definitions("TARGET_WIN32")
-    set(TARGET_WIN32 TRUE)
+    
 endif()
 
 if(CMAKE_HOST_APPLE)
-    add_compile_definitions("TARGET_MACOS")
-    set(TARGET_MACOS TRUE)
-    enable_language(OBJCXX)
-    # Locates macOS Framework. Outputs to ${F_NAME}_LIB
-    function(find_macos_framework F_NAME)
-        message(STATUS "Locating ${F_NAME} Framework")
-        find_library("${F_NAME}_LIB" "${F_NAME}" REQUIRED)
-        if(NOT ${F_NAME}_LIB)
-            message(STATUS "Locating ${F_NAME} Framework - not found")
-            message(FATAL_ERROR "${F_NAME}.framework is required to build OmegaWTK")
-        else()
-            message(STATUS "Locating ${F_NAME} Framework - found (Path:${${F_NAME}_LIB})")
-        endif()
-    endfunction()
 
     find_macos_framework("Cocoa")
     find_macos_framework("Metal")
@@ -74,3 +72,18 @@ if(CMAKE_HOST_APPLE)
 endif()
 
 add_subdirectory("lib")
+
+install(TARGETS ${OmegaWTKLibs} EXPORT OmegaWTKTargets
+    LIBRARY DESTINATION "lib"
+    ARCHIVE DESTINATION "lib"
+    RUNTIME DESTINATION "bin"
+    INCLUDES DESTINATION "include"
+)
+
+export(EXPORT OmegaWTKTargets 
+    FILE "${CMAKE_CURRENT_BINARY_DIR}/cmake/OmegaWTKTargets.cmake"
+    NAMESPACE OmegaWTK::
+)
+
+configure_file(cmake/OmegaWTKConfig.cmake.in "${CMAKE_BINARY_DIR}/cmake/OmegaWTKConfig.cmake" @ONLY)
+configure_file(cmake/OmegaWTKUTils.cmake "${CMAKE_BINARY_DIR}/cmake/OmegaWTKUtils.cmake" COPYONLY)

@@ -1,6 +1,7 @@
 #include "MakeItem.h"
 #include "NativePrivate/macos/CocoaItem.h"
 
+
 namespace OmegaWTK::Native::Cocoa {
 
 NSRect core_rect_to_cg_rect(Core::Rect & rect){

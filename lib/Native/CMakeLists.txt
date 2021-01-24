@@ -4,8 +4,12 @@ add_omega_wtk_lib(
     "Native"
     SOURCES 
     "NativeItem.cpp"
+    "NativeApp.cpp"
+    "AppMenu.cpp"
     HEADERS
     "NativeItem.h" 
+    "NativeApp.h"
+    "AppMenu.h"
     LINK_LIBS
     "omegaWTKCore"
 )
