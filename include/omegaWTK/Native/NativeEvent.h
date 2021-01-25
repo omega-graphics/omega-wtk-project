@@ -9,26 +9,28 @@ namespace OmegaWTK {
 namespace Native {
 
 class NativeEvent {
-    OPT_PARAM type;
 public:
-    enum : OPT_PARAM {
+    typedef enum : OPT_PARAM {
         AnimKeyFrame,
         Hover,
         Click
-    };
-    NativeEvent(OPT_PARAM _type):type(_type){};
+    } EventType;
+private:
+    EventType type;
+public:
+    NativeEvent(EventType _type):type(_type){};
 };
 
 typedef NativeEvent *NativeEventPtr;
 typedef std::function<void(NativeEventPtr)> NativeEventCallback;
-typedef Core::Map<OPT_PARAM,NativeEventCallback> NativeEventListenerMap;
+typedef Core::Map<NativeEvent::EventType,NativeEventCallback> NativeEventListenerMap;
 
 class NativeEventHandler {
 protected:
     NativeEventListenerMap listeners;
 public:
     NativeEventHandler();
-    void addListener(OPT_PARAM event_type,NativeEventCallback & callback);
+    void addListener(NativeEvent::EventType event_type,NativeEventCallback & callback);
     virtual void listen();
     virtual ~NativeEventHandler();
 };

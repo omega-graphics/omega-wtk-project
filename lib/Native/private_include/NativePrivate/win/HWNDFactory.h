@@ -12,13 +12,14 @@ namespace OmegaWTK::Native{
             HWND rootWindow;
             HINSTANCE hInst;
             HWND currentParent;
+            std::vector<std::string> wndclassregistry;
             public:
             static HWNDFactory * appFactoryInst;
             void setRootWindowAndHINST(HWND root,HINSTANCE hinst);
             /// NOTE: Only call if in Application and/or Composition Libs!
             void setCurrentParent(HWND parent);
             HWND makeWindow(LPCSTR class_name,LPCSTR name,Core::Rect rect,DWORD base_style,LPVOID custom_params);
-            ATOM registerWindow();
+            ATOM registerWindow(LPCSTR class_name,WNDPROC proc_ptr);
             // One HWND Factory Allowed!
             HWNDFactory(){
                 appFactoryInst = this;

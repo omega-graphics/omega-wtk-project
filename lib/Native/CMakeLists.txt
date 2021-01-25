@@ -15,8 +15,8 @@ add_omega_wtk_lib(
 )
 
 if(TARGET_WIN32)
-    set(NATIVE_WIN_HEADERS "HWNDItem.h" "HWNDFactory.h")
-    set(NATIVE_WIN_SOURCES  "MakeItem.h" "MakeItem.cpp" "HWNDFactory.cpp")
+    set(NATIVE_WIN_HEADERS "HWNDItem.h" "HWNDFactory.h" "WinEvent.h")
+    set(NATIVE_WIN_SOURCES  "MakeItem.h" "MakeItem.cpp" "HWNDItem.cpp" "HWNDFactory.cpp"  "WinMenu.h" "WinMenu.cpp" "WinEvent.cpp")
 
     list(TRANSFORM NATIVE_WIN_HEADERS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/private_include/NativePrivate/win/")
     list(TRANSFORM NATIVE_WIN_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/win/")

@@ -14,7 +14,7 @@ class TestApplication {
         WNDCLASSEX wndclass = {0};
         wndclass.cbSize = sizeof(WNDCLASSEX);
         wndclass.style = CS_HREDRAW | CS_VREDRAW;
-        wndclass.lpfnWndProc = WindowProc;
+        wndclass.lpfnWndProc = (WNDPROC)WindowProc;
         wndclass.hInstance = hInst;
         wndclass.hCursor = LoadCursor(hInst,IDC_ARROW);
         wndclass.lpszClassName = "TestApplication";
@@ -54,7 +54,7 @@ class TestApplication {
     };  
     static HWND GetHwnd() { return m_hwnd; }
     protected:
-        static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
+        LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 
              switch (message)
             {

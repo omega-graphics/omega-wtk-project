@@ -11,13 +11,16 @@ namespace OmegaWTK::Native::Win {
     HWND HWNDFactory::makeWindow(LPCSTR class_name,LPCSTR name,Core::Rect rect,DWORD base_style,LPVOID custom_params){
         return CreateWindow(class_name,name,base_style,rect.pos.x,rect.pos.y,rect.dimen.minWidth,rect.dimen.minHeight,currentParent,nullptr,hInst,custom_params);
     };
-    ATOM HWNDFactory::registerWindow(){
-        WNDCLASSEX ex;
-        ex.cbSize = sizeof(WNDCLASSEX);
-        ex.hInstance = hInst;
-        ex.hbrBackground = (HBRUSH)COLOR_WINDOW;
+    ATOM HWNDFactory::registerWindow(LPCSTR class_name,WNDPROC proc_ptr){
+        wndclassregistry.push_back(class_name);
+        WNDCLASS ex;
+        ex.lpszClassName = class_name;
+        ex.lpfnWndProc = proc_ptr;
+        ex.hIcon = nullptr;
         ex.style = CS_HREDRAW | CS_VREDRAW;
-        return RegisterClassEx(&ex);
+        ex.lpszMenuName = nullptr;
+        return RegisterClass(&ex);
+
     };
 
 };

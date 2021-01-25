@@ -62,10 +62,10 @@ namespace OmegaWTK {
             unsigned minHeight;
         };
         struct Rect {
-            enum : OPT_PARAM {
+            typedef enum : OPT_PARAM {
                 Regular,
                 Rounded
-            };
+            } RectType;
             Position pos;
             Dimensions dimen;
             Rect(Position _pos,Dimensions _dimen):pos(_pos),dimen(_dimen){};
@@ -74,12 +74,12 @@ namespace OmegaWTK {
             String text_val;
             public:
             struct Font {
-                enum : OPT_PARAM {
+                typedef enum : OPT_PARAM {
                     Regular,
                     Italic,
                     Bold,
                     BoldAndItalic
-                };
+                } FontStyle;
                 String family;
                 OPT_PARAM style;
                 Font(String _family,OPT_PARAM _style):family(_family),style(_style){};
