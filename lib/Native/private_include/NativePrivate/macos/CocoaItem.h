@@ -4,18 +4,20 @@
 #ifndef OMEGAWTK_NATIVE_MACOS_COCOA_ITEM_H
 #define OMEGAWTK_NATIVE_MACOS_COCOA_ITEM_H
 
+@class OmegaWTKCocoaEventDelegate;
+
 @interface OmegaWTKCocoaView : NSView
+-(void)setDelegate:(OmegaWTKCocoaEventDelegate *)delegate;
 @end
 
-@interface OmegaWTKCocoaButton : NSButton
-@end
 
 namespace OmegaWTK::Native {
 
 namespace Cocoa {
 
 class CocoaItem : public NativeItem {
-    NSView * _ptr;
+    OmegaWTKCocoaView * _ptr;
+    friend class CocoaEventHandler;
 public:
     enum : OPT_PARAM {
         View,
@@ -24,7 +26,7 @@ public:
 private:
     OPT_PARAM type;
 public:
-    CocoaItem(NSView *ptr,OPT_PARAM _type);
+    CocoaItem(OmegaWTKCocoaView *ptr,OPT_PARAM _type);
     ~CocoaItem();
 };
 

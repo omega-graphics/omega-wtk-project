@@ -7,9 +7,13 @@ add_omega_wtk_lib(
     "Label.cpp"
     "Button.h"
     "Button.cpp"
+    "App.cpp"
+    "Clickable.cpp"
     HEADERS 
     "Widget.h"
     "Label.h"
+    "App.h"
+    "Clickable.h"
     LINK_LIBS 
     "omegaWTKCore"
 )

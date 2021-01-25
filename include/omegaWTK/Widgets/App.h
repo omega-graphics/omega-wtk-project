@@ -1,10 +1,12 @@
 #include "omegaWTK/Core/Core.h"
+#include "Clickable.h"
 
 #ifdef TARGET_WIN32
 #include <Windows.h>
 #endif
 
 #ifdef TARGET_MACOS
+#import <AppKit/AppKit.h>
 #endif
 
 #ifndef OMEGAWTK_WIDGETS_APP_H
@@ -24,7 +26,36 @@
 #endif
 
 namespace OmegaWTK {
+
+    namespace Native {
+    class NativeAppMenuItem;
+    class NativeAppMenu;
+    class NativeApp;
+    
+    typedef NativeAppMenuItem *NAMI;
+    typedef NativeAppMenu *NAM;
+    typedef NativeApp *NativeAppPtr;
+    };
+    
+    
+    class AppMenuItem implements(Clickable) {
+        Core::Vector<AppMenuItem> sub_menu;
+        Native::NAMI native;
+    public:
+        void onHover(Native::NativeEventCallback callback);
+        void onClick(Native::NativeEventCallback callback);
+        AppMenuItem();
+        virtual ~AppMenuItem();
+    };
+    class AppMenu {
+        Core::Vector<AppMenuItem> menu;
+        Native::NAM native;
+    public:
+        AppMenu();
+        virtual ~AppMenu();
+    };
     class App {
+        AppMenu main_menu;
         
     };
 };

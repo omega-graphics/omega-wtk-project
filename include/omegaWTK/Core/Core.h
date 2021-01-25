@@ -9,10 +9,12 @@ namespace OmegaWTK {
     namespace Core {
         typedef unsigned char Option;
     };
-    #define STATIC_OPT static constexpr Core::Option
-    #define OPT_PARAM Core::Option
-    #define ENUM(name,args...) enum class name : Core::Option { args }; 
-    #define CORE_CLASS(name) class OWTK##name
+
+#define implements(interfaces...) : public interfaces
+#define STATIC_OPT static constexpr Core::Option
+#define OPT_PARAM Core::Option
+#define ENUM(name,args...) enum class name : Core::Option { args };
+#define CORE_CLASS(name) class OWTK##name
 
     namespace Core {
     
@@ -23,6 +25,33 @@ namespace OmegaWTK {
 
         template<class _Key,class _Val>
         using Map = std::map<_Key,_Val>;
+        /// Array Reference Class!
+        template<class _Ty>
+        class ArrayRef {
+            _Ty *_data;
+            unsigned _size;
+        public:
+            using iterator = _Ty *;
+            using const_iterator = const _Ty *;
+            using reference  = _Ty &;
+            const _Ty * data(){
+                return _data;
+            };
+            const unsigned & size(){
+                return _size;
+            };
+            iterator begin(){
+                return _data;
+            };
+            iterator end(){
+                return _data + (sizeof(_Ty) * _size);
+            };
+            reference operator[](unsigned idx){
+                return begin()[idx];
+            };
+            ArrayRef() = delete;
+            ArrayRef(Core::Vector<_Ty> & ref):_data(ref.data()),_size(ref.size()){};
+        };
 
         struct Position {
             unsigned x;

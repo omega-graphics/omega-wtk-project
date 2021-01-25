@@ -5,11 +5,11 @@ add_omega_wtk_lib(
     SOURCES 
     "NativeItem.cpp"
     "NativeApp.cpp"
-    "AppMenu.cpp"
+    "NativeEvent.cpp"
     HEADERS
     "NativeItem.h" 
     "NativeApp.h"
-    "AppMenu.h"
+    "NativeEvent.h"
     LINK_LIBS
     "omegaWTKCore"
 )
@@ -25,8 +25,8 @@ if(TARGET_WIN32)
 endif()
 
 if(TARGET_MACOS)
-    set(NATIVE_MAC_HEADERS "CocoaItem.h")
-    set(NATIVE_MAC_SOURCES "MakeItem.h" "MakeItem.mm" "CocoaItem.mm")
+    set(NATIVE_MAC_HEADERS "CocoaItem.h" "CocoaEvent.h")
+    set(NATIVE_MAC_SOURCES "MakeItem.h" "MakeItem.mm" "CocoaItem.mm" "CocoaMenu.h" "CocoaMenu.mm" "CocoaEvent.mm")
 
     list(TRANSFORM NATIVE_MAC_HEADERS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/private_include/NativePrivate/macos/")
     list(TRANSFORM NATIVE_MAC_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/macos/")
