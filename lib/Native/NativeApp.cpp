@@ -10,8 +10,9 @@
 
 namespace OmegaWTK::Native {
 
-NAMI make_menu_item(){
+NAMI make_menu_item(Core::String & str,bool hasSubMenu,NAM subMenuPtr){
 #ifdef TARGET_WIN32
+    return NAMI(new Win::WinMenuItem(str,hasSubMenu,subMenuPtr));
 #endif
     
 #ifdef TARGET_MACOS
@@ -21,6 +22,7 @@ NAMI make_menu_item(){
 
 NAM make_menu(){
 #ifdef TARGET_WIN32
+return NAM(new Win::WinMenu());
 #endif
     
 #ifdef TARGET_MACOS

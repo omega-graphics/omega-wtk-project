@@ -7,15 +7,22 @@ namespace OmegaWTK::Native {
 
 class NativeAppMenuItem {};
 
-class NativeAppMenu {};
+typedef NativeAppMenuItem *NAMI;
+
+class NativeAppMenu {
+    public:
+    virtual void addMenuItem(NAMI menu_item,unsigned idx);
+};
+
+typedef NativeAppMenu *NAM;
 
 class NativeApp {};
 
-typedef NativeAppMenuItem *NAMI;
-typedef NativeAppMenu *NAM;
 typedef NativeApp *NativeAppPtr;
 
-NAMI make_menu_item();
+
+
+NAMI make_menu_item(Core::String & str,bool hasSubMenu,NAM subMenuPtr = nullptr);
 NAM make_menu();
     
 };

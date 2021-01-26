@@ -9,16 +9,23 @@ namespace OmegaWTK::Native {
     namespace Win {
         class WinMenuItem : public NativeAppMenuItem {
             MENUITEMINFO menu_item_info;
+            friend class WinMenu;
             public:
-            WinMenuItem();
+            WinMenuItem(Core::String & name,bool hasSubMenu,NAM subMenu);
             ~WinMenuItem();
         };
         class WinMenu : public NativeAppMenu {
             HMENU hMenu;
+            MENUINFO menu_info;
+            friend class WinMenuItem;
             public:
+            void addMenuItem(NAMI menu_item,unsigned idx);
+            HMENU getHandle(){return hMenu;};
             WinMenu();
             ~WinMenu();
         };
+
+
     };
 };
 

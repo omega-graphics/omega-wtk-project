@@ -3,6 +3,7 @@
 
 namespace OmegaWTK::Native::Win {
     HWNDItem::HWNDItem(Core::Rect & rect,Type type):
+        wndrect(rect),
         wnd_proc_ptr([&](HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam) -> LRESULT{
 
             if(event_handler){
@@ -29,5 +30,35 @@ namespace OmegaWTK::Native::Win {
     };
     void HWNDItem::setHandler(WinEventHandler *eventHandler){
         event_handler = eventHandler;
+    };
+    
+    bool HWNDItem::isExtended(){
+        return false;
+    };
+    HWND HWNDItem::getHandle(){
+        return hwnd;
+    };
+    DWORD HWNDItem::getStyle(){
+        return GetWindowLongPtr(hwnd,GWL_STYLE);
+    };
+    void HWNDItem::show(int nCmdShow){
+        ShowWindow(hwnd,nCmdShow);
+    };
+    void HWNDItem::update(){
+        UpdateWindow(hwnd);
+    };
+    Core::Rect HWNDItem::getClientRect(){
+        RECT r;
+        GetClientRect(hwnd,&r);
+        UINT height = r.top - r.bottom;
+        UINT width = r.right - r.left;
+
+        return {{wndrect.pos.x,wndrect.pos.y},{width,height}};
+    };
+    Core::Rect HWNDItem::getWindowRect(){
+        return wndrect;
+    };
+    HDC HWNDItem::getDCFromHWND(){
+        return GetDC(hwnd);
     };
 }
