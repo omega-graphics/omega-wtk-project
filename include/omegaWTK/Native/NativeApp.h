@@ -22,7 +22,7 @@ typedef NativeApp *NativeAppPtr;
 
 
 
-NAMI make_menu_item(Core::String & str,bool hasSubMenu,NAM subMenuPtr = nullptr);
+NAMI make_menu_item(Core::String & str,bool hasSubMenu,bool isSeperator = false,NAM subMenuPtr = nullptr);
 NAM make_menu();
     
 };

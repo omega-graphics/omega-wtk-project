@@ -11,7 +11,7 @@ namespace OmegaWTK::Native {
             MENUITEMINFO menu_item_info;
             friend class WinMenu;
             public:
-            WinMenuItem(Core::String & name,bool hasSubMenu,NAM subMenu);
+            WinMenuItem(Core::String & name,bool hasSubMenu,bool isSeperator,NAM subMenu);
             ~WinMenuItem();
         };
         class WinMenu : public NativeAppMenu {

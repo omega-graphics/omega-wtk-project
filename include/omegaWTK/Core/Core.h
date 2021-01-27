@@ -140,6 +140,16 @@ namespace OmegaWTK {
         //     OWTKString(char * data,unsigned _len);
         //     ~OWTKString();
         // };
+        #ifdef TARGET_WIN32
+        template <class T> void SafeRelease(T **ppT)
+        {
+            if (*ppT)
+            {
+                (*ppT)->Release();
+                *ppT = NULL;
+            }
+        }
+        #endif
     };
 };
 

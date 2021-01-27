@@ -1,15 +1,18 @@
 #include "WinMenu.h"
 
 namespace OmegaWTK::Native::Win {
-    WinMenuItem::WinMenuItem(Core::String & name,bool hasSubMenu,NAM subMenu){
-        UINT featureMask; 
+    WinMenuItem::WinMenuItem(Core::String & name,bool hasSubMenu,bool isSeperator,NAM subMenu){
+        UINT featureMask = MIIM_DATA | MIIM_FTYPE; 
         if(hasSubMenu)
-            featureMask = MIIM_STRING | MIIM_SUBMENU;
+            featureMask |= (MIIM_STRING | MIIM_SUBMENU);
         else 
-            featureMask = MIIM_STRING;
+            featureMask |= MIIM_STRING;
         WinMenu *sM = (WinMenu*)subMenu;
         menu_item_info.cbSize = sizeof(MENUITEMINFO);
         menu_item_info.fMask = featureMask;
+        menu_item_info.fType = MFT_OWNERDRAW;
+        if(isSeperator)
+            menu_item_info.fType |= MFT_SEPARATOR;
         if(hasSubMenu)
             menu_item_info.hSubMenu = sM->hMenu;
         menu_item_info.cch = name.size();
@@ -22,8 +25,8 @@ namespace OmegaWTK::Native::Win {
         SetMenuInfo(hMenu,&menu_info);
     };
 
-    void WinMenu::addMenuItem(NAMI menu_item){
+    void WinMenu::addMenuItem(NAMI menu_item,unsigned idx){
         WinMenuItem *item = (WinMenuItem *)menu_item;
-        InsertMenuItem(hMenu,GetMenuItemCount(hMenu) - 1,TRUE,&item->menu_item_info);
+        InsertMenuItemA(hMenu,idx,TRUE,&item->menu_item_info);
     };
 };

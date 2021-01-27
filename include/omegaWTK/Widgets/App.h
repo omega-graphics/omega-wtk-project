@@ -45,14 +45,14 @@ namespace OmegaWTK {
         void onHover(Native::NativeEventCallback callback);
         void onClick(Native::NativeEventCallback callback);
         AppMenuItem();
-        virtual ~AppMenuItem();
+        ~AppMenuItem();
     };
     class AppMenu {
         Core::Vector<AppMenuItem> menu;
         Native::NAM native;
     public:
         AppMenu();
-        virtual ~AppMenu();
+        ~AppMenu();
     };
     class App {
         AppMenu main_menu;
