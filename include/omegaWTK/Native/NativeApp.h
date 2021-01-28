@@ -11,7 +11,8 @@ typedef NativeAppMenuItem *NAMI;
 
 class NativeAppMenu {
     public:
-    virtual void addMenuItem(NAMI menu_item,unsigned idx);
+    virtual void addMenuItem(NAMI menu_item);
+    virtual void insertMenuItem(NAMI menu_item,unsigned idx);
 };
 
 typedef NativeAppMenu *NAM;

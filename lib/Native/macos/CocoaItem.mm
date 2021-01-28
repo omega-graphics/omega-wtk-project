@@ -32,7 +32,7 @@
 
 namespace OmegaWTK::Native::Cocoa {
 
-CocoaItem::CocoaItem(OmegaWTKCocoaView *ptr,OPT_PARAM _type):_ptr(ptr),type(_type){
+CocoaItem::CocoaItem(OmegaWTKCocoaView *ptr,CocoaItem::Type _type):_ptr(ptr),type(_type){
     
 };
 
