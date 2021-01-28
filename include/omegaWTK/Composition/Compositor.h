@@ -1,39 +1,54 @@
 #include "omegaWTK/Core/Core.h"
 #include "omegaWTK/Native/NativeItem.h"
-#include <string>
-#include <vector>
+#include "omegaWTK/Composition/Canvas.h"
 
 #ifndef OMEGAWTK_COMPOSITION_COMPOSITOR_H
 #define OMEGAWTK_COMPOSITION_COMPOSITOR_H
 
 namespace OmegaWTK {
     namespace Composition {
-        // class Animation {
 
-        //     public:
-        //     STATIC_OPT Fade = 0;
-        //     STATIC_OPT KeyFramed = 1;
-        //     STATIC_OPT CubicBezier = 2;
+        class Text {
+            Core::String text_val;
+            public:
+            struct Font {
+                typedef enum : OPT_PARAM {
+                    Regular,
+                    Italic,
+                    Bold,
+                    BoldAndItalic
+                } FontStyle;
+                Core::String family;
+                OPT_PARAM style;
+                Font(Core::String _family,OPT_PARAM _style):family(_family),style(_style){};
+                ~Font(){};
 
-        //     class KeyFrame {
-
-        //     };
-        //     Animation(std::string name,std::vector<KeyFrame> key_fs);
-        // };
-
-        /// A specified area on the screen that can be drawn on by a parent Compositor
-        class Canvas {
-        public:
-            Canvas(){};
-            virtual Native::NativeItemPtr getNativeItem();
+            };
+            private:
+            Font font;
+            unsigned fontSize;
+            public:
+            const Font & getFont() noexcept{
+                return font;
+            };
+            const unsigned getFontSize() noexcept{
+                return fontSize;
+            };
+            void setFontSize(const unsigned & new_size){
+                fontSize = new_size;
+            };
+            void setFont(const Font & new_font){
+                font = new_font;
+            };
+            
+            Text(Core::String _val,unsigned size,const Font & _font = Font("Arial",Font::Regular)):text_val(_val),font(std::move(_font)),fontSize(size){};
         };
-        /// The visuals renderer!
         class Compositor {
             public:
             Compositor(){};
             virtual void setCanvas(Canvas *canvas);
             virtual void drawRect(Core::Rect & rect,OPT_PARAM type);
-            virtual void drawText(Core::Text & text);
+            virtual void drawText(Text & text);
             // virtual void DoAnimation(Animation & anim);
             virtual ~Compositor();
         };

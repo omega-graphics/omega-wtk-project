@@ -4,8 +4,14 @@ add_omega_wtk_lib(
     "Composition"
     SOURCES 
     "Compositor.cpp"
+    "Canvas.cpp"
+    "Color.cpp"
+    "Layer.cpp"
     HEADERS 
     "Compositor.h"
+    "Canvas.h"
+    "Color.h"
+    "Layer.h"
     LINK_LIBS 
     "omegaWTKCore"
     "omegaWTKNative"

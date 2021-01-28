@@ -1,6 +1,9 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
+#include <queue>
+#include <cassert>
 
 #ifndef OMEGAWTK_CORE_CORE_H
 #define OMEGAWTK_CORE_CORE_H
@@ -14,7 +17,7 @@ namespace OmegaWTK {
 #define STATIC_OPT static constexpr Core::Option
 #define OPT_PARAM Core::Option
 #define ENUM(name,args...) enum class name : Core::Option { args };
-#define CORE_CLASS(name) class OWTK##name
+#define CORE_CLASS(name) class name
 
     namespace Core {
     
@@ -23,8 +26,14 @@ namespace OmegaWTK {
         template<class _Ty>
         using Vector = std::vector<_Ty>;
 
+        template<class _Ty>
+        using Queue = std::queue<_Ty>;
+
         template<class _Key,class _Val>
         using Map = std::map<_Key,_Val>;
+
+        template<class _Ty>
+        using UniquePtr = std::unique_ptr<_Ty>;
         /// Array Reference Class!
         template<class _Ty>
         class ArrayRef {
@@ -70,41 +79,102 @@ namespace OmegaWTK {
             Dimensions dimen;
             Rect(Position _pos,Dimensions _dimen):pos(_pos),dimen(_dimen){};
         };
-        class Text {
-            String text_val;
+        /// A vector that acts like a queue (first in , first out), but has control over every element and its order in the container.
+        template<class _Ty>
+        CORE_CLASS(QueueVector) 
+        {
+            _Ty *_data;
             public:
-            struct Font {
-                typedef enum : OPT_PARAM {
-                    Regular,
-                    Italic,
-                    Bold,
-                    BoldAndItalic
-                } FontStyle;
-                String family;
-                OPT_PARAM style;
-                Font(String _family,OPT_PARAM _style):family(_family),style(_style){};
-                ~Font(){};
+            using size_type = unsigned;
+            private:
+            size_type len = 0;
+            public:
+            using iterator = _Ty *;
+            using reference = _Ty &;
+            const size_type & size() noexcept {return len;};
+            bool empty() noexcept {return len == 0;};
+            iterator begin(){ return _data;};
+            iterator end(){return _data + (len * sizeof(_Ty));};
+            reference first(){ return begin()[0];};
+            reference last(){ return end()[-1];};
+            reference operator[](size_type idx){ return begin()[idx];};
+            private:
+            void _push_el(const _Ty & el){
+                if(len == 0)
+                    _data = new _Ty(std::move(el));
+                else {
+                    _Ty temp[len];
+                    std::move(begin(),end(),temp);
+                    delete [] _data;
+                    _data = new _Ty[len + 1];
+                    std::move(temp,temp + (sizeof(_Ty) * len),begin());
+                    begin()[len] = std::move(el);
+                };
+                ++len;
+            }; 
+            void _insert_el_at_idx(const _Ty & el,size_type & idx){
+                if(len == 0) {
+                    assert(idx == 0 && "Cannot emplace item at requested index! No mem allocated!");
+                    _data = new _Ty(std::move(el));
+                }
+                else {
+                    assert(idx < len && "Index is out of range!");
+                    _Ty temp[len + 1];
+                    std::move(begin(),begin() + (idx * sizeof(_Ty)),temp);
+                    temp[idx] = std::move(el);
+                    std::move(begin() + (idx * sizeof(_Ty)),end(),temp + ((idx+1) * sizeof(_Ty)));
+                    delete [] _data;
+                    _data = new _Ty[len + 1];
+                    std::move(temp,temp + (sizeof(_Ty) * (len + 1)),begin());
+                };
+                ++len;
+            };
+            public:
+            void insert(const _Ty & el,size_type idx){
+                _insert_el_at_idx(el,idx);
+            };
+            void insert(_Ty && el,size_type idx){
+                _insert_el_at_idx(el,idx);
+            };
+            void push(const _Ty & el){
+                _push_el(el);
+            };
+            void push(_Ty && el){
+                _push_el(el);
+            };
+            void pop(){
+                assert(!empty() && "Cannot call pop() on empty QueueVector!");
+                auto f_el = first();
+                f_el.~_Ty();
+                _Ty temp[len-1];
+                std::move(begin() + sizeof(_Ty),end(),temp);
+                delete [] _data;
+                --len;
+                _data = new _Ty[len];
+                std::move(temp,temp + (len * sizeof(_Ty)),begin());
+            };
+            QueueVector():_data(nullptr),len(0){};
+            QueueVector(const QueueVector<_Ty> & other):len(other.len){
+                _data = new _Ty[len];
+                std::copy(other.begin(),other.end(),begin());
+            };
+            QueueVector(QueueVector<_Ty> && other):len(other.len){
+                _data = new _Ty[len];
+                std::copy(other.begin(),other.end(),begin());
 
             };
-            private:
-            Font font;
-            unsigned fontSize;
-            public:
-            const Font & getFont() noexcept{
-                return font;
+            ~QueueVector(){
+                auto it = begin();
+                while(it != end()){
+                    reference item = *it;
+                    item.~_Ty();
+                    ++it;
+                };
+                delete [] _data;
             };
-            const unsigned getFontSize() noexcept{
-                return fontSize;
-            };
-            void setFontSize(const unsigned & new_size){
-                fontSize = new_size;
-            };
-            void setFont(const Font & new_font){
-                font = new_font;
-            };
-            
-            Text(String _val,unsigned size,const Font & _font = Font("Arial",Font::Regular)):text_val(_val),font(std::move(_font)),fontSize(size){};
+
         };
+        
         /// A basic reimplementation of the std::string class!
         // CORE_CLASS(String) {
         //     char * data;
