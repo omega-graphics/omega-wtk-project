@@ -1,9 +1,8 @@
 #include "omegaWTK/Core/Core.h"
 #include "omegaWTK/Native/NativeItem.h"
-#include "omegaWTK/Composition/Canvas.h"
 
-#ifndef OMEGAWTK_COMPOSITION_COMPOSITOR_H
-#define OMEGAWTK_COMPOSITION_COMPOSITOR_H
+#ifndef OMEGAWTK_COMPOSITION_TEXT_H
+#define OMEGAWTK_COMPOSITION_TEXT_H
 
 namespace OmegaWTK {
     namespace Composition {

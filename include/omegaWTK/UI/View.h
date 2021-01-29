@@ -5,16 +5,35 @@
 #ifndef OMEGAWTK_COMPOSITION_VIEW_H
 #define OMEGAWTK_COMPOSITION_VIEW_H
 
-namespace OmegaWTK::Composition {
+namespace OmegaWTK {
+
+    class LayerOwner {
+        protected:
+        Composition::Layer *layer;
+        public:
+        /**
+            Constructs a Layer using the Rect param provided!
+            @param rect The Rect to Use!
+            @returns A LayerOwner
+        */
+        LayerOwner(const Core::Rect & rect,Composition::Layer * layer);
+    };
+
     class ViewDelegate;
     /// The root view class!
-    class View : public Layer, Native::NativeEventEmitter {
+    class View : public LayerOwner , Native::NativeEventEmitter {
+        Core::Vector<View *> subviews;
+        View *parent_ptr = nullptr;
+        Core::Rect rect;
         Native::NativeItemPtr native;
         ViewDelegate *delegate = nullptr;
         bool hasDelegate();
     public:
+        bool isRootView(){return parent_ptr == nullptr;};
         void setDelegate(ViewDelegate *_delegate);
-        View(const Core::Rect & rect);
+        void addSubView(View *view);
+        void removeSubView(View *view);
+        View(const Core::Rect & rect,Composition::Layer *layer_to_use,Native::NativeItemPtr item);
     };
     /// The Root View delegate class!
     class ViewDelegate : public Native::NativeEventResponder {
@@ -33,6 +52,8 @@ namespace OmegaWTK::Composition {
         ViewDelegate();
         ~ViewDelegate();
     };
+
+    View *make_view(const Core::Rect & rect);
 
 };
 

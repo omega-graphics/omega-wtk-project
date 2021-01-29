@@ -18,7 +18,7 @@ void NativeEventEmitter::emit(NativeEventPtr event){
     message_reciever->onRecieveEvent(event);
 };
 
-NativeEventResponder::NativeEventResponder(const Core::List<NativeEvent::EventType> & events_to_listen_for){};
+NativeEventResponder::NativeEventResponder(const Core::List<NativeEvent::EventType> & events_to_listen_for):event_types(events_to_listen_for){};
 
 void NativeEventResponder::queue(NativeEventPtr event){
     message_queue.push(event);

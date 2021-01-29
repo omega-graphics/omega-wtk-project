@@ -1,7 +1,7 @@
 add_omega_wtk_lib(
     STATIC
     NAME 
-    "Widgets"
+    "UI"
     SOURCES 
     "Widget.cpp"
     "Label.cpp"
