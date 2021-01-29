@@ -1,7 +1,7 @@
 #import "NativePrivate/macos/CocoaEvent.h"
 
 void ns_event_to_omega_wtk_native_event(NSEvent *event,OmegaWTK::Native::NativeEventPtr res){
-    OmegaWTK::Core::Option type;
+    OmegaWTK::Native::NativeEvent::EventType type;
     if(event.type == NSEventTypeMouseEntered){
         type = OmegaWTK::Native::NativeEvent::Hover;
     }
@@ -17,7 +17,7 @@ void ns_event_to_omega_wtk_native_event(NSEvent *event,OmegaWTK::Native::NativeE
 
 @implementation OmegaWTKCocoaEventDelegate
 
--(OmegaWTK::Native::NativeEventCallback &) getCallback:(OmegaWTK::Core::Option) opt {
+-(OmegaWTK::Native::NativeEventCallback &) getCallback:(OmegaWTK::Native::NativeEvent::EventType) opt {
     auto & listeners = self.map;
     auto f_pos = listeners.find(opt);
     if(f_pos != listeners.end()){

@@ -25,8 +25,8 @@ if(TARGET_WIN32)
 endif()
 
 if(TARGET_MACOS)
-    set(NATIVE_MAC_HEADERS "CocoaItem.h" "CocoaEvent.h")
-    set(NATIVE_MAC_SOURCES "MakeItem.h" "MakeItem.mm" "CocoaItem.mm" "CocoaMenu.h" "CocoaMenu.mm" "CocoaEvent.mm")
+    set(NATIVE_MAC_HEADERS "CocoaItem.h" "CocoaEvent.h" "CocoaUtils.h")
+    set(NATIVE_MAC_SOURCES "MakeItem.h" "MakeItem.mm" "CocoaItem.mm" "CocoaMenu.h" "CocoaMenu.mm" "CocoaEvent.mm" "CocoaUtils.mm")
 
     list(TRANSFORM NATIVE_MAC_HEADERS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/private_include/NativePrivate/macos/")
     list(TRANSFORM NATIVE_MAC_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/macos/")

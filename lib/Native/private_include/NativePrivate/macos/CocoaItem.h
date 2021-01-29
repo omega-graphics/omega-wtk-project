@@ -19,14 +19,14 @@ class CocoaItem : public NativeItem {
     OmegaWTKCocoaView * _ptr;
     friend class CocoaEventHandler;
 public:
-    enum : OPT_PARAM {
+    typedef enum : OPT_PARAM {
         View,
         Button
-    };
+    } Type;
 private:
-    OPT_PARAM type;
+    Type type;
 public:
-    CocoaItem(OmegaWTKCocoaView *ptr,OPT_PARAM _type);
+    CocoaItem(OmegaWTKCocoaView *ptr,Type _type);
     ~CocoaItem();
 };
 
