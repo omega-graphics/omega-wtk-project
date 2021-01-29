@@ -2,7 +2,7 @@
 #include "omegaWTK/Composition/Canvas.h"
 
 namespace OmegaWTK::Composition {
-    Layer::Layer(){};
+    Layer::Layer(const Core::Rect & rect):surface_rect(rect){};
 
     Canvas * Layer::getParentCanvas(){
         return parentCanvas;

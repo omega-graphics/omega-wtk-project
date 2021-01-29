@@ -7,7 +7,7 @@
 namespace OmegaWTK::Core {
     namespace Math {
         template<class _Num_Ty,typename _Angle_Ty>
-        class Vector2D_Base {
+        CORE_CLASS(Vector2D_Base) {
             _Num_Ty i;
             _Num_Ty j;
             public:
@@ -58,6 +58,8 @@ namespace OmegaWTK::Core {
         };
         
         typedef Vector2D_Base<float,float> Vector2D;
+
+        
     };
 };
 

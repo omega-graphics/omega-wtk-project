@@ -1,4 +1,5 @@
 #include "omegaWTK/Native/NativeItem.h"
+#include "omegaWTK/Native/NativeEvent.h"
 
 #ifdef TARGET_WIN32
 #include "win/MakeItem.h" 
@@ -9,12 +10,22 @@
 #endif
 
 namespace OmegaWTK::Native {
-    NativeItemPtr make_native_item(Core::Rect rect,OPT_PARAM type){
+    NativeItem::NativeItem():event_emitter(nullptr){};
+
+    bool NativeItem::hasEventEmitter(){
+        return event_emitter != nullptr;
+    };
+
+    NativeItemPtr make_native_item(Core::Rect rect,ItemType type){
         #ifdef TARGET_WIN32
         return Win::make_item_win(rect,type); 
         #endif
         #ifdef TARGET_MACOS
         return Cocoa::make_item_cocoa(rect,type);
         #endif
+    };
+
+    void set_native_item_event_emitter(NativeItemPtr ptr,NativeEventEmitter * emitter){
+        ptr->event_emitter = emitter;
     };
 };

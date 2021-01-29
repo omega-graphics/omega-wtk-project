@@ -12,9 +12,11 @@ namespace OmegaWTK {
         class Layer {
             Canvas *parentCanvas;
             friend class Canvas;
+            protected:
+            Core::Rect surface_rect;
             public:
             Canvas *getParentCanvas();
-            Layer();
+            Layer(const Core::Rect & rect);
         };
     };
 };

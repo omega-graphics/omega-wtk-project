@@ -4,6 +4,7 @@
 #include <memory>
 #include <queue>
 #include <cassert>
+#include <list>
 
 #ifndef OMEGAWTK_CORE_CORE_H
 #define OMEGAWTK_CORE_CORE_H
@@ -25,6 +26,9 @@ namespace OmegaWTK {
     
         template<class _Ty>
         using Vector = std::vector<_Ty>;
+
+        template<class _Ty>
+        using List = std::list<_Ty>;
 
         template<class _Ty>
         using Queue = std::queue<_Ty>;

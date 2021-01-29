@@ -43,22 +43,6 @@ namespace OmegaWTK {
             
             Text(Core::String _val,unsigned size,const Font & _font = Font("Arial",Font::Regular)):text_val(_val),font(std::move(_font)),fontSize(size){};
         };
-        class Compositor {
-            public:
-            Compositor(){};
-            virtual void setCanvas(Canvas *canvas);
-            virtual void drawRect(Core::Rect & rect,OPT_PARAM type);
-            virtual void drawText(Text & text);
-            // virtual void DoAnimation(Animation & anim);
-            virtual ~Compositor();
-        };
-
-        typedef Compositor * CompPtr;
-        typedef Canvas * CanvasPtr;
-
-        CompPtr make_compositor();
-        CanvasPtr make_canvas(Native::NativeItemPtr native_item);
-
     };
 }
 
