@@ -4,11 +4,9 @@
 #ifndef OMEGAWTK_NATIVE_MACOS_COCOA_ITEM_H
 #define OMEGAWTK_NATIVE_MACOS_COCOA_ITEM_H
 
-@class OmegaWTKCocoaEventDelegate;
 
-@interface OmegaWTKCocoaView : NSView
--(void)setDelegate:(OmegaWTKCocoaEventDelegate *)delegate;
-@end
+
+@class OmegaWTKCocoaView;
 
 
 namespace OmegaWTK::Native {
@@ -16,6 +14,7 @@ namespace OmegaWTK::Native {
 namespace Cocoa {
 
 class CocoaItem : public NativeItem {
+    Core::Rect rect;
     OmegaWTKCocoaView * _ptr;
     friend class CocoaEventHandler;
 public:
@@ -26,12 +25,16 @@ public:
 private:
     Type type;
 public:
-    CocoaItem(OmegaWTKCocoaView *ptr,Type _type);
+    CocoaItem(Core::Rect & rect,Type _type);
     ~CocoaItem();
 };
 
 };
 
 };
+
+@interface OmegaWTKCocoaView : NSView
+-(instancetype) initWithFrame:(NSRect) rect delegate:(OmegaWTK::Native::Cocoa::CocoaItem *)delegate;
+@end
 
 #endif

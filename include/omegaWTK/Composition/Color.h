@@ -16,6 +16,7 @@ namespace OmegaWTK {
                 @param blue blue amount
                 @param alpha alpha value
             */
+        public:
             Color(unsigned red,unsigned green,unsigned blue,unsigned alpha);
         };
     };

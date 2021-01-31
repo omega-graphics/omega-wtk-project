@@ -75,13 +75,21 @@ namespace OmegaWTK {
             unsigned minHeight;
         };
         struct Rect {
-            typedef enum : OPT_PARAM {
-                Regular,
-                Rounded
-            } RectType;
             Position pos;
             Dimensions dimen;
             Rect(Position _pos,Dimensions _dimen):pos(_pos),dimen(_dimen){};
+        };
+    
+        struct RoundedRect : public Rect {
+            unsigned radius_x;
+            unsigned radius_y;
+            RoundedRect(const Rect &rect,unsigned rad_x,unsigned rad_y):Rect(rect),radius_x(rad_x),radius_y(rad_y){};
+        };
+    
+        struct Ellipse {
+            Position pos;
+            unsigned radius_x;
+            unsigned raidus_y;
         };
         /// A vector that acts like a queue (first in , first out), but has control over every element and its order in the container.
         template<class _Ty>

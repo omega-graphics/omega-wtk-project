@@ -4,18 +4,16 @@ add_omega_wtk_lib(
     "UI"
     SOURCES 
     "Widget.cpp"
-    "Label.cpp"
-    "Button.h"
-    "Button.cpp"
     "App.cpp"
-    "Clickable.cpp"
+    "View.cpp"
     HEADERS 
     "Widget.h"
-    "Label.h"
     "App.h"
-    "Clickable.h"
+    "View.h"
     LINK_LIBS 
     "omegaWTKCore"
+    "omegaWTKNative"
+    "omegaWTKComposition"
 )
 
 # if(TARGET_WIN32)

@@ -7,8 +7,10 @@
 namespace OmegaWTK {
 namespace Native {
 
+typedef void* NativeEventParams;
+
 class NativeEvent {
-    friend class NativeEventResponder;
+    friend class NativeEventProcessor;
 public:
     typedef enum : OPT_PARAM {
         CursorEnter,
@@ -22,30 +24,48 @@ public:
     } EventType;
 private:
     EventType type;
+    NativeEventParams params;
 public:
-    NativeEvent(EventType _type):type(_type){};
+    NativeEvent(EventType _type,NativeEventParams params):type(_type),params(params){};
 };
 
 typedef NativeEvent * NativeEventPtr;
-// typedef std::function<void(NativeEventPtr)> NativeEventCallback;
-// typedef Core::Map<NativeEvent::EventType,NativeEventCallback> NativeEventListenerMap;
 
-///
-class NativeEventResponder;
+typedef struct {
+    
+} CursorEnterParams;
+typedef struct {
+    
+} CursorExitParams;
+typedef struct {
+    
+} LMouseDownParams;
+typedef struct {
+    
+} LMouseUpParams;
+typedef struct {
+    
+} RMouseDownParams;
+typedef struct {
+    
+} RMouseUpParams;
+
+
+class NativeEventProcessor;
 //
 class NativeEventEmitter {
-    NativeEventResponder *message_reciever;
-    friend class NativeEventResponder;
+    NativeEventProcessor *message_reciever;
+    friend class NativeEventProcessor;
 public:
     NativeEventEmitter();
     bool hasReciever();
-    void setReciever(NativeEventResponder *_responder);
+    void setReciever(NativeEventProcessor *_responder);
     void emit(NativeEventPtr event);
     ~NativeEventEmitter();
 };
 
 /// Listens for native events! (Only some types!)
-class NativeEventResponder {
+class NativeEventProcessor {
     Core::Queue<NativeEventPtr> message_queue;
     void queue(NativeEventPtr ptr);
     Core::List<NativeEvent::EventType> event_types;
@@ -53,8 +73,8 @@ class NativeEventResponder {
     NativeEventPtr getLatest();
     public:
     void onRecieveEvent(NativeEventPtr event);
-    NativeEventResponder(const Core::List<NativeEvent::EventType> & events_to_listen_for = {NativeEvent::CursorEnter,NativeEvent::CursorExit});
-    ~NativeEventResponder();
+    NativeEventProcessor(const Core::List<NativeEvent::EventType> & events_to_listen_for = {NativeEvent::CursorEnter,NativeEvent::CursorExit});
+    ~NativeEventProcessor();
 };
     
 };

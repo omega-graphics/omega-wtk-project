@@ -42,3 +42,4 @@ out
 build
 .cache
 .DS_Store
+doxygen

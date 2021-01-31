@@ -1,5 +1,4 @@
 #include "omegaWTK/Core/Core.h"
-#include "Clickable.h"
 
 #ifdef TARGET_WIN32
 #include <Windows.h>

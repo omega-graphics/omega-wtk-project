@@ -5,21 +5,13 @@
 
 namespace OmegaWTK {
     namespace Native {
-
-        class NativeCompositionTask {
-            typedef enum : OPT_PARAM {
-               Draw,
-               Transform,
-               Effect
-            } TaskType;
-            
-            NativeCompositionTask(TaskType);
-        };
+    class NativeItem;
         /// Manages or Passes NativeCompositionTasks to a NativeItem to perform!
         class NativeCompositionHandler {
-            Core::Queue<NativeCompositionTask *> taskQueue;
+            NativeItem * native_binding;
         public:
-            void addCompTask(NativeCompositionTask *task);
+            NativeCompositionHandler(NativeItem * native);
+            
         };
     }
 }

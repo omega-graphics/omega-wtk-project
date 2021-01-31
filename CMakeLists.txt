@@ -55,10 +55,12 @@ function(add_omega_wtk_lib)
 endfunction()
 
 if(WIN32)
-    
+    message("Targeting Win32")
 endif()
 
 if(CMAKE_HOST_APPLE)
+
+    message("Targeting macOS")
 
     find_macos_framework("Cocoa")
     find_macos_framework("Metal")

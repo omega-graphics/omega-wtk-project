@@ -6,10 +6,12 @@ add_omega_wtk_lib(
     "NativeItem.cpp"
     "NativeApp.cpp"
     "NativeEvent.cpp"
+    "NativeCompHandler.cpp"
     HEADERS
     "NativeItem.h" 
     "NativeApp.h"
     "NativeEvent.h"
+    "NativeCompHandler.h"
     LINK_LIBS
     "omegaWTKCore"
 )

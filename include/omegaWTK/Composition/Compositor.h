@@ -11,6 +11,7 @@ namespace OmegaWTK::Composition {
         public:
         void draw();
         void erase();
+        Compositor(Layer *layer);
     };
 
 }
