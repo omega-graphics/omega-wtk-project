@@ -53,7 +53,7 @@ namespace OmegaWTK {
             @param rect The Rect to use
             @param layer_to_use The Composition Layer to use
             @param item The NativeItemPtr to use
-            @returns A UI::View!
+            @returns A View!
          */
         View(const Core::Rect & rect,Composition::Layer *layer_to_use,Native::NativeItemPtr item);
     };

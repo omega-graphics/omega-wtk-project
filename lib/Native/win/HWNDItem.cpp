@@ -1,37 +1,71 @@
 #include "NativePrivate/win/HWNDItem.h"
 #include "NativePrivate/win/HWNDFactory.h"
+#include "NativePrivate/win/WinEvent.h"
+#include <windowsx.h>
 
 namespace OmegaWTK::Native::Win {
-    HWNDItem::HWNDItem(Core::Rect & rect,Type type):
-        wndrect(rect),
-        wnd_proc_ptr([&](HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam) -> LRESULT{
-
-            if(event_handler){
-                event_handler->handleMessages(uMsg,wParam,lParam);
-            };
-
-            switch (uMsg) {
-            case WM_CREATE :
-                break;
-            case WM_DESTROY:
-                PostQuitMessage(0); 
-                break;
-            default:
-                return DefWindowProc(hwnd,uMsg,wParam,lParam);
-                break;
-            }
-            return 0;
-        }),
-        type(type){
-            //TODO: Randomize Class Names!
-        LPCSTR class_name = "WindowClass";
-        HWNDFactory::appFactoryInst->registerWindow(class_name,wnd_proc_ptr.target<LRESULT CALLBACK(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam)>());
-        hwnd = HWNDFactory::appFactoryInst->makeWindow(class_name,"",rect,WS_CHILD | WS_TABSTOP,nullptr);
+    HWNDItem::HWNDItem(Core::Rect & rect,Type type):wndrect(rect){
+        atom = HWNDFactory::appFactoryInst->registerWindow();
+        HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,(void *)this);
     };
-    void HWNDItem::setHandler(WinEventHandler *eventHandler){
-        event_handler = eventHandler;
+    LRESULT HWNDItem::ProcessWndMsg(UINT u_int,WPARAM wParam,LPARAM lParam){
+        LRESULT result = 0;
+        if(u_int == WM_NCDESTROY){
+            hwnd = nullptr;
+        };
+        if(!ProcessWndMsgImpl(hwnd,u_int,wParam,lParam,&result))
+            result = DefWindowProcA(hwnd,u_int,wParam,lParam);
+        return result;
     };
-    
+    BOOL HWNDItem::ProcessWndMsgImpl(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam,LRESULT *lresult){
+        BOOL rc = TRUE;
+        NativeEventPtr event = nullptr;
+        POINT pt;
+        /// Set LRESULT to 0 (Assuming the message will be processed)
+        *lresult = 0;
+
+        switch (uMsg) {
+        case WM_LBUTTONDOWN : {
+            pt.x = GET_X_LPARAM(lParam);
+            pt.y = GET_Y_LPARAM(lParam);
+            event = button_event_to_native_event(NativeEvent::LMouseDown,&pt);
+            break;
+        };
+        case WM_LBUTTONUP : {
+            pt.x = GET_X_LPARAM(lParam);
+            pt.y = GET_Y_LPARAM(lParam);
+            event = button_event_to_native_event(NativeEvent::LMouseUp,&pt);
+            break;
+        };
+        case WM_RBUTTONDOWN : {
+            pt.x = GET_X_LPARAM(lParam);
+            pt.y = GET_Y_LPARAM(lParam);
+            event = button_event_to_native_event(NativeEvent::RMouseDown,&pt);
+            break;
+        };
+        case WM_RBUTTONUP : {
+            pt.x = GET_X_LPARAM(lParam);
+            pt.y = GET_Y_LPARAM(lParam);
+            event = button_event_to_native_event(NativeEvent::RMouseUp,&pt);
+            break;
+        };
+        case WM_PAINT : {
+            break;
+        };
+        default:
+           rc = FALSE;
+           break;
+        }
+
+        if(event != nullptr)
+            emitIfPossible(event);
+        
+        return rc;
+    };
+    void HWNDItem::emitIfPossible(NativeEventPtr event){
+        if(hasEventEmitter())
+            sendEventToEmitter(event);
+    };
     bool HWNDItem::isExtended(){
         return false;
     };
@@ -47,16 +81,10 @@ namespace OmegaWTK::Native::Win {
     void HWNDItem::update(){
         UpdateWindow(hwnd);
     };
-    Core::Rect HWNDItem::getClientRect(){
+    RECT HWNDItem::getClientRect(){
         RECT r;
         GetClientRect(hwnd,&r);
-        UINT height = r.top - r.bottom;
-        UINT width = r.right - r.left;
-
-        return {{wndrect.pos.x,wndrect.pos.y},{width,height}};
-    };
-    Core::Rect HWNDItem::getWindowRect(){
-        return wndrect;
+        return r;
     };
     HDC HWNDItem::getDCFromHWND(){
         return GetDC(hwnd);

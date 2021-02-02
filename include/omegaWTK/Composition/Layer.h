@@ -7,6 +7,7 @@
 #include "omegaWTK/Core/Core.h"
 #include "omegaWTK/Native/NativeItem.h"
 #include "Color.h"
+#include <functional>
 
 #ifndef OMEGAWTK_COMPOSITION_LAYER_H
 #define OMEGAWTK_COMPOSITION_LAYER_H
