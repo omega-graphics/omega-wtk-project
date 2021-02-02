@@ -9,8 +9,9 @@ namespace OmegaWTK::Composition {
     class Compositor {
         Layer *rootLayer;
         public:
-        void draw();
-        void erase();
+        void prepareDraw();
+        void prepareCleanup();
+        void prepareUpdate();
         Compositor(Layer *layer);
     };
 

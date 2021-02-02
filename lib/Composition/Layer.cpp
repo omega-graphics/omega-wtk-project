@@ -2,7 +2,7 @@
 #include <iostream>
 
 namespace OmegaWTK::Composition {
-    Layer::Layer(const Core::Rect & rect,Native::NativeItemPtr native_ptr):Native::NativeCompositionHandler(native_ptr),surface_rect(rect){};
+    Layer::Layer(const Core::Rect & rect,Native::NativeItemPtr native_ptr):compTarget(std::make_unique<Target>(native_ptr)),surface_rect(rect){};
 
     void Layer::addSubLayer(Layer *layer){
         layer->parent_ptr = this;
@@ -24,6 +24,10 @@ namespace OmegaWTK::Composition {
         std::cout << "Error! Could not Remove Sublayer!" << std::endl;
         
     };
+
+void Layer::setBackgroundColor(const Color & color){
+    background = color;
+};
 
 void LayerTree::_recursive_trav(LayerTreeTraversalCallback &callback,Layer *current){
     for(auto & child_layer : current->children){

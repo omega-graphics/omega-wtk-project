@@ -10,7 +10,7 @@ bool NativeEventEmitter::hasReciever(){
     return message_reciever != nullptr;
 };
 
-void NativeEventEmitter::setReciever(NativeEventResponder *_responder){
+void NativeEventEmitter::setReciever(NativeEventProcessor *_responder){
     message_reciever = _responder;
 };
 
@@ -18,19 +18,19 @@ void NativeEventEmitter::emit(NativeEventPtr event){
     message_reciever->onRecieveEvent(event);
 };
 
-NativeEventResponder::NativeEventResponder(const Core::List<NativeEvent::EventType> & events_to_listen_for):event_types(events_to_listen_for){};
+NativeEventProcessor::NativeEventProcessor(const Core::List<NativeEvent::EventType> & events_to_listen_for):event_types(events_to_listen_for){};
 
-void NativeEventResponder::queue(NativeEventPtr event){
+void NativeEventProcessor::queue(NativeEventPtr event){
     message_queue.push(event);
 };
 
-NativeEventPtr NativeEventResponder::getLatest(){
+NativeEventPtr NativeEventProcessor::getLatest(){
     auto eventPtr = message_queue.front();
     message_queue.pop();
     return eventPtr;
 };
 
-void NativeEventResponder::onRecieveEvent(NativeEventPtr event){
+void NativeEventProcessor::onRecieveEvent(NativeEventPtr event){
     for(auto & t : event_types){
         if(t == event->type){
             queue(event);

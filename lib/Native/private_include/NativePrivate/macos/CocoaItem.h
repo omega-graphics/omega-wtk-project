@@ -4,9 +4,20 @@
 #ifndef OMEGAWTK_NATIVE_MACOS_COCOA_ITEM_H
 #define OMEGAWTK_NATIVE_MACOS_COCOA_ITEM_H
 
+namespace OmegaWTK::Native {
+namespace Cocoa {
+class CocoaItem;
+
+}
+}
 
 
-@class OmegaWTKCocoaView;
+@interface OmegaWTKCocoaView : NSView
+-(instancetype) initWithFrame:(NSRect) rect delegate:(OmegaWTK::Native::Cocoa::CocoaItem *)delegate;
+-(CALayer *) getCALayer;
+@end
+
+@class CALayer;
 
 
 namespace OmegaWTK::Native {
@@ -25,7 +36,9 @@ public:
 private:
     Type type;
 public:
-    CocoaItem(Core::Rect & rect,Type _type);
+    CALayer *getLayer(){ return [_ptr getCALayer];};
+    void setNeedsDisplay();
+    CocoaItem(const Core::Rect & rect,Type _type);
     ~CocoaItem();
 };
 
@@ -33,8 +46,5 @@ public:
 
 };
 
-@interface OmegaWTKCocoaView : NSView
--(instancetype) initWithFrame:(NSRect) rect delegate:(OmegaWTK::Native::Cocoa::CocoaItem *)delegate;
-@end
 
 #endif

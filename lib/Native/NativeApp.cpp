@@ -4,9 +4,9 @@
 #include "win/WinMenu.h"
 #endif
 
-#ifdef TARGET_MACOS
-#include "macos/CocoaMenu.h"
-#endif
+//#ifdef TARGET_MACOS
+//#include "macos/CocoaMenu.h"
+//#endif
 
 namespace OmegaWTK::Native {
 
@@ -14,10 +14,11 @@ NAMI make_menu_item(Core::String & str,bool hasSubMenu,bool isSeperator,NAM subM
 #ifdef TARGET_WIN32
     return NAMI(new Win::WinMenuItem(str,hasSubMenu,isSeperator,subMenuPtr));
 #endif
-    
-#ifdef TARGET_MACOS
-    return NAMI(new Cocoa::CocoaMenuItem());
-#endif
+
+return NAMI(nullptr);
+//#ifdef TARGET_MACOS
+//    return NAMI(new Cocoa::CocoaMenuItem());
+//#endif
 };
 
 NAM make_menu(){
@@ -25,9 +26,11 @@ NAM make_menu(){
 return NAM(new Win::WinMenu());
 #endif
     
-#ifdef TARGET_MACOS
-    return NAM(new Cocoa::CocoaMenu());
-#endif
+return NAM(nullptr);
+    
+//#ifdef TARGET_MACOS
+//    return NAM(new Cocoa::CocoaMenu());
+//#endif
 };
 
 };

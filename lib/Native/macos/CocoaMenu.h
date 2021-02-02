@@ -9,10 +9,6 @@ namespace OmegaWTK::Native {
 
 namespace Cocoa {
 
-inline cpp_string_to_ns_string(){
-    
-};
-
 class CocoaMenuItem : public NativeAppMenuItem {
     NSMenuItem *item;
     friend class CocoaMenu;

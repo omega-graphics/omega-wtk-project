@@ -59,13 +59,14 @@ if(WIN32)
 endif()
 
 if(CMAKE_HOST_APPLE)
-
+    enable_language(OBJCXX)
     message("Targeting macOS")
 
     find_macos_framework("Cocoa")
     find_macos_framework("Metal")
     find_macos_framework("AVFoundation")
     find_macos_framework("AVKit")
+    find_macos_framework("QuartzCore")
     # if(NOT XCODE)
     # find_path(LIBCXX_PATH "XcodeDefault.xctoolchain" REQUIRED)
     # message("LIBCXX_PATH:${LIBCXX_PATH}")

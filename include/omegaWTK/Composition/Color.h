@@ -7,7 +7,7 @@
 namespace OmegaWTK {
     namespace Composition {
         /// Standard RBGA Color
-        class Color {
+        struct Color {
             unsigned r,g,b,a;
             /**
                 Constructs a color!

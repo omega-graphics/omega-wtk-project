@@ -1,7 +1,5 @@
 #include "omegaWTK/Native/NativeItem.h"
 
-#import <Cocoa/Cocoa.h>
-
 #ifndef OMEGAWTK_NATIVE_MACOS_MAKEITEM_H
 #define OMEGAWTK_NATIVE_MACOS_MAKEITEM_H
 

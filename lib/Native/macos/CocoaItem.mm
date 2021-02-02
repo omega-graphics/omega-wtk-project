@@ -2,6 +2,7 @@
 #import "NativePrivate/macos/CocoaEvent.h"
 #import "NativePrivate/macos/CocoaUtils.h"
 
+#import <QuartzCore/QuartzCore.h>
 
 @interface OmegaWTKCocoaView ()
 @property (nonatomic) OmegaWTK::Native::Cocoa::CocoaItem *delegate;
@@ -10,6 +11,8 @@
 @implementation OmegaWTKCocoaView
 - (instancetype)initWithFrame:(NSRect)rect delegate:(OmegaWTK::Native::Cocoa::CocoaItem *)delegate{
     if(self = [super initWithFrame:rect]){
+        self.wantsLayer = YES;
+        self.layer = [CALayer layer];
         _delegate = delegate;
     };
     return self;
@@ -34,19 +37,26 @@
 };
 
 - (void)drawRect:(NSRect)dirtyRect{
-    
+    NSLog(@"NEVER CALL THIS FUNCTION!!!");
+};
+- (CALayer *)getCALayer {
+    return (CALayer *)self.layer;
 };
 
 @end
 
 namespace OmegaWTK::Native::Cocoa {
 
-CocoaItem::CocoaItem(Core::Rect & rect,CocoaItem::Type _type):rect(rect),type(_type){
+CocoaItem::CocoaItem(const Core::Rect & rect,CocoaItem::Type _type):rect(rect),type(_type){
     _ptr = [[OmegaWTKCocoaView alloc] initWithFrame:OmegaWTK::Native::Cocoa::core_rect_to_cg_rect(rect) delegate:this];
 };
 
 CocoaItem::~CocoaItem(){
     
+};
+
+void CocoaItem::setNeedsDisplay(){
+    _ptr.needsDisplay = YES;
 };
 
 };
