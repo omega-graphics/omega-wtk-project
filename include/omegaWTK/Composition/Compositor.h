@@ -5,9 +5,10 @@
 
 namespace OmegaWTK::Composition {
 
-
-    class Compositor {
+    class Backend;
+    class OMEGAWTK_EXPORT Compositor {
         Layer *rootLayer;
+        Backend *backend;
         public:
         void prepareDraw();
         void prepareCleanup();

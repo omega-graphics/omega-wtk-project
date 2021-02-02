@@ -7,16 +7,17 @@
 #include "omegaWTK/Native/NativeItem.h"
 #include "omegaWTK/Native/NativeEvent.h"
 
-#ifndef OMEGAWTK_COMPOSITION_VIEW_H
-#define OMEGAWTK_COMPOSITION_VIEW_H
+#ifndef OMEGAWTK_UI_VIEW_H
+#define OMEGAWTK_UI_VIEW_H
 
 namespace OmegaWTK {
+    class Widget;
     /**
         A class that owns a layer.
         NOTE: This is only implemented by a few classes including the View, and the Window.
         @relates View
      */
-    class LayerOwner {
+    class OMEGAWTK_EXPORT LayerOwner {
         protected:
         Composition::Layer *layer;
         public:
@@ -34,13 +35,14 @@ namespace OmegaWTK {
         @relates Widget
         
      */
-    class View : public LayerOwner , Native::NativeEventEmitter {
+    class OMEGAWTK_EXPORT View : public LayerOwner , Native::NativeEventEmitter {
         Core::Vector<View *> subviews;
         View *parent_ptr = nullptr;
         Core::Rect rect;
         Native::NativeItemPtr native;
         ViewDelegate *delegate = nullptr;
         bool hasDelegate();
+        friend class Widget;
     public:
         bool isRootView(){return parent_ptr == nullptr;};
         void setDelegate(ViewDelegate *_delegate);
@@ -56,7 +58,7 @@ namespace OmegaWTK {
         View(const Core::Rect & rect,Composition::Layer *layer_to_use,Native::NativeItemPtr item);
     };
     /// The Root View delegate class!
-    class ViewDelegate : public Native::NativeEventProcessor {
+    class OMEGAWTK_EXPORT ViewDelegate : public Native::NativeEventProcessor {
         View * view;
         friend class View;
         protected:

@@ -1,21 +1,17 @@
-#include "omegaWTK/Widgets/App.h"
-#include "omegaWTK/Native/NativeApp.h"
+#include "omegaWTK/UI/App.h"
+//#include "omegaWTK/Native/NativeApp.h"
+
 
 namespace OmegaWTK {
-AppMenuItem::AppMenuItem(){
-    
+
+AppInst * AppInst::instance = nullptr;
+
+AppInst::AppInst(Widget *root):root(root){
+    instance = this;
 };
 
-void AppMenuItem::onClick(Native::NativeEventCallback callback){
-    
-};
-
-void AppMenuItem::onHover(Native::NativeEventCallback callback){
-    
-};
-
-AppMenu::AppMenu(){
-    
+AppInst::~AppInst(){
+    instance = nullptr;
 };
 
 };

@@ -25,7 +25,7 @@ namespace OmegaWTK::Native {
         return Win::make_item_win(rect,type); 
         #endif
         #ifdef TARGET_MACOS
-        return Cocoa::make_item_cocoa(rect,type);
+        return Cocoa::make_item_cocoa(rect);
         #endif
     };
 

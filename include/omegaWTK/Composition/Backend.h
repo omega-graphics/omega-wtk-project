@@ -8,15 +8,17 @@ namespace Composition {
 
 class Layer;
 
-class Backend {
+class OMEGAWTK_EXPORT Backend {
 protected:
     Layer *currentLayer;
 public:
     void setCurrentJob(Layer *layer);
-    virtual void doWork();
+    virtual void doWork() = 0;
     Backend();
     ~Backend();
 };
+
+Backend * make_backend();
 
 };
 };

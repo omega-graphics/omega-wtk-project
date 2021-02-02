@@ -6,6 +6,8 @@ NativeEventEmitter::NativeEventEmitter():message_reciever(nullptr){
 
 };
 
+NativeEventEmitter::~NativeEventEmitter(){};
+
 bool NativeEventEmitter::hasReciever(){
     return message_reciever != nullptr;
 };
@@ -36,6 +38,10 @@ void NativeEventProcessor::onRecieveEvent(NativeEventPtr event){
             queue(event);
         };
     };
+};
+
+NativeEventProcessor::~NativeEventProcessor(){
+    
 };
 
 };

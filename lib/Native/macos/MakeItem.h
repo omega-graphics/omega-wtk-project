@@ -8,7 +8,7 @@ namespace OmegaWTK::Native {
 
 namespace Cocoa {
 
-NativeItemPtr make_item_cocoa(Core::Rect & rect,OPT_PARAM type);
+NativeItemPtr make_item_cocoa(const Core::Rect & rect);
 };
 
 }

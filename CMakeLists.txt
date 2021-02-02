@@ -40,7 +40,7 @@ function(add_omega_wtk_lib)
     set_target_properties(${_ARG_NAME} PROPERTIES
      VERSION ${OMEGAWTK_VERSION}
      INTERFACE_${_ARG_NAME}_MAJOR_VERSION ${OMEGAWTK_VERSION}
-     ARCHIVE_OUTPUT_DIRECTORY "lib"
+     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
      FOLDER "OmegaWTK Libraries")
 
     if(NOT TARGET ${_ARG_NAME})
@@ -53,6 +53,40 @@ function(add_omega_wtk_lib)
     target_link_libraries(${_ARG_NAME} PRIVATE ${_ARG_LINK_LIBS})
 
 endfunction()
+
+macro(find_vcpkg USE_TOOLCHAIN)
+	message(STATUS "Locating vcpkg executable")
+	find_program(VCPKG_ROOT "vcpkg" ONLY_CMAKE_FIND_ROOT_PATH)
+	if(NOT EXISTS ${VCPKG_ROOT})
+		message(STATUS "Locating vcpkg executable - not found")
+	else()
+		message(STATUS "Locating vcpkg executable - found")
+		get_filename_component(VCPKG_DIR ${VCPKG_ROOT} DIRECTORY)
+		message(STATUS "Locating vcpkg ports")
+		if(IS_DIRECTORY ${VCPKG_DIR}/ports)
+			message(STATUS "Locating vcpkg ports - found")
+			if(${USE_TOOLCHAIN})
+				message(STATUS "Locating vcpkg toolchain file")
+				set(VCPKG_TOOLCHAIN_FILE_DIR ${VCPKG_DIR}/scripts/buildsystems)
+				if(EXISTS ${VCPKG_TOOLCHAIN_FILE_DIR}/vcpkg.cmake)
+					message(STATUS "Locating vcpkg toolchain file - found")
+					message(STATUS "Loading toolchain")
+					include(${VCPKG_TOOLCHAIN_FILE_DIR}/vcpkg.cmake)
+				else()
+					message(STATUS "Locating vcpkg toolchain file - not found")
+				endif()
+			endif()
+		else()
+			message(STATUS "Locating vcpkg ports - not found")
+			message(FATAL_ERROR "vcpkg executable is provided but there are NO ports found in its directory!")
+		endif()
+	endif()
+endmacro()
+
+# find_vcpkg(TRUE)
+
+# find_package(libpng CONFIG REQUIRED)
+# find_package(freetype CONFIG REQUIRED)
 
 if(WIN32)
     message("Targeting Win32")

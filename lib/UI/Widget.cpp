@@ -1,35 +1,21 @@
-#include "omegaWTK/Widgets/Widget.h"
+#include "omegaWTK/UI/Widget.h"
 
 namespace OmegaWTK {
 
-Widget::Widget(Widget * parent,Core::Rect _rect,bool enabled):isEnabled(enabled),rect(_rect){
-    if(parent){
-        parent->addChild(this);
-        isRoot = false;
-        comp = parent->getCompositorPtr();
-    }
-    else
-        isRoot = true;
+Widget::Widget(const Core::Rect & rect,Widget *parent):rootView(make_view(rect)),compositor(new Composition::Compositor(rootView->layer)),parent(parent){
+    if(parent)
+        parent->rootView->addSubView(this->rootView);
+};
+void Widget::show(){
+    compositor->prepareDraw();
+};
+void Widget::hide(){
+    compositor->prepareCleanup();
 };
 
-void Widget::setNativeItemPtr(Native::NativeItemPtr ptr){
-    native = ptr;
-};
-
-Composition::CompPtr Widget::getCompositorPtr(){
-    return comp;
-};
-
-Native::NativeItemPtr Widget::getNativeItemPtr(){
-    return native;
-};
-
-void Widget::setCompositor(Composition::CompPtr _comp){
-    comp = _comp;
-};
-
-void Widget::addChild(Widget *child){
-    children.push_back(child);
+Widget::~Widget(){
+    delete rootView;
+    delete compositor;
 };
 
 }

@@ -11,8 +11,18 @@ Backend::Backend():currentLayer(nullptr){
     
 };
 
-Backend::setCurrentJob(Layer *layer){
+Backend::~Backend(){
+    
+};
+
+void Backend::setCurrentJob(Layer *layer){
     currentLayer = layer;
+};
+
+Backend * make_backend(){
+#ifdef TARGET_MACOS
+    return make_quartz_backend();
+#endif
 };
 
 };

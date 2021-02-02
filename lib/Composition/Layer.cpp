@@ -2,6 +2,9 @@
 #include <iostream>
 
 namespace OmegaWTK::Composition {
+Target::Target(Native::NativeItemPtr _native):native(_native){};
+Target::~Target(){};
+    
     Layer::Layer(const Core::Rect & rect,Native::NativeItemPtr native_ptr):compTarget(std::make_unique<Target>(native_ptr)),surface_rect(rect){};
 
     void Layer::addSubLayer(Layer *layer){

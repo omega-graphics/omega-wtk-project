@@ -5,6 +5,7 @@
 #include <queue>
 #include <cassert>
 #include <list>
+#include "OmegaWTKExport.h"
 
 #ifndef OMEGAWTK_CORE_CORE_H
 #define OMEGAWTK_CORE_CORE_H
@@ -18,7 +19,6 @@ namespace OmegaWTK {
 #define STATIC_OPT static constexpr Core::Option
 #define OPT_PARAM Core::Option
 #define ENUM(name,args...) enum class name : Core::Option { args };
-#define CORE_CLASS(name) class name
 
     namespace Core {
     
@@ -40,7 +40,7 @@ namespace OmegaWTK {
         using UniquePtr = std::unique_ptr<_Ty>;
         /// Array Reference Class!
         template<class _Ty>
-        class ArrayRef {
+        class OMEGAWTK_EXPORT ArrayRef {
             _Ty *_data;
             unsigned _size;
         public:
@@ -66,34 +66,34 @@ namespace OmegaWTK {
             ArrayRef(Core::Vector<_Ty> & ref):_data(ref.data()),_size(ref.size()){};
         };
 
-        struct Position {
+        struct OMEGAWTK_EXPORT Position {
             unsigned x;
             unsigned y;
         };
-        struct Dimensions {
+        struct OMEGAWTK_EXPORT Dimensions {
             unsigned minWidth;
             unsigned minHeight;
         };
-        struct Rect {
+        struct OMEGAWTK_EXPORT Rect {
             Position pos;
             Dimensions dimen;
             Rect(Position _pos,Dimensions _dimen):pos(_pos),dimen(_dimen){};
         };
     
-        struct RoundedRect : public Rect {
+        struct OMEGAWTK_EXPORT RoundedRect : public Rect {
             unsigned radius_x;
             unsigned radius_y;
             RoundedRect(const Rect &rect,unsigned rad_x,unsigned rad_y):Rect(rect),radius_x(rad_x),radius_y(rad_y){};
         };
     
-        struct Ellipse {
+        struct OMEGAWTK_EXPORT Ellipse {
             Position pos;
             unsigned radius_x;
             unsigned raidus_y;
         };
         /// A vector that acts like a queue (first in , first out), but has control over every element and its order in the container.
         template<class _Ty>
-        CORE_CLASS(QueueVector) 
+        class OMEGAWTK_EXPORT QueueVector
         {
             _Ty *_data;
             public:

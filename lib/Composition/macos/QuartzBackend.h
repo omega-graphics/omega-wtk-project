@@ -6,7 +6,7 @@
 namespace OmegaWTK::Composition {
 
 Backend *make_quartz_backend();
-
+    
 }
 
 #endif

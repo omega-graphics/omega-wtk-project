@@ -19,7 +19,7 @@ namespace OmegaWTK {
         typedef enum : OPT_PARAM {
             DrawRect,
             DrawRoundedRect,
-            DrawEllipse
+            DrawEllipse,
             DrawText
         } Type;
         Type type;
@@ -59,7 +59,7 @@ namespace OmegaWTK {
         /**
             A surface which visuals can draw upon!
          */
-        class Layer {
+        class OMEGAWTK_EXPORT Layer {
             Core::Vector<Layer *> children;
             Layer * parent_ptr = nullptr;
             Core::Rect surface_rect;
@@ -100,7 +100,7 @@ namespace OmegaWTK {
     
     typedef std::function<bool(Layer *)> LayerTreeTraversalCallback;
         
-        class LayerTree {
+        class OMEGAWTK_EXPORT LayerTree {
             Layer *root;
             void _recursive_trav(LayerTreeTraversalCallback &callback,Layer *current);
         public:

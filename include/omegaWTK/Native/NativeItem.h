@@ -14,7 +14,6 @@ namespace OmegaWTK {
             public:
             void sendEventToEmitter(NativeEvent *ptr);
             bool hasEventEmitter();
-            virtual void nativeCompTask();
             NativeItem();
         };
         typedef NativeItem *NativeItemPtr;
@@ -25,7 +24,7 @@ namespace OmegaWTK {
 //            TextInput
         }ItemType;
 
-        NativeItemPtr make_native_item(Core::Rect rect,OPT_PARAM type = Native::Default);
+        NativeItemPtr make_native_item(Core::Rect rect,Native::ItemType type = Native::Default);
         void set_native_item_event_emitter(NativeItemPtr ptr,NativeEventEmitter * emitter);
     }
 };
