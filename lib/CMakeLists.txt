@@ -12,8 +12,8 @@ if(TARGET_WIN32)
     list(TRANSFORM OMEGALIBS PREPEND "lib/")
     list(TRANSFORM OMEGALIBS APPEND ".lib")
     string(JOIN "  " OMEGA_OUT ${OMEGALIBS})
-    set(WINDOWS_LINK_F "${WINDOWS_LINK_F}${OMEGA_OUT}")
-    message("WindowsLIBS:${WINDOWS_LINK_F}")
+    set(WINDOWS_LINK_F "${WINDOWS_LINK_F}${OMEGA_OUT} d2d1.lib dwrite.lib d3d12.lib dcomp.lib")
+    message("WindowsLIBS:${WINDOWS_LINK_F} d2d1.lib dwrite.lib d3d12.lib dcomp.lib")
 
     set_target_properties("OmegaWTK" PROPERTIES 
     VERSION ${OMEGAWTK_VERSION}
@@ -28,5 +28,6 @@ if(TARGET_MACOS)
 endif()
 target_link_libraries("OmegaWTK" PUBLIC ${OmegaWTKLibs})
 set(OmegaWTKLibs ${OmegaWTKLibs} "OmegaWTK" CACHE INTERNAL "OmegaWTK Libs")
+target_include_directories("OmegaWTK" PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
 
 

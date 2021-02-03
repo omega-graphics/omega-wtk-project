@@ -3,10 +3,16 @@ cmake_minimum_required(VERSION 3.13)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
+
 project("OmegaWTK" C CXX)
 set(OMEGAWTK_VERSION "0.1")
 
+
+
 include_directories("include")
+include(ExternalProject)
+
+
 
 set(OmegaWTKLibs "" CACHE INTERNAL "OmegaWTK Libs")
 
@@ -111,16 +117,20 @@ endif()
 add_subdirectory("lib")
 
 install(TARGETS ${OmegaWTKLibs} EXPORT OmegaWTKTargets
-    LIBRARY DESTINATION "lib"
-    ARCHIVE DESTINATION "lib"
-    RUNTIME DESTINATION "bin"
-    INCLUDES DESTINATION "include"
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
-export(EXPORT OmegaWTKTargets 
-    FILE "${CMAKE_CURRENT_BINARY_DIR}/cmake/OmegaWTKTargets.cmake"
+export(TARGETS ${OmegaWTKLibs} 
+    FILE "${CMAKE_BINARY_DIR}/cmake/OmegaWTKTargets.cmake"
     NAMESPACE OmegaWTK::
 )
+
+install(EXPORT OmegaWTKTargets
+    NAMESPACE OmegaWTK:: 
+    DESTINATION "${CMAKE_BINARY_DIR}/cmake")
 
 configure_file(cmake/OmegaWTKConfig.cmake.in "${CMAKE_BINARY_DIR}/cmake/OmegaWTKConfig.cmake" @ONLY)
 configure_file(cmake/OmegaWTKUTils.cmake "${CMAKE_BINARY_DIR}/cmake/OmegaWTKUtils.cmake" COPYONLY)
