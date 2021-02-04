@@ -6,17 +6,17 @@
 
 namespace OmegaWTK::Native {
 
-class NativeAppMenuItem {};
+// class NativeAppMenuItem {};
 
-typedef NativeAppMenuItem *NAMI;
+// typedef NativeAppMenuItem *NAMI;
 
-class NativeAppMenu {
-    public:
-    virtual void addMenuItem(NAMI menu_item);
-    virtual void insertMenuItem(NAMI menu_item,unsigned idx);
-};
+// class NativeAppMenu {
+//     public:
+//     virtual void addMenuItem(NAMI menu_item);
+//     virtual void insertMenuItem(NAMI menu_item,unsigned idx);
+// };
 
-typedef NativeAppMenu *NAM;
+// typedef NativeAppMenu *NAM;
 
 class NativeApp {
     NativeItemPtr ptr;
@@ -29,15 +29,22 @@ public:
 typedef NativeApp *NAP;
 
 
-NAMI make_menu_item(Core::String & str,bool hasSubMenu,bool isSeperator = false,NAM subMenuPtr = nullptr);
-NAM make_menu();
-
-
-
-#ifdef TARGET_MACOS
-int cocoa_app_init(int argc,char * argv[]);
-#endif
+// NAMI make_menu_item(Core::String & str,bool hasSubMenu,bool isSeperator = false,NAM subMenuPtr = nullptr);
+// NAM make_menu();
 
 };
+
+#ifdef TARGET_WIN32 
+#ifdef WINDOWS_PRIVATE
+void * __create_hwnd_factory(void *hinst);
+
+void __free_hwnd_factory(void *hwnd_factory);
+#endif
+#endif
+
+
+// #ifdef TARGET_MACOS
+// int cocoa_app_init(int argc,char * argv[]);
+// #endif};
 
 #endif

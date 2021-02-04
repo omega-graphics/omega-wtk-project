@@ -1,0 +1,60 @@
+#include "resource.h"
+#include <Windows.h>
+#include "@APPENTRY@"
+#include <OmegaWTK.h>
+
+LRESULT CALLBACK WndProc(HWND hwnd,UINT usmg,WPARAM wParam,LPARAM lParam){
+    
+};
+
+int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd){
+    WNDCLASSEX wndclass;
+    wndclass.cbSize = sizeof(wndclass);
+    wndclass.lpszClassName = "WINOMEGAWTKMAIN";
+    wndclass.lpfnWndProc = WndProc;
+    wndclass.style =  CS_HREDRAW | CS_VREDRAW;
+    wndclass.hbrBackground = (HBRUSH)COLOR_WINDOW;
+    wndclass.hIcon = LoadIcon(hInstance,IDC_ICON);
+    wndclass.hCursor = LoadCursor(hInstance,IDC_ARROW);
+    wndclass.hInstance = hInstance;
+    RegisterClassEx(&wndclass);
+
+    HWND main = CreateWindow(wndclass.lpszClassName,"",WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,NULL,NULL,hInstance,NULL);
+
+    void *factory = create_hwnd_factory((void *)hInstance);
+
+
+    ShowWindow(main,nShowCmd);
+    UpdateWindow(main);
+    
+    OmegaWTK::AppInst app;
+    omegaWTKMain(&app);
+
+    HWND rootHWND = (HWND)app.getNAP()->getNativeItemNativeBinding();
+
+    SetParent(rootHWND,main);
+    UpdateWindow(main);
+
+    // HACCEL hAccelTable = LoadAccelerators(hInstance,MAKEINTRESOURCE(IDC_@APPNAME@));
+
+    BOOL breturn;
+
+    MSG msg = {};
+    while ((breturn = GetMessage(&msg,nullptr,0,0)) != 0)
+    {
+        // Process any messages in the queue.
+        if (breturn == -1){
+
+        }
+        else
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    }
+
+    free_hwnd_factory(factory);
+
+    return msg.wParam;
+
+};

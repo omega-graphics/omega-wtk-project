@@ -1,6 +1,5 @@
 #include "MakeItem.h"
 #include "NativePrivate/win/HWNDItem.h"
-#include "NativePrivate/win/HWNDFactory.h"
 
 namespace OmegaWTK::Native::Win {
     NativeItemPtr make_item_win(Core::Rect & rect,ItemType type){

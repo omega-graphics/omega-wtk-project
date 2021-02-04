@@ -1,5 +1,5 @@
 add_omega_wtk_lib(
-    OBJECT
+    STATIC
     NAME 
     "Composition"
     SOURCES 

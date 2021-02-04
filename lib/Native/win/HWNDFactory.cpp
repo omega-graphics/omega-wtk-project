@@ -1,10 +1,19 @@
-#include "NativePrivate/win/HWNDFactory.h"
+#include "HWNDFactory.h"
 #include "NativePrivate/win/HWNDItem.h"
 
 namespace OmegaWTK::Native::Win {
 
     int windowID = 0;
     std::string str = "OmegaWTKWinView_";
+
+    HWNDFactory * HWNDFactory::appFactoryInst = nullptr;
+
+    HWNDFactory::HWNDFactory(HINSTANCE hinst){
+         hInst = hinst;
+        appFactoryInst = this;
+    };
+
+    HWNDFactory::~HWNDFactory(){};
 
     void * setHWNDUserData(HWND hwnd,void *data){
         return (void *)SetWindowLongPtr(hwnd,GWLP_USERDATA,(LONG_PTR)data);

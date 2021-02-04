@@ -36,9 +36,17 @@ function(add_omega_wtk_app)
     if(TARGET_WIN32)
         add_executable(${_ARG_NAME} WIN32 ${_ARG_SOURCES})
         set(OMEGAWTK_WINDOWS_UTILS_DIR  ${OMEGAWTK_TARGET_UTILS_DIR}/windows)
-        set(WINDOWS_UTIL_FILES "${CMAKE_CURRENT_BINARY_DIR}/${_ARG_NAME}.rc" "${CMAKE_CURRENT_BINARY_DIR}/targetver.h" "${CMAKE_CURRENT_BINARY_DIR}/resource.h")
-        configure_file("${OMEGAWTK_WINDOWS_UTILS_DIR}/resource_scripts.rc.in" "${CMAKE_CURRENT_BINARY_DIR}/${_ARG_NAME}.rc" COPYONLY)
-        file(COPY "${OMEGAWTK_WINDOWS_UTILS_DIR}/resource.h;${OMEGAWTK_WINDOWS_UTILS_DIR}/targetver.h" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+        set(WINDOWS_UTIL_FILES "${CMAKE_CURRENT_BINARY_DIR}/${_ARG_NAME}.rc" "${CMAKE_CURRENT_BINARY_DIR}/targetver.h" "${CMAKE_CURRENT_BINARY_DIR}/resource.h" "${CMAKE_CURRENT_BINARY_DIR}/main_.cpp" "${CMAKE_CURRENT_BINARY_DIR}/${_ARG_NAME}.exe.manifest")
+        set(APPNAME ${_ARG_NAME})
+        set(APPENTRY ${_ARG_MAIN})
+        configure_file("${OMEGAWTK_WINDOWS_UTILS_DIR}/main_.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/main_.cpp")
+        configure_file("${OMEGAWTK_WINDOWS_UTILS_DIR}/resource_script.rc.in" "${CMAKE_CURRENT_BINARY_DIR}/${_ARG_NAME}.rc" @ONLY)
+        configure_file("${OMEGAWTK_WINDOWS_UTILS_DIR}/resource.h.in" "${CMAKE_CURRENT_BINARY_DIR}/resource.h" @ONLY)
+        configure_file("${OMEGAWTK_WINDOWS_UTILS_DIR}/targetver.h" "${CMAKE_CURRENT_BINARY_DIR}/targetver.h" @ONLY)
+        configure_file("${OMEGAWTK_WINDOWS_UTILS_DIR}/test.ico" "${CMAKE_CURRENT_BINARY_DIR}/${_ARG_NAME}.ico" COPYONLY)
+        configure_file("${OMEGAWTK_WINDOWS_UTILS_DIR}/app.exe.manifest" "${CMAKE_CURRENT_BINARY_DIR}/${_ARG_NAME}.exe.manifest")
+        file(COPY "${OMEGAWTK_WINDOWS_UTILS_DIR}/small.ico" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+        set_source_files_properties("${CMAKE_CURRENT_BINARY_DIR}/main_.cpp" PROPERTIES COMPILE_DEFINITIONS "WINDOWS_PRIVATE")
         target_sources(${_ARG_NAME} PRIVATE ${WINDOWS_UTIL_FILES})
     endif()
 
@@ -63,10 +71,11 @@ function(add_omega_wtk_app)
             MACOSX_FRAMEWORK_IDENTIFIER ${_ARG_MAC_BUNDLE_ID}
             XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER ${_ARG_MAC_BUNDLE_ID}
         )
+        set(_ARG_LINK_LIBS ${_ARG_LINK_LIBS} ${Cocoa_LIB})
     endif()
 
     target_include_directories(${_ARG_NAME} PUBLIC ${_ARG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
-    target_link_libraries(${_ARG_NAME} PRIVATE ${_ARG_LINK_LIBS} "OmegaWTK" ${Cocoa_LIB})
+    target_link_libraries(${_ARG_NAME} PRIVATE ${_ARG_LINK_LIBS} "omegaWTKNative;omegaWTKCore;omegaWTKComposition;omegaWTKUI")
 
 endfunction()
 

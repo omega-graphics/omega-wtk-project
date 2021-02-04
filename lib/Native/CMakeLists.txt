@@ -1,5 +1,5 @@
 add_omega_wtk_lib(
-    OBJECT
+    STATIC
     NAME 
     "Native"
     SOURCES 
@@ -15,13 +15,14 @@ add_omega_wtk_lib(
 )
 
 if(TARGET_WIN32)
-    set(NATIVE_WIN_HEADERS "HWNDItem.h" "HWNDFactory.h" "WinEvent.h")
-    set(NATIVE_WIN_SOURCES  "MakeItem.h" "MakeItem.cpp" "HWNDItem.cpp" "HWNDFactory.cpp"  "WinMenu.h" "WinMenu.cpp" "WinEvent.cpp")
+    set(NATIVE_WIN_HEADERS "HWNDItem.h" "WinEvent.h")
+    set(NATIVE_WIN_SOURCES  "MakeItem.h" "MakeItem.cpp" "HWNDItem.cpp" "HWNDFactory.h" "HWNDFactory.cpp"  "WinMenu.h" "WinMenu.cpp" "WinEvent.cpp")
 
     list(TRANSFORM NATIVE_WIN_HEADERS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/private_include/NativePrivate/win/")
     list(TRANSFORM NATIVE_WIN_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/win/")
 
     target_sources("omegaWTKNative" PRIVATE ${NATIVE_WIN_HEADERS} ${NATIVE_WIN_SOURCES})
+    target_compile_definitions("omegaWTKNative" PRIVATE "WINDOWS_PRIVATE")
 endif()
 
 if(TARGET_MACOS)

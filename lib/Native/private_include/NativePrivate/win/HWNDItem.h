@@ -26,6 +26,7 @@ namespace OmegaWTK::Native {
             void destroy();
             RECT getClientRect();
             HDC getDCFromHWND();
+            void *getBinding(){ return (void *)hwnd;};
             typedef enum : OPT_PARAM {
                 View,
                 PushButton,

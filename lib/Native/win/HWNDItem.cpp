@@ -1,5 +1,5 @@
 #include "NativePrivate/win/HWNDItem.h"
-#include "NativePrivate/win/HWNDFactory.h"
+#include "HWNDFactory.h"
 #include "NativePrivate/win/WinEvent.h"
 #include <windowsx.h>
 

@@ -1,5 +1,5 @@
 add_omega_wtk_lib(
-    OBJECT
+    STATIC
     NAME 
     "UI"
     SOURCES 
@@ -15,6 +15,8 @@ add_omega_wtk_lib(
     "omegaWTKNative"
     "omegaWTKComposition"
 )
+
+target_compile_definitions("omegaWTKUI" PRIVATE "WINDOWS_PRIVATE")
 
 # if(TARGET_WIN32)
 #     target_sources("omegaWTKWidgets" PRIVATE "NativeItem_Win.h" "NativeItem_Win.cpp")

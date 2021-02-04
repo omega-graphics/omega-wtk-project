@@ -12,6 +12,7 @@ public:
 };
 };
 
+
 int omegaWTKMain(OmegaWTK::AppInst *app)
 {
     OmegaWTK::MyWidget widget({{0,0},{100,100}});
