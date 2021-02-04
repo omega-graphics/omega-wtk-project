@@ -1,5 +1,5 @@
 add_omega_wtk_lib(
-    STATIC 
+    OBJECT
     NAME 
     "Native"
     SOURCES 
@@ -26,7 +26,7 @@ endif()
 
 if(TARGET_MACOS)
     set(NATIVE_MAC_HEADERS "CocoaItem.h" "CocoaEvent.h" "CocoaUtils.h")
-    set(NATIVE_MAC_SOURCES "MakeItem.h" "MakeItem.mm" "CocoaItem.mm" "CocoaEvent.mm" "CocoaUtils.mm")
+    set(NATIVE_MAC_SOURCES "MakeItem.h" "MakeItem.mm" "CocoaItem.mm" "CocoaEvent.mm" "CocoaUtils.mm" "CocoaApp.h" "CocoaApp.mm")
 
     set_source_files_properties(${NATIVE_MAC_HEADERS} ${NATIVE_MAC_SOURCES} PROPERTIES LANGUAGE OBJCXX)
 

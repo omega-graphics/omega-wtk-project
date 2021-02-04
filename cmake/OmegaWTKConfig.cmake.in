@@ -3,5 +3,7 @@ set(OMEGAWTK_VERSION @OMEGAWTK_VERSION@)
 
 set(OMEGAWTK_LIBS @OmegaWTKLibs@)
 
+set(OMEGAWTK_TARGET_UTILS_DIR "${CMAKE_CURRENT_LIST_DIR}../target")
+
 include("${CMAKE_CURRENT_LIST_DIR}/OmegaWTKUtils.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/OmegaWTKTargets.cmake")

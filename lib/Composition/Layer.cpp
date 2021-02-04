@@ -4,8 +4,12 @@
 namespace OmegaWTK::Composition {
 Target::Target(Native::NativeItemPtr _native):native(_native){};
 Target::~Target(){};
+
+    void Layer::drawRect(const Core::Rect &rect,const Color & color){
+        compTarget->tasks.push(new Task({Task::DrawRect,(void *)new Task::DrawRectParams({rect,color})}));
+    };
     
-    Layer::Layer(const Core::Rect & rect,Native::NativeItemPtr native_ptr):compTarget(std::make_unique<Target>(native_ptr)),surface_rect(rect){};
+    Layer::Layer(const Core::Rect & rect,Native::NativeItemPtr native_ptr):compTarget(new Target(native_ptr)),surface_rect(rect){};
 
     void Layer::addSubLayer(Layer *layer){
         layer->parent_ptr = this;
@@ -30,6 +34,10 @@ Target::~Target(){};
 
 void Layer::setBackgroundColor(const Color & color){
     background = color;
+};
+
+Layer::~Layer(){
+    delete compTarget;
 };
 
 void LayerTree::_recursive_trav(LayerTreeTraversalCallback &callback,Layer *current){

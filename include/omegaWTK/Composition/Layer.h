@@ -65,14 +65,14 @@ namespace OmegaWTK {
             Layer * parent_ptr = nullptr;
             Core::Rect surface_rect;
             Color background = Color(0,0,0,255);
-            Core::UniquePtr<Target> compTarget;
+            Target * compTarget;
             bool enabled;
             friend class LayerTree;
             public:
             /// @name Base Functions
             /// @{
-            Native::NativeItemPtr getTargetNativePtr(){return compTarget.get()->native;};
-            Core::Queue<Task *> & getTargetTasks(){return compTarget.get()->tasks;};
+            Native::NativeItemPtr getTargetNativePtr(){return compTarget->native;};
+            Core::Queue<Task *> & getTargetTasks(){return compTarget->tasks;};
             const Core::Rect & getLayerRect(){return surface_rect;};
             void setEnabled(bool state){enabled = state;};
             bool isChildLayer(){return parent_ptr != nullptr;};

@@ -38,6 +38,7 @@ private:
 public:
     CALayer *getLayer(){ return [_ptr getCALayer];};
     void setNeedsDisplay();
+    void * getBinding();
     CocoaItem(const Core::Rect & rect,Type _type);
     ~CocoaItem();
 };

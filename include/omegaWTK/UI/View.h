@@ -6,12 +6,14 @@
 #include "omegaWTK/Composition/Layer.h"
 #include "omegaWTK/Native/NativeItem.h"
 #include "omegaWTK/Native/NativeEvent.h"
+#include "omegaWTK/Native/NativeApp.h"
 
 #ifndef OMEGAWTK_UI_VIEW_H
 #define OMEGAWTK_UI_VIEW_H
 
 namespace OmegaWTK {
     class Widget;
+    class AppInst;
     /**
         A class that owns a layer.
         NOTE: This is only implemented by a few classes including the View, and the Window.
@@ -28,6 +30,7 @@ namespace OmegaWTK {
             @returns A LayerOwner
         */
         LayerOwner(const Core::Rect & rect,Composition::Layer * layer);
+        Composition::Layer *getLayer(){ return layer;};
     };
     class ViewDelegate;
     /**
@@ -43,6 +46,7 @@ namespace OmegaWTK {
         ViewDelegate *delegate = nullptr;
         bool hasDelegate();
         friend class Widget;
+        friend void internal_set_root(View *view,Native::NAP ptr);
     public:
         bool isRootView(){return parent_ptr == nullptr;};
         void setDelegate(ViewDelegate *_delegate);

@@ -5,15 +5,20 @@ add_subdirectory("UI")
 
 # Generate Shared Library/Export
 set(EXPORT_HEADER "${CMAKE_SOURCE_DIR}/include/OmegaWTK.h")
-add_library("OmegaWTK" SHARED ${EXPORT_HEADER} "OmegaWTK.cpp")
+set(OMEGA_TARGET_SOURCES "")
+foreach(LIB ${OmegaWTKLibs})
+    string(APPEND OMEGA_TARGET_SOURCES "  $<TARGET_OBJECTS:${LIB}>")
+endforeach()
+message("OBJECTS:${OMEGA_TARGET_SOURCES}")
+add_library("OmegaWTK" STATIC ${EXPORT_HEADER} "OmegaWTK.cpp" $<TARGET_OBJECTS:omegaWTKCore> $<TARGET_OBJECTS:omegaWTKNative> $<TARGET_OBJECTS:omegaWTKComposition> $<TARGET_OBJECTS:omegaWTKUI>)
 if(TARGET_WIN32)
     set(WINDOWS_LINK_F "/WHOLEARCHIVE:")
     set(OMEGALIBS ${OmegaWTKLibs})
     list(TRANSFORM OMEGALIBS PREPEND "lib/")
     list(TRANSFORM OMEGALIBS APPEND ".lib")
     string(JOIN "  " OMEGA_OUT ${OMEGALIBS})
-    set(WINDOWS_LINK_F "${WINDOWS_LINK_F}${OMEGA_OUT} d2d1.lib dwrite.lib d3d12.lib dcomp.lib")
-    message("WindowsLIBS:${WINDOWS_LINK_F} d2d1.lib dwrite.lib d3d12.lib dcomp.lib")
+    set(WINDOWS_LINK_F "${WINDOWS_LINK_F}${OMEGA_OUT}")
+    message("WindowsLIBS:${WINDOWS_LINK_F}")
 
     set_target_properties("OmegaWTK" PROPERTIES 
     VERSION ${OMEGAWTK_VERSION}

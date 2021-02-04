@@ -14,6 +14,7 @@ namespace OmegaWTK {
             public:
             void sendEventToEmitter(NativeEvent *ptr);
             bool hasEventEmitter();
+            virtual void *getBinding() = 0;
             NativeItem();
         };
         typedef NativeItem *NativeItemPtr;

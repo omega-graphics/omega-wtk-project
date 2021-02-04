@@ -51,6 +51,10 @@ CocoaItem::CocoaItem(const Core::Rect & rect,CocoaItem::Type _type):rect(rect),t
     _ptr = [[OmegaWTKCocoaView alloc] initWithFrame:OmegaWTK::Native::Cocoa::core_rect_to_cg_rect(rect) delegate:this];
 };
 
+void * CocoaItem::getBinding(){
+    return reinterpret_cast<void *>(_ptr);
+};
+
 CocoaItem::~CocoaItem(){
     
 };

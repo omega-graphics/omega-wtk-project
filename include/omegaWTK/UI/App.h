@@ -1,4 +1,5 @@
 #include "omegaWTK/Core/Core.h"
+#include "omegaWTK/Native/NativeApp.h"
 #include "Widget.h"
 
 #ifndef OMEGAWTK_UI_APP_H
@@ -12,16 +13,19 @@
 #elif defined(TARGET_MACOS)
 #define OMEGAWTK_APP_ENTRY_BEGIN int main(int argc,char *argv[]) {
 #define OMEGAWTK_INIT_APP(app)
-#define OMEGAWTK_APP_ENTRY_END }
+#define OMEGAWTK_APP_ENTRY_END return OmegaWTK::Native::cocoa_app_init(argc,argv);}
 #endif
 
 namespace OmegaWTK {
 
 class OMEGAWTK_EXPORT AppInst {
-    Widget *root;
+    Widget *rootWidget;
+    Native::NAP ptr;
 public:
     static AppInst *instance;
-    AppInst(Widget *root);
+    AppInst();
+    void setRoot(Widget *widget);
+    Native::NAP getNAP(){ return ptr;};
     ~AppInst();
 };
     

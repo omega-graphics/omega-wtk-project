@@ -7,16 +7,19 @@
 
 namespace OmegaWTK {
 
+class AppInst;
+
 class OMEGAWTK_EXPORT Widget {
 protected:
     View *rootView;
     Widget *parent = nullptr;
 private:
     Composition::Compositor *compositor;
+    friend class AppInst;
 public:
     void show();
     void hide();
-    Widget(const Core::Rect & rect,Widget *parent);
+    Widget(const Core::Rect & rect,Widget *parent = nullptr);
     ~Widget();
 };
 

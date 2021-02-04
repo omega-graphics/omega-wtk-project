@@ -10,6 +10,10 @@ if(CMAKE_HOST_APPLE)
     if(NOT XCODE)
         set(FATAL_ERROR "Xcode Generator is Needed to Build an OmegaWTK App For Mac!")
     endif()
+
+    set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED "NO")
+    set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "")
+
     add_compile_definitions("TARGET_MACOS")
     set(TARGET_MACOS TRUE)
     # Locates macOS Framework. Outputs to ${F_NAME}_LIB
@@ -27,7 +31,7 @@ if(CMAKE_HOST_APPLE)
 endif()
 
 function(add_omega_wtk_app)
-    cmake_parse_arguments("_ARG" "" "NAME;" "SOURCES;LINK_LIBS;INCLUDE_DIRS")
+    cmake_parse_arguments("_ARG" "" "NAME;MAIN;MAC_BUNDLE_ID" "SOURCES;LINK_LIBS;INCLUDE_DIRS" ${ARGN})
 
     if(TARGET_WIN32)
         add_executable(${_ARG_NAME} WIN32 ${_ARG_SOURCES})
@@ -39,26 +43,30 @@ function(add_omega_wtk_app)
     endif()
 
     if(TARGET_MACOS)
-        if(NOT OBJCXX IN_LIST ENABLED_LANGUAGES)
-            message(FATAL_ERROR "Objectve C++ Must be enabled!")
-        endif()
-
         add_executable(${_ARG_NAME} MACOSX_BUNDLE ${_ARG_SOURCES})
         set(OMEGAWTK_MACOS_UTILS_DIR ${OMEGAWTK_TARGET_UTILS_DIR}/macos)
-        set(MACOS_UTIL_FILES "AppDelegate.mm" "AppDelegate.h")
-        list(TRANSFORM MACOS_UTIL_FILES PREPEND "${OMEGAWTK_TARGET_UTILS_DIR}/")
-        file(COPY "${MACOS_UTIL_FILES}" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-        set(MACOS_UTILS "AppDelegate.mm" "AppDelegate.h" "Info.plist")
+        set(MACOS_UTIL_FILES "AppDelegate.h" "AppDelegate.mm" "English.lproj/MainMenu.xib" "main.mm" )
+        list(TRANSFORM MACOS_UTIL_FILES PREPEND "${OMEGAWTK_MACOS_UTILS_DIR}/")
+        foreach(_F IN ITEMS ${MACOS_UTIL_FILES})
+            file(COPY ${_F} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+        endforeach()
+        set(APPENTRY ${_ARG_MAIN})
+        configure_file( "${OMEGAWTK_MACOS_UTILS_DIR}/AppDelegate.mm" "${CMAKE_CURRENT_BINARY_DIR}/AppDelegate.mm" @ONLY)
+        
+        set(MACOS_UTILS "AppDelegate.mm" "AppDelegate.h" "MainMenu.xib" "main.mm")
         list(TRANSFORM MACOS_UTILS PREPEND "${CMAKE_CURRENT_BINARY_DIR}/")
         target_sources(${_ARG_NAME} PRIVATE ${MACOS_UTILS})
         # set_source_files_properties("Assets.xcassets" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
         set_target_properties(${_ARG_NAME} PROPERTIES
-            MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist"
+            MACOSX_BUNDLE_INFO_PLIST "${OMEGAWTK_MACOS_UTILS_DIR}/Info.plist"
+            RESOURCE "${CMAKE_CURRENT_BINARY_DIR}/MainMenu.xib"
+            MACOSX_FRAMEWORK_IDENTIFIER ${_ARG_MAC_BUNDLE_ID}
+            XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER ${_ARG_MAC_BUNDLE_ID}
         )
     endif()
 
-    target_include_directories(${_ARG_NAME} PUBLIC ${_ARG_INCLUDE_DIRS})
-    target_link_libraries(${_ARG_NAME} PRIVATE ${_ARG_LINK_LIBS})
+    target_include_directories(${_ARG_NAME} PUBLIC ${_ARG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
+    target_link_libraries(${_ARG_NAME} PRIVATE ${_ARG_LINK_LIBS} "OmegaWTK" ${Cocoa_LIB})
 
 endfunction()
 

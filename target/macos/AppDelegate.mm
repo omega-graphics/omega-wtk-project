@@ -1,4 +1,22 @@
 #import "AppDelegate.h"
+#import "@APPENTRY@"
+#import <OmegaWTK.h>
+
+@interface OmegaWTKRootView : NSView
+@end
+
+@implementation OmegaWTKRootView
+-(instancetype)init{
+    if(self = [super initWithFrame:NSZeroRect]){
+        
+    };
+    return self;
+};
+-(void)drawRect:(NSRect) dirtyRect {
+    NSEraseRect(dirtyRect);
+};
+
+@end
 
 @interface OmegaWTKAppWindowController () <NSWindowDelegate>
 @property (nonatomic) NSWindowController *r_self;
@@ -15,6 +33,14 @@
         [window layoutIfNeeded];
         [window center];
         window.frameAutosaveName = @"Main";
+        
+        OmegaWTK::AppInst inst;
+        omegaWTKMain(&inst);
+        
+        NSView * root = (NSView *)inst.getNAP()->getNativeItemNativeBinding();
+        OmegaWTKRootView *global = [[OmegaWTKRootView alloc] init];
+        [global addSubview:root];
+        [window setContentView:global];
     };
     return self;
 }

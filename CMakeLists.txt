@@ -25,7 +25,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(OmegaWTKUtils)
 
 function(add_omega_wtk_lib)
-    cmake_parse_arguments("_ARG" "STATIC;SHARED" "NAME" "SOURCES;HEADERS;LINK_LIBS" ${ARGN})
+    cmake_parse_arguments("_ARG" "STATIC;SHARED;OBJECT" "NAME" "SOURCES;HEADERS;LINK_LIBS" ${ARGN})
 
     string(PREPEND _ARG_NAME "omegaWTK")
 
@@ -36,6 +36,8 @@ function(add_omega_wtk_lib)
 
     if(_ARG_STATIC)
         add_library(${_ARG_NAME} STATIC ${_ARG_SOURCES} ${_ARG_HEADERS})
+    elseif(_ARG_OBJECT)
+        add_library(${_ARG_NAME} OBJECT ${_ARG_SOURCES} ${_ARG_HEADERS})
     elseif(_ARG_SHARED)
         add_library(${_ARG_NAME} SHARED ${_ARG_SOURCES} ${_ARG_HEADERS})
     endif()
@@ -56,7 +58,7 @@ function(add_omega_wtk_lib)
     foreach(_LIB IN ITEMS ${_ARG_LINK_LIBS})
         add_dependencies(${_ARG_NAME} ${_LIB})
     endforeach()
-    target_link_libraries(${_ARG_NAME} PRIVATE ${_ARG_LINK_LIBS})
+    target_link_libraries(${_ARG_NAME} PUBLIC ${_ARG_LINK_LIBS})
 
 endfunction()
 
@@ -115,6 +117,10 @@ if(CMAKE_HOST_APPLE)
 endif()
 
 add_subdirectory("lib")
+
+set(OMEGAWTK_TARGET_UTILS_DIR ${CMAKE_SOURCE_DIR}/target)
+
+add_subdirectory("tests")
 
 install(TARGETS ${OmegaWTKLibs} EXPORT OmegaWTKTargets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
