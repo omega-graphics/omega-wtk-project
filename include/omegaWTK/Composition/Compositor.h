@@ -1,19 +1,25 @@
-#include "Layer.h"
+#include "omegaWTK/Core/Core.h"
 
 #ifndef OMEGAWTK_COMPOSTION_COMPOSITOR_H
 #define OMEGAWTK_COMPOSTION_COMPOSITOR_H
 
 namespace OmegaWTK::Composition {
 
+    class Layer;
+
     class Backend;
     class OMEGAWTK_EXPORT Compositor {
-        Layer *rootLayer;
         Backend *backend;
+        bool allowUpdates = false;
+        friend class Layer;
+        void updateRequestLayer(Layer *layer);
         public:
-        void prepareDraw();
+        /// Initial Draw
+        void prepareDraw(Layer *root);
+        /// Cleanup (Called when app closes, or widget hides)
         void prepareCleanup();
-        void prepareUpdate();
-        Compositor(Layer *layer);
+        Compositor();
+        ~Compositor();
     };
 
 }

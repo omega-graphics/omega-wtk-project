@@ -1,4 +1,5 @@
 #include "omegaWTK/Composition/Layer.h"
+#include "omegaWTK/Composition/Compositor.h"
 #include <iostream>
 
 namespace OmegaWTK::Composition {
@@ -6,10 +7,12 @@ Target::Target(Native::NativeItemPtr _native):native(_native){};
 Target::~Target(){};
 
     void Layer::drawRect(const Core::Rect &rect,const Color & color){
-        compTarget->tasks.push(new Task({Task::DrawRect,(void *)new Task::DrawRectParams({rect,color})}));
+        compTarget->visuals.push_back(new Visual({Visual::Rect,(void *)new Visual::RectParams({rect,color})}));
     };
     
-    Layer::Layer(const Core::Rect & rect,Native::NativeItemPtr native_ptr):surface_rect(rect),compTarget(new Target(native_ptr)){};
+    Layer::Layer(const Core::Rect & rect,Native::NativeItemPtr native_ptr,Compositor *compPtr):surface_rect(rect),compTarget(new Target(native_ptr)),ownerCompositor(compPtr){
+        native_ptr->setParentLayer(this);
+    };
 
     void Layer::addSubLayer(Layer *layer){
         layer->parent_ptr = this;
@@ -34,6 +37,10 @@ Target::~Target(){};
 
 void Layer::setBackgroundColor(const Color & color){
     background = color;
+};
+
+void Layer::redraw(){
+    ownerCompositor->updateRequestLayer(this);
 };
 
 Layer::~Layer(){

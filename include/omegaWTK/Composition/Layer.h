@@ -14,43 +14,45 @@
 
 namespace OmegaWTK {
     namespace Composition {
+
+    class Compositor;
     
     
-    struct Task {
+    struct Visual {
         typedef enum : OPT_PARAM {
-            DrawRect,
-            DrawRoundedRect,
-            DrawEllipse,
-            DrawText
+            Rect,
+            RoundedRect,
+            Ellipse,
+            Text
         } Type;
         Type type;
         typedef struct {
             Core::Rect rect;
             Color color;
-        } DrawRectParams;
+        } RectParams;
         
         typedef struct {
             Core::Rect rect;
             unsigned rad_x;
             unsigned rad_y;
             Color color;
-        } DrawRoundedRectParams;
+        } RoundedRectParams;
         
         typedef struct {
             unsigned rad_x;
             unsigned rad_y;
             Color color;
-        } DrawEllipseParams;
+        } EllipseParams;
         typedef struct {
             Core::String str;
             Color textColor;
             unsigned size;
-        } DrawTextParams;
+        } TextParams;
         void * params;
     };
     
     class Target {
-        Core::Queue<Task *> tasks;
+        Core::Vector<Visual *> visuals;
         Native::NativeItemPtr native;
         friend class Layer;
     public:
@@ -60,19 +62,20 @@ namespace OmegaWTK {
         /**
             A surface which visuals can draw upon!
          */
-        class OMEGAWTK_EXPORT Layer {
+        class OMEGAWTK_EXPORT Layer : public Native::NativeLayer {
             Core::Vector<Layer *> children;
             Layer * parent_ptr = nullptr;
             Core::Rect surface_rect;
             Color background = Color(0,0,0,255);
             Target * compTarget;
             bool enabled;
+            Compositor *ownerCompositor;
             friend class LayerTree;
             public:
             /// @name Base Functions
             /// @{
             Native::NativeItemPtr getTargetNativePtr(){return compTarget->native;};
-            Core::Queue<Task *> & getTargetTasks(){return compTarget->tasks;};
+            auto & getTargetVisuals(){return compTarget->visuals;};
             const Core::Rect & getLayerRect(){return surface_rect;};
             void setEnabled(bool state){enabled = state;};
             bool isChildLayer(){return parent_ptr != nullptr;};
@@ -91,11 +94,11 @@ namespace OmegaWTK {
             
             /// @name Main Action Functions!
             /// @{
-            void render();
-            void cleanup();
+            void redraw();
             /// @}
             
-            Layer(const Core::Rect & rect,Native::NativeItemPtr native_ptr);
+            
+            Layer(const Core::Rect & rect,Native::NativeItemPtr native_ptr,Compositor *compPtr);
             ~Layer();
         };
     

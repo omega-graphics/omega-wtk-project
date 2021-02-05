@@ -14,6 +14,7 @@ protected:
 public:
     void setCurrentJob(Layer *layer);
     virtual void doWork() = 0;
+    virtual void doUpdate() = 0;
     Backend();
     ~Backend();
 };

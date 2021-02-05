@@ -108,7 +108,7 @@ namespace OmegaWTK {
         ViewDelegate();
         ~ViewDelegate();
     };
-    View *make_view(const Core::Rect & rect);
+    View *make_view(const Core::Rect & rect,Composition::Compositor *widgetCompositor);
 
 };
 

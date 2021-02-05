@@ -10,6 +10,9 @@
 LPCSTR szTitle = "@APPNAME@";                
 LPCSTR szWindowClass = "@APPNAME@"; 
 
+OmegaWTK::AppInst app;
+bool hasLoaded = false;
+
 LRESULT CALLBACK WndProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam){
     LRESULT lr = 0;
     switch(umsg)
@@ -17,6 +20,23 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam){
         case WM_CREATE : {
             break;
         }
+        // case WM_SIZING : {
+        //    app.updateRootWidget();
+        // }
+        // case WM_SIZE : {
+        //     if(hasLoaded) {
+        //         UINT width = LOWORD(lParam);
+        //         UINT height = HIWORD(lParam);
+        //         app.updateRootWidget();
+        //     }
+        //     break;
+        // }
+        // case WM_MOVE : {
+        //     // UINT xPos = (int)(short) LOWORD(lParam); 
+        //     // UINT yPos = (int)(short) HIWORD(lParam);
+        //     // app.updateRootWidget(); 
+        //     break;
+        // }
         case WM_PAINT : {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd,&ps);
@@ -64,22 +84,23 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLi
     RegisterClassEx(&wndclass);
 
     HWND hwndWindow = CreateWindow(szWindowClass,szTitle,WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,NULL,NULL,hInstance,NULL);
-
-    ShowWindow(hwndWindow,nShowCmd);
-    UpdateWindow(hwndWindow);
-
+   
+    
     void *factory = create_hwnd_factory((void *)hInstance,(void *)hwndWindow);
 
+    ShowWindow(hwndWindow,nShowCmd);
+   
+    omegaWTKMain(&app);
 
-   OmegaWTK::AppInst app;
+    UpdateWindow(hwndWindow);
 
-   omegaWTKMain(&app);
+   hasLoaded = true;
 
    // HWND rootHWND = (HWND)app.getNAP()->getNativeItemNativeBinding();
 
    // SetParent(rootHWND,hwndWindow);
    // ShowWindow(rootHWND,SW_SHOW);
-  // UpdateWindow(hwndWindow);
+ 
 
     HACCEL hAccelTable = LoadAccelerators(hInstance,MAKEINTRESOURCE(IDC_@APPNAME@));
 

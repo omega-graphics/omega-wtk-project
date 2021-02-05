@@ -19,6 +19,11 @@ void AppInst::setRoot(Widget *widget){
     internal_set_root(widget->rootView,ptr);
 };
 
+// void AppInst::updateRootWidget()
+// {
+//     rootWidget->compositor->prepareUpdate();
+// };
+
 AppInst::~AppInst(){
     instance = nullptr;
 };

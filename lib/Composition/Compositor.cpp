@@ -2,18 +2,27 @@
 #include "omegaWTK/Composition/Backend.h"
 
 namespace OmegaWTK::Composition {
-Compositor::Compositor(Layer *layer):rootLayer(layer),backend(make_backend()){};
+Compositor::Compositor():backend(make_backend()){};
 
-void Compositor::prepareDraw(){
-    backend->setCurrentJob(rootLayer);
+void Compositor::prepareDraw(Layer *root){
+    backend->setCurrentJob(root);
     backend->doWork();
+    allowUpdates = true;
 };
 void Compositor::prepareCleanup(){
-    
+    allowUpdates = false;
 };
 
-void Compositor::prepareUpdate(){
-    
+void Compositor::updateRequestLayer(Layer *layer){
+    if(allowUpdates){
+        backend->setCurrentJob(layer);
+        backend->doUpdate();
+    };
 };
+
+Compositor::~Compositor(){
+    prepareCleanup();
+};
+
 
 };

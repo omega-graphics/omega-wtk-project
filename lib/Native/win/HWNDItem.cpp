@@ -55,13 +55,15 @@ namespace OmegaWTK::Native::Win {
         //     event = button_event_to_native_event(NativeEvent::RMouseUp,&pt);
         //     break;
         // };
-        // case WM_PAINT : {
-        //     PAINTSTRUCT ps;
-        //     HDC hdc = BeginPaint(hwnd,&ps);
+        case WM_PAINT : {
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd,&ps);
 
-        //     EndPaint(hwnd,&ps);
-        //     break;
-        // };
+            parentLayer->redraw();
+
+            EndPaint(hwnd,&ps);
+            break;
+        };
         default:
            rc = FALSE;
            break;

@@ -10,6 +10,7 @@
 #endif
 
 namespace OmegaWTK::Native {
+   
     NativeItem::NativeItem():event_emitter(nullptr){};
 
     bool NativeItem::hasEventEmitter(){

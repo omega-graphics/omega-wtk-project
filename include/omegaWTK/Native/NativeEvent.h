@@ -20,7 +20,8 @@ public:
         RMouseDown,
         RMouseUp,
         KeyDown,
-        KeyUp
+        KeyUp,
+        Redraw
     } EventType;
 private:
     EventType type;

@@ -32,8 +32,8 @@ namespace OmegaWTK {
         };
     };
 
-    View *make_view(const Core::Rect & rect){
+    View *make_view(const Core::Rect & rect,Composition::Compositor *widgetCompositor){
         Native::NativeItemPtr native = Native::make_native_item(rect);
-        return new View(rect,new Composition::Layer(rect,native),native);
+        return new View(rect,new Composition::Layer(rect,native,widgetCompositor),native);
     };
 };
