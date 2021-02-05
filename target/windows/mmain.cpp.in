@@ -88,10 +88,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLi
     
     void *factory = create_hwnd_factory((void *)hInstance,(void *)hwndWindow);
 
-    ShowWindow(hwndWindow,nShowCmd);
+   
    
     omegaWTKMain(&app);
 
+     ShowWindow(hwndWindow,nShowCmd);
     UpdateWindow(hwndWindow);
 
    hasLoaded = true;
