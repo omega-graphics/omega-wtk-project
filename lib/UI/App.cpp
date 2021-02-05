@@ -28,8 +28,8 @@ AppInst::~AppInst(){
 #ifdef TARGET_WIN32 
 #ifdef WINDOWS_PRIVATE
 
-void * create_hwnd_factory(void * hinst){
-    return __create_hwnd_factory(hinst);
+void * create_hwnd_factory(void * hinst,void *hwndroot){
+    return __create_hwnd_factory(hinst,hwndroot);
 };
 
 void free_hwnd_factory(void *factory){

@@ -6,11 +6,10 @@ namespace OmegaWTK::Native::Win {
     int windowID = 0;
     std::string str = "OmegaWTKWinView_";
 
-    HWNDFactory * HWNDFactory::appFactoryInst = nullptr;
+    HWNDFactory * HWNDFactory::appFactoryInst;
 
-    HWNDFactory::HWNDFactory(HINSTANCE hinst){
-         hInst = hinst;
-        appFactoryInst = this;
+    HWNDFactory::HWNDFactory(HINSTANCE hinst,HWND rootHwnd):rootWindow(rootHwnd),hInst(hinst){
+       
     };
 
     HWNDFactory::~HWNDFactory(){};
@@ -23,7 +22,9 @@ namespace OmegaWTK::Native::Win {
         return (void *)GetWindowLongPtr(hwnd,GWLP_USERDATA);
     };
 
-    CALLBACK LRESULT HWNDFactory::WndProc(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam){
+    HWND HWNDFactory::getRootWnd(){ return rootWindow;};
+
+    LRESULT HWNDFactory::WndProc(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam){
         HWNDItem *hwndItem;
         if(uMsg == WM_NCCREATE){
             CREATESTRUCT *ctstrt = (CREATESTRUCT *)lParam;
@@ -43,7 +44,10 @@ namespace OmegaWTK::Native::Win {
         hInst = hinst;
     };
     HWND HWNDFactory::makeWindow(ATOM atom,LPCSTR name,Core::Rect rect,DWORD base_style,LPVOID custom_params,DWORD ext_style){
-        return CreateWindowEx(ext_style,reinterpret_cast<LPCSTR>(atom),name,base_style,rect.pos.x,rect.pos.y,rect.dimen.minWidth,rect.dimen.minHeight,nullptr,nullptr,hInst,custom_params);
+        // RECT rc;
+        // GetClientRect(rootWindow, &rc);
+        // unsigned rootWndHeight = rc.bottom - rc.top;
+        return CreateWindowA(MAKEINTATOM(atom),name,base_style,rect.pos.x,rect.pos.y,rect.dimen.minWidth,rect.dimen.minHeight,rootWindow,NULL,hInst,custom_params);
     };
     ATOM HWNDFactory::registerWindow(){
 
@@ -51,11 +55,20 @@ namespace OmegaWTK::Native::Win {
         ++windowID;
 
         wndclassregistry.push_back(str);
-        WNDCLASS ex;
+        WNDCLASSEX ex;
+        ex.cbSize = sizeof(ex);
         ex.lpszClassName = str.c_str();
+        ex.lpszMenuName = NULL;
+        ex.cbClsExtra = 0;
+        ex.cbWndExtra = 0;
+        ex.hbrBackground = (HBRUSH)COLOR_WINDOW;
+        ex.hInstance = hInst;
+        ex.hCursor = LoadCursor(NULL,IDC_ARROW);
+        ex.hIcon = NULL;
+        ex.hIconSm = NULL;
         ex.lpfnWndProc = WndProc;
         ex.style = CS_HREDRAW | CS_VREDRAW;
-        return RegisterClass(&ex);
+        return RegisterClassEx(&ex);
 
     };
 

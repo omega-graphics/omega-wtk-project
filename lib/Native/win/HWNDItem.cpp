@@ -2,10 +2,16 @@
 #include "HWNDFactory.h"
 #include "NativePrivate/win/WinEvent.h"
 #include <windowsx.h>
+#include <iostream>
 
 namespace OmegaWTK::Native::Win {
     HWNDItem::HWNDItem(Core::Rect & rect,Type type):wndrect(rect){
+        std::cout << "Registering Window!" << std::endl;
         atom = HWNDFactory::appFactoryInst->registerWindow();
+        if(!atom)
+        {
+            MessageBox(HWNDFactory::appFactoryInst->getRootWnd(),"Failed to Register HWNDItem Window!",NULL,MB_OKCANCEL);
+        }
         HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,(void *)this);
     };
     LRESULT HWNDItem::ProcessWndMsg(UINT u_int,WPARAM wParam,LPARAM lParam){
@@ -25,33 +31,37 @@ namespace OmegaWTK::Native::Win {
         *lresult = 0;
 
         switch (uMsg) {
-        case WM_LBUTTONDOWN : {
-            pt.x = GET_X_LPARAM(lParam);
-            pt.y = GET_Y_LPARAM(lParam);
-            event = button_event_to_native_event(NativeEvent::LMouseDown,&pt);
-            break;
-        };
-        case WM_LBUTTONUP : {
-            pt.x = GET_X_LPARAM(lParam);
-            pt.y = GET_Y_LPARAM(lParam);
-            event = button_event_to_native_event(NativeEvent::LMouseUp,&pt);
-            break;
-        };
-        case WM_RBUTTONDOWN : {
-            pt.x = GET_X_LPARAM(lParam);
-            pt.y = GET_Y_LPARAM(lParam);
-            event = button_event_to_native_event(NativeEvent::RMouseDown,&pt);
-            break;
-        };
-        case WM_RBUTTONUP : {
-            pt.x = GET_X_LPARAM(lParam);
-            pt.y = GET_Y_LPARAM(lParam);
-            event = button_event_to_native_event(NativeEvent::RMouseUp,&pt);
-            break;
-        };
-        case WM_PAINT : {
-            break;
-        };
+        // case WM_LBUTTONDOWN : {
+        //     pt.x = GET_X_LPARAM(lParam);
+        //     pt.y = GET_Y_LPARAM(lParam);
+        //     event = button_event_to_native_event(NativeEvent::LMouseDown,&pt);
+        //     break;
+        // };
+        // case WM_LBUTTONUP : {
+        //     pt.x = GET_X_LPARAM(lParam);
+        //     pt.y = GET_Y_LPARAM(lParam);
+        //     event = button_event_to_native_event(NativeEvent::LMouseUp,&pt);
+        //     break;
+        // };
+        // case WM_RBUTTONDOWN : {
+        //     pt.x = GET_X_LPARAM(lParam);
+        //     pt.y = GET_Y_LPARAM(lParam);
+        //     event = button_event_to_native_event(NativeEvent::RMouseDown,&pt);
+        //     break;
+        // };
+        // case WM_RBUTTONUP : {
+        //     pt.x = GET_X_LPARAM(lParam);
+        //     pt.y = GET_Y_LPARAM(lParam);
+        //     event = button_event_to_native_event(NativeEvent::RMouseUp,&pt);
+        //     break;
+        // };
+        // case WM_PAINT : {
+        //     PAINTSTRUCT ps;
+        //     HDC hdc = BeginPaint(hwnd,&ps);
+
+        //     EndPaint(hwnd,&ps);
+        //     break;
+        // };
         default:
            rc = FALSE;
            break;

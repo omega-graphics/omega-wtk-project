@@ -9,7 +9,7 @@ Target::~Target(){};
         compTarget->tasks.push(new Task({Task::DrawRect,(void *)new Task::DrawRectParams({rect,color})}));
     };
     
-    Layer::Layer(const Core::Rect & rect,Native::NativeItemPtr native_ptr):compTarget(new Target(native_ptr)),surface_rect(rect){};
+    Layer::Layer(const Core::Rect & rect,Native::NativeItemPtr native_ptr):surface_rect(rect),compTarget(new Target(native_ptr)){};
 
     void Layer::addSubLayer(Layer *layer){
         layer->parent_ptr = this;

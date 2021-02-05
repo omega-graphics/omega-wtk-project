@@ -41,7 +41,7 @@ public:
 #ifdef TARGET_WIN32 
 #ifdef WINDOWS_PRIVATE
 
-void * create_hwnd_factory(void * hinst);
+void * create_hwnd_factory(void * hinst,void *hwndroot);
 void free_hwnd_factory(void *factory);
 
 #endif

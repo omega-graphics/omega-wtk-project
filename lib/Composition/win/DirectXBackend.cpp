@@ -13,7 +13,7 @@
 #include "NativePrivate/win/HWNDItem.h" 
 #include "omegaWTK/Composition/Layer.h"
 
-
+#pragma comment(lib, "runtimeobject.lib")
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "d2d1.lib")
 #pragma comment(lib, "dcomp.lib")
@@ -27,7 +27,8 @@ namespace OmegaWTK::Composition {
     };
 
     D2D1::ColorF color_to_d2d1_color(Color & color){
-        return D2D1::ColorF(color.r,color.g,color.b,color.a);
+        #define EIGHTBIT_TO_FLOAT(num) (num/255.f)
+        return D2D1::ColorF(EIGHTBIT_TO_FLOAT(color.r),EIGHTBIT_TO_FLOAT(color.g),EIGHTBIT_TO_FLOAT(color.b),EIGHTBIT_TO_FLOAT(color.a));
     };
 
     void core_rect_to_win_rect(Core::Rect &rect,LPRECT rectres){
@@ -76,6 +77,7 @@ namespace OmegaWTK::Composition {
         UniqueComPtr<IDWriteFactory> dwrite_factory;
 
         void setup(){
+            // MessageBox(GetForegroundWindow(),"Setting Up Backend","Note",MB_OK);
             HRESULT hr;
             hr = D3D12CreateDevice(NULL,D3D_FEATURE_LEVEL_11_0,IID_PPV_ARGS(&direct3d_device));
             if(!SUCCEEDED(hr)){
@@ -107,13 +109,15 @@ namespace OmegaWTK::Composition {
             ID2D1HwndRenderTarget *render_target;
 
             RECT rc = native_item->getClientRect();
-
-            hr = direct2d_factory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(),D2D1::HwndRenderTargetProperties(native_item->getHandle()),&render_target);
-                if(!SUCCEEDED(hr)){
+            auto target_size = D2D1::SizeU(rc.right - rc.left,rc.bottom - rc.top);
+            hr = direct2d_factory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(),D2D1::HwndRenderTargetProperties(native_item->getHandle(),target_size),&render_target);
+            if(!SUCCEEDED(hr)){
                 //Handle Error!
             };
 
             render_target->BeginDraw();
+            render_target->SetTransform(D2D1::IdentityMatrix());
+            render_target->Clear(D2D1::ColorF(D2D1::ColorF::White));
 
             while(!tasks.empty()) {
                 auto task = tasks.front();
@@ -144,27 +148,40 @@ namespace OmegaWTK::Composition {
                     }
                     case Task::DrawRect : {
                         Task::DrawRectParams *params = (Task::DrawRectParams *)task->params;
+                        /// Step 1: Create Brush
                         ID2D1SolidColorBrush *color_brush;
                         hr = render_target->CreateSolidColorBrush(color_to_d2d1_color(params->color),&color_brush);
                         if(!SUCCEEDED(hr)){
                             //Handle Error!
                         };
                         RECT rect_;
+                        /// Step 2: Convert Core::Rect to RECT struct
                         core_rect_to_win_rect(params->rect,&rect_);
+                        auto d2_rect = D2D1::RectF(rect_.left,rect_.top,rect_.right,rect_.bottom);
+                        /// Step 3: Frame the Rectangle with Brush
+                        render_target->DrawRectangle(d2_rect,color_brush);
 
-                        render_target->DrawRectangle(D2D1::RectF(rect_.left,rect_.top,rect_.right,rect_.bottom),color_brush);
+                        /// Step 4: Fill Rectangle with Brush.
+                        render_target->FillRectangle(d2_rect,color_brush);
                         break;
                     }
                     case Task::DrawRoundedRect : {
                         Task::DrawRoundedRectParams *params = (Task::DrawRoundedRectParams *)task->params;
+                        /// Step 1: Create Brush
                         ID2D1SolidColorBrush *color_brush;
                         hr = render_target->CreateSolidColorBrush(color_to_d2d1_color(params->color),&color_brush);
                         if(!SUCCEEDED(hr)){
                             //Handle Error!
                         };
                         RECT rect_;
+                        /// Step 2: Convert Core::Rect to RECT struct
                         core_rect_to_win_rect(params->rect,&rect_);
-                        render_target->DrawRoundedRectangle(D2D1::RoundedRect(D2D1::RectF(rect_.left,rect_.top,rect_.right,rect_.bottom),params->rad_x,params->rad_y),color_brush);
+                        auto d2_rounded_rect = D2D1::RoundedRect(D2D1::RectF(rect_.left,rect_.top,rect_.right,rect_.bottom),params->rad_x,params->rad_y);
+                        /// Step 3: Frame the Rectangle with Brush
+                        render_target->DrawRoundedRectangle(d2_rounded_rect,color_brush);
+
+                        /// Step 4: Fill Rectangle with Brush.
+                        render_target->FillRoundedRectangle(d2_rounded_rect,color_brush);
                         break;
                     }
                 }
@@ -184,6 +201,6 @@ namespace OmegaWTK::Composition {
     };
 
     Backend * make_directx_backend(){
-        return (Backend *)new DirectXBackend();
+        return new DirectXBackend();
     };
 }

@@ -62,8 +62,10 @@ NativeApp::~NativeApp(){
 
 #include "win/HWNDFactory.h"
 
-void *__create_hwnd_factory(void *hinst){
-    return (void *)new OmegaWTK::Native::Win::HWNDFactory((HINSTANCE)hinst);
+void *__create_hwnd_factory(void *hinst,void *hwndroot){
+    auto ptr = new OmegaWTK::Native::Win::HWNDFactory((HINSTANCE)hinst,(HWND)hwndroot);
+    OmegaWTK::Native::Win::HWNDFactory::appFactoryInst = ptr;
+    return ptr;
 };
 
 void __free_hwnd_factory(void * hwnd_factory){

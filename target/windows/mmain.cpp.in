@@ -1,0 +1,104 @@
+#include "resource.h"
+#include "@APPENTRY@"
+#include <OmegaWTK.h>
+#include <wrl.h>
+
+#pragma comment(lib, "runtimeobject.lib")
+
+#define MAX_LOADSTRING 100
+
+LPCSTR szTitle = "@APPNAME@";                
+LPCSTR szWindowClass = "@APPNAME@"; 
+
+LRESULT CALLBACK WndProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam){
+    LRESULT lr = 0;
+    switch(umsg)
+    {
+        case WM_CREATE : {
+            break;
+        }
+        case WM_PAINT : {
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd,&ps);
+            EndPaint(hwnd,&ps);
+            break;
+        }
+        case WM_DESTROY : {
+            PostQuitMessage(0);
+            break;
+        }
+        default : {
+            return DefWindowProc(hwnd,umsg,wParam,lParam);
+            break;
+        }
+    }
+    return lr;
+};
+
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLine, int nShowCmd){
+
+    // LoadString(hInstance,IDS_APP_TITLE,szTitle,MAX_LOADSTRING);
+    // LoadString(hInstance,IDC_@APPNAME@,szWindowClass,MAX_LOADSTRING);
+
+    HRESULT hr;
+    hr = CoInitializeEx(NULL,COINIT_MULTITHREADED);
+    if(!SUCCEEDED(hr))
+    {
+        //Handle Error!
+    }
+
+    WNDCLASSEX wndclass;
+    wndclass.cbSize = sizeof(wndclass);
+    wndclass.lpszClassName = szWindowClass;
+    wndclass.lpfnWndProc = WndProc;
+    wndclass.cbClsExtra     = 0;
+    wndclass.cbWndExtra     = 0;
+    wndclass.style =  CS_HREDRAW | CS_VREDRAW;
+    wndclass.hbrBackground = (HBRUSH)COLOR_WINDOW;
+    wndclass.hIcon = LoadIcon(hInstance,MAKEINTRESOURCE(IDI_@APPNAME@));
+    wndclass.hCursor = LoadCursor(nullptr,IDC_ARROW);
+    wndclass.hInstance = hInstance;
+    wndclass.hIconSm = LoadIcon(hInstance,MAKEINTRESOURCE(IDI_SMALL));
+    wndclass.lpszMenuName = NULL;
+
+    RegisterClassEx(&wndclass);
+
+    HWND hwndWindow = CreateWindow(szWindowClass,szTitle,WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,NULL,NULL,hInstance,NULL);
+
+    ShowWindow(hwndWindow,nShowCmd);
+    UpdateWindow(hwndWindow);
+
+    void *factory = create_hwnd_factory((void *)hInstance,(void *)hwndWindow);
+
+
+   OmegaWTK::AppInst app;
+
+   omegaWTKMain(&app);
+
+   // HWND rootHWND = (HWND)app.getNAP()->getNativeItemNativeBinding();
+
+   // SetParent(rootHWND,hwndWindow);
+   // ShowWindow(rootHWND,SW_SHOW);
+  // UpdateWindow(hwndWindow);
+
+    HACCEL hAccelTable = LoadAccelerators(hInstance,MAKEINTRESOURCE(IDC_@APPNAME@));
+
+    BOOL breturn;
+
+    MSG msg = {};
+    while (GetMessage(&msg,nullptr,0,0))
+    {
+        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    }
+
+    free_hwnd_factory(factory);
+
+    CoUninitialize();
+
+    return msg.wParam;
+
+};

@@ -12,15 +12,16 @@ namespace OmegaWTK::Native{
             HWND rootWindow;
             HINSTANCE hInst;
             std::vector<std::string> wndclassregistry;
-            static CALLBACK LRESULT WndProc(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
+            static LRESULT WndProc(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
             public:
             static HWNDFactory * appFactoryInst;
 
             void setRootWindowAndHINST(HWND root,HINSTANCE hinst);
+            HWND getRootWnd();
             HWND makeWindow(ATOM atom,LPCSTR name,Core::Rect rect,DWORD base_style,LPVOID custom_params,DWORD ext_style = NULL);
             ATOM registerWindow();
             // One HWND Factory Allowed!
-            HWNDFactory(HINSTANCE hinst);
+            HWNDFactory(HINSTANCE hinst,HWND rootHwnd);
             ~HWNDFactory();
         };
     };

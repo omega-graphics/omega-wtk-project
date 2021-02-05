@@ -36,7 +36,7 @@ typedef NativeApp *NAP;
 
 #ifdef TARGET_WIN32 
 #ifdef WINDOWS_PRIVATE
-void * __create_hwnd_factory(void *hinst);
+void * __create_hwnd_factory(void *hinst,void *hwndroot);
 
 void __free_hwnd_factory(void *hwnd_factory);
 #endif

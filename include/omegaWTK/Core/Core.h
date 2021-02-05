@@ -15,10 +15,8 @@ namespace OmegaWTK {
         typedef unsigned char Option;
     };
 
-#define implements(interfaces...) : public interfaces
 #define STATIC_OPT static constexpr Core::Option
 #define OPT_PARAM Core::Option
-#define ENUM(name,args...) enum class name : Core::Option { args };
 
     namespace Core {
     
