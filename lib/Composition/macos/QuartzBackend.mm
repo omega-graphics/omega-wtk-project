@@ -17,16 +17,16 @@ class QuartzBackend : public Backend {
     void doWork(){
         
         Native::Cocoa::CocoaItem * native_ptr = (Native::Cocoa::CocoaItem *)currentLayer->getTargetNativePtr();
-        auto tasks = currentLayer->getTargetTasks();
+        auto & visuals = currentLayer->getTargetVisuals();
         CALayer *nativeLayer = native_ptr->getLayer();
         CALayer *currentLayer = nativeLayer;
-        while(!tasks.empty()){
-            auto task = tasks.front();
-            tasks.pop();
-            switch (task->type) {
-                case Task::DrawRect :
+        auto it = visuals.begin();
+        while(it != visuals.end()){
+            auto & visual = *it;
+            switch (visual->type) {
+                case Visual::Rect :
                 {
-                    Task::DrawRectParams *params = reinterpret_cast<Task::DrawRectParams *>(task->params);
+                    Visual::RectParams *params = reinterpret_cast<Visual::RectParams *>(visual->params);
                     CAShapeLayer *shapeLayer = [CAShapeLayer layer];
                     CGMutablePathRef path = CGPathCreateMutable();
                     CGPathAddRect(path,&CGAffineTransformIdentity,Native::Cocoa::core_rect_to_cg_rect(params->rect));
@@ -36,9 +36,9 @@ class QuartzBackend : public Backend {
                     currentLayer = shapeLayer;
                     break;
                 }
-                case Task::DrawRoundedRect :
+                case Visual::RoundedRect :
                 {
-                    Task::DrawRoundedRectParams *params = reinterpret_cast<Task::DrawRoundedRectParams *>(task->params);
+                    Visual::RoundedRectParams *params = reinterpret_cast<Visual::RoundedRectParams *>(visual->params);
                     CAShapeLayer *shapeLayer = [CAShapeLayer layer];
                     CGMutablePathRef path = CGPathCreateMutable();
                     CGPathAddRoundedRect(path,&CGAffineTransformIdentity,Native::Cocoa::core_rect_to_cg_rect(params->rect), params->rad_x,params->rad_y);
@@ -48,8 +48,8 @@ class QuartzBackend : public Backend {
                     currentLayer = shapeLayer;
                     break;
                 }
-                case Task::DrawText : {
-                    Task::DrawTextParams *params = reinterpret_cast<Task::DrawTextParams *>(task->params);
+                case Visual::Text : {
+                    Visual::TextParams *params = reinterpret_cast<Visual::TextParams *>(visual->params);
                     CATextLayer *textLayer = [CATextLayer layer];
                     textLayer.fontSize = params->size;
                     textLayer.font = [NSFont fontWithName:@"Arial" size:params->size];
@@ -61,11 +61,17 @@ class QuartzBackend : public Backend {
                     currentLayer = textLayer;
                     break;
                 }
-                default:
+                default: {
                     break;
-            }
+                }
+            };
+            ++it;
+            native_ptr->setNeedsDisplay();
         };
-        native_ptr->setNeedsDisplay();
+        
+    };
+    void doUpdate(){
+        doWork();
     };
 };
 

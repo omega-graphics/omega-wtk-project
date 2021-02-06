@@ -12,6 +12,7 @@ namespace OmegaWTK {
     void View::setDelegate(ViewDelegate *_delegate){
         delegate = _delegate;
         delegate->view = this;
+        setReciever(delegate);
     };
     void View::addSubView(View *view){
         subviews.push_back(view);
@@ -32,8 +33,59 @@ namespace OmegaWTK {
         };
     };
 
+
     View *make_view(const Core::Rect & rect,Composition::Compositor *widgetCompositor){
         Native::NativeItemPtr native = Native::make_native_item(rect);
         return new View(rect,new Composition::Layer(rect,native,widgetCompositor),native);
     };
+
+ViewDelegate::ViewDelegate(){};
+
+ViewDelegate::~ViewDelegate(){};
+
+void ViewDelegate::onRecieveEvent(Native::NativeEventPtr event){
+    using Native::NativeEvent;
+    switch (event->type) {
+        case NativeEvent::CursorEnter : {
+            onMouseEnter(event);
+            break;
+        }
+        case NativeEvent::CursorExit : {
+            onMouseExit(event);
+            break;
+        }
+        case NativeEvent::LMouseDown : {
+            onLeftMouseDown(event);
+            break;
+        }
+        case NativeEvent::LMouseUp : {
+            onLeftMouseUp(event);
+            break;
+        }
+        case NativeEvent::RMouseDown : {
+            onRightMouseDown(event);
+            break;
+        };
+        case NativeEvent::RMouseUp : {
+            onRightMouseUp(event);
+            break;
+        }
+        case NativeEvent::KeyDown : {
+            onKeyDown(event);
+            break;
+        };
+        case NativeEvent::KeyUp : {
+            onKeyUp(event);
+            break;
+        }
+        
+        default:
+            break;
+    }
+};
+
+void ViewDelegate(View *_view){
+    
+};
+
 };

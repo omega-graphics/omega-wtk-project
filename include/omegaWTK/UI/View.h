@@ -63,9 +63,10 @@ namespace OmegaWTK {
     };
     /// The Root View delegate class!
     class OMEGAWTK_EXPORT ViewDelegate : public Native::NativeEventProcessor {
-        View * view;
+        void onRecieveEvent(Native::NativeEventPtr event);
         friend class View;
         protected:
+        View * view;
         /**
             @name Interface Methods
          
@@ -74,35 +75,35 @@ namespace OmegaWTK {
         /**
             Called when the Mouse Enters the View
          */
-        virtual void onMouseEnter(Native::NativeEventPtr event) = 0;
+        virtual void onMouseEnter(Native::NativeEventPtr event) {};
         /**
             Called when the Mouse Exits the View
          */
-        virtual void onMouseExit(Native::NativeEventPtr event) = 0;
+        virtual void onMouseExit(Native::NativeEventPtr event) {};
         /**
             Called when the Left Mouse Button is pressed
          */
-        virtual void onLeftMouseDown(Native::NativeEventPtr event) = 0;
+        virtual void onLeftMouseDown(Native::NativeEventPtr event) {};
         /**
             Called when the Left Mouse Button is raised after being pressed
          */
-        virtual void onLeftMouseUp(Native::NativeEventPtr event) = 0;
+        virtual void onLeftMouseUp(Native::NativeEventPtr event) {};
         /**
             Called when the Right Mouse Button is pressed
          */
-        virtual void onRightMouseDown(Native::NativeEventPtr event) = 0;
+        virtual void onRightMouseDown(Native::NativeEventPtr event) {};
         /**
             Called when the Right Mouse Button is raised after being pressed
          */
-        virtual void onRightMouseUp(Native::NativeEventPtr event) = 0;
+        virtual void onRightMouseUp(Native::NativeEventPtr event) {};
         /**
             Called when a key on a keyboard is pressed
          */
-        virtual void onKeyDown(Native::NativeEventPtr event) = 0;
+        virtual void onKeyDown(Native::NativeEventPtr event) {};
         /**
             Called when a key on a keyboard is raised after being pressed
          */
-        virtual void onKeyUp(Native::NativeEventPtr event) = 0;
+        virtual void onKeyUp(Native::NativeEventPtr event) {};
         /// @}
         public:
         ViewDelegate();

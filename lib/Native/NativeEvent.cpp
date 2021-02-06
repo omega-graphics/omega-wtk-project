@@ -17,28 +17,16 @@ void NativeEventEmitter::setReciever(NativeEventProcessor *_responder){
 };
 
 void NativeEventEmitter::emit(NativeEventPtr event){
-    message_reciever->onRecieveEvent(event);
+    if(hasReciever())
+        message_reciever->onRecieveEvent(event);
 };
 
-NativeEventProcessor::NativeEventProcessor(const Core::List<NativeEvent::EventType> & events_to_listen_for):event_types(events_to_listen_for){};
+NativeEventProcessor::NativeEventProcessor(){};
 
-void NativeEventProcessor::queue(NativeEventPtr event){
-    message_queue.push(event);
-};
 
-NativeEventPtr NativeEventProcessor::getLatest(){
-    auto eventPtr = message_queue.front();
-    message_queue.pop();
-    return eventPtr;
-};
-
-void NativeEventProcessor::onRecieveEvent(NativeEventPtr event){
-    for(auto & t : event_types){
-        if(t == event->type){
-            queue(event);
-        };
-    };
-};
+//void NativeEventProcessor::onRecieveEvent(NativeEventPtr event){
+//
+//};
 
 NativeEventProcessor::~NativeEventProcessor(){
     
