@@ -8,7 +8,6 @@ namespace OmegaWTK::Composition {
   switch (type) {                                                              \
   case Rect: {                                                                 \
     RectParams *params = (RectParams *)this->params;                           \
-                                                                               \
     arg break;                                                                 \
   };                                                                           \
   case Text: {                                                                 \

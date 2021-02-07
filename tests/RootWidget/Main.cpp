@@ -6,11 +6,8 @@ class MyWidget : public Widget {
     class MyRootDelegate : public ViewDelegate {
         void onLeftMouseDown(Native::NativeEventPtr event) {
             Composition::Layer *layer = view->getLayer();
-            auto & rect_visual = layer->getTargetVisuals()[0];
-            Core::Rect rc = {{0,0},{100,100}};
-            
-            delete (Composition::Visual::RectParams *)rect_visual->params;
-            rect_visual->params = new Composition::Visual::RectParams({rc,{Composition::Color::Red}});
+            auto & rect_visual = layer->getVisualByIdx(0);
+            rect_visual->setColor({Composition::Color::Red});
             layer->redraw();
         };
         void onLeftMouseUp(Native::NativeEventPtr event) {

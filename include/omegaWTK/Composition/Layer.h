@@ -94,8 +94,8 @@ namespace OmegaWTK {
             /// @{
             Native::NativeItemPtr getTargetNativePtr(){return compTarget->native;};
             auto & getTargetVisuals(){return compTarget->visuals;};
-            template<class _Ty>
-            _Ty *& getVisualByIdx(unsigned idx){ return (_Ty *)compTarget->visuals[idx];};
+            
+            auto & getVisualByIdx(unsigned idx){ return compTarget->visuals[idx];};
             const Core::Rect & getLayerRect(){return surface_rect;};
             void setEnabled(bool state){enabled = state;};
             bool isChildLayer(){return parent_ptr != nullptr;};
