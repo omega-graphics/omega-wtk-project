@@ -125,16 +125,17 @@ namespace OmegaWTK::Composition {
                 compAssets->direct2d_hwnd_target = render_target;
                 compAssets->has_direct2d_hwnd_target = true;
             }
-            else {
-               auto render_target_size = compAssets->direct2d_hwnd_target->GetPixelSize();
-               hr = compAssets->direct2d_hwnd_target->Resize(render_target_size);
-               if(!SUCCEEDED(hr)){
-                    //Handle Error!
-              };
+            // else if(posChanged){
+            //     Core::SafeRelease(&compAssets->direct2d_hwnd_target);
+            //     ID2D1HwndRenderTarget *render_target;
             //    RECT rc = native_item->getClientRect();
             //    auto new_target_size = D2D1::SizeU(rc.right - rc.left,rc.bottom - rc.top);
-               
-            };
+            //    hr = direct2d_factory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(),D2D1::HwndRenderTargetProperties(native_item->getHandle(),new_target_size),&render_target);
+            //    if(!SUCCEEDED(hr)){
+            //         //Handle Error!
+            //     };
+            //     compAssets->direct2d_hwnd_target = render_target;
+            // };
             // return S_OK;
         };
         /// Checks to see if the two colors inputted are equalivent!

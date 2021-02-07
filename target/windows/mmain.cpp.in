@@ -21,7 +21,8 @@ void updateAllHWNDPos(UINT root_wnd_height){
     while(it != all_hwnds->end()){
         HWND hwnd = *it;
         GetClientRect(hwnd,&rc);
-        MoveWindow(hwnd,rc.left,(root_wnd_height - rc.bottom), rc.right - rc.left,rc.bottom - rc.top,TRUE);
+        SetWindowPos(hwnd,hwnd,rc.left,(root_wnd_height - rc.bottom), rc.right - rc.left,rc.bottom - rc.top,SWP_NOZORDER);
+        ++it;
     };
 };
 
@@ -42,14 +43,14 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam){
            }
            break;
         }
-        // case WM_SIZE : {
-        //     if(hasLoaded) {
-        //         UINT width = LOWORD(lParam);
-        //         UINT height = HIWORD(lParam);
-        //         updateAllHWNDPos(height);
-        //     }
-        //     break;
-        // }
+        case WM_SIZE : {
+           if(hasLoaded) {
+                 UINT width = LOWORD(lParam);
+                 UINT height = HIWORD(lParam);
+                 updateAllHWNDPos(height);
+             }
+             break;
+        }
         // case WM_MOVE : {
         //     // UINT xPos = (int)(short) LOWORD(lParam); 
         //     // UINT yPos = (int)(short) HIWORD(lParam);
@@ -111,12 +112,24 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLi
    
     omegaWTKMain(&app);
 
+     all_hwnds = (OmegaWTK::Core::Vector<HWND> *)hwnd_factory_get_all_hwnds(factory);
+
+    /// Intial Windows Coordinate System Correction!
+     RECT rc;
+    GetClientRect(hwndWindow,&rc);
+    updateAllHWNDPos(rc.bottom - rc.top);
+
      ShowWindow(hwndWindow,nShowCmd);
     UpdateWindow(hwndWindow);
 
-    all_hwnds = (OmegaWTK::Core::Vector<HWND> *)hwnd_factory_get_all_hwnds(factory);
 
-   hasLoaded = true;
+
+
+    hasLoaded = true;
+    
+    
+
+   
 
 
    // HWND rootHWND = (HWND)app.getNAP()->getNativeItemNativeBinding();
