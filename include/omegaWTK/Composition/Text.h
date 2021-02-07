@@ -18,8 +18,8 @@ namespace OmegaWTK {
                     BoldAndItalic
                 } FontStyle;
                 Core::String family;
-                OPT_PARAM style;
-                Font(Core::String _family,OPT_PARAM _style):family(_family),style(_style){};
+                FontStyle style;
+                Font(Core::String _family,FontStyle _style):family(_family),style(_style){};
                 ~Font(){};
 
             };

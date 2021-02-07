@@ -4,6 +4,8 @@
 #include <d2d1_1.h>
 #include <d2d1_1helper.h>
 #include <dwrite.h>
+#include <UIAnimation.h>
+#include <Uxtheme.h>
 
 #include <wrl.h>
 
@@ -18,6 +20,7 @@
 #pragma comment(lib, "d2d1.lib")
 #pragma comment(lib, "dcomp.lib")
 #pragma comment(lib, "dwrite.lib")
+#pragma comment(lib, "uxtheme.lib")
 
 namespace OmegaWTK::Composition {
 
@@ -31,11 +34,11 @@ namespace OmegaWTK::Composition {
         return D2D1::ColorF(EIGHTBIT_TO_FLOAT(color.r),EIGHTBIT_TO_FLOAT(color.g),EIGHTBIT_TO_FLOAT(color.b),EIGHTBIT_TO_FLOAT(color.a));
     };
 
-    void core_rect_to_win_rect(Core::Rect &rect,LPRECT rectres){
-        rectres->left = rect.pos.x;
-        rectres->bottom = rect.pos.y;
-        rectres->right = rect.pos.x + rect.dimen.minWidth;
-        rectres->top = rect.pos.y + rect.dimen.minHeight;
+    void core_rect_to_win_rect(Core::Rect &rect,LPRECT rectres,LPRECT parent_wnd_rect){
+        rectres->left = rect.pos.x + parent_wnd_rect->left;
+        rectres->right = rectres->left + rect.dimen.minWidth;
+        rectres->top = ((parent_wnd_rect->bottom - parent_wnd_rect->top) - rect.pos.y) - rect.dimen.minHeight;
+        rectres->bottom = rectres->top + rect.dimen.minHeight;
     };
     /// A ComPtr that releases its object on its destruction. (Similar to the std::unique_ptr)
     template<class T>
@@ -65,8 +68,8 @@ namespace OmegaWTK::Composition {
             UniqueComPtr<ID2D1HwndRenderTarget> direct2d_hwnd_target;
             bool has_dcomp_hwnd_target;
             UniqueComPtr<IDCompositionTarget> dcomp_hwnd_target;
-            bool has_direct2d_brush;
-             UniqueComPtr<ID2D1Brush> brush;
+            bool has_direct2d_solid_color_brush;
+             UniqueComPtr<ID2D1SolidColorBrush> solid_color_brush;
         };
 
         using HWNDItemCompAssetsCatalog = Core::Map<Native::Win::HWNDItem *,HWNDItemCompAssets>;
@@ -105,6 +108,10 @@ namespace OmegaWTK::Composition {
 
         };
 
+        bool match_size_u(D2D1_SIZE_U lhs,D2D1_SIZE_U rhs){
+            return (lhs.height == rhs.height) && (lhs.width == rhs.width);
+        };
+
         void setupTarget(Native::Win::HWNDItem *native_item,HWNDItemCompAssets *compAssets){
             HRESULT hr;
             if(!compAssets->has_direct2d_hwnd_target){
@@ -117,20 +124,48 @@ namespace OmegaWTK::Composition {
                 };
                 compAssets->direct2d_hwnd_target = render_target;
                 compAssets->has_direct2d_hwnd_target = true;
+            }
+            else {
+               auto render_target_size = compAssets->direct2d_hwnd_target->GetPixelSize();
+               hr = compAssets->direct2d_hwnd_target->Resize(render_target_size);
+               if(!SUCCEEDED(hr)){
+                    //Handle Error!
+              };
+            //    RECT rc = native_item->getClientRect();
+            //    auto new_target_size = D2D1::SizeU(rc.right - rc.left,rc.bottom - rc.top);
+               
             };
             // return S_OK;
         };
+        /// Checks to see if the two colors inputted are equalivent!
+        bool compareD2D1Colors(const D2D1_COLOR_F & first,const D2D1_COLOR_F & second){
+            return  (first.r == second.r) && (first.g == second.g) && (first.b == second.b) && (first.a == second.a);
+        };
 
-        void setupBrush(HWNDItemCompAssets *compAssets,Color &color){
+        void setupSolidColorBrush(HWNDItemCompAssets *compAssets,Color &color){
             HRESULT hr;
-            if(!compAssets->has_direct2d_brush){
+            if(!compAssets->has_direct2d_solid_color_brush){
                 ID2D1SolidColorBrush *solidBrush;
                 hr = compAssets->direct2d_hwnd_target->CreateSolidColorBrush(color_to_d2d1_color(color),&solidBrush);
                 if(!SUCCEEDED(hr)){
                     //Handle Error!
                 };
-                compAssets->has_direct2d_brush = true;
-                compAssets->brush = solidBrush;
+                compAssets->has_direct2d_solid_color_brush = true;
+                compAssets->solid_color_brush = solidBrush;
+            }
+
+            /// If the brush exists but the color is not the same!
+            else  {
+                auto new_color = color_to_d2d1_color(color);
+                if(!compareD2D1Colors(compAssets->solid_color_brush->GetColor(),new_color)) {
+                    Core::SafeRelease(&compAssets->solid_color_brush);
+                    ID2D1SolidColorBrush *solidBrush;
+                    hr = compAssets->direct2d_hwnd_target->CreateSolidColorBrush(new_color,&solidBrush);
+                    if(!SUCCEEDED(hr)){
+                        //Handle Error!
+                    };
+                    compAssets->solid_color_brush = solidBrush;
+                };
             };
             // return S_OK;
         };
@@ -139,9 +174,9 @@ namespace OmegaWTK::Composition {
                 Core::SafeRelease(&assets->direct2d_hwnd_target);
                 assets->has_direct2d_hwnd_target = false;
             }
-            if(assets->has_direct2d_brush){
-                Core::SafeRelease(&assets->brush);
-                assets->has_direct2d_brush = false;
+            if(assets->has_direct2d_solid_color_brush){
+                Core::SafeRelease(&assets->solid_color_brush);
+                assets->has_direct2d_solid_color_brush = false;
             };
         };
 
@@ -177,11 +212,11 @@ namespace OmegaWTK::Composition {
                         Visual::RectParams *params = (Visual::RectParams *)visual->params;
                         /// Step 1: Create Brush
                         ID2D1SolidColorBrush *color_brush;
-                        setupBrush(assets,params->color);
-                        color_brush = (ID2D1SolidColorBrush *)assets->brush.get();
+                        setupSolidColorBrush(assets,params->color);
+                        color_brush = assets->solid_color_brush.get();
                         RECT rect_;
                         /// Step 2: Convert Core::Rect to RECT struct
-                        core_rect_to_win_rect(params->rect,&rect_);
+                        core_rect_to_win_rect(params->rect,&rect_,&rc);
                         auto d2_rect = D2D1::RectF(rect_.left,rect_.top,rect_.right,rect_.bottom);
                         /// Step 3: Frame the Rectangle with Brush
                         // render_target->DrawRectangle(d2_rect,color_brush);
@@ -193,14 +228,14 @@ namespace OmegaWTK::Composition {
                         Visual::RoundedRectParams *params = (Visual::RoundedRectParams *)visual->params;
                         /// Step 1: Create Brush
                         ID2D1SolidColorBrush *color_brush;
-                        setupBrush(assets,params->color);
-                        color_brush = (ID2D1SolidColorBrush *)assets->brush.get();
+                        setupSolidColorBrush(assets,params->color);
+                        color_brush = assets->solid_color_brush.get();
                         RECT rect_;
                         /// Step 2: Convert Core::Rect to RECT struct
-                        core_rect_to_win_rect(params->rect,&rect_);
+                        core_rect_to_win_rect(params->rect,&rect_,&rc);
                         auto d2_rounded_rect = D2D1::RoundedRect(D2D1::RectF(rect_.left,rect_.top,rect_.right,rect_.bottom),params->rad_x,params->rad_y);
                         /// Step 3: Frame the Rectangle with Brush
-                        render_target->DrawRoundedRectangle(d2_rounded_rect,color_brush);
+                        // render_target->DrawRoundedRectangle(d2_rounded_rect,color_brush);
 
                         /// Step 4: Fill Rectangle with Brush.
                         render_target->FillRoundedRectangle(d2_rounded_rect,color_brush);

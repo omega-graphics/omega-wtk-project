@@ -37,6 +37,10 @@ void * create_hwnd_factory(void * hinst,void *hwndroot){
     return __create_hwnd_factory(hinst,hwndroot);
 };
 
+void *hwnd_factory_get_all_hwnds(void *hwnd_factory){
+    return __hwnd_factory_get_all_hwnds(hwnd_factory);
+};
+
 void free_hwnd_factory(void *factory){
     return __free_hwnd_factory(factory);
 };

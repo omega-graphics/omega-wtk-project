@@ -43,11 +43,22 @@ namespace OmegaWTK::Native::Win {
         rootWindow = root;
         hInst = hinst;
     };
-    HWND HWNDFactory::makeWindow(ATOM atom,LPCSTR name,Core::Rect rect,DWORD base_style,LPVOID custom_params,DWORD ext_style){
-        // RECT rc;
-        // GetClientRect(rootWindow, &rc);
-        // unsigned rootWndHeight = rc.bottom - rc.top;
-        return CreateWindowA(MAKEINTATOM(atom),name,base_style,rect.pos.x,rect.pos.y,rect.dimen.minWidth,rect.dimen.minHeight,rootWindow,NULL,hInst,custom_params);
+    HWND HWNDFactory::makeWindow(ATOM atom,LPCSTR name,Core::Rect rect,DWORD base_style,LPVOID custom_params,HWND parent,DWORD ext_style){
+        HWND wind_parent;
+        if(parent != nullptr)
+            wind_parent = parent;
+        else 
+            wind_parent = rootWindow;
+
+        /// Windows Coordinate system fix!
+        RECT rc;
+        GetWindowRect(GetForegroundWindow(),&rc);
+        unsigned wndHeight = rc.bottom - rc.top;
+        HWND hwnd = CreateWindowA(MAKEINTATOM(atom),name,base_style,rect.pos.x,(wndHeight - rect.pos.y),rect.dimen.minWidth,rect.dimen.minHeight,wind_parent,NULL,hInst,custom_params);
+        if(parent == nullptr)
+            all_hwnds.push_back(hwnd);
+        return hwnd;
+        
     };
     ATOM HWNDFactory::registerWindow(){
 
@@ -61,7 +72,7 @@ namespace OmegaWTK::Native::Win {
         ex.lpszMenuName = NULL;
         ex.cbClsExtra = 0;
         ex.cbWndExtra = 0;
-        ex.hbrBackground = (HBRUSH)COLOR_WINDOW;
+        ex.hbrBackground = (HBRUSH)COLOR_WINDOW+1;
         ex.hInstance = hInst;
         ex.hCursor = LoadCursor(NULL,IDC_ARROW);
         ex.hIcon = NULL;

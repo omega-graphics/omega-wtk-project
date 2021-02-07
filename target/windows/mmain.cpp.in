@@ -10,8 +10,20 @@
 LPCSTR szTitle = "@APPNAME@";                
 LPCSTR szWindowClass = "@APPNAME@"; 
 
+OmegaWTK::Core::Vector<HWND> * all_hwnds ;
+
 OmegaWTK::AppInst app;
 bool hasLoaded = false;
+
+void updateAllHWNDPos(UINT root_wnd_height){
+    RECT rc;
+    auto it = all_hwnds->begin();
+    while(it != all_hwnds->end()){
+        HWND hwnd = *it;
+        GetClientRect(hwnd,&rc);
+        MoveWindow(hwnd,rc.left,(root_wnd_height - rc.bottom), rc.right - rc.left,rc.bottom - rc.top,TRUE);
+    };
+};
 
 LRESULT CALLBACK WndProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam){
     LRESULT lr = 0;
@@ -20,14 +32,21 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam){
         case WM_CREATE : {
             break;
         }
-        // case WM_SIZING : {
-        //    app.updateRootWidget();
-        // }
+        case WM_SIZING : {
+           if(hasLoaded) {
+               if(wParam == WMSZ_BOTTOM) {
+                   RECT rc;
+                   GetClientRect(hwnd,&rc);
+                   updateAllHWNDPos(rc.bottom - rc.top);
+               };
+           }
+           break;
+        }
         // case WM_SIZE : {
         //     if(hasLoaded) {
         //         UINT width = LOWORD(lParam);
         //         UINT height = HIWORD(lParam);
-        //         app.updateRootWidget();
+        //         updateAllHWNDPos(height);
         //     }
         //     break;
         // }
@@ -95,7 +114,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLi
      ShowWindow(hwndWindow,nShowCmd);
     UpdateWindow(hwndWindow);
 
+    all_hwnds = (OmegaWTK::Core::Vector<HWND> *)hwnd_factory_get_all_hwnds(factory);
+
    hasLoaded = true;
+
 
    // HWND rootHWND = (HWND)app.getNAP()->getNativeItemNativeBinding();
 

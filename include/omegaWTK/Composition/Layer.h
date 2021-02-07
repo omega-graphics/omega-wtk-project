@@ -7,6 +7,7 @@
 #include "omegaWTK/Core/Core.h"
 #include "omegaWTK/Native/NativeItem.h"
 #include "Color.h"
+#include "Text.h"
 #include <functional>
 
 #ifndef OMEGAWTK_COMPOSITION_LAYER_H
@@ -16,8 +17,19 @@ namespace OmegaWTK {
     namespace Composition {
 
     class Compositor;
-    
-    
+    /// Visual Params Validation Result!
+    struct VPVR {
+        typedef enum : int {
+            Success = 0,
+            Failed = -1
+        } Code;
+        Code code;
+        void * res;
+        template<class _Ty>
+        _Ty & getRes(){ return *((_Ty *)res);};
+            
+    };
+    /// An object drawn by a Compositor.
     struct Visual {
         typedef enum : OPT_PARAM {
             Rect,
@@ -44,11 +56,17 @@ namespace OmegaWTK {
             Color color;
         } EllipseParams;
         typedef struct {
-            Core::String str;
-            Color textColor;
+            class Text text;
+            Color color;
             unsigned size;
         } TextParams;
         void * params;
+        void setColor(const Color & new_color);
+        void setRect(const Core::Rect & bew_rect);
+        void setFont(const Text::Font & new_font);
+        VPVR getColor();
+        VPVR getRect();
+        VPVR getFont();
     };
     
     class Target {
@@ -76,6 +94,8 @@ namespace OmegaWTK {
             /// @{
             Native::NativeItemPtr getTargetNativePtr(){return compTarget->native;};
             auto & getTargetVisuals(){return compTarget->visuals;};
+            template<class _Ty>
+            _Ty *& getVisualByIdx(unsigned idx){ return (_Ty *)compTarget->visuals[idx];};
             const Core::Rect & getLayerRect(){return surface_rect;};
             void setEnabled(bool state){enabled = state;};
             bool isChildLayer(){return parent_ptr != nullptr;};

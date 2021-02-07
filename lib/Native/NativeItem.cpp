@@ -20,10 +20,10 @@ namespace OmegaWTK::Native {
     void NativeItem::sendEventToEmitter(NativeEventPtr event){
         event_emitter->emit(event);
     };
-
-    NativeItemPtr make_native_item(Core::Rect rect,ItemType type){
+    
+    NativeItemPtr make_native_item(Core::Rect rect,ItemType type,NativeItemPtr parent){
         #ifdef TARGET_WIN32
-        return Win::make_item_win(rect,type); 
+        return Win::make_item_win(rect,type,parent); 
         #endif
         #ifdef TARGET_MACOS
         return Cocoa::make_item_cocoa(rect);

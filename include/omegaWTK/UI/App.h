@@ -42,6 +42,7 @@ public:
 #ifdef WINDOWS_PRIVATE
 
 void * create_hwnd_factory(void * hinst,void *hwndroot);
+void * hwnd_factory_get_all_hwnds(void *hwnd_factory);
 void free_hwnd_factory(void *factory);
 
 #endif

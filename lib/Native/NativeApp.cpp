@@ -68,6 +68,10 @@ void *__create_hwnd_factory(void *hinst,void *hwndroot){
     return ptr;
 };
 
+void * __hwnd_factory_get_all_hwnds(void * hwnd_factory){
+    return ((OmegaWTK::Native::Win::HWNDFactory *)hwnd_factory)->getAllHwnds();
+};
+
 void __free_hwnd_factory(void * hwnd_factory){
     delete (OmegaWTK::Native::Win::HWNDFactory *) hwnd_factory;
 };

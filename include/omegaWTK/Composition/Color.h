@@ -17,7 +17,28 @@ namespace OmegaWTK {
                 @param alpha alpha value
             */
         public:
+            typedef enum : OPT_PARAM {
+                Red,
+                Green,
+                Blue,
+                Yellow,
+                Orange
+            } STDColor;
+            bool compare(const Color &other);
+            bool operator!=(Color && other){
+                return !compare(other);
+            };
+            bool operator!=(const Color &other){
+                return !compare(other);
+            };
+            bool operator==(Color && other){
+                return compare(other);
+            };
+            bool operator==(const Color &other){
+                return compare(other);
+            };
             Color(unsigned red,unsigned green,unsigned blue,unsigned alpha);
+            Color(STDColor ty);
         };
     };
 };

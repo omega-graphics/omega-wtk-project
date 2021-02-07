@@ -34,7 +34,7 @@ namespace OmegaWTK::Native {
             private:
             Type type;
             public:
-            HWNDItem(Core::Rect & rect,Type _type);
+            HWNDItem(Core::Rect & rect,Type _type,HWNDItem *parent);
             ~HWNDItem(){};
         };
     };

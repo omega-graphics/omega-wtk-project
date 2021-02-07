@@ -34,7 +34,8 @@ namespace OmegaWTK {
 //            TextInput
         }ItemType;
 
-        NativeItemPtr make_native_item(Core::Rect rect,Native::ItemType type = Native::Default);
+        /// Makes Native Item (If `parent` arg is nullptr, the native_item will be attached as a child to the root HWND or NSView *)
+        NativeItemPtr make_native_item(Core::Rect rect,Native::ItemType type = Native::Default,NativeItemPtr parent = nullptr);
         void set_native_item_event_emitter(NativeItemPtr ptr,NativeEventEmitter * emitter);
     }
 };
