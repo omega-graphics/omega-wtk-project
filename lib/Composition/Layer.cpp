@@ -57,6 +57,10 @@ void Layer::drawRect(const Core::Rect &rect, const Color &color) {
       {Visual::Rect, (void *)new Visual::RectParams({rect, color})}));
 };
 
+void Layer::drawText(const Core::String & str,unsigned size,const Color & color,const Core::Rect & rect,const Text::Font & font){
+    compTarget->visuals.push_back(new Visual({Visual::Text,(void *) new Visual::TextParams({Text({str,size,font}),color,rect})}));
+};
+
 Layer::Layer(const Core::Rect &rect, Native::NativeItemPtr native_ptr,
              Compositor *compPtr)
     : surface_rect(rect), compTarget(new Target(native_ptr)),

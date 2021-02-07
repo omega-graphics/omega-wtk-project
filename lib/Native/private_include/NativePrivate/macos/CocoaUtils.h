@@ -9,8 +9,9 @@ namespace OmegaWTK::Native {
 namespace Cocoa {
 
 void ns_string_to_core_string(NSString *str,Core::String & res);
-NSString * core_string_to_ns_string(Core::String & str);
+NSString * core_string_to_ns_string(const Core::String & str);
 NSRect core_rect_to_cg_rect(const Core::Rect & rect);
+CGPoint core_pos_to_cg_point(const Core::Position & pos);
 
 };
 };

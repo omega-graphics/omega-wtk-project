@@ -7,11 +7,13 @@ add_omega_wtk_lib(
     "Compositor.cpp"
     "Color.cpp"
     "Layer.cpp"
+	"Text.cpp"
     HEADERS 
     "Backend.h"
     "Compositor.h"
     "Color.h"
     "Layer.h"
+	"Text.h"
     LINK_LIBS 
     "omegaWTKCore"
     "omegaWTKNative"

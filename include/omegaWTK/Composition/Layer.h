@@ -58,7 +58,7 @@ namespace OmegaWTK {
         typedef struct {
             class Text text;
             Color color;
-            unsigned size;
+            Core::Rect rect;
         } TextParams;
         void * params;
         void setColor(const Color & new_color);
@@ -109,7 +109,7 @@ namespace OmegaWTK {
             void setBackgroundColor(const Color & color);
             void drawRect(const Core::Rect &rect,const Color & color);
             void drawRoundedRect(const Core::RoundedRect & rect,const Color & color);
-            void drawText(const Core::String & str,unsigned size);
+            void drawText(const Core::String & str,unsigned size,const Color & color,const Core::Rect & rect,const Text::Font & font = {"Arial",Text::Font::Regular});
             /// @}
             
             /// @name Main Action Functions!

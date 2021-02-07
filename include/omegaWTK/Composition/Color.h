@@ -19,6 +19,8 @@ namespace OmegaWTK {
             */
         public:
             typedef enum : std::uint32_t {
+                Black  = 0x000000,
+                White  = 0xFFFFFF,
                 Red    = 0xFF0000,
                 Green  = 0x00FF00,
                 Blue   = 0x0000FF,

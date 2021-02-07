@@ -5,10 +5,7 @@ namespace OmegaWTK {
 class MyWidget : public Widget {
     class MyRootDelegate : public ViewDelegate {
         void onLeftMouseDown(Native::NativeEventPtr event) {
-            Composition::Layer *layer = view->getLayer();
-            auto & rect_visual = layer->getVisualByIdx(0);
-            rect_visual->setColor({Composition::Color::Red});
-            layer->redraw();
+             
         };
         void onLeftMouseUp(Native::NativeEventPtr event) {
             
@@ -19,7 +16,9 @@ public:
     MyWidget(const Core::Rect & rect):Widget(rect),delegate(new MyRootDelegate()){
         rootView->setDelegate(delegate);
         Composition::Layer *rootLayer = rootView->getLayer();
-        rootLayer->drawRect(rect,{Composition::Color::Green});
+//        rootLayer->drawRect(rect,{Composition::Color::Red});
+        rootLayer->drawText("Hello World",30,Composition::Color::Black,rect,{"Times New Roman",Composition::Text::Font::Regular});
+        
     };
     
 };

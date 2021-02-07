@@ -39,8 +39,12 @@ namespace OmegaWTK {
             void setFont(const Font & new_font){
                 font = new_font;
             };
+            const Core::String & getString() noexcept{ return text_val;};
+            void setString(const Core::String & str){
+                text_val = std::move(str);
+            };
             
-            Text(Core::String _val,unsigned size,const Font & _font = Font("Arial",Font::Regular)):text_val(_val),font(std::move(_font)),fontSize(size){};
+            Text(Core::String _val,unsigned size,const Font & _font):text_val(_val),font(_font),fontSize(size){};
         };
     };
 }
