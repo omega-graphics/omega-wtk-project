@@ -10,7 +10,7 @@ class MyWidget : public Widget {
             Core::Rect rc = {{0,0},{100,100}};
             
             delete (Composition::Visual::RectParams *)rect_visual->params;
-            rect_visual->params = new Composition::Visual::RectParams({rc,{255,0,0,255}});
+            rect_visual->params = new Composition::Visual::RectParams({rc,{Composition::Color::Red}});
             layer->redraw();
         };
         void onLeftMouseUp(Native::NativeEventPtr event) {
@@ -22,7 +22,7 @@ public:
     MyWidget(const Core::Rect & rect):Widget(rect),delegate(new MyRootDelegate()){
         rootView->setDelegate(delegate);
         Composition::Layer *rootLayer = rootView->getLayer();
-        rootLayer->drawRect(rect,{0,255,0,255});
+        rootLayer->drawRect(rect,{Composition::Color::Green});
     };
     
 };

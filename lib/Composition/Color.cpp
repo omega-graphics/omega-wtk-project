@@ -3,23 +3,18 @@
 namespace OmegaWTK::Composition {
 Color::Color(unsigned red,unsigned green,unsigned blue,unsigned alpha):r(red),g(green),b(blue),a(alpha){};
 
-Color::Color(STDColor ty){
-   a = 255;
-   if(ty == Color::Red){
-      r = 255;
-      g = 0;
-      b = 0;
-   }
-   else if(ty == Color::Blue){
-      b = 255;
-      g = 0;
-      r = 0;
-   }
-   else if(ty == Color::Green){
-      g = 255;
-      r = 0;
-      b = 0;
-   };
+Color::Color(std::uint32_t hex_color,std::uint8_t alpha){
+   uint8_t mask = 0xFF;
+   /// BB
+   b = hex_color & mask;
+   hex_color = hex_color >> 8;
+   /// GG
+   g = hex_color & mask;
+   hex_color = hex_color >> 8;
+   /// RR
+   r = hex_color & mask;
+
+   a = alpha;
 };
 
 bool Color::compare(const Color &other){
