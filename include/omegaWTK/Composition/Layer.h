@@ -31,6 +31,7 @@ namespace OmegaWTK {
     };
     /// An object drawn by a Compositor.
     struct Visual {
+        unsigned id;
         typedef enum : OPT_PARAM {
             Rect,
             RoundedRect,
@@ -70,6 +71,7 @@ namespace OmegaWTK {
     };
     
     class Target {
+        unsigned id_gen = 0;
         Core::Vector<Visual *> visuals;
         Native::NativeItemPtr native;
         friend class Layer;

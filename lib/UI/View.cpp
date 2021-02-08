@@ -82,6 +82,8 @@ void ViewDelegate::onRecieveEvent(Native::NativeEventPtr event){
         default:
             break;
     }
+    /// Garbage Collect!
+    delete event;
 };
 
 void ViewDelegate(View *_view){

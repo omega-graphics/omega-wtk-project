@@ -6,7 +6,7 @@
 #include <dwrite.h>
 #include <UIAnimation.h>
 #include <Uxtheme.h>
-
+#include <atlstr.h>
 #include <wrl.h>
 
 #undef DrawText
@@ -22,12 +22,20 @@
 #pragma comment(lib, "dwrite.lib")
 #pragma comment(lib, "uxtheme.lib")
 
+
 namespace OmegaWTK::Composition {
 
-    void cpp_str_to_cpp_wstr(std::string & str,std::wstring & res){
-        res.reserve(str.size());
-        MultiByteToWideChar(CP_UTF8,MB_COMPOSITE,str.c_str(),str.size(),res.data(),str.size());
+    void cpp_str_to_cpp_wstr(Core::String str,std::wstring & res){
+        CString st (str.data());
+        CStringW sw (st);
+        res = std::move(sw);
     };
+
+    // void cpp_wstr_to_cpp_str(std::wstring &str,Core::String & res){
+    //     CStringW sw(str.data());
+    //     CString st (sw);
+    //     res = std::move(st);
+    // };
 
     D2D1::ColorF color_to_d2d1_color(Color & color){
         #define EIGHTBIT_TO_FLOAT(num) (num/255.f)
@@ -62,14 +70,49 @@ namespace OmegaWTK::Composition {
     };
 
     class DirectXBackend : public Backend {
+        /// The Assets for a single HWNDItem!
+        class HWNDItemCompAssets {
+            template<class _Ty>
+            struct Entry {
+            private:
+                bool hasEntry;
+                UniqueComPtr<_Ty> ptr;
+            public:
+                bool & hasVal(){ return hasEntry;};
+                void setVal(_Ty * _ptr){
+                    hasEntry = true;
+                    ptr = _ptr;
+                };
+                void releaseVal(){
+                    Core::SafeRelease(&ptr);
+                    hasEntry = false;
+                };
+                _Ty *get(){
+                    return ptr.get();
+                };
+                Entry(_Ty *ptr):hasEntry(true),ptr(ptr){};
+            };
 
-        struct HWNDItemCompAssets {
+            public:
+
+            using SolidColorBrushEntry = Entry<ID2D1SolidColorBrush>;
+            using TextFormatEntry = Entry<IDWriteTextFormat>;
+
             bool has_direct2d_hwnd_target;
             UniqueComPtr<ID2D1HwndRenderTarget> direct2d_hwnd_target;
             bool has_dcomp_hwnd_target;
             UniqueComPtr<IDCompositionTarget> dcomp_hwnd_target;
-            bool has_direct2d_solid_color_brush;
-             UniqueComPtr<ID2D1SolidColorBrush> solid_color_brush;
+            
+            template<typename _Ent_Ty>
+            using MapEntry = std::pair<unsigned,_Ent_Ty>;
+
+            Core::Map<unsigned,SolidColorBrushEntry *> solid_color_brushes;
+            Core::Map<unsigned,TextFormatEntry *> text_formats;
+            
+            ~HWNDItemCompAssets(){
+                
+            };
+            
         };
 
         using HWNDItemCompAssetsCatalog = Core::Map<Native::Win::HWNDItem *,HWNDItemCompAssets>;
@@ -125,96 +168,246 @@ namespace OmegaWTK::Composition {
                 compAssets->direct2d_hwnd_target = render_target;
                 compAssets->has_direct2d_hwnd_target = true;
             }
-            // else if(posChanged){
-            //     Core::SafeRelease(&compAssets->direct2d_hwnd_target);
-            //     ID2D1HwndRenderTarget *render_target;
-            //    RECT rc = native_item->getClientRect();
-            //    auto new_target_size = D2D1::SizeU(rc.right - rc.left,rc.bottom - rc.top);
-            //    hr = direct2d_factory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(),D2D1::HwndRenderTargetProperties(native_item->getHandle(),new_target_size),&render_target);
-            //    if(!SUCCEEDED(hr)){
-            //         //Handle Error!
-            //     };
-            //     compAssets->direct2d_hwnd_target = render_target;
-            // };
-            // return S_OK;
         };
         /// Checks to see if the two colors inputted are equalivent!
         bool compareD2D1Colors(const D2D1_COLOR_F & first,const D2D1_COLOR_F & second){
             return  (first.r == second.r) && (first.g == second.g) && (first.b == second.b) && (first.a == second.a);
         };
 
-        void setupSolidColorBrush(HWNDItemCompAssets *compAssets,Color &color){
+        void setupSolidColorBrush(HWNDItemCompAssets *compAssets,Color &color,unsigned id){
             HRESULT hr;
-            if(!compAssets->has_direct2d_solid_color_brush){
+            auto it = compAssets->solid_color_brushes.find(id);
+            /// If the brush entry has not been created at all! (Initalization!)
+            if(it == compAssets->solid_color_brushes.end()){
                 ID2D1SolidColorBrush *solidBrush;
                 hr = compAssets->direct2d_hwnd_target->CreateSolidColorBrush(color_to_d2d1_color(color),&solidBrush);
                 if(!SUCCEEDED(hr)){
                     //Handle Error!
                 };
-                compAssets->has_direct2d_solid_color_brush = true;
-                compAssets->solid_color_brush = solidBrush;
+                
+                compAssets->solid_color_brushes.insert(HWNDItemCompAssets::MapEntry<HWNDItemCompAssets::SolidColorBrushEntry *>(id,new HWNDItemCompAssets::SolidColorBrushEntry(solidBrush)));
             }
-
-            /// If the brush exists but the color is not the same!
+            
             else  {
-                auto new_color = color_to_d2d1_color(color);
-                if(!compareD2D1Colors(compAssets->solid_color_brush->GetColor(),new_color)) {
-                    Core::SafeRelease(&compAssets->solid_color_brush);
-                    ID2D1SolidColorBrush *solidBrush;
-                    hr = compAssets->direct2d_hwnd_target->CreateSolidColorBrush(new_color,&solidBrush);
-                    if(!SUCCEEDED(hr)){
-                        //Handle Error!
+                auto & color_entry = it->second;
+                if(color_entry->hasVal()) {
+                /// If the brush exists but the color is not the same!
+                    auto new_color = color_to_d2d1_color(color);
+                    if(!compareD2D1Colors(color_entry->get()->GetColor(),new_color)) {
+                        color_entry->releaseVal();
+                        ID2D1SolidColorBrush *solidBrush;
+                        hr = compAssets->direct2d_hwnd_target->CreateSolidColorBrush(new_color,&solidBrush);
+                        if(!SUCCEEDED(hr)){
+                            //Handle Error!
+                        };
+                        color_entry->setVal(solidBrush);
                     };
-                    compAssets->solid_color_brush = solidBrush;
+                }
+                /// If the brush has been released due to a bad hwnd render target!
+                else {
+                    ID2D1SolidColorBrush *solidBrush;
+                    hr = compAssets->direct2d_hwnd_target->CreateSolidColorBrush(color_to_d2d1_color(color),&solidBrush);
+                    if(!SUCCEEDED(hr)){
+                    //Handle Error!
+                    };
+                    color_entry->setVal(solidBrush);
                 };
             };
             // return S_OK;
         };
+
+        void setupTextFormatIfNeeded(HWNDItemCompAssets *compAssets,Text & text,unsigned id){
+            HRESULT hr;
+            auto it = compAssets->text_formats.find(id);
+            if(it == compAssets->text_formats.end()){
+                std::wstring fontName;
+                cpp_str_to_cpp_wstr(text.getFont().family,fontName);
+
+
+                DWRITE_FONT_WEIGHT weight;
+                DWRITE_FONT_STYLE style;
+
+                switch (text.getFont().style) {
+                    case Text::Font::BoldAndItalic : {
+                        style = DWRITE_FONT_STYLE_ITALIC;
+                        weight = DWRITE_FONT_WEIGHT_BOLD;
+                        break;
+                    }
+                    case Text::Font::Bold : {
+                        weight = DWRITE_FONT_WEIGHT_BOLD;
+                        style = DWRITE_FONT_STYLE_NORMAL;
+                        break;
+                    }
+                    case Text::Font::Italic : {
+                        weight = DWRITE_FONT_WEIGHT_NORMAL;
+                        style = DWRITE_FONT_STYLE_ITALIC;
+                        break;
+                    }
+                    case Text::Font::Regular : {
+                        weight = DWRITE_FONT_WEIGHT_NORMAL;
+                        style = DWRITE_FONT_STYLE_NORMAL;
+                        break;
+                    };
+                }
+                IDWriteTextFormat *textFormat;
+
+                hr = dwrite_factory->CreateTextFormat(fontName.c_str(),NULL,weight,style,DWRITE_FONT_STRETCH_NORMAL,text.getFontSize(),L"en-us",&textFormat);
+                if(!SUCCEEDED(hr)){
+                    //Handle Error!
+                };
+
+                hr = textFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
+                if(!SUCCEEDED(hr)){
+                    //Handle Error!
+                };
+                hr = textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+                if(!SUCCEEDED(hr)){
+                    //Handle Error!
+                };
+                // const DWRITE_TRIMMING trimmingParams = {DWRITE_TRIMMING_GRANULARITY_WORD,'\n',1};
+                // hr = textFormat->SetTrimming(&trimmingParams,NULL);
+                // if(!SUCCEEDED(hr)){
+                //     //Handle Error!
+                // };
+
+                compAssets->text_formats.insert(HWNDItemCompAssets::MapEntry<HWNDItemCompAssets::TextFormatEntry *>(id,new HWNDItemCompAssets::TextFormatEntry(textFormat)));
+            } /// If text_format entry exists but new_format might be different!
+            else {
+                auto & entry = it->second;
+                auto txt_format = entry->get();
+                auto & font = text.getFont();
+
+                bool needsChange = false;
+
+                UINT32 w_buffer_len = txt_format->GetFontFamilyNameLength();
+                WCHAR w_buffer[w_buffer_len];
+                hr = txt_format->GetFontFamilyName(w_buffer,w_buffer_len);
+                if(!SUCCEEDED(hr)){
+                    //Handle Error!
+                };
+                std::wstring newFontName;
+                cpp_str_to_cpp_wstr(font.family,newFontName);
+
+                if(newFontName != w_buffer)
+                    needsChange = true;
+
+                auto weight = txt_format->GetFontWeight();
+                auto style = txt_format->GetFontStyle();
+
+                switch (font.style) {
+                    case Text::Font::Regular : {
+                        if(weight != DWRITE_FONT_WEIGHT_NORMAL) {
+                            weight = DWRITE_FONT_WEIGHT_NORMAL; 
+                            needsChange = true;
+                        }
+                        if(style != DWRITE_FONT_STYLE_NORMAL) {
+                            style = DWRITE_FONT_STYLE_NORMAL;
+                            needsChange = true;
+                        }
+                        break;
+                    };
+                    case Text::Font::Italic : {
+                        if(weight != DWRITE_FONT_WEIGHT_NORMAL) {
+                            weight = DWRITE_FONT_WEIGHT_NORMAL;
+                            needsChange = true;
+                        }
+                        if(style != DWRITE_FONT_STYLE_ITALIC) {
+                            style = DWRITE_FONT_STYLE_ITALIC;
+                            needsChange = true;
+                        }
+                        break;
+                    };
+                    case Text::Font::Bold : {
+                        if(weight != DWRITE_FONT_WEIGHT_BOLD) {
+                            weight = DWRITE_FONT_WEIGHT_BOLD;
+                            needsChange = true;
+                        }
+                        if(style != DWRITE_FONT_STYLE_NORMAL) {
+                            style = DWRITE_FONT_STYLE_NORMAL;
+                            needsChange = true;
+                        }
+                        break;
+                    };
+                    case Text::Font::BoldAndItalic : {
+                        if(weight != DWRITE_FONT_WEIGHT_BOLD) {
+                            weight = DWRITE_FONT_WEIGHT_BOLD;
+                            needsChange = true;
+                        }
+                        if(style != DWRITE_FONT_STYLE_ITALIC) {
+                            style = DWRITE_FONT_STYLE_ITALIC;
+                            needsChange = true;
+                        }
+                        break;
+                    };
+                }
+
+                auto fontSize = txt_format->GetFontSize();
+                if(fontSize != text.getFontSize()){
+                    fontSize = text.getFontSize();
+                    needsChange = true;
+                };
+
+                if(needsChange){
+                    entry->releaseVal();
+                    IDWriteTextFormat  *text_format;
+                    hr = dwrite_factory->CreateTextFormat(w_buffer,NULL,weight, style,DWRITE_FONT_STRETCH_NORMAL, fontSize,L"en-us",&text_format);
+
+                    if(!SUCCEEDED(hr)){
+                    //Handle Error!
+                    };
+
+                    entry->setVal(text_format);
+                };
+            }
+        };
+
+
         void discardAssets(HWNDItemCompAssets *assets){
             if(assets->has_direct2d_hwnd_target){
                 Core::SafeRelease(&assets->direct2d_hwnd_target);
                 assets->has_direct2d_hwnd_target = false;
             }
-            if(assets->has_direct2d_solid_color_brush){
-                Core::SafeRelease(&assets->solid_color_brush);
-                assets->has_direct2d_solid_color_brush = false;
+
+            auto _solid_brush_it =  assets->solid_color_brushes.begin();
+            while(_solid_brush_it != assets->solid_color_brushes.end()){
+                auto & entry = _solid_brush_it->second;
+                if(entry->hasVal())
+                    entry->releaseVal();
+                ++_solid_brush_it;
             };
+
         };
 
         void drawVisual(Visual *visual,HWNDItemCompAssets *assets,RECT rc){
 
-            HRESULT hr;
+            // HRESULT hr;
             ID2D1HwndRenderTarget * render_target = assets->direct2d_hwnd_target.get();
             switch (visual->type) {
-                    // case Visual::Text : {
-                    //    Visual::TextParams *params = (Visual::TextParams *)visual->params;
-                    //    std::wstring wide_str;
-                    //     ///Step 1: Convert std::string to std::wstring
-                    //    cpp_str_to_cpp_wstr(params->str,wide_str);
+                    case Visual::Text : {
+                       Visual::TextParams *params = (Visual::TextParams *)visual->params;
+                       IDWriteTextFormat *textFormat;
+                       setupTextFormatIfNeeded(assets,params->text,visual->id);
+                        textFormat = assets->text_formats[visual->id]->get();
 
-                    //    IDWriteTextFormat * textFormat;
-                    //    /// Step 2: Create Text Format to use!
-                    //    hr = dwrite_factory->CreateTextFormat(L"Arial",NULL,DWRITE_FONT_WEIGHT_NORMAL,DWRITE_FONT_STYLE_NORMAL,DWRITE_FONT_STRETCH_NORMAL,params->size,L"UTF-8",&textFormat);
-                    //    if(!SUCCEEDED(hr)){
-                    //         //Handle Error!
-                    //    };  
-                    //    ID2D1SolidColorBrush *color_brush;
-                    //    /// Step 3: Create Brush
-                    //    hr = render_target->CreateSolidColorBrush(color_to_d2d1_color(params->textColor),&color_brush);
-                    //    if(!SUCCEEDED(hr)){
-                    //         //Handle Error!
-                    //    };
+                       ID2D1SolidColorBrush *color_brush;
+                       setupSolidColorBrush(assets,params->color,visual->id);
+                       color_brush = assets->solid_color_brushes[visual->id]->get();
 
-                    //    /// Step 4: Draw the Text onto HWND.
-                    //    render_target->DrawTextA(wide_str.c_str(),wide_str.size(),textFormat,D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom),color_brush);
-                    //    break;
-                    // }
+                       std::wstring text_to_render;
+                        cpp_str_to_cpp_wstr(params->text.getString(),text_to_render);
+                        RECT text_cont;
+                       core_rect_to_win_rect(params->rect,&text_cont,&rc);
+
+                       /// Step 4: Draw the Text onto HWND.
+                       render_target->DrawTextA(text_to_render.c_str(),text_to_render.size(),textFormat,D2D1::RectF(text_cont.left,text_cont.top,text_cont.right,text_cont.bottom),color_brush);
+                       break;
+                    }
                     case Visual::Rect : {
                         Visual::RectParams *params = (Visual::RectParams *)visual->params;
                         /// Step 1: Create Brush
                         ID2D1SolidColorBrush *color_brush;
-                        setupSolidColorBrush(assets,params->color);
-                        color_brush = assets->solid_color_brush.get();
+                        setupSolidColorBrush(assets,params->color,visual->id);
+                        color_brush = assets->solid_color_brushes[visual->id]->get();
                         RECT rect_;
                         /// Step 2: Convert Core::Rect to RECT struct
                         core_rect_to_win_rect(params->rect,&rect_,&rc);
@@ -229,8 +422,8 @@ namespace OmegaWTK::Composition {
                         Visual::RoundedRectParams *params = (Visual::RoundedRectParams *)visual->params;
                         /// Step 1: Create Brush
                         ID2D1SolidColorBrush *color_brush;
-                        setupSolidColorBrush(assets,params->color);
-                        color_brush = assets->solid_color_brush.get();
+                        setupSolidColorBrush(assets,params->color,visual->id);
+                        color_brush = assets->solid_color_brushes[visual->id]->get();
                         RECT rect_;
                         /// Step 2: Convert Core::Rect to RECT struct
                         core_rect_to_win_rect(params->rect,&rect_,&rc);
@@ -248,7 +441,7 @@ namespace OmegaWTK::Composition {
         void doWork(){
             auto & objects = currentLayer->getTargetVisuals();
             auto native_item = (Native::Win::HWNDItem *)currentLayer->getTargetNativePtr();
-            HWNDItemCompAssets assets {false,NULL,false,NULL,false,NULL};
+            HWNDItemCompAssets assets {false,NULL,false,NULL};
             setupTarget(native_item,&assets);
             HRESULT hr;
             auto & render_target = assets.direct2d_hwnd_target;

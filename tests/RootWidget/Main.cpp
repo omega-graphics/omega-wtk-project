@@ -16,8 +16,8 @@ public:
     MyWidget(const Core::Rect & rect):Widget(rect),delegate(new MyRootDelegate()){
         rootView->setDelegate(delegate);
         Composition::Layer *rootLayer = rootView->getLayer();
-//        rootLayer->drawRect(rect,{Composition::Color::Red});
-        rootLayer->drawText("Hello World",30,Composition::Color::Black,rect,{"Times New Roman",Composition::Text::Font::Regular});
+    //    rootLayer->drawRect(rect,{Composition::Color::Red});
+        rootLayer->drawText("Hello World",20,Composition::Color::Black,rect,{"Arial",Composition::Text::Font::Regular});
         
     };
     

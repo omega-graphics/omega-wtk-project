@@ -54,11 +54,13 @@ Target::~Target(){};
 
 void Layer::drawRect(const Core::Rect &rect, const Color &color) {
   compTarget->visuals.push_back(new Visual(
-      {Visual::Rect, (void *)new Visual::RectParams({rect, color})}));
+      {compTarget->id_gen,Visual::Rect, (void *)new Visual::RectParams({rect, color})}));
+  compTarget->id_gen += 1;
 };
 
 void Layer::drawText(const Core::String & str,unsigned size,const Color & color,const Core::Rect & rect,const Text::Font & font){
-    compTarget->visuals.push_back(new Visual({Visual::Text,(void *) new Visual::TextParams({Text({str,size,font}),color,rect})}));
+    compTarget->visuals.push_back(new Visual({compTarget->id_gen,Visual::Text,(void *) new Visual::TextParams({Text({str,size,font}),color,rect})}));
+    compTarget->id_gen += 1;
 };
 
 Layer::Layer(const Core::Rect &rect, Native::NativeItemPtr native_ptr,
