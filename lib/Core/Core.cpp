@@ -3,6 +3,14 @@
 #include <algorithm>
 
 namespace OmegaWTK::Core {
+
+bool Rect::compare(Rect & other){
+    return (pos.x == other.pos.x) && (pos.y == other.pos.y) && (dimen.minWidth == other.dimen.minWidth) && (dimen.minHeight == other.dimen.minHeight);
+};
+
+bool RoundedRect::compare(RoundedRect & other){
+    return Rect::compare(other) && (radius_x == other.radius_x) && (radius_y == other.radius_y);
+};
     // OWTKString::~OWTKString(){
     //     delete data;
     // };

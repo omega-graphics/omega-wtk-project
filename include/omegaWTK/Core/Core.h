@@ -75,12 +75,14 @@ namespace OmegaWTK {
         struct OMEGAWTK_EXPORT Rect {
             Position pos;
             Dimensions dimen;
+            bool compare(Rect & other);
             Rect(Position _pos,Dimensions _dimen):pos(_pos),dimen(_dimen){};
         };
     
         struct OMEGAWTK_EXPORT RoundedRect : public Rect {
             unsigned radius_x;
             unsigned radius_y;
+            bool compare(RoundedRect & other);
             RoundedRect(const Rect &rect,unsigned rad_x,unsigned rad_y):Rect(rect),radius_x(rad_x),radius_y(rad_y){};
         };
     
