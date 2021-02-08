@@ -109,8 +109,20 @@ namespace OmegaWTK::Composition {
             Core::Map<unsigned,SolidColorBrushEntry *> solid_color_brushes;
             Core::Map<unsigned,TextFormatEntry *> text_formats;
             
+            template<class _Ty>
+            void releaseMap(Core::Map<unsigned,_Ty> & core_map){
+                auto it = core_map.begin();
+                while(it != core_map.end()){
+                    auto &entry = it->second;
+                    entry->releaseVal();
+                    delete entry;
+                    ++it;
+                };
+            };
+
             ~HWNDItemCompAssets(){
-                
+                // releaseMap(solid_color_brushes);
+                // releaseMap(text_formats);
             };
             
         };
@@ -272,93 +284,95 @@ namespace OmegaWTK::Composition {
 
                 compAssets->text_formats.insert(HWNDItemCompAssets::MapEntry<HWNDItemCompAssets::TextFormatEntry *>(id,new HWNDItemCompAssets::TextFormatEntry(textFormat)));
             } /// If text_format entry exists but new_format might be different!
-            else {
-                auto & entry = it->second;
-                auto txt_format = entry->get();
-                auto & font = text.getFont();
+            // else {
+            //     auto & entry = it->second;
+            //     auto txt_format = entry->get();
+            //     auto & font = text.getFont();
 
-                bool needsChange = false;
+            //     bool needsChange = false;
 
-                UINT32 w_buffer_len = txt_format->GetFontFamilyNameLength();
-                WCHAR w_buffer[w_buffer_len];
-                hr = txt_format->GetFontFamilyName(w_buffer,w_buffer_len);
-                if(!SUCCEEDED(hr)){
-                    //Handle Error!
-                };
-                std::wstring newFontName;
-                cpp_str_to_cpp_wstr(font.family,newFontName);
+            //     UINT32 w_buffer_len = txt_format->GetFontFamilyNameLength();
+            //     WCHAR w_buffer[w_buffer_len];
+            //     hr = txt_format->GetFontFamilyName(w_buffer,w_buffer_len);
 
-                if(newFontName != w_buffer)
-                    needsChange = true;
+            //     if(!SUCCEEDED(hr)){
+            //         //Handle Error!
+            //     };
 
-                auto weight = txt_format->GetFontWeight();
-                auto style = txt_format->GetFontStyle();
+            //     std::wstring newFontName;
+            //     cpp_str_to_cpp_wstr(font.family,newFontName);
 
-                switch (font.style) {
-                    case Text::Font::Regular : {
-                        if(weight != DWRITE_FONT_WEIGHT_NORMAL) {
-                            weight = DWRITE_FONT_WEIGHT_NORMAL; 
-                            needsChange = true;
-                        }
-                        if(style != DWRITE_FONT_STYLE_NORMAL) {
-                            style = DWRITE_FONT_STYLE_NORMAL;
-                            needsChange = true;
-                        }
-                        break;
-                    };
-                    case Text::Font::Italic : {
-                        if(weight != DWRITE_FONT_WEIGHT_NORMAL) {
-                            weight = DWRITE_FONT_WEIGHT_NORMAL;
-                            needsChange = true;
-                        }
-                        if(style != DWRITE_FONT_STYLE_ITALIC) {
-                            style = DWRITE_FONT_STYLE_ITALIC;
-                            needsChange = true;
-                        }
-                        break;
-                    };
-                    case Text::Font::Bold : {
-                        if(weight != DWRITE_FONT_WEIGHT_BOLD) {
-                            weight = DWRITE_FONT_WEIGHT_BOLD;
-                            needsChange = true;
-                        }
-                        if(style != DWRITE_FONT_STYLE_NORMAL) {
-                            style = DWRITE_FONT_STYLE_NORMAL;
-                            needsChange = true;
-                        }
-                        break;
-                    };
-                    case Text::Font::BoldAndItalic : {
-                        if(weight != DWRITE_FONT_WEIGHT_BOLD) {
-                            weight = DWRITE_FONT_WEIGHT_BOLD;
-                            needsChange = true;
-                        }
-                        if(style != DWRITE_FONT_STYLE_ITALIC) {
-                            style = DWRITE_FONT_STYLE_ITALIC;
-                            needsChange = true;
-                        }
-                        break;
-                    };
-                }
+            //     if(newFontName != w_buffer)
+            //         needsChange = true;
 
-                auto fontSize = txt_format->GetFontSize();
-                if(fontSize != text.getFontSize()){
-                    fontSize = text.getFontSize();
-                    needsChange = true;
-                };
+            //     auto weight = txt_format->GetFontWeight();
+            //     auto style = txt_format->GetFontStyle();
 
-                if(needsChange){
-                    entry->releaseVal();
-                    IDWriteTextFormat  *text_format;
-                    hr = dwrite_factory->CreateTextFormat(w_buffer,NULL,weight, style,DWRITE_FONT_STRETCH_NORMAL, fontSize,L"en-us",&text_format);
+            //     switch (font.style) {
+            //         case Text::Font::Regular : {
+            //             if(weight != DWRITE_FONT_WEIGHT_NORMAL) {
+            //                 weight = DWRITE_FONT_WEIGHT_NORMAL; 
+            //                 needsChange = true;
+            //             }
+            //             if(style != DWRITE_FONT_STYLE_NORMAL) {
+            //                 style = DWRITE_FONT_STYLE_NORMAL;
+            //                 needsChange = true;
+            //             }
+            //             break;
+            //         };
+            //         case Text::Font::Italic : {
+            //             if(weight != DWRITE_FONT_WEIGHT_NORMAL) {
+            //                 weight = DWRITE_FONT_WEIGHT_NORMAL;
+            //                 needsChange = true;
+            //             }
+            //             if(style != DWRITE_FONT_STYLE_ITALIC) {
+            //                 style = DWRITE_FONT_STYLE_ITALIC;
+            //                 needsChange = true;
+            //             }
+            //             break;
+            //         };
+            //         case Text::Font::Bold : {
+            //             if(weight != DWRITE_FONT_WEIGHT_BOLD) {
+            //                 weight = DWRITE_FONT_WEIGHT_BOLD;
+            //                 needsChange = true;
+            //             }
+            //             if(style != DWRITE_FONT_STYLE_NORMAL) {
+            //                 style = DWRITE_FONT_STYLE_NORMAL;
+            //                 needsChange = true;
+            //             }
+            //             break;
+            //         };
+            //         case Text::Font::BoldAndItalic : {
+            //             if(weight != DWRITE_FONT_WEIGHT_BOLD) {
+            //                 weight = DWRITE_FONT_WEIGHT_BOLD;
+            //                 needsChange = true;
+            //             }
+            //             if(style != DWRITE_FONT_STYLE_ITALIC) {
+            //                 style = DWRITE_FONT_STYLE_ITALIC;
+            //                 needsChange = true;
+            //             }
+            //             break;
+            //         };
+            //     }
 
-                    if(!SUCCEEDED(hr)){
-                    //Handle Error!
-                    };
+            //     auto fontSize = txt_format->GetFontSize();
+            //     if(fontSize != FLOAT(text.getFontSize())){
+            //         fontSize = text.getFontSize();
+            //         needsChange = true;
+            //     };
 
-                    entry->setVal(text_format);
-                };
-            }
+            //     if(needsChange){
+            //         entry->releaseVal();
+            //         IDWriteTextFormat  *text_format;
+            //         hr = dwrite_factory->CreateTextFormat(w_buffer,NULL,weight, style,DWRITE_FONT_STRETCH_NORMAL, fontSize,L"en-us",&text_format);
+
+            //         if(!SUCCEEDED(hr)){
+            //         //Handle Error!
+            //         };
+
+            //         entry->setVal(text_format);
+            //     };
+            // }
         };
 
 
