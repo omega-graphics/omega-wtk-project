@@ -27,11 +27,30 @@ public:
     };
     
 };
+
+class MyMenuDelegate : public MenuDelegate {
+public:
+    void onSelectItem(unsigned int itemIndex) {
+        if(itemIndex == 0){
+            std::cout << "Oww!! You Clicked Me!" << std::endl;
+        };
+    };
+    MyMenuDelegate(){};
 };
+
+};
+
 
 
 int omegaWTKMain(OmegaWTK::AppInst *app)
 {
+    auto menu = new OmegaWTK::Menu("AppMenu",{
+        new OmegaWTK::MenuItem("",true,new OmegaWTK::Menu("File",{
+            new OmegaWTK::MenuItem("Test Button",false,nullptr)
+        },new OmegaWTK::MyMenuDelegate()))
+    });
+ app->menu = menu;
+    
     OmegaWTK::MyWidget widget({{0,0},{100,100}});
     widget.show();
     app->setRoot(&widget);

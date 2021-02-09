@@ -8,6 +8,7 @@
 #include "omegaWTK/Native/NativeApp.h"
 
 // UI Exports
+#include "omegaWTK/UI/Menu.h"
 #include "omegaWTK/UI/App.h"
 #include "omegaWTK/UI/Widget.h"
 

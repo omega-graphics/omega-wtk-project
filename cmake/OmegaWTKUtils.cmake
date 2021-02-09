@@ -59,6 +59,7 @@ function(add_omega_wtk_app)
             file(COPY ${_F} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
         endforeach()
         set(APPENTRY ${_ARG_MAIN})
+        set(APPNAME ${_ARG_NAME})
         configure_file( "${OMEGAWTK_MACOS_UTILS_DIR}/AppDelegate.mm" "${CMAKE_CURRENT_BINARY_DIR}/AppDelegate.mm" @ONLY)
         
         set(MACOS_UTILS "AppDelegate.mm" "AppDelegate.h" "MainMenu.xib" "main.mm")

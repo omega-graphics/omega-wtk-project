@@ -22,11 +22,14 @@ namespace OmegaWTK {
         class NativeApp;
     };
 
+class Menu;
+
 class OMEGAWTK_EXPORT AppInst {
     Widget *rootWidget;
     Native::NativeApp * ptr;
 public:
     static AppInst *instance;
+    Menu *menu = nullptr;
     AppInst();
     AppInst(void * windows_inst);
     void setRoot(Widget *widget);

@@ -6,10 +6,12 @@ add_omega_wtk_lib(
     "NativeItem.cpp"
     "NativeApp.cpp"
     "NativeEvent.cpp"
+	"NativeMenu.cpp"
     HEADERS
     "NativeItem.h" 
     "NativeApp.h"
     "NativeEvent.h"
+	"NativeMenu.h"
     LINK_LIBS
     "omegaWTKCore"
 )
@@ -27,7 +29,7 @@ endif()
 
 if(TARGET_MACOS)
     set(NATIVE_MAC_HEADERS "CocoaItem.h" "CocoaEvent.h" "CocoaUtils.h")
-    set(NATIVE_MAC_SOURCES "MakeItem.h" "MakeItem.mm" "CocoaItem.mm" "CocoaEvent.mm" "CocoaUtils.mm" "CocoaApp.h" "CocoaApp.mm")
+    set(NATIVE_MAC_SOURCES "MakeItem.h" "MakeItem.mm" "CocoaItem.mm" "CocoaEvent.mm" "CocoaUtils.mm" "CocoaApp.h" "CocoaApp.mm" "CocoaMenu.h" "CocoaMenu.mm")
 
     set_source_files_properties(${NATIVE_MAC_HEADERS} ${NATIVE_MAC_SOURCES} PROPERTIES LANGUAGE OBJCXX)
 

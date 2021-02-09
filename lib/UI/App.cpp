@@ -1,8 +1,11 @@
 #include "omegaWTK/UI/App.h"
 #include "omegaWTK/Native/NativeApp.h"
+#include "omegaWTK/UI/Menu.h"
 
 
 namespace OmegaWTK {
+
+
 
 AppInst * AppInst::instance;
 

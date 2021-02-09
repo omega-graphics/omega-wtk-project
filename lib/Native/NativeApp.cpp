@@ -10,29 +10,6 @@
 
 namespace OmegaWTK::Native {
 
-// NAMI make_menu_item(Core::String & str,bool hasSubMenu,bool isSeperator,NAM subMenuPtr){
-// #ifdef TARGET_WIN32
-//     return NAMI(new Win::WinMenuItem(str,hasSubMenu,isSeperator,subMenuPtr));
-// #endif
-
-// return NAMI(nullptr);
-// //#ifdef TARGET_MACOS
-// //    return NAMI(new Cocoa::CocoaMenuItem());
-// //#endif
-// };
-
-// NAM make_menu(){
-// #ifdef TARGET_WIN32
-// return NAM(new Win::WinMenu());
-// #endif
-    
-// return NAM(nullptr);
-    
-// //#ifdef TARGET_MACOS
-// //    return NAM(new Cocoa::CocoaMenu());
-// //#endif
-// };
-
 NativeApp::NativeApp(){
     
 };

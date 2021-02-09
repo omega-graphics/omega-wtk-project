@@ -41,9 +41,24 @@
         OmegaWTKRootView *global = [[OmegaWTKRootView alloc] init];
         [global addSubview:root];
         [window setContentView:global];
+        if(inst.menu != nullptr) {
+            NSMenu *menu = (NSMenu *)inst.menu->getNativeMenu()->getNativeBinding();
+            NSLog(@"Mounting Menu %@",menu);
+            NSMenuItem *applicationBaseMenuI = [[NSMenuItem alloc] initWithTitle:@"@APPNAME@" action:nil keyEquivalent:@""];
+              NSMenu *applicationBaseMenu = [[NSMenu alloc] init];
+              [applicationBaseMenu addItemWithTitle:@"About @APPNAME@" action:nil keyEquivalent:@""];
+              [applicationBaseMenu addItemWithTitle:@"Quit @APPNAME@" action:@selector(closeApplication) keyEquivalent:@""];
+            [applicationBaseMenuI setSubmenu:applicationBaseMenu];
+
+            [menu insertItem:applicationBaseMenuI atIndex:0];
+            [NSApp setMainMenu:menu];
+        }
     };
     return self;
 }
+-(void)closeApplication {
+    [NSApp performSelector:@selector(terminate:) withObject:nil afterDelay:0];
+};
 -(void)windowWillClose:(NSNotification *)notification {
     _r_self = nil;
     [NSApp performSelector:@selector(terminate:) withObject:nil afterDelay:0];
@@ -51,7 +66,7 @@
 @end
 
 
-@interface AppDelegate () <NSApplicationDelegate,NSWindowDelegate,NSMenuDelegate>
+@interface AppDelegate () <NSApplicationDelegate,NSWindowDelegate>
 @property (nonatomic) NSWindow *window;
 @end
 
