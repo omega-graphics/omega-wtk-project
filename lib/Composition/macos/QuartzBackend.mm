@@ -41,7 +41,7 @@ class QuartzBackend : public Backend {
             assets->colors.insert(CocoaItemCompAssets::MapEntry<NSColor *>(v_id,ns_color));
         }
         else {
-            NSLog(@"Comparing Colors");
+//            NSLog(@"Comparing Colors");
             auto & old_color = found->second;
             CGFloat _old_r,_old_g,_old_b,_old_a;
             _old_r = old_color.redComponent;
@@ -57,7 +57,7 @@ class QuartzBackend : public Backend {
             
             if(!((_old_r == new_r) && (_old_g == new_g) && (_old_b == new_b) && (_old_a == new_a))){
                 [old_color dealloc];
-                NSLog(@"Setting New Color!");
+//                NSLog(@"Setting New Color!");
                 old_color = [NSColor colorWithRed:new_r green:new_g blue:new_b alpha:new_a];
             };
         };

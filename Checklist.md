@@ -3,8 +3,8 @@
 ---
 
 - [x] Windows coordinate system fix.
-- [x] - Hex Color support.
-- [ ]  Text
+- [x]  Hex Color support.
+- [x]  Text
 - [ ]  Images/Bitmaps
 - [ ]  Menus.
 - [ ]  Styles.
