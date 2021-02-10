@@ -33,6 +33,15 @@ Menu::Menu(const Core::String & name,std::initializer_list<MenuItem *> menu_item
 
 MenuDelegate::MenuDelegate(){};
 
+MenuItem *SubMenu(const Core::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate){
+    #ifdef TARGET_WIN32
+        return new MenuItem(name,true,new Menu("",items,delegate));
+    #endif 
+    #ifdef TARGET_MACOS 
+        return new MenuItem("",true,new Menu(name,items,delegate));
+    #endif
+};
+
 };
 
 #ifdef TARGET_WIN32 

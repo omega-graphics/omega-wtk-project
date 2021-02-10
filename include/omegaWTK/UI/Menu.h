@@ -52,7 +52,10 @@ public:
     virtual void onSelectItem(unsigned itemIndex) = 0;
 };
 
+MenuItem *SubMenu(const Core::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate = nullptr);
+
 };
+
 
 #ifdef TARGET_WIN32 
 #ifdef WINDOWS_PRIVATE

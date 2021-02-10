@@ -47,9 +47,9 @@ public:
 int omegaWTKMain(OmegaWTK::AppInst *app)
 {
     auto menu = new OmegaWTK::Menu("AppMenu",{
-        new OmegaWTK::MenuItem("File",true,new OmegaWTK::Menu("File",{
+        OmegaWTK::SubMenu("File",{
             new OmegaWTK::MenuItem("Test Button",false,nullptr)
-        },new OmegaWTK::MyMenuDelegate()))
+        },new OmegaWTK::MyMenuDelegate())
     });
  app->menu = menu;
     
