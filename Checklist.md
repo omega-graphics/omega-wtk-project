@@ -5,12 +5,13 @@
 - [x] Windows coordinate system fix.
 - [x]  Hex Color support.
 - [x]  Text
-- [ ]  Menus.
+- [x]  Menus.
 - [ ]  Custom Icons
-- [ ]  Scroll Views (Ones with Native Scroll Bars)
 - [ ]  Images/Bitmaps
 - [ ]  Styles.
 - [ ]  Video Layer.
+- [ ]  Scroll Views (Ones with Native Scroll Bars)
+- [ ]  Windows
 - [ ]  Camera Capture (For Songalong)
 - [ ]  Animation/Transtions.
 - [ ]  Cross widget messaging.
