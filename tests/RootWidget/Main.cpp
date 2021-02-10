@@ -1,6 +1,5 @@
 #include "Main.h"
 #include <iostream>
-#include <windows.h>
 
 namespace OmegaWTK {
 class MyWidget : public Widget {
@@ -32,9 +31,10 @@ public:
 class MyMenuDelegate : public MenuDelegate {
 public:
     void onSelectItem(unsigned int itemIndex) {
-        if(itemIndex == 0){
-            std::cout << "Oww!! You Clicked Me!" << std::endl;
-            MessageBox(GetForegroundWindow(),"Oww!! You Clicked Me!","WOOHOO",MB_OK);
+        if(itemIndex == 2){
+            auto item = menu->getItemByIdx(0);
+            item->disable();
+            std::cout << "Disabled Item!" << std::endl;
         };
     };
     MyMenuDelegate(){};
@@ -47,9 +47,13 @@ public:
 int omegaWTKMain(OmegaWTK::AppInst *app)
 {
     auto menu = new OmegaWTK::Menu("AppMenu",{
-        OmegaWTK::SubMenu("File",{
-            new OmegaWTK::MenuItem("Test Button",false,nullptr)
-        },new OmegaWTK::MyMenuDelegate())
+        OmegaWTK::CategoricalMenu("File",{
+            OmegaWTK::SubMenu("Inside",{
+                new OmegaWTK::MenuItem("Here!",false,nullptr),
+                new OmegaWTK::MenuItem(),
+                new OmegaWTK::MenuItem("Test!",false,nullptr)
+            },new OmegaWTK::MyMenuDelegate())
+        })
     });
  app->menu = menu;
     

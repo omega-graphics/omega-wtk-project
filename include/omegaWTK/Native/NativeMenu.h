@@ -8,7 +8,8 @@ namespace Native {
 
 
 class NativeMenuItem {
-    
+public:
+    virtual void setState(bool state) = 0;
 };
 
 typedef NativeMenuItem *NMI;

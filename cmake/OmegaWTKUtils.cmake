@@ -31,7 +31,7 @@ if(CMAKE_HOST_APPLE)
 endif()
 
 function(add_omega_wtk_app)
-    cmake_parse_arguments("_ARG" "" "NAME;MAIN;MAC_BUNDLE_ID" "SOURCES;LINK_LIBS;INCLUDE_DIRS" ${ARGN})
+    cmake_parse_arguments("_ARG" "" "NAME;MAIN;MAC_BUNDLE_ID;WIN_ICO;MAC_ICON" "SOURCES;LINK_LIBS;INCLUDE_DIRS" ${ARGN})
 
     if(TARGET_WIN32)
         add_executable(${_ARG_NAME} WIN32 ${_ARG_SOURCES})
@@ -51,7 +51,7 @@ function(add_omega_wtk_app)
     endif()
 
     if(TARGET_MACOS)
-        add_executable(${_ARG_NAME} MACOSX_BUNDLE ${_ARG_SOURCES})
+        add_executable(${_ARG_NAME} MACOSX_BUNDLE ${_ARG_SOURCES} "Assets.xcassets")
         set(OMEGAWTK_MACOS_UTILS_DIR ${OMEGAWTK_TARGET_UTILS_DIR}/macos)
         set(MACOS_UTIL_FILES "AppDelegate.h" "AppDelegate.mm" "English.lproj/MainMenu.xib" "main.mm" )
         list(TRANSFORM MACOS_UTIL_FILES PREPEND "${OMEGAWTK_MACOS_UTILS_DIR}/")
@@ -61,16 +61,21 @@ function(add_omega_wtk_app)
         set(APPENTRY ${_ARG_MAIN})
         set(APPNAME ${_ARG_NAME})
         configure_file( "${OMEGAWTK_MACOS_UTILS_DIR}/AppDelegate.mm" "${CMAKE_CURRENT_BINARY_DIR}/AppDelegate.mm" @ONLY)
-        
+		set(MAC_ICON ${_ARG_MAC_ICON})
+		message("MAC ICON:${MAC_ICON}")
+		
+		configure_file("${OMEGAWTK_MACOS_UTILS_DIR}/Info.plist.in" "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" @ONLY)
+		
         set(MACOS_UTILS "AppDelegate.mm" "AppDelegate.h" "MainMenu.xib" "main.mm")
         list(TRANSFORM MACOS_UTILS PREPEND "${CMAKE_CURRENT_BINARY_DIR}/")
         target_sources(${_ARG_NAME} PRIVATE ${MACOS_UTILS})
-        # set_source_files_properties("Assets.xcassets" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+        # set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/${MAC_ICON}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
         set_target_properties(${_ARG_NAME} PROPERTIES
-            MACOSX_BUNDLE_INFO_PLIST "${OMEGAWTK_MACOS_UTILS_DIR}/Info.plist"
-            RESOURCE "${CMAKE_CURRENT_BINARY_DIR}/MainMenu.xib"
+            MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist"
+            RESOURCE "${CMAKE_CURRENT_BINARY_DIR}/MainMenu.xib;Assets.xcassets"
             MACOSX_FRAMEWORK_IDENTIFIER ${_ARG_MAC_BUNDLE_ID}
             XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER ${_ARG_MAC_BUNDLE_ID}
+			XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME ${MAC_ICON}
         )
         set(_ARG_LINK_LIBS ${_ARG_LINK_LIBS} ${Cocoa_LIB})
     endif()

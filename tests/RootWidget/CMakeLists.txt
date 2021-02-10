@@ -8,5 +8,7 @@ add_omega_wtk_app(
     "Main.h"
     MAC_BUNDLE_ID 
     ""
+	MAC_ICON
+	"AppIcon"
     
 )

@@ -6,7 +6,7 @@
 - [x]  Hex Color support.
 - [x]  Text
 - [x]  Menus.
-- [ ]  Custom Icons
+- [ ]  Custom Icons and Diagram!
 - [ ]  Images/Bitmaps
 - [ ]  Styles.
 - [ ]  Video Layer.

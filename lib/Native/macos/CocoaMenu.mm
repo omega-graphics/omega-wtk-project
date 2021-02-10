@@ -27,6 +27,8 @@ class CocoaMenuItem : public NativeMenuItem {
     unsigned idx = 0;
     friend class CocoaMenu;
 public:
+    bool isSeperator;
+    void setState(bool state);
     NSMenuItem *item;
     void selectThisItem();
     void assignIndex(unsigned _idx){
@@ -39,8 +41,8 @@ public:
     /**
      Consructs a Seperator Menu Item!
      */
-    CocoaMenuItem():item([NSMenuItem separatorItem]),sub_menu(nullptr),hasSubMenu(false){
-       
+    CocoaMenuItem():item([NSMenuItem separatorItem]),sub_menu(nullptr),hasSubMenu(false),isSeperator(true){
+        [item setEnabled:NO];
     };
     ~CocoaMenuItem(){};
 };
@@ -67,6 +69,9 @@ class CocoaMenu : public NativeMenu {
     void * getNativeBinding(){
         return (void *)menu;
     };
+    void updateMenu(){
+        [menu update];
+    };
     friend class CocoaMenuItem;
 public:
     /**
@@ -74,13 +79,14 @@ public:
      */
     CocoaMenu(const Core::String & name ){
         menu = [[NSMenu alloc] initWithTitle:core_string_to_ns_string(name)];
+        [menu setAutoenablesItems:NO];
     };
     ~CocoaMenu(){
         [menu dealloc];
     };
 };
 
-CocoaMenuItem::CocoaMenuItem(const Core::String & str,CocoaMenu *parent,bool hasSubMenu,CocoaMenu *subMenu):item([[NSMenuItem alloc] initWithTitle:core_string_to_ns_string(str) action:nil keyEquivalent:@""]),delegate([[CocoaMenuItemDelegate alloc] initWithCppBinding:this]),parent_menu(parent),hasSubMenu(hasSubMenu),sub_menu(subMenu){
+CocoaMenuItem::CocoaMenuItem(const Core::String & str,CocoaMenu *parent,bool hasSubMenu,CocoaMenu *subMenu):item([[NSMenuItem alloc] initWithTitle:core_string_to_ns_string(str) action:nil keyEquivalent:@""]),delegate([[CocoaMenuItemDelegate alloc] initWithCppBinding:this]),parent_menu(parent),hasSubMenu(hasSubMenu),sub_menu(subMenu),isSeperator(false){
     [delegate hasMenu];
     if(hasSubMenu){
         [item setSubmenu:sub_menu->menu];
@@ -89,6 +95,16 @@ CocoaMenuItem::CocoaMenuItem(const Core::String & str,CocoaMenu *parent,bool has
 
 void CocoaMenuItem::selectThisItem(){
     parent_menu->menuItemSelected(this->idx);
+};
+void CocoaMenuItem::setState(bool state) {
+    if(!isSeperator) {
+       BOOL _state = NO;
+       if(state){
+           _state = YES;
+       };
+       [item setEnabled:_state];
+       parent_menu->updateMenu();
+    }
 };
 
 
@@ -120,9 +136,11 @@ NM make_cocoa_menu(const Core::String & name){
 }
 
 -(void)hasMenu {
-    [_cpp_binding->item setTarget:self];
-    [_cpp_binding->item setAction:@selector(menuItemAction)];
-    [_cpp_binding->item setEnabled:YES];
+    if(!_cpp_binding->isSeperator) {
+        [_cpp_binding->item setTarget:self];
+        [_cpp_binding->item setAction:@selector(menuItemAction)];
+        [_cpp_binding->item setEnabled:YES];
+    }
 };
 
 -(void)menuItemAction {

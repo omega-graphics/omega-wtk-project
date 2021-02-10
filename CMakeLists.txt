@@ -7,7 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
 project("OmegaWTK" C CXX)
 set(OMEGAWTK_VERSION "0.1")
 
-
+find_package(PNG REQUIRED)
+if(PNG_FOUND)
+    message("Found libpng - Version:${PNG_VERSION_STRING}")
+endif()
+# find_package(TIFF REQUIRED)
 
 include_directories("include")
 include(ExternalProject)
