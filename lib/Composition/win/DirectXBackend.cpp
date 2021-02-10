@@ -42,11 +42,22 @@ namespace OmegaWTK::Composition {
         return D2D1::ColorF(EIGHTBIT_TO_FLOAT(color.r),EIGHTBIT_TO_FLOAT(color.g),EIGHTBIT_TO_FLOAT(color.b),EIGHTBIT_TO_FLOAT(color.a));
     };
 
-    void core_rect_to_win_rect(Core::Rect &rect,LPRECT rectres,LPRECT parent_wnd_rect){
+    void core_rect_to_win_rect(Core::Rect &rect,LPRECT rectres,LPRECT parent_wnd_rect,HWND parent){
+        #define DEFAULT_DPI 96.f
+        UINT dpi = GetDpiForWindow(parent);
+
+        // MessageBox(GetForegroundWindow(),(std::string("DPI :") + std::to_string(dpi)).c_str(),"Note",MB_OK);
+
+        
+        FLOAT sacleFactor = FLOAT(dpi)/DEFAULT_DPI;
+        // FLOAT sacleFactor = 1.0;
+
         rectres->left = rect.pos.x + parent_wnd_rect->left;
-        rectres->right = rectres->left + rect.dimen.minWidth;
-        rectres->top = ((parent_wnd_rect->bottom - parent_wnd_rect->top) - rect.pos.y) - rect.dimen.minHeight;
-        rectres->bottom = rectres->top + rect.dimen.minHeight;
+        rectres->right = rectres->left + (rect.dimen.minWidth * sacleFactor);
+
+         UINT newHeight = rect.dimen.minHeight * sacleFactor;
+        rectres->top = ((parent_wnd_rect->bottom - parent_wnd_rect->top) - rect.pos.y) - newHeight;
+        rectres->bottom = rectres->top + newHeight;
     };
     /// A ComPtr that releases its object on its destruction. (Similar to the std::unique_ptr)
     template<class T>
@@ -177,7 +188,9 @@ namespace OmegaWTK::Composition {
                 if(!SUCCEEDED(hr)){
                     //Handle Error!
                 };
+                
                 compAssets->direct2d_hwnd_target = render_target;
+                compAssets->direct2d_hwnd_target->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
                 compAssets->has_direct2d_hwnd_target = true;
             }
         };
@@ -392,7 +405,7 @@ namespace OmegaWTK::Composition {
 
         };
 
-        void drawVisual(Visual *visual,HWNDItemCompAssets *assets,RECT rc){
+        void drawVisual(Visual *visual,HWNDItemCompAssets *assets,RECT rc,HWND parent){
 
             // HRESULT hr;
             ID2D1HwndRenderTarget * render_target = assets->direct2d_hwnd_target.get();
@@ -410,7 +423,7 @@ namespace OmegaWTK::Composition {
                        std::wstring text_to_render;
                         cpp_str_to_cpp_wstr(params->text.getString(),text_to_render);
                         RECT text_cont;
-                       core_rect_to_win_rect(params->rect,&text_cont,&rc);
+                       core_rect_to_win_rect(params->rect,&text_cont,&rc,parent);
 
                        /// Step 4: Draw the Text onto HWND.
                        render_target->DrawTextA(text_to_render.c_str(),text_to_render.size(),textFormat,D2D1::RectF(text_cont.left,text_cont.top,text_cont.right,text_cont.bottom),color_brush);
@@ -424,7 +437,7 @@ namespace OmegaWTK::Composition {
                         color_brush = assets->solid_color_brushes[visual->id]->get();
                         RECT rect_;
                         /// Step 2: Convert Core::Rect to RECT struct
-                        core_rect_to_win_rect(params->rect,&rect_,&rc);
+                        core_rect_to_win_rect(params->rect,&rect_,&rc,parent);
                         auto d2_rect = D2D1::RectF(rect_.left,rect_.top,rect_.right,rect_.bottom);
                         /// Step 3: Frame the Rectangle with Brush
                         // render_target->DrawRectangle(d2_rect,color_brush);
@@ -440,7 +453,7 @@ namespace OmegaWTK::Composition {
                         color_brush = assets->solid_color_brushes[visual->id]->get();
                         RECT rect_;
                         /// Step 2: Convert Core::Rect to RECT struct
-                        core_rect_to_win_rect(params->rect,&rect_,&rc);
+                        core_rect_to_win_rect(params->rect,&rect_,&rc,parent);
                         auto d2_rounded_rect = D2D1::RoundedRect(D2D1::RectF(rect_.left,rect_.top,rect_.right,rect_.bottom),params->rad_x,params->rad_y);
                         /// Step 3: Frame the Rectangle with Brush
                         // render_target->DrawRoundedRectangle(d2_rounded_rect,color_brush);
@@ -467,7 +480,7 @@ namespace OmegaWTK::Composition {
             auto object_it = objects.begin();
             while(object_it != objects.end()) {
                 auto & visual = *object_it;
-                drawVisual(visual,&assets,native_item->getClientRect());
+                drawVisual(visual,&assets,native_item->getClientRect(),native_item->getHandle());
                 ++object_it;
             };
 
@@ -496,7 +509,7 @@ namespace OmegaWTK::Composition {
                 auto object_it = objects.begin();
                 while(object_it != objects.end()) {
                     auto & visual = *object_it;
-                    drawVisual(visual,&hwndAssets,hwndItem->getClientRect());
+                    drawVisual(visual,&hwndAssets,hwndItem->getClientRect(),hwndItem->getHandle());
                     ++object_it;
                 };
                 hr = render_target->EndDraw();

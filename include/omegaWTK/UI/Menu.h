@@ -39,9 +39,7 @@ class OMEGAWTK_EXPORT Menu {
     bool hasDelegate;
     friend class MenuItem;
 public:
-#ifdef TARGET_MACOS
     Native::NM getNativeMenu(){ return native;};
-#endif
     Menu(const Core::String & name,std::initializer_list<MenuItem *> menu_items,MenuDelegate *delegate = nullptr);
 //    ~Menu();
 };
@@ -55,5 +53,13 @@ public:
 };
 
 };
+
+#ifdef TARGET_WIN32 
+#ifdef WINDOWS_PRIVATE
+
+void select_item_on_win_menu(void * win_menu,unsigned idx);
+
+#endif 
+#endif
 
 #endif

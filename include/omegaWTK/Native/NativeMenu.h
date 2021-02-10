@@ -40,5 +40,12 @@ NM make_native_menu(const Core::String & name);
 };
 };
 
+#ifdef TARGET_WIN32
+#ifdef WINDOWS_PRIVATE
+
+void __select_item_on_win_menu(void * win_menu,unsigned idx);
+#endif
+#endif
+
 
 #endif

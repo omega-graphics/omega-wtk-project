@@ -6,7 +6,7 @@
 - [x]  Hex Color support.
 - [x]  Text
 - [ ]  Menus.
-- [ ] Custom Icons
+- [ ]  Custom Icons
 - [ ]  Scroll Views (Ones with Native Scroll Bars)
 - [ ]  Images/Bitmaps
 - [ ]  Styles.

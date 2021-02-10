@@ -50,14 +50,20 @@ namespace OmegaWTK::Native::Win {
         else 
             wind_parent = rootWindow;
 
+        UINT dpi = GetDpiForWindow(wind_parent);
+
+        // MessageBox(GetForegroundWindow(),(std::string("DPI:") + std::to_string(dpi)).c_str(),"Note",MB_OK);
+
+        FLOAT scaleFactor = FLOAT(dpi)/96.f;
         /// Windows Coordinate system fix!
         RECT rc;
         GetWindowRect(GetForegroundWindow(),&rc);
         unsigned wndHeight = rc.bottom - rc.top;
-        HWND hwnd = CreateWindowA(MAKEINTATOM(atom),name,base_style,rect.pos.x,(wndHeight - rect.pos.y),rect.dimen.minWidth,rect.dimen.minHeight,wind_parent,NULL,hInst,custom_params);
+        HWND hwnd = CreateWindowA(MAKEINTATOM(atom),name,base_style,rect.pos.x,(wndHeight - rect.pos.y),rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor,wind_parent,NULL,hInst,custom_params);
         if(parent == nullptr)
             all_hwnds.push_back(hwnd);
         return hwnd;
+        #undef DEFAULT_DPI
         
     };
     ATOM HWNDFactory::registerWindow(){

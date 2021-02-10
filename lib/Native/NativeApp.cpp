@@ -1,8 +1,5 @@
 #include "omegaWTK/Native/NativeApp.h"
 
-#ifdef TARGET_WIN32
-#include "win/WinMenu.h"
-#endif
 
 #ifdef TARGET_MACOS
 #include "macos/CocoaApp.h"

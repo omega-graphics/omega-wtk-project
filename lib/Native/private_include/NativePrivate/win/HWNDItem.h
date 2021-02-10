@@ -10,6 +10,7 @@ namespace OmegaWTK::Native {
         class HWNDItem : public NativeItem {
             HWND hwnd;
             Core::Rect wndrect;
+            UINT currentDpi;
             LRESULT ProcessWndMsg(UINT,WPARAM,LPARAM);
             BOOL ProcessWndMsgImpl(HWND,UINT,WPARAM,LPARAM,LRESULT *);
             ATOM atom;

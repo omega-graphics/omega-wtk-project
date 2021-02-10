@@ -34,3 +34,13 @@ Menu::Menu(const Core::String & name,std::initializer_list<MenuItem *> menu_item
 MenuDelegate::MenuDelegate(){};
 
 };
+
+#ifdef TARGET_WIN32 
+#ifdef WINDOWS_PRIVATE
+
+void select_item_on_win_menu(void * win_menu,unsigned idx){
+    return __select_item_on_win_menu(win_menu, idx);
+};
+
+#endif 
+#endif
