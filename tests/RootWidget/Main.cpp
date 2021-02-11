@@ -5,10 +5,10 @@ namespace OmegaWTK {
 class MyWidget : public Widget {
     class MyRootDelegate : public ViewDelegate {
         void onLeftMouseDown(Native::NativeEventPtr event) {
-            Composition::Layer *layer = view->getLayer();
-            Composition::Visual *text = layer->getVisualByIdx(1);
-            text->setColor(Composition::Color::Green);
-            layer->redraw();
+            // Composition::Layer *layer = view->getLayer();
+            // Composition::Visual *text = layer->getVisualByIdx(1);
+            // text->setColor(Composition::Color::Green);
+            // layer->redraw();
         };
         void onLeftMouseUp(Native::NativeEventPtr event) {
             
@@ -19,10 +19,12 @@ public:
     MyWidget(const Core::Rect & rect):Widget(rect),delegate(new MyRootDelegate()){
         rootView->setDelegate(delegate);
         Composition::Layer *rootLayer = rootView->getLayer();
+        rootLayer->drawRect(OmegaWTK::Rect(0,0,150,150),Composition::Color::Red,Composition::Border(Composition::Color::Black,10));
+        rootLayer->drawEllipse({{150,150},30,50},Composition::Color::Green);
         /// ID: 0
-        rootLayer->drawRect(rect,Composition::Color::Red);
-        /// ID: 1
-        rootLayer->drawText("Hello World",20,Composition::Color::Black,rect,{"Times New Roman",Composition::Text::Font::Regular});
+        // rootLayer->drawRect(rect,Composition::Color::Red);
+        // /// ID: 1
+        // rootLayer->drawText("Hello World",20,Composition::Color::Black,rect,{"Times New Roman",Composition::Text::Font::Regular});
         
     };
     
@@ -50,14 +52,14 @@ int omegaWTKMain(OmegaWTK::AppInst *app)
         OmegaWTK::CategoricalMenu("File",{
             OmegaWTK::SubMenu("Inside",{
                 new OmegaWTK::MenuItem("Here!",false,nullptr),
-                new OmegaWTK::MenuItem(),
+                OmegaWTK::Seperator(),
                 new OmegaWTK::MenuItem("Test!",false,nullptr)
             },new OmegaWTK::MyMenuDelegate())
         })
     });
  app->menu = menu;
     
-    OmegaWTK::MyWidget widget({{0,0},{100,100}});
+    OmegaWTK::MyWidget widget({{0,0},{300,300}});
     widget.show();
     app->setRoot(&widget);
     return 0;

@@ -11,6 +11,8 @@ bool Rect::compare(Rect & other){
 bool RoundedRect::compare(RoundedRect & other){
     return Rect::compare(other) && (radius_x == other.radius_x) && (radius_y == other.radius_y);
 };
+
+
     // OWTKString::~OWTKString(){
     //     delete data;
     // };
@@ -64,4 +66,19 @@ bool RoundedRect::compare(RoundedRect & other){
     //     std::move(_data,_data + _size,begin());
     //     len = _len;
     // };
+}
+
+namespace OmegaWTK {
+
+Core::Rect Rect(unsigned x,unsigned y,unsigned width,unsigned height){
+    return {{x,y},{width,height}};
+};
+Core::Ellipse Ellipse(unsigned x,unsigned y,unsigned radius_x,unsigned radius_y){
+    return {{x,y},radius_x,radius_y};
+};
+
+Core::RoundedRect RoundedRect(unsigned x,unsigned y,unsigned width,unsigned height,unsigned radius_x,unsigned radius_y) {
+    return {Rect(x,y,width,height),radius_x,radius_y};
+}
+
 }

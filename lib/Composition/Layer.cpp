@@ -37,30 +37,43 @@ void Visual::setRect(const Core::Rect &new_rect){
     
 };
 
-VPVR Visual::getRect(){
+// VPVR Visual::getRect(){
 
-};
+// };
 
-VPVR Visual::getColor(){
+// VPVR Visual::getColor(){
 
-};
+// };
 
-VPVR Visual::getFont(){
+// VPVR Visual::getFont(){
 
-};
+// };
 
 Target::Target(Native::NativeItemPtr _native) : native(_native){};
 Target::~Target(){};
 
-void Layer::drawRect(const Core::Rect &rect, const Color &color) {
+void Layer::drawRect(const Core::Rect &rect, const Color &color,Core::Optional<Border> border) {
   compTarget->visuals.push_back(new Visual(
-      {compTarget->id_gen,Visual::Rect, (void *)new Visual::RectParams({rect, color})}));
-  compTarget->id_gen += 1;
+      {compTarget->id_gen,Visual::Rect, (void *)new Visual::RectParams({rect, color,border})}));
+  ++compTarget->id_gen;
+};
+
+void Layer::drawRoundedRect(const Core::RoundedRect &rect, const Color &color,Core::Optional<Border> border){
+  compTarget->visuals.push_back(new Visual(
+    {compTarget->id_gen,Visual::RoundedRect,(void *) new Visual::RoundedRectParams({{rect.pos,rect.dimen},rect.radius_x,rect.radius_y,color,border})}));
+    ++compTarget->id_gen;
 };
 
 void Layer::drawText(const Core::String & str,unsigned size,const Color & color,const Core::Rect & rect,const Text::Font & font){
-    compTarget->visuals.push_back(new Visual({compTarget->id_gen,Visual::Text,(void *) new Visual::TextParams({Text({str,size,font}),color,rect})}));
-    compTarget->id_gen += 1;
+    compTarget->visuals.push_back(new Visual(
+      {compTarget->id_gen,Visual::Text,(void *) new Visual::TextParams({Text({str,size,font}),color,rect})}));
+    ++compTarget->id_gen;
+};
+
+void Layer::drawEllipse(const Core::Ellipse &ellipse,const Color &color,Core::Optional<Border> border){
+  compTarget->visuals.push_back(new Visual(
+    {compTarget->id_gen,Visual::Ellipse,(void *) new Visual::EllipseParams({ellipse,color,border})}));
+  ++compTarget->id_gen;
 };
 
 Layer::Layer(const Core::Rect &rect, Native::NativeItemPtr native_ptr,

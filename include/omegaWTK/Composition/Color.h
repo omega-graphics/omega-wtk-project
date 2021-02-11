@@ -10,13 +10,6 @@ namespace OmegaWTK {
         /// Standard RBGA Color
         struct OMEGAWTK_EXPORT Color {
             unsigned r,g,b,a;
-            /**
-                Constructs a color!
-                @param red red amount
-                @param green green amount
-                @param blue blue amount
-                @param alpha alpha value
-            */
         public:
             typedef enum : std::uint32_t {
                 Black  = 0x000000,
@@ -41,6 +34,13 @@ namespace OmegaWTK {
             bool operator==(const Color &other){
                 return compare(other);
             };
+            /**
+                Constructs a color!
+                @param red red amount
+                @param green green amount
+                @param blue blue amount
+                @param alpha alpha value
+            */
             Color(unsigned red,unsigned green,unsigned blue,unsigned alpha);
             /**
              Constructs a Color using a 32bit uint (In hexadecimal form)!
@@ -51,6 +51,10 @@ namespace OmegaWTK {
             */ 
             Color(std::uint32_t hex_color,std::uint8_t alpha = 0xFF);
         };
+
+        // class Gradient {
+            
+        // };
     };
 };
 

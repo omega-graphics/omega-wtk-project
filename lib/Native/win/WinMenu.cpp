@@ -15,6 +15,7 @@ namespace OmegaWTK::Native::Win {
         friend class WinMenu;
     public:
         void assignIndex(unsigned _idx){ idx = _idx;};
+        void setState(bool state);
         /**
          Constructs a Regular Menu Item
          NOTE: Only Initalizes info!
@@ -29,6 +30,9 @@ namespace OmegaWTK::Native::Win {
             // info.dwItemData = (ULONG_PTR)this;
             info.fMask = MIIM_FTYPE;
             info.fType = MFT_SEPARATOR;
+
+        };
+        ~WinMenuItem(){
 
         };
     };
@@ -69,7 +73,7 @@ namespace OmegaWTK::Native::Win {
                 info.cbSize = sizeof(info);
                 info.fMask = MIM_MENUDATA | MIM_BACKGROUND | MIM_STYLE;
                 info.dwStyle = MNS_NOTIFYBYPOS;
-                info.hbrBack = (HBRUSH)COLOR_MENU;
+                info.hbrBack = (HBRUSH)COLOR_WINDOW;
                 // info.cyMax = 0;
                 hmenu = CreateMenu();
 
@@ -98,6 +102,15 @@ namespace OmegaWTK::Native::Win {
             info.fState = MFS_ENABLED;
             if(hasSubMenu)
                 info.hSubMenu = subMenu->hmenu;
+        };
+
+        void WinMenuItem::setState(bool state){
+            UINT mask = MF_BYPOSITION;
+            if(state)
+                mask |= MF_ENABLED;
+            else;
+                mask |= MF_GRAYED | MF_DISABLED;
+            EnableMenuItem(parent->hmenu,idx,mask);
         };
 
 

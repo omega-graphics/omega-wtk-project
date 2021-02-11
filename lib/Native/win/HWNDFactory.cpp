@@ -57,9 +57,13 @@ namespace OmegaWTK::Native::Win {
         FLOAT scaleFactor = FLOAT(dpi)/96.f;
         /// Windows Coordinate system fix!
         RECT rc;
-        GetWindowRect(GetForegroundWindow(),&rc);
-        unsigned wndHeight = rc.bottom - rc.top;
-        HWND hwnd = CreateWindowA(MAKEINTATOM(atom),name,base_style,rect.pos.x,(wndHeight - rect.pos.y),rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor,wind_parent,NULL,hInst,custom_params);
+        GetClientRect(wind_parent,&rc);
+        // std::string s3 = "RECT for App Window:" + std::to_string(rc.left) + ",T:" + std::to_string(rc.top) + ",R:" + std::to_string(rc.right) + ",B:" + std::to_string(rc.bottom);
+        // MessageBox(GetForegroundWindow(),s3.c_str(),"NOTE",MB_OK);
+        
+        // unsigned wndHeight = rc.bottom - rc.top;
+        // unsigned height = rect.dimen.minHeight * scaleFactor;
+        HWND hwnd = CreateWindowA(MAKEINTATOM(atom),name,base_style,rect.pos.x,(rc.bottom - (rect.dimen.minHeight) * scaleFactor) - rect.pos.y,rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor,wind_parent,NULL,hInst,custom_params);
         if(parent == nullptr)
             all_hwnds.push_back(hwnd);
         return hwnd;

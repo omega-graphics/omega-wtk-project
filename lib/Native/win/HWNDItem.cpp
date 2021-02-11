@@ -13,9 +13,9 @@ namespace OmegaWTK::Native::Win {
             MessageBox(HWNDFactory::appFactoryInst->getRootWnd(),"Failed to Register HWNDItem Window!",NULL,MB_OKCANCEL);
         }
         if(parent)
-            HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,(void *)this,parent->hwnd);
+            HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD | WS_VISIBLE,(void *)this,parent->hwnd);
         else 
-            HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,(void *)this,nullptr);
+            HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD | WS_VISIBLE,(void *)this,nullptr);
 
         currentDpi = GetDpiForWindow(hwnd);
     };
@@ -35,25 +35,25 @@ namespace OmegaWTK::Native::Win {
         *lresult = 0;
 
         switch (uMsg) {
-        case WM_DPICHANGED_AFTERPARENT : {
+        // case WM_DPICHANGED_AFTERPARENT : {
 
-            UINT newDpi = GetDpiForWindow(hwnd);
+        //     UINT newDpi = GetDpiForWindow(hwnd);
 
-            // MessageBox(GetForegroundWindow(),(std::string("NEW DPI:") + std::to_string(newDpi) + "\nOLD DPI" + std::to_string(currentDpi)).c_str(),"Note",MB_OK);
+        //     // MessageBox(GetForegroundWindow(),(std::string("NEW DPI:") + std::to_string(newDpi) + "\nOLD DPI" + std::to_string(currentDpi)).c_str(),"Note",MB_OK);
 
-            FLOAT scaleFactor = FLOAT(newDpi)/currentDpi;
+        //     FLOAT scaleFactor = FLOAT(newDpi)/currentDpi;
 
-            RECT parentRect;
-            GetClientRect(GetParent(hwnd),&parentRect);
+        //     RECT parentRect;
+        //     GetClientRect(GetParent(hwnd),&parentRect);
 
-            UINT newParentWndHeight = parentRect.bottom - parentRect.top;
+        //     UINT newParentWndHeight = parentRect.bottom - parentRect.top;
             
-            RECT rc = getClientRect();
-            SetWindowPos(hwnd,hwnd,rc.left,(newParentWndHeight - (rc.bottom * scaleFactor)),(rc.bottom - rc.top) * scaleFactor,(rc.right - rc.left) * scaleFactor,SWP_NOZORDER | SWP_NOACTIVATE);
+        //     RECT rc = getClientRect();
+        //     SetWindowPos(hwnd,hwnd,rc.left,(newParentWndHeight - (rc.bottom * scaleFactor)),(rc.bottom - rc.top) * scaleFactor,(rc.right - rc.left) * scaleFactor,SWP_NOZORDER | SWP_NOACTIVATE);
 
-            currentDpi = newDpi;
-            break;
-        }
+        //     currentDpi = newDpi;
+        //     break;
+        // }
         case WM_LBUTTONDOWN : {
             pt.x = GET_X_LPARAM(lParam);
             pt.y = GET_Y_LPARAM(lParam);

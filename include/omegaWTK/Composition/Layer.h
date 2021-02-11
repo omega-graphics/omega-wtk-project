@@ -29,6 +29,13 @@ namespace OmegaWTK {
         _Ty & getRes(){ return *((_Ty *)res);};
             
     };
+
+    struct Border {
+        Color color;
+        unsigned width;
+        Border() = delete;
+        Border(Color _color,unsigned _width):color(_color),width(_width){};
+    };
     /// An object drawn by a Compositor.
     struct Visual {
         unsigned id;
@@ -42,6 +49,7 @@ namespace OmegaWTK {
         typedef struct {
             Core::Rect rect;
             Color color;
+            Core::Optional<Border> border;
         } RectParams;
         
         typedef struct {
@@ -49,12 +57,13 @@ namespace OmegaWTK {
             unsigned rad_x;
             unsigned rad_y;
             Color color;
+            Core::Optional<Border> border;
         } RoundedRectParams;
         
         typedef struct {
-            unsigned rad_x;
-            unsigned rad_y;
+            Core::Ellipse ellipse;
             Color color;
+            Core::Optional<Border> border;
         } EllipseParams;
         typedef struct {
             class Text text;
@@ -86,7 +95,7 @@ namespace OmegaWTK {
             Core::Vector<Layer *> children;
             Layer * parent_ptr = nullptr;
             Core::Rect surface_rect;
-            Color background = Color(0,0,0,255);
+            Color background = Color(Color::White);
             Target * compTarget;
             bool enabled;
             Compositor *ownerCompositor;
@@ -109,9 +118,14 @@ namespace OmegaWTK {
             /// Draws on to its target!
             /// @{
             void setBackgroundColor(const Color & color);
-            void drawRect(const Core::Rect &rect,const Color & color);
-            void drawRoundedRect(const Core::RoundedRect & rect,const Color & color);
+
+            void drawRect(const Core::Rect &rect,const Color & color,Core::Optional<Border> border = {});
+
+            void drawRoundedRect(const Core::RoundedRect & rect,const Color & color,Core::Optional<Border> border = {});
+
             void drawText(const Core::String & str,unsigned size,const Color & color,const Core::Rect & rect,const Text::Font & font = {"Arial",Text::Font::Regular});
+
+            void drawEllipse(const Core::Ellipse &ellipse,const Color &color,Core::Optional<Border> border = {});
             /// @}
             
             /// @name Main Action Functions!

@@ -66,6 +66,10 @@ MenuItem *SubMenu(const Core::String & name,std::initializer_list<MenuItem *> it
     #endif
 };
 
+MenuItem *Seperator(){
+    return new MenuItem();
+};
+
 };
 
 #ifdef TARGET_WIN32 

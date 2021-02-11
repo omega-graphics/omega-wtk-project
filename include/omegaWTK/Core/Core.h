@@ -5,6 +5,7 @@
 #include <queue>
 #include <cassert>
 #include <list>
+#include <optional>
 #include "OmegaWTKExport.h"
 
 #ifndef OMEGAWTK_CORE_CORE_H
@@ -36,6 +37,9 @@ namespace OmegaWTK {
 
         template<class _Ty>
         using UniquePtr = std::unique_ptr<_Ty>;
+
+        template<class _Ty>
+        using Optional = std::optional<_Ty>;
         /// Array Reference Class!
         template<class _Ty>
         class OMEGAWTK_EXPORT ArrayRef {
@@ -89,7 +93,7 @@ namespace OmegaWTK {
         struct OMEGAWTK_EXPORT Ellipse {
             Position pos;
             unsigned radius_x;
-            unsigned raidus_y;
+            unsigned radius_y;
         };
         /// A vector that acts like a queue (first in , first out), but has control over every element and its order in the container.
         template<class _Ty>
@@ -233,6 +237,9 @@ namespace OmegaWTK {
         }
         #endif
     };
+    Core::Rect Rect(unsigned x,unsigned y,unsigned width,unsigned height);
+    Core::Ellipse Ellipse(unsigned x,unsigned y,unsigned radius_x,unsigned radius_y);
+    Core::RoundedRect RoundedRect(unsigned x,unsigned y,unsigned width,unsigned height,unsigned radius_x,unsigned radius_y);
 };
 
 #endif

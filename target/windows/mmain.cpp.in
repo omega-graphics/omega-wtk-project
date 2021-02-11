@@ -17,15 +17,15 @@ bool hasLoaded = false;
 bool mainWindowHasMenu = false;
 
 void updateAllHWNDPos(UINT root_wnd_height){
-    RECT rc;
-    auto it = all_hwnds->begin();
-    while(it != all_hwnds->end()){
-        HWND hwnd = *it;
-        GetClientRect(hwnd,&rc);
-        SetWindowPos(hwnd,hwnd,rc.left,(root_wnd_height - rc.bottom), rc.right - rc.left,rc.bottom - rc.top,SWP_NOZORDER);
-        ++it;
-    };
-};
+     RECT rc;
+     auto it = all_hwnds->begin();
+     while(it != all_hwnds->end()){
+         HWND hwnd = *it;
+         GetClientRect(hwnd,&rc);
+         SetWindowPos(hwnd,hwnd,rc.left,(root_wnd_height - rc.bottom), rc.right - rc.left,rc.bottom - rc.top,SWP_NOZORDER | SWP_NOACTIVATE);
+         ++it;
+     };
+ };
 
 LRESULT CALLBACK WndProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam){
     LRESULT lr = 0;
@@ -45,25 +45,25 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam){
     };
     switch(umsg)
     {
-        case WM_CREATE : {
+        // case WM_CREATE : {
+        //     break;
+        // }
+         case WM_SIZING : {
+            if(hasLoaded) {
+                if(wParam == WMSZ_BOTTOM) {
+                   RECT rc;
+                    GetClientRect(hwnd,&rc);
+                    updateAllHWNDPos(rc.bottom - rc.top);
+                };
+           }
             break;
         }
-        case WM_SIZING : {
-           if(hasLoaded) {
-               if(wParam == WMSZ_BOTTOM) {
-                   RECT rc;
-                   GetClientRect(hwnd,&rc);
-                   updateAllHWNDPos(rc.bottom - rc.top);
-               };
-           }
-           break;
-        }
-        case WM_SIZE : {
-           if(hasLoaded) {
+         case WM_SIZE : {
+            if(hasLoaded) {
                  UINT width = LOWORD(lParam);
                  UINT height = HIWORD(lParam);
                  updateAllHWNDPos(height);
-             }
+              }
              break;
         }
         case WM_DPICHANGED : {
@@ -127,7 +127,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLi
 
     
 
-    HWND hwndWindow = CreateWindow(szWindowClass,szTitle,WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,NULL,NULL,hInstance,NULL);
+    HWND hwndWindow = CreateWindowA(szWindowClass,szTitle,WS_OVERLAPPEDWINDOW,CW_USEDEFAULT,CW_USEDEFAULT,1500,1500,NULL,NULL,hInstance,NULL);
    
     
     void *factory = create_hwnd_factory((void *)hInstance,(void *)hwndWindow);
@@ -145,7 +145,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLi
         mainWindowHasMenu = true;
     };
     /// Intial Windows Coordinate System Correction!
-     RECT rc;
+    RECT rc;
     GetClientRect(hwndWindow,&rc);
     updateAllHWNDPos(rc.bottom - rc.top);
 
