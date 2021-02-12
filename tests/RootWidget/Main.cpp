@@ -19,12 +19,9 @@ public:
     MyWidget(const Core::Rect & rect):Widget(rect),delegate(new MyRootDelegate()){
         rootView->setDelegate(delegate);
         Composition::Layer *rootLayer = rootView->getLayer();
-        rootLayer->drawRect(OmegaWTK::Rect(0,0,150,150),Composition::Color::Red,Composition::Border(Composition::Color::Black,10));
-        rootLayer->drawEllipse({{150,150},30,50},Composition::Color::Green);
-        /// ID: 0
-        // rootLayer->drawRect(rect,Composition::Color::Red);
-        // /// ID: 1
-        // rootLayer->drawText("Hello World",20,Composition::Color::Black,rect,{"Times New Roman",Composition::Text::Font::Regular});
+        // rootLayer->drawRect(OmegaWTK::Rect(0,0,150,150),Composition::Color::Red,Composition::Border(Composition::Color::Black,10));
+        // rootLayer->drawEllipse({{150,150},30,50},Composition::Color::Green);
+        rootLayer->drawBitmap(Composition::loadImageFromFile("./assets/test.png"),Rect(0,0,200,200));
         
     };
     

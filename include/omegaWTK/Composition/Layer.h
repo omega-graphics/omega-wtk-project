@@ -6,8 +6,7 @@
 
 #include "omegaWTK/Core/Core.h"
 #include "omegaWTK/Native/NativeItem.h"
-#include "Color.h"
-#include "Text.h"
+#include "Visual.h"
 #include <functional>
 
 #ifndef OMEGAWTK_COMPOSITION_LAYER_H
@@ -17,67 +16,6 @@ namespace OmegaWTK {
     namespace Composition {
 
     class Compositor;
-    /// Visual Params Validation Result!
-    struct VPVR {
-        typedef enum : int {
-            Success = 0,
-            Failed = -1
-        } Code;
-        Code code;
-        void * res;
-        template<class _Ty>
-        _Ty & getRes(){ return *((_Ty *)res);};
-            
-    };
-
-    struct Border {
-        Color color;
-        unsigned width;
-        Border() = delete;
-        Border(Color _color,unsigned _width):color(_color),width(_width){};
-    };
-    /// An object drawn by a Compositor.
-    struct Visual {
-        unsigned id;
-        typedef enum : OPT_PARAM {
-            Rect,
-            RoundedRect,
-            Ellipse,
-            Text
-        } Type;
-        Type type;
-        typedef struct {
-            Core::Rect rect;
-            Color color;
-            Core::Optional<Border> border;
-        } RectParams;
-        
-        typedef struct {
-            Core::Rect rect;
-            unsigned rad_x;
-            unsigned rad_y;
-            Color color;
-            Core::Optional<Border> border;
-        } RoundedRectParams;
-        
-        typedef struct {
-            Core::Ellipse ellipse;
-            Color color;
-            Core::Optional<Border> border;
-        } EllipseParams;
-        typedef struct {
-            class Text text;
-            Color color;
-            Core::Rect rect;
-        } TextParams;
-        void * params;
-        void setColor(const Color & new_color);
-        void setRect(const Core::Rect & bew_rect);
-        void setFont(const Text::Font & new_font);
-        VPVR getColor();
-        VPVR getRect();
-        VPVR getFont();
-    };
     
     class Target {
         unsigned id_gen = 0;
@@ -105,6 +43,7 @@ namespace OmegaWTK {
             /// @{
             Native::NativeItemPtr getTargetNativePtr(){return compTarget->native;};
             auto & getTargetVisuals(){return compTarget->visuals;};
+            auto & getBackgroundColor(){ return background;};
             
             auto & getVisualByIdx(unsigned idx){ return compTarget->visuals[idx];};
             const Core::Rect & getLayerRect(){return surface_rect;};
@@ -126,6 +65,8 @@ namespace OmegaWTK {
             void drawText(const Core::String & str,unsigned size,const Color & color,const Core::Rect & rect,const Text::Font & font = {"Arial",Text::Font::Regular});
 
             void drawEllipse(const Core::Ellipse &ellipse,const Color &color,Core::Optional<Border> border = {});
+
+            void drawBitmap(BitmapImage image,const Core::Rect & rect);
             /// @}
             
             /// @name Main Action Functions!

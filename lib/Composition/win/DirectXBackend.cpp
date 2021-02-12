@@ -125,6 +125,7 @@ namespace OmegaWTK::Composition {
 
             using SolidColorBrushEntry = Entry<ID2D1SolidColorBrush>;
             using TextFormatEntry = Entry<IDWriteTextFormat>;
+            using BitmapEntry = Entry<ID2D1Bitmap>;
 
             bool has_direct2d_hwnd_target;
             UniqueComPtr<ID2D1HwndRenderTarget> direct2d_hwnd_target;
@@ -144,6 +145,7 @@ namespace OmegaWTK::Composition {
             Core::Map<unsigned,SolidColorBrushEntry *> fill_solid_color_brushes;
             Core::Map<unsigned,SolidColorBrushEntry *> border_solid_color_brushes;
             Core::Map<unsigned,TextFormatEntry *> text_formats;
+            Core::Map<unsigned,BitmapEntry *> bitmaps;
             
             template<class _Ty>
             void releaseMap(Core::Map<unsigned,_Ty> & core_map){
@@ -288,6 +290,43 @@ namespace OmegaWTK::Composition {
                 __setup_color_brush(compAssets->direct2d_hwnd_target,compAssets->border_solid_color_brushes,color,id);
             };
             // return S_OK;
+        };
+
+        void setupBitmap(HWNDItemCompAssets *compAssets,BitmapImage &bitmap,unsigned v_id){
+            HRESULT hr;
+            auto it = compAssets->bitmaps.find(v_id);
+            if(it == compAssets->bitmaps.end()){
+                ID2D1Bitmap *bitmap_res;
+                hr = compAssets->direct2d_hwnd_target->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(),&bitmap_res);
+                if(!SUCCEEDED(hr)){
+                    //Handle Error!
+                };
+                compAssets->bitmaps.insert(std::pair<unsigned,HWNDItemCompAssets::BitmapEntry *>(v_id,new HWNDItemCompAssets::BitmapEntry(bitmap_res)));
+            }
+            else {
+                auto & entry = it->second;
+                if(entry->hasVal()){
+                    auto size = entry->get()->GetPixelSize();
+                    /// If image has changed!
+                    if(!(size.height == bitmap.height && size.width == bitmap.width)){
+                        entry->releaseVal();
+                        ID2D1Bitmap *bitmap_res;
+                        hr = compAssets->direct2d_hwnd_target->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(),&bitmap_res);
+                        if(!SUCCEEDED(hr)){
+                            //Handle Error!
+                        };
+                        entry->setVal(bitmap_res);
+                    };
+                }
+                else {
+                    ID2D1Bitmap *bitmap_res;
+                    hr = compAssets->direct2d_hwnd_target->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(),&bitmap_res);
+                    if(!SUCCEEDED(hr)){
+                        //Handle Error!
+                    };
+                    entry->setVal(bitmap_res);
+                };
+            }
         };
 
         void setupTextFormatIfNeeded(HWNDItemCompAssets *compAssets,Text & text,unsigned id){
@@ -566,6 +605,14 @@ namespace OmegaWTK::Composition {
                         }
                         break;
                     }
+                    case Visual::Bitmap : {
+                        Visual::BitmapParams *params = (Visual::BitmapParams *)visual->params;
+                        setupBitmap(assets,params->img,visual->id);
+                        ID2D1Bitmap *bitmap = assets->bitmaps[visual->id]->get();
+                        RECT rc = core_rect_to_win_rect(params->rect,parent);
+                        render_target->DrawBitmap(bitmap,D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom));
+                        break;
+                    };
                 }
         };
 
@@ -579,7 +626,7 @@ namespace OmegaWTK::Composition {
 
             render_target->BeginDraw();
             render_target->SetTransform(D2D1::IdentityMatrix());
-            render_target->Clear(D2D1::ColorF(D2D1::ColorF::White));
+            render_target->Clear(color_to_d2d1_color(currentLayer->getBackgroundColor()));
 
             // render_target->PushLayer(D2D1::LayerParameters(),layer.get());
 
@@ -614,7 +661,7 @@ namespace OmegaWTK::Composition {
 
                 render_target->BeginDraw();
                 render_target->SetTransform(D2D1::IdentityMatrix());
-                render_target->Clear(D2D1::ColorF(D2D1::ColorF::White));
+                render_target->Clear(color_to_d2d1_color(currentLayer->getBackgroundColor()));
 
                 // render_target->PushLayer(D2D1::LayerParameters(),layer.get());
 

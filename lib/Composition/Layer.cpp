@@ -4,50 +4,6 @@
 
 namespace OmegaWTK::Composition {
 
-#define VISUAL_SET_PARAMS(arg)                                                 \
-  switch (type) {                                                              \
-  case Rect: {                                                                 \
-    RectParams *params = (RectParams *)this->params;                           \
-    arg break;                                                                 \
-  };                                                                           \
-  case Text: {                                                                 \
-    TextParams *params = (TextParams *)this->params;                           \
-    arg break;                                                                 \
-  }                                                                            \
-  case RoundedRect: {                                                          \
-    RoundedRectParams *params = (RoundedRectParams *)this->params;             \
-    arg break;                                                                 \
-  }                                                                            \
-  case Ellipse: {                                                              \
-    EllipseParams *params = (EllipseParams *)this->params;                     \
-    arg break;                                                                 \
-  }                                                                            \
-  };
-
-void Visual::setColor(const Color &new_color) {
-  VISUAL_SET_PARAMS(params->color = std::move(new_color);)
-};
-void Visual::setFont(const Text::Font &new_font){
-    if(type == Text){
-        TextParams *params = (TextParams *)this->params;
-        params->text.setFont(std::move(new_font));
-    };
-};
-void Visual::setRect(const Core::Rect &new_rect){
-    
-};
-
-// VPVR Visual::getRect(){
-
-// };
-
-// VPVR Visual::getColor(){
-
-// };
-
-// VPVR Visual::getFont(){
-
-// };
 
 Target::Target(Native::NativeItemPtr _native) : native(_native){};
 Target::~Target(){};
@@ -73,6 +29,13 @@ void Layer::drawText(const Core::String & str,unsigned size,const Color & color,
 void Layer::drawEllipse(const Core::Ellipse &ellipse,const Color &color,Core::Optional<Border> border){
   compTarget->visuals.push_back(new Visual(
     {compTarget->id_gen,Visual::Ellipse,(void *) new Visual::EllipseParams({ellipse,color,border})}));
+  ++compTarget->id_gen;
+};
+
+void Layer::drawBitmap(BitmapImage image,const Core::Rect & rect){
+  compTarget->visuals.push_back(new Visual(
+    {compTarget->id_gen,Visual::Bitmap,(void *)new Visual::BitmapParams({image,rect})
+  }));
   ++compTarget->id_gen;
 };
 

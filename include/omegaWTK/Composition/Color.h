@@ -52,9 +52,7 @@ namespace OmegaWTK {
             Color(std::uint32_t hex_color,std::uint8_t alpha = 0xFF);
         };
 
-        // class Gradient {
-            
-        // };
+        
     };
 };
 
