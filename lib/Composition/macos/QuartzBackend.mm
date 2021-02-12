@@ -24,6 +24,7 @@ class QuartzBackend : public Backend {
         Core::Map<unsigned,CGPathRef> paths;
         Core::Map<unsigned,Core::Rect *> rects;
         Core::Map<unsigned,Core::RoundedRect *> rounded_rects;
+        Core::Map<unsigned,Core::Ellipse *> ellipses;
         Core::Map<unsigned,CALayer *> layers;
         Core::Map<unsigned,Text *> text_objects;
         
@@ -156,6 +157,44 @@ class QuartzBackend : public Backend {
                 [shapeLayer setNeedsDisplay];
                 break;
             }
+            case Visual::Ellipse : {
+                Visual::EllipseParams *params = reinterpret_cast<Visual::EllipseParams *>(visual->params);
+                bool init = setupCALayerIfNeeded<CAShapeLayer>(assets,visual_id);
+                CAShapeLayer *shapeLayer = (CAShapeLayer *)assets->layers[visual_id];
+                /// Setup CG Path if needed or if it has changed!
+                {
+                    auto found = assets->paths.find(visual_id);
+                    if(found == assets->paths.end()){
+                        assets->ellipses.insert(std::pair<unsigned,Core::Ellipse *>(visual_id,new Core::Ellipse(params->ellipse)));
+                        assets->paths.insert(std::pair<unsigned,CGPathRef> (visual_id,CGPathCreateWithEllipseInRect(CGRectMake(params->ellipse.pos.x,params->ellipse.pos.y,params->ellipse.radius_x * 2,params->ellipse.radius_y * 2),NULL)));
+                    }
+                    else {
+                        auto & old_path = found->second;
+                        auto & old_ellipse = assets->ellipses[visual_id];
+                        if(!old_ellipse->compare(params->ellipse)){
+                            CGPathRelease(old_path);
+                            old_path = CGPathCreateWithEllipseInRect(CGRectMake(params->ellipse.pos.x,params->ellipse.pos.y, params->ellipse.radius_x * 2,params->ellipse.radius_y * 2),NULL);
+                            delete old_ellipse;
+                            old_ellipse = new Core::Ellipse(params->ellipse);
+                        };
+                    };
+                    
+                    CGPathRef path = assets->paths[visual_id];
+                    
+                    setupNSColor(assets,params->color,visual_id);
+                    NSColor *color = assets->colors[visual_id];
+                    
+                    shapeLayer.fillColor = color.CGColor;
+                    shapeLayer.path = path;
+                    
+                    if(init) {
+                        [currentLayer addSublayer:shapeLayer];
+                        currentLayer = shapeLayer;
+                    }
+                    [shapeLayer setNeedsDisplay];
+                    break;
+                }
+            };
             case Visual::Text : {
                 Visual::TextParams *params = reinterpret_cast<Visual::TextParams *>(visual->params);
                 bool init = setupCALayerIfNeeded<CATextLayer>(assets,visual_id);

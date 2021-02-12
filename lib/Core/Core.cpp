@@ -12,6 +12,10 @@ bool RoundedRect::compare(RoundedRect & other){
     return Rect::compare(other) && (radius_x == other.radius_x) && (radius_y == other.radius_y);
 };
 
+bool Ellipse::compare(Ellipse & other){
+    return (pos.x == other.pos.x) && (pos.y == other.pos.y) && (radius_x == other.radius_x) && (radius_y == other.radius_y);
+};
+
 
     // OWTKString::~OWTKString(){
     //     delete data;

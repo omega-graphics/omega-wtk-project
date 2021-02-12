@@ -71,14 +71,36 @@ namespace PNG {
             png_read_info(png_ptr,info_ptr);
 
             /// Set Info!
+            
             auto width = png_get_image_width(png_ptr,info_ptr);
             auto height = png_get_image_height(png_ptr,info_ptr);
 
             auto bitDepth = png_get_bit_depth(png_ptr,info_ptr);
-            auto numChannels = png_get_channels(png_ptr,info_ptr);
+            auto channels = png_get_channels(png_ptr,info_ptr);
             auto colorTy = png_get_color_type(png_ptr,info_ptr);
-
             
+            rowPtrs = new png_bytep[height];
+            data = new char[width * height * bitDepth * channels / 8];
+            unsigned int stride = width * bitDepth * channels / 8;
+            
+            for(auto i = 0;i < height;i++){
+                png_uint_32 ptr = (height - i - 1) * stride;
+                rowPtrs[i] = (png_bytep)data + ptr;
+            };
+            
+            png_read_image(png_ptr,rowPtrs);
+            
+            png_read_end(png_ptr,info_ptr);
+            
+            delete [] rowPtrs;
+            png_destroy_read_struct(&png_ptr, &info_ptr,(png_infopp)0);
+            
+            img_res->data = data;
+            img_res->stride = stride;
+            img_res->width = width;
+            img_res->height = height;
+            
+            return true;
 
         }
         else 
@@ -87,8 +109,13 @@ namespace PNG {
 };
 
 BitmapImage loadImageFromFile(const Core::String & name) {
-
-    
+    BitmapImage img;
+    if(PNG::load_png_from_file(name,&img)){
+        return img;
+    }
+    else {
+        return {};
+    };
 };
 
 }

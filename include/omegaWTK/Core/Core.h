@@ -94,6 +94,7 @@ namespace OmegaWTK {
             Position pos;
             unsigned radius_x;
             unsigned radius_y;
+            bool compare(Ellipse & other);
         };
         /// A vector that acts like a queue (first in , first out), but has control over every element and its order in the container.
         template<class _Ty>
