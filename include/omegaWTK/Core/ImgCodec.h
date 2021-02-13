@@ -13,11 +13,6 @@ namespace OmegaWTK {
             unsigned bitDepth;
             unsigned channelCount;
         };
-
-        class ImgCodec {
-            BitmapImage *storage;
-            virtual void readToStorage();
-        };
         BitmapImage loadImageFromFile(const Core::String & name);
     };
 };

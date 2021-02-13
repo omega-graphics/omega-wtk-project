@@ -1,6 +1,17 @@
 #include "omegaWTK/Core/Core.h"
 #include <cstring>
 #include <algorithm>
+#include <sstream>
+#include <cctype>
+
+
+#ifdef TARGET_WIN32
+#include <windows.h>
+#endif
+
+#ifdef TARGET_MACOS
+#include <unistd.h>
+#endif
 
 namespace OmegaWTK::Core {
 
@@ -86,7 +97,141 @@ Core::RoundedRect RoundedRect(unsigned x,unsigned y,unsigned width,unsigned heig
 }
 
 void FSPath::parse(const Core::String & str){
+    std::istringstream stream(str);
+    
+    char buffer[200];
+    char *buffer_ptr = buffer;
+    char *buf_start = buffer_ptr;
+    
+    auto get_char = [&](){
+        return stream.get();
+    };
+    
+    auto ahead_char = [&](){
+        return stream.peek();
+    };
+    
+    auto clear_buffer = [&](Token::Type ty){
+        auto len = buffer_ptr - buf_start;
+        tokens.push_back({ty,Core::String(buffer,len)});
+        buffer_ptr = buffer;
+    };
+    
+    char c;
+    /// A Boolean to decide whether to continue!
+    bool cont = true;
+    while(cont){
+        c = get_char();
+        switch (c) {
+            case '\0' : {
+                cont = false;
+                break;
+            }
+            case '/' : {
+                *buffer_ptr = c;
+                ++buffer_ptr;
+                clear_buffer(Token::Slash);
+                break;
+            };
+            case '.' : {
+                *buffer_ptr = c;
+                ++buffer_ptr;
+                clear_buffer(Token::Dot);
+            }
+            case '\\' : {
+                *buffer_ptr = c;
+                ++buffer_ptr;
+                clear_buffer(Token::Slash);
+                break;
+            };
+            case ' ' : {
+                break;
+            }
+            default : {
+                if(isalnum(c)){
+                    *buffer_ptr = c;
+                    ++buffer_ptr;
+                    c = ahead_char();
+                    if(!isalnum(ahead_char())){
+                        clear_buffer(Token::ID);
+                    };
+                    break;
+                };
+            }
+        };
+    };
+    
+    
+};
 
+Core::String & FSPath::ext(){
+    if(tokens.back().type == Token::ID && tokens[tokens.size() - 2].type == Token::Dot){
+        return tokens.back().str;
+    }
+};
+
+Core::String FSPath::filename(){
+    Core::String res = "";
+    auto it = tokens.begin();
+    while(it != tokens.end()){
+        auto &type  = it->type;
+        if(type == Token::ID){
+            ++it;
+            auto & type = it->type;
+            if(type == Token::Dot){
+                res.append((it - 1)->str);
+                if(it == (tokens.end() - 2)){
+                    return res;
+                    break;
+                };
+                
+                while(it != (tokens.end() - 2)){
+                    res.append(it->str);
+                    ++it;
+                };
+                return res;
+                break;
+            };
+        };
+        ++it;
+    };
+};
+
+Core::String FSPath::serialize(){
+    std::ostringstream out;
+#ifdef TARGET_MACOS
+    char pwd[100];
+    if(getcwd(pwd,sizeof(pwd)) != nullptr){
+        out << pwd << std::flush;
+    };
+#endif
+    
+#ifdef TARGET_WIN32
+    
+#endif
+    
+    auto it = tokens.begin();
+    if(it->type == Token::Dot){
+        ++it;
+    }
+    else if(it->type == Token::ID){
+        out << '/' << std::flush;
+        ++it;
+    };
+    
+    while(it != tokens.end()){
+#ifdef TARGET_WIN32
+        if(it->type == Token::Slash){
+            out << '\\' << std::flush;
+        }
+        else {;
+#endif
+            out << it->str << std::flush;
+            ++it;
+#ifdef TARGET_WIN32
+        };
+#endif
+    };
 };
 
 FSPath::FSPath(const Core::String & str){

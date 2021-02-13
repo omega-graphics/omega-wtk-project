@@ -4,6 +4,7 @@
 
 #import "QuartzBackend.h"
 #import <QuartzCore/QuartzCore.h>
+#import "MetalBackend.h"
 
 
 namespace OmegaWTK::Composition {
@@ -20,26 +21,80 @@ CFStringRef core_string_to_cf_string(const Core::String & str){
 class QuartzBackend : public Backend {
     
     struct CocoaItemCompAssets {
-        Core::Map<unsigned,NSColor *> colors;
+        Core::Map<unsigned,NSColor *> border_colors;
+        Core::Map<unsigned,NSColor *> fill_colors;
         Core::Map<unsigned,CGPathRef> paths;
         Core::Map<unsigned,Core::Rect *> rects;
         Core::Map<unsigned,Core::RoundedRect *> rounded_rects;
         Core::Map<unsigned,Core::Ellipse *> ellipses;
+        Core::Map<unsigned,Border *> borders;
         Core::Map<unsigned,CALayer *> layers;
         Core::Map<unsigned,Text *> text_objects;
         
+        enum class NSColorUsage : OPT_PARAM {
+            Fill,
+            Border
+        };
+        
+        
         template<class _Ty>
         using MapEntry = std::pair<unsigned,_Ty>;
+        
+        template<class _Map_Ty>
+        static void free_map(_Map_Ty & map){
+            auto it = map.begin();
+            while(it != map.end()){
+                auto & entry = it->second;
+                delete entry;
+                ++it;
+            };
+        };
+        ~CocoaItemCompAssets(){
+            free_map(borders);
+            free_map(text_objects);
+            free_map(rounded_rects);
+            free_map(rects);
+            free_map(ellipses);
+            /// Free Fill NSColors
+            auto it = fill_colors.begin();
+            while(it != fill_colors.end()){
+                auto & nscolor = it->second;
+                [nscolor dealloc];
+                ++it;
+            };
+            /// Free Border NSColors
+            auto it_1 = border_colors.begin();
+            while(it_1 != border_colors.end()){
+                auto & nscolor = it_1->second;
+                [nscolor dealloc];
+                ++it_1;
+            };
+            /// Free CGPathRefs
+            auto it_2 = paths.begin();
+            while(it_2 != paths.end()){
+                auto & path = it_2->second;
+                CGPathRelease(path);
+                ++it_2;
+            };
+            /// Free CALayers
+            auto it_3 = layers.begin();
+            while(it_3 != layers.end()){
+                auto & layer = it_3->second;
+                [layer dealloc];
+                ++it_3;
+            };
+        };
+        
     };
     
     using CocoaItemAssetsCatalog = Core::Map<Native::Cocoa::CocoaItem *,CocoaItemCompAssets>;
     CocoaItemAssetsCatalog assets_catalog;
-    
-    void setupNSColor(CocoaItemCompAssets *assets,Color & color,unsigned v_id){
-        auto found = assets->colors.find(v_id);
-        if(found == assets->colors.end()){
+
+    void __setup_color(Core::Map<unsigned,NSColor *> & color_map,Color & color,unsigned & v_id){
+        auto found = color_map.find(v_id);
+        if(found == color_map.end()){
             NSColor *ns_color = color_to_ns_color(color);
-            assets->colors.insert(CocoaItemCompAssets::MapEntry<NSColor *>(v_id,ns_color));
+            color_map.insert(CocoaItemCompAssets::MapEntry<NSColor *>(v_id,ns_color));
         }
         else {
 //            NSLog(@"Comparing Colors");
@@ -62,6 +117,16 @@ class QuartzBackend : public Backend {
                 old_color = [NSColor colorWithRed:new_r green:new_g blue:new_b alpha:new_a];
             };
         };
+    };
+    
+    void setupNSColor(CocoaItemCompAssets *assets,Color & color,unsigned v_id,CocoaItemCompAssets::NSColorUsage usage){
+        if(usage == CocoaItemCompAssets::NSColorUsage::Fill){
+            __setup_color(assets->fill_colors,color,v_id);
+        }
+        else if(usage == CocoaItemCompAssets::NSColorUsage::Border){
+            __setup_color(assets->border_colors,color,v_id);
+        };
+       
     };
     template<class _Layer_Ty>
     bool setupCALayerIfNeeded(CocoaItemCompAssets *assets,unsigned v_id){
@@ -105,11 +170,20 @@ class QuartzBackend : public Backend {
                 }
                 CGPathRef path = assets->paths[visual_id];
                 
-                setupNSColor(assets,params->color,visual_id);
-                NSColor *color = assets->colors[visual_id];
+                setupNSColor(assets,params->color,visual_id,CocoaItemCompAssets::NSColorUsage::Fill);
+                NSColor *color = assets->fill_colors[visual_id];
                 
                 shapeLayer.fillColor = color.CGColor;
                 shapeLayer.path = path;
+                
+                if(params->border.has_value()){
+                    auto & border_obj = params->border.value();
+                    setupNSColor(assets,border_obj.color,visual_id,CocoaItemCompAssets::NSColorUsage::Border);
+                    NSColor *color = assets->border_colors[visual_id];
+                    
+                    shapeLayer.borderColor = color.CGColor;
+                    shapeLayer.borderWidth = border_obj.width;
+                };
                 
                 if(init) {
                     [currentLayer addSublayer:shapeLayer];
@@ -145,11 +219,21 @@ class QuartzBackend : public Backend {
                 }
                 CGPathRef path = assets->paths[visual_id];
                 
-                setupNSColor(assets,params->color,visual_id);
-                NSColor *color = assets->colors[visual_id];
+                setupNSColor(assets,params->color,visual_id,CocoaItemCompAssets::NSColorUsage::Fill);
+                NSColor *color = assets->fill_colors[visual_id];
                 
                 shapeLayer.fillColor = color.CGColor;
                 shapeLayer.path = path;
+                
+                if(params->border.has_value()){
+                    auto & border_obj = params->border.value();
+                    setupNSColor(assets,border_obj.color,visual_id,CocoaItemCompAssets::NSColorUsage::Border);
+                    NSColor *color = assets->border_colors[visual_id];
+                    
+                    shapeLayer.borderColor = color.CGColor;
+                    shapeLayer.borderWidth = border_obj.width;
+                };
+                
                 if(init) {
                     [currentLayer addSublayer:shapeLayer];
                     currentLayer = shapeLayer;
@@ -181,11 +265,20 @@ class QuartzBackend : public Backend {
                     
                     CGPathRef path = assets->paths[visual_id];
                     
-                    setupNSColor(assets,params->color,visual_id);
-                    NSColor *color = assets->colors[visual_id];
+                    setupNSColor(assets,params->color,visual_id,CocoaItemCompAssets::NSColorUsage::Fill);
+                    NSColor *color = assets->fill_colors[visual_id];
                     
                     shapeLayer.fillColor = color.CGColor;
                     shapeLayer.path = path;
+                    
+                    if(params->border.has_value()){
+                        auto & border_obj = params->border.value();
+                        setupNSColor(assets,border_obj.color,visual_id,CocoaItemCompAssets::NSColorUsage::Border);
+                        NSColor *color = assets->border_colors[visual_id];
+                        
+                        shapeLayer.borderColor = color.CGColor;
+                        shapeLayer.borderWidth = border_obj.width;
+                    };
                     
                     if(init) {
                         [currentLayer addSublayer:shapeLayer];
@@ -217,8 +310,8 @@ class QuartzBackend : public Backend {
                 auto rect_ptr = assets->rects[visual_id];
                 textLayer.frame = Native::Cocoa::core_rect_to_cg_rect(*rect_ptr);
                 
-                setupNSColor(assets,params->color,visual_id);
-                NSColor *color = assets->colors[visual_id];
+                setupNSColor(assets,params->color,visual_id,CocoaItemCompAssets::NSColorUsage::Fill);
+                NSColor *color = assets->fill_colors[visual_id];
                 textLayer.foregroundColor = color.CGColor;
                 /// Setup Text if needed or if needed text has changed!
                 bool fontChange;
@@ -340,6 +433,9 @@ class QuartzBackend : public Backend {
             native_ptr->setNeedsDisplay();
         };
     };
+//    ~QuartzBackend(){
+//
+//    };
 };
 
 Backend *make_quartz_backend(){

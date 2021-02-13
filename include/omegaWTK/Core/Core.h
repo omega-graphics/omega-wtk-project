@@ -244,12 +244,21 @@ namespace OmegaWTK {
 
 
     class FSPath {
-        Core::Vector<Core::String> tokens;
+        struct Token {
+            typedef enum : OPT_PARAM {
+                ID,
+                Dot,
+                Slash,
+            } Type;
+            Type type;
+            Core::String str;
+        };
+        Core::Vector<Token> tokens;
         void parse(const Core::String & str);
     public:
         Core::String dir();
         Core::String filename();
-        Core::String ext();
+        Core::String & ext();
         Core::String serialize();
         FSPath(const Core::String & str);
         ~FSPath();

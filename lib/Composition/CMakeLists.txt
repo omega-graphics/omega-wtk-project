@@ -31,7 +31,7 @@ if(TARGET_WIN32)
 endif()
 
 if(TARGET_MACOS)
-    set(COMPOSITION_MAC_SOURCES "QuartzBackend.h" "QuartzBackend.mm")
+    set(COMPOSITION_MAC_SOURCES "QuartzBackend.h" "QuartzBackend.mm" "MetalBackend.h" "MetalBackend.mm")
     list(TRANSFORM COMPOSITION_MAC_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/macos/")
     target_sources("omegaWTKComposition" PRIVATE ${COMPOSITION_MAC_SOURCES})
 endif()
