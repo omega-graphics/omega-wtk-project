@@ -52,7 +52,20 @@ namespace OmegaWTK {
             Color(std::uint32_t hex_color,std::uint8_t alpha = 0xFF);
         };
 
-        
+        struct OMEGAWTK_EXPORT Gradient {
+            Core::Position start;
+            Core::Position end;
+            struct GradientStop {
+                Core::Position pos;
+                Color color;
+            };
+            typedef enum : OPT_PARAM {
+                Linear,
+                Radial
+            } GradientType;
+            GradientType type;
+            Core::Vector<GradientStop> stops;
+        };
     };
 };
 

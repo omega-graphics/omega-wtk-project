@@ -241,6 +241,19 @@ namespace OmegaWTK {
     Core::Rect Rect(unsigned x,unsigned y,unsigned width,unsigned height);
     Core::Ellipse Ellipse(unsigned x,unsigned y,unsigned radius_x,unsigned radius_y);
     Core::RoundedRect RoundedRect(unsigned x,unsigned y,unsigned width,unsigned height,unsigned radius_x,unsigned radius_y);
+
+
+    class FSPath {
+        Core::Vector<Core::String> tokens;
+        void parse(const Core::String & str);
+    public:
+        Core::String dir();
+        Core::String filename();
+        Core::String ext();
+        Core::String serialize();
+        FSPath(const Core::String & str);
+        ~FSPath();
+    };
 };
 
 #endif

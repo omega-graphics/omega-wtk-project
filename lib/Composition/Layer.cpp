@@ -32,7 +32,7 @@ void Layer::drawEllipse(const Core::Ellipse &ellipse,const Color &color,Core::Op
   ++compTarget->id_gen;
 };
 
-void Layer::drawBitmap(BitmapImage image,const Core::Rect & rect){
+void Layer::drawBitmap(Core::BitmapImage image,const Core::Rect & rect){
   compTarget->visuals.push_back(new Visual(
     {compTarget->id_gen,Visual::Bitmap,(void *)new Visual::BitmapParams({image,rect})
   }));

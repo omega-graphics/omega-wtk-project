@@ -3,9 +3,10 @@ cmake_minimum_required(VERSION 3.13)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
-
 project("OmegaWTK" C CXX)
 set(OMEGAWTK_VERSION "0.1")
+
+# set(CMAKE_CXX_FLAGS "-gdwarf")
 
 find_package(PNG REQUIRED)
 if(PNG_FOUND)

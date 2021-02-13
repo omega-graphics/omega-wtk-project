@@ -85,4 +85,12 @@ Core::RoundedRect RoundedRect(unsigned x,unsigned y,unsigned width,unsigned heig
     return {Rect(x,y,width,height),radius_x,radius_y};
 }
 
+void FSPath::parse(const Core::String & str){
+
+};
+
+FSPath::FSPath(const Core::String & str){
+    parse(str);
+};
+
 }

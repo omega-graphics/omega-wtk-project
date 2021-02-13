@@ -8,6 +8,8 @@
 #include <Uxtheme.h>
 #include <atlstr.h>
 #include <wrl.h>
+#include <iomanip>
+#include <sstream>
 
 #undef DrawText
 
@@ -292,26 +294,93 @@ namespace OmegaWTK::Composition {
             // return S_OK;
         };
 
-        void setupBitmap(HWNDItemCompAssets *compAssets,BitmapImage &bitmap,unsigned v_id){
+        DXGI_FORMAT computePixelFormat(unsigned bitDepth,unsigned channelCount){
+            std::string message = "BitDepth :" + std::to_string(bitDepth) + "ChannelCount:" + std::to_string(channelCount);
+            MessageBox(GetForegroundWindow(),message.c_str(),"NOTE",MB_OK);
+            if(bitDepth == 32){
+                switch (channelCount) {
+                    case 1 : {
+                        return DXGI_FORMAT_R32_TYPELESS;
+                         break;
+                    };
+                    case 2 : {
+                        return DXGI_FORMAT_R32G32_TYPELESS;
+                         break;
+                    };
+                    case 3 : {
+                        return DXGI_FORMAT_R32G32B32_TYPELESS;
+                         break;
+                    };
+                    case 4 : {
+                        return  DXGI_FORMAT_R32G32B32A32_TYPELESS;
+                         break;
+                    };
+                }
+            }
+            else if(bitDepth == 16){
+                switch (channelCount) {
+                    case 1 : {
+                        return DXGI_FORMAT_R16_TYPELESS;
+                         break;
+                    };
+                    case 2 : {
+                        return DXGI_FORMAT_R16G16_TYPELESS;
+                         break;
+                    };
+                    // case 3 : {
+                    //     return DXGI_FORMAT_R16G16B16_T;
+                    // };
+                    case 4 : {
+                        return  DXGI_FORMAT_R16G16B16A16_TYPELESS;
+                         break;
+                    };
+                }
+            }
+            else if(bitDepth == 8){
+                switch (channelCount) {
+                    case 1 : {
+                        return DXGI_FORMAT_R8_TYPELESS;
+                         break;
+                    };
+                    case 2 : {
+                        return DXGI_FORMAT_R8G8_TYPELESS;
+                         break;
+                    };
+                    // case 3 : {
+                    //     return DXGI_FORMAT_R8G8B8_TYPELESS;
+                    // };
+                    case 4 : {
+                        return  DXGI_FORMAT_R8G8B8A8_TYPELESS;
+                        break;
+                    };
+                }
+            };
+            // return DXGI_FORMAT_UNKNOWN;
+        };
+
+        void setupBitmap(HWNDItemCompAssets *compAssets,Core::BitmapImage &bitmap,unsigned v_id){
             HRESULT hr;
             auto it = compAssets->bitmaps.find(v_id);
             if(it == compAssets->bitmaps.end()){
                 ID2D1Bitmap *bitmap_res;
-                hr = compAssets->direct2d_hwnd_target->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(),&bitmap_res);
+                hr = compAssets->direct2d_hwnd_target->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED)),&bitmap_res);
                 if(!SUCCEEDED(hr)){
                     //Handle Error!
+                    std::stringstream s;
+                    s << "Failed to Create Bitmap: Error Code:" << std::hex << hr;
+                    MessageBox(GetForegroundWindow(),s.str().c_str(),NULL,MB_OK);
                 };
                 compAssets->bitmaps.insert(std::pair<unsigned,HWNDItemCompAssets::BitmapEntry *>(v_id,new HWNDItemCompAssets::BitmapEntry(bitmap_res)));
             }
             else {
                 auto & entry = it->second;
                 if(entry->hasVal()){
-                    auto size = entry->get()->GetPixelSize();
+                    auto size = entry->get()->GetSize();
                     /// If image has changed!
                     if(!(size.height == bitmap.height && size.width == bitmap.width)){
                         entry->releaseVal();
                         ID2D1Bitmap *bitmap_res;
-                        hr = compAssets->direct2d_hwnd_target->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(),&bitmap_res);
+                        hr = compAssets->direct2d_hwnd_target->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED)),&bitmap_res);
                         if(!SUCCEEDED(hr)){
                             //Handle Error!
                         };
@@ -320,7 +389,7 @@ namespace OmegaWTK::Composition {
                 }
                 else {
                     ID2D1Bitmap *bitmap_res;
-                    hr = compAssets->direct2d_hwnd_target->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(),&bitmap_res);
+                    hr = compAssets->direct2d_hwnd_target->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED)),&bitmap_res);
                     if(!SUCCEEDED(hr)){
                         //Handle Error!
                     };
@@ -607,6 +676,8 @@ namespace OmegaWTK::Composition {
                     }
                     case Visual::Bitmap : {
                         Visual::BitmapParams *params = (Visual::BitmapParams *)visual->params;
+                        std::string info = "Width:" + std::to_string(params->img.width) + "Height:" + std::to_string(params->img.height) + "Stride:" + std::to_string(params->img.stride);
+                        MessageBox(GetForegroundWindow(),info.c_str(),"NOTE",MB_OK);
                         setupBitmap(assets,params->img,visual->id);
                         ID2D1Bitmap *bitmap = assets->bitmaps[visual->id]->get();
                         RECT rc = core_rect_to_win_rect(params->rect,parent);

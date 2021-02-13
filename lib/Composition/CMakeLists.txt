@@ -8,7 +8,6 @@ add_omega_wtk_lib(
     "Color.cpp"
     "Layer.cpp"
 	"Text.cpp"
-    "Bitmap.cpp"
     "Visual.cpp"
     HEADERS 
     "Backend.h"
@@ -16,16 +15,14 @@ add_omega_wtk_lib(
     "Color.h"
     "Layer.h"
 	"Text.h"
-    "Bitmap.h"
     "Visual.h"
     LINK_LIBS 
     "omegaWTKCore"
     "omegaWTKNative"
 )
-# Exposing private_include from omegaWTKNative lib!
-target_include_directories("omegaWTKComposition" PRIVATE "${CMAKE_SOURCE_DIR}/lib/Native/private_include;${PNG_INCLUDE_DIRS}")
-target_link_libraries("omegaWTKComposition" PRIVATE ${PNG_LIBRARIES})
-target_compile_definitions("omegaWTKComposition" PRIVATE "${PNG_DEFINTIONS}")
+# Exposing private_include from omegaWTKNative lib
+
+target_include_directories("omegaWTKComposition" PRIVATE "${CMAKE_SOURCE_DIR}/lib/Native/private_include")
 
 if(TARGET_WIN32)
     set(COMPOSITION_WIN_SOURCES "DirectXBackend.h" "DirectXBackend.cpp" "DCVisualTree.h" "DCVisualTree.cpp")

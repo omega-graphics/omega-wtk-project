@@ -1,7 +1,7 @@
 #include "omegaWTK/Core/Core.h"
 #include "Color.h"
 #include "Text.h"
-#include "Bitmap.h"
+#include "omegaWTK/Core/ImgCodec.h"
 
 #ifndef OMEGAWTK_COMPOSITION_VISUAL_H
 #define OMEGAWTK_COMPOSITION_VISUAL_H
@@ -63,7 +63,7 @@ namespace OmegaWTK {
             Core::Rect rect;
         } TextParams;
         typedef struct {
-            BitmapImage img;
+            Core::BitmapImage img;
             Core::Rect rect;
         } BitmapParams;
         void * params;
