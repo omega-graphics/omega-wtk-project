@@ -6,6 +6,7 @@
 #include <cassert>
 #include <list>
 #include <optional>
+#include <sstream>
 #include "OmegaWTKExport.h"
 
 #ifndef OMEGAWTK_CORE_CORE_H
@@ -256,6 +257,16 @@ namespace OmegaWTK {
         Core::Vector<Token> tokens;
         void parse(const Core::String & str);
     public:
+        const unsigned getTokenCount(){ return tokens.size();};
+        Core::String debugString(){
+            std::ostringstream out;
+            auto it = tokens.begin();
+            while(it != tokens.end()){
+                out << "{Type:" << int(it->type) << ",Content:" << it->str << "}, " << std::flush;
+                ++it;
+            };
+            return out.str();
+        };
         Core::String dir();
         Core::String filename();
         Core::String & ext();

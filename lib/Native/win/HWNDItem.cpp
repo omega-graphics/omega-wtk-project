@@ -107,12 +107,12 @@ namespace OmegaWTK::Native::Win {
     DWORD HWNDItem::getStyle(){
         return GetWindowLongPtr(hwnd,GWL_STYLE);
     };
-    void HWNDItem::show(int nCmdShow){
-        ShowWindow(hwnd,nCmdShow);
-    };
-    void HWNDItem::update(){
-        UpdateWindow(hwnd);
-    };
+    // void HWNDItem::show(int nCmdShow){
+    //     ShowWindow(hwnd,nCmdShow);
+    // };
+    // void HWNDItem::update(){
+    //     UpdateWindow(hwnd);
+    // };
     RECT HWNDItem::getClientRect(){
         RECT r;
         GetClientRect(hwnd,&r);

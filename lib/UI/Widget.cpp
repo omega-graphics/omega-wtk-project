@@ -7,17 +7,18 @@ Widget::Widget(const Core::Rect & rect,Widget *parent):parent(parent),compositor
 
     if(parent)
         parent->rootView->addSubView(this->rootView);
-};
-void Widget::show(){
+
     compositor->prepareDraw(rootView->layer);
 };
+void Widget::show(){
+    rootView->native->enable();
+};
 void Widget::hide(){
-    compositor->prepareCleanup();
+   rootView->native->disable();
 };
 
 Widget::~Widget(){
-    // delete rootView;
-    // delete compositor;
+    //  compositor->prepareCleanup();
 };
 
 }

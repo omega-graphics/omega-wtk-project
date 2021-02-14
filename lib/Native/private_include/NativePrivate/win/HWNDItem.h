@@ -16,14 +16,20 @@ namespace OmegaWTK::Native {
             ATOM atom;
             void emitIfPossible(NativeEventPtr event);
             friend class HWNDFactory;
+            void enable(){
+                ShowWindow(hwnd,SW_SHOWDEFAULT);
+            };
+            void disable(){
+                ShowWindow(hwnd,SW_HIDE);
+            };
             public:
             ATOM getAtom();
             HWND getHandle();
             bool isExtended();
             DWORD getStyle();
             DWORD getExtendedStyle();
-            void show(int nCmdShow);
-            void update();
+            // void show(int nCmdShow);
+            // void update();
             void destroy();
             RECT getClientRect();
             HDC getDCFromHWND();

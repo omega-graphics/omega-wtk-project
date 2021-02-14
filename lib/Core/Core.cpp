@@ -97,18 +97,18 @@ Core::RoundedRect RoundedRect(unsigned x,unsigned y,unsigned width,unsigned heig
 }
 
 void FSPath::parse(const Core::String & str){
-    std::istringstream stream(str);
+    unsigned idx = 0;
     
     char buffer[200];
     char *buffer_ptr = buffer;
     char *buf_start = buffer_ptr;
     
     auto get_char = [&](){
-        return stream.get();
+        return str[idx];
     };
     
     auto ahead_char = [&](){
-        return stream.peek();
+        return str[idx + 1];
     };
     
     auto clear_buffer = [&](Token::Type ty){
@@ -120,13 +120,13 @@ void FSPath::parse(const Core::String & str){
     char c;
     /// A Boolean to decide whether to continue!
     bool cont = true;
-    while(cont){
+    while(idx != str.size()){
         c = get_char();
         switch (c) {
-            case '\0' : {
-                cont = false;
-                break;
-            }
+            // case '\0' : {
+            //     cont = false;
+            //     break;
+            // }
             case '/' : {
                 *buffer_ptr = c;
                 ++buffer_ptr;
@@ -137,6 +137,7 @@ void FSPath::parse(const Core::String & str){
                 *buffer_ptr = c;
                 ++buffer_ptr;
                 clear_buffer(Token::Dot);
+                break;
             }
             case '\\' : {
                 *buffer_ptr = c;
@@ -151,14 +152,14 @@ void FSPath::parse(const Core::String & str){
                 if(isalnum(c)){
                     *buffer_ptr = c;
                     ++buffer_ptr;
-                    c = ahead_char();
                     if(!isalnum(ahead_char())){
                         clear_buffer(Token::ID);
                     };
-                    break;
                 };
+                break;
             }
         };
+        ++idx;
     };
     
     
@@ -198,16 +199,20 @@ Core::String FSPath::filename(){
 };
 
 Core::String FSPath::serialize(){
+    #define PATH_LIMIT 100
     std::ostringstream out;
 #ifdef TARGET_MACOS
-    char pwd[100];
-    if(getcwd(pwd,sizeof(pwd)) != nullptr){
+    char pwd[PATH_LIMIT];
+    if(getcwd(pwd,PATH_LIMIT) != nullptr){
         out << pwd << std::flush;
     };
 #endif
     
 #ifdef TARGET_WIN32
-    
+    CHAR buffer[PATH_LIMIT];
+    if(GetCurrentDirectoryA(PATH_LIMIT,buffer)){
+        out << buffer << std::flush;
+    };
 #endif
     
     auto it = tokens.begin();
@@ -227,15 +232,20 @@ Core::String FSPath::serialize(){
         else {;
 #endif
             out << it->str << std::flush;
-            ++it;
 #ifdef TARGET_WIN32
         };
 #endif
+        ++it;
     };
+    return out.str();
 };
 
 FSPath::FSPath(const Core::String & str){
     parse(str);
+};
+
+FSPath::~FSPath(){
+    
 };
 
 }

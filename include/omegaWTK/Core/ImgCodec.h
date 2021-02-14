@@ -13,7 +13,7 @@ namespace OmegaWTK {
             unsigned bitDepth;
             unsigned channelCount;
         };
-        BitmapImage loadImageFromFile(const Core::String & name);
+        BitmapImage loadImageFromFile(FSPath path);
     };
 };
 

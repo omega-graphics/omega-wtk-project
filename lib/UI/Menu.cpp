@@ -66,7 +66,7 @@ MenuItem *SubMenu(const Core::String & name,std::initializer_list<MenuItem *> it
     #endif
 };
 
-MenuItem *Seperator(){
+MenuItem *MenuSeperatorItem(){
     return new MenuItem();
 };
 

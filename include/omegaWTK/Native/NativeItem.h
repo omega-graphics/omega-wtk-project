@@ -23,6 +23,8 @@ namespace OmegaWTK {
             bool hasEventEmitter();
             void setParentLayer(NativeLayer *layer){ parentLayer = layer;};
             virtual void *getBinding() = 0;
+            virtual void enable() = 0;
+            virtual void disable() = 0;
             NativeItem();
             // ~NativeItem();
         };

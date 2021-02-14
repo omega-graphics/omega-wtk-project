@@ -21,7 +21,7 @@ public:
         Composition::Layer *rootLayer = rootView->getLayer();
          rootLayer->drawRect(Rect(0,0,150,150),Composition::Color::Red,Composition::Border(Composition::Color::Black,10));
         //  rootLayer->drawEllipse({{150,150},30,50},Composition::Color::Green);
-        rootLayer->drawBitmap(Core::loadImageFromFile("./test.png"),Rect(0,0,200,200));
+        // rootLayer->drawBitmap(Core::loadImageFromFile(Core::String("./test.png")),Rect(0,0,200,200));
         
     };
     
@@ -49,15 +49,21 @@ int omegaWTKMain(OmegaWTK::AppInst *app)
         OmegaWTK::CategoricalMenu("File",{
             OmegaWTK::SubMenu("Inside",{
                 new OmegaWTK::MenuItem("Here!",false,nullptr),
-                OmegaWTK::Seperator(),
+                OmegaWTK::MenuSeperatorItem(),
                 new OmegaWTK::MenuItem("Test!",false,nullptr)
             },new OmegaWTK::MyMenuDelegate())
         })
     });
  app->menu = menu;
-    
+    // OmegaWTK::FSPath path = OmegaWTK::Core::String("./test.png");
+    // MessageBoxA(GetForegroundWindow(),std::to_string(path.getTokenCount()).c_str(),"Token Count",MB_OK);
+    // // MessageBoxA(GetForegroundWindow(),path.debugString().c_str(),"DEBUG STRING",MB_OK);
+    // MessageBoxA(GetForegroundWindow(),path.serialize().c_str(),"RESULT",MB_OK);
+
     OmegaWTK::MyWidget widget({{0,0},{300,300}});
     widget.show();
+    // OmegaWTK::MyWidget widget2({{500,0},{300,300}});
+    // widget2.show();
     app->setRoot(&widget);
     return 0;
 }

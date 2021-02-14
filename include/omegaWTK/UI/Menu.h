@@ -67,7 +67,7 @@ MenuItem *SubMenu(const Core::String & name,std::initializer_list<MenuItem *> it
 /**
  Creates a Menu Seperator Item!
 */
-MenuItem *Seperator();
+MenuItem *MenuSeperatorItem();
 
 };
 
