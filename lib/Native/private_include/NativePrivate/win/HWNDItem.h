@@ -11,6 +11,8 @@ namespace OmegaWTK::Native {
             HWND hwnd;
             Core::Rect wndrect;
             UINT currentDpi;
+            bool isTracking;
+            bool hovered;
             LRESULT ProcessWndMsg(UINT,WPARAM,LPARAM);
             BOOL ProcessWndMsgImpl(HWND,UINT,WPARAM,LPARAM,LRESULT *);
             ATOM atom;

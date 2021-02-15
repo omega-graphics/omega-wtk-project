@@ -18,6 +18,8 @@ namespace OmegaWTK::Native::Win {
             HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD | WS_VISIBLE,(void *)this,nullptr,WS_EX_LAYERED);
 
         currentDpi = GetDpiForWindow(hwnd);
+        isTracking = false;
+        hovered = false;
     };
     LRESULT HWNDItem::ProcessWndMsg(UINT u_int,WPARAM wParam,LPARAM lParam){
         LRESULT result = 0;
@@ -54,6 +56,34 @@ namespace OmegaWTK::Native::Win {
         //     currentDpi = newDpi;
         //     break;
         // }
+        case WM_MOUSEMOVE : {
+            if(!isTracking && !hovered){
+                TRACKMOUSEEVENT ev;
+                ev.cbSize = sizeof(ev);
+                ev.hwndTrack = hwnd;
+                ev.dwFlags  = TME_HOVER | TME_LEAVE;
+                ev.dwHoverTime = HOVER_DEFAULT;
+                TrackMouseEvent(&ev);
+                isTracking = true;
+            };
+            break;
+        }
+        case WM_MOUSEHOVER : {
+            isTracking = false;
+            pt.x = GET_X_LPARAM(lParam);
+            pt.y = GET_Y_LPARAM(lParam);
+            emitIfPossible(button_event_to_native_event(NativeEvent::CursorEnter,&pt));
+            hovered = true;
+            break;
+        };
+        case WM_MOUSELEAVE : {
+            isTracking = false;
+            pt.x = GET_X_LPARAM(lParam);
+            pt.y = GET_Y_LPARAM(lParam);
+            emitIfPossible(button_event_to_native_event(NativeEvent::CursorExit,&pt));
+            hovered = false;
+            break;
+        };
         case WM_LBUTTONDOWN : {
             pt.x = GET_X_LPARAM(lParam);
             pt.y = GET_Y_LPARAM(lParam);
