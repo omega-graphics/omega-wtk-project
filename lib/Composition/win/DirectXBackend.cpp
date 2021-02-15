@@ -1,5 +1,5 @@
 #include <dcomp.h>
-#include <d3d12.h>
+#include <d3d11.h>
 #include <d2d1.h>
 #include <d2d1_1.h>
 #include <d2d1_1helper.h>
@@ -18,7 +18,7 @@
 #include "omegaWTK/Composition/Layer.h"
 
 #pragma comment(lib, "runtimeobject.lib")
-#pragma comment(lib, "d3d12.lib")
+#pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d2d1.lib")
 #pragma comment(lib, "dcomp.lib")
 #pragma comment(lib, "dwrite.lib")
@@ -58,10 +58,10 @@ namespace OmegaWTK::Composition {
         // FLOAT sacleFactor = 1.0;
 
         rectres.left = rect.pos.x;
-        rectres.right = (rectres.left + (rect.dimen.minWidth));
+        rectres.right = (rectres.left + (rect.dimen.minWidth) * sacleFactor);
 
-         rectres.bottom = ((parent_wnd_rect.bottom / sacleFactor) - rect.pos.y);
-         rectres.top = rectres.bottom - (rect.dimen.minHeight);
+         rectres.bottom = ((parent_wnd_rect.bottom) - rect.pos.y * sacleFactor);
+         rectres.top = rectres.bottom - (rect.dimen.minHeight * sacleFactor);
         
         return rectres;
     };
@@ -75,7 +75,7 @@ namespace OmegaWTK::Composition {
         GetClientRect(parent,&rc);
         auto wndHeight = rc.bottom - rc.top;
 
-        return D2D1::Point2F(pos.x,(wndHeight / scaleFactor) - pos.y);
+        return D2D1::Point2F(pos.x,(wndHeight) - pos.y);
 
     };
     /// A ComPtr that releases its object on its destruction. (Similar to the std::unique_ptr)
@@ -129,12 +129,16 @@ namespace OmegaWTK::Composition {
             using TextFormatEntry = Entry<IDWriteTextFormat>;
             using BitmapEntry = Entry<ID2D1Bitmap>;
 
-            bool has_direct2d_hwnd_target;
-            UniqueComPtr<ID2D1HwndRenderTarget> direct2d_hwnd_target;
+            bool has_dxgi_swap_chain;
+            UniqueComPtr<IDXGISwapChain1> dxgi_chain;
+            bool has_dxgi_surface;
+            UniqueComPtr<IDXGISurface> dxgi_surface;
+            bool has_direct2d_bitmap;
+            UniqueComPtr<ID2D1Bitmap1> d2_bitmap;
+            bool has_direct2d_device_context;
+            UniqueComPtr<ID2D1DeviceContext> direct2d_device_context;
             bool has_dcomp_hwnd_target;
             UniqueComPtr<IDCompositionTarget> dcomp_hwnd_target;
-            bool has_direct2d_layer;
-            UniqueComPtr<ID2D1Layer> direct2d_layer;
             
             template<typename _Ent_Ty>
             using MapEntry = std::pair<unsigned,_Ent_Ty>;
@@ -160,7 +164,7 @@ namespace OmegaWTK::Composition {
                 };
             };
 
-            HWNDItemCompAssets():has_direct2d_hwnd_target(false),direct2d_hwnd_target(NULL),has_dcomp_hwnd_target(false),dcomp_hwnd_target(NULL),has_direct2d_layer(false),direct2d_layer(NULL){};
+            HWNDItemCompAssets():has_dxgi_swap_chain(false),dxgi_chain(NULL),has_dxgi_surface(false),dxgi_surface(NULL),has_dcomp_hwnd_target(false),dcomp_hwnd_target(NULL){};
 
             ~HWNDItemCompAssets(){
                 // releaseMap(solid_color_brushes);
@@ -172,27 +176,62 @@ namespace OmegaWTK::Composition {
         using HWNDItemCompAssetsCatalog = Core::Map<Native::Win::HWNDItem *,HWNDItemCompAssets>;
         HWNDItemCompAssetsCatalog assets_catalog;
 
-        UniqueComPtr<ID3D12Device1> direct3d_device;
+        UniqueComPtr<ID3D11Device> direct3d_device;
+        // UniqueComPtr<ID3D11DeviceContext> direct3d_device_context;
+        // D3D_FEATURE_LEVEL level[10];
         UniqueComPtr<ID2D1Factory1> direct2d_factory;
-        UniqueComPtr<IDXGIDevice> dxgi_device;
+        UniqueComPtr<IDXGIDevice1> dxgi_device;
         UniqueComPtr<ID2D1Device> direct2d_device;
+        UniqueComPtr<IDXGIAdapter> dxgi_adapter;
+        UniqueComPtr<IDXGIFactory2> dxgi_factory;
         UniqueComPtr<IDCompositionDevice3> dcomp_device;
         UniqueComPtr<IDWriteFactory> dwrite_factory;
 
         void setup(){
-            // MessageBox(GetForegroundWindow(),"Setting Up Backend","Note",MB_OK);
+            MessageBox(GetForegroundWindow(),"Setting Up Backend","Note",MB_OK);
             HRESULT hr;
-            hr = D3D12CreateDevice(NULL,D3D_FEATURE_LEVEL_11_0,IID_PPV_ARGS(&direct3d_device));
+            D3D_FEATURE_LEVEL feature_level[] = {
+                D3D_FEATURE_LEVEL_11_1,
+                D3D_FEATURE_LEVEL_11_0,
+                D3D_FEATURE_LEVEL_10_1,
+                D3D_FEATURE_LEVEL_10_0,
+                D3D_FEATURE_LEVEL_9_3,
+                D3D_FEATURE_LEVEL_9_2,
+                D3D_FEATURE_LEVEL_9_1,
+            };
+            hr = D3D11CreateDevice(NULL,D3D_DRIVER_TYPE_HARDWARE,NULL,D3D11_CREATE_DEVICE_BGRA_SUPPORT,feature_level,ARRAYSIZE(feature_level),D3D11_SDK_VERSION,&direct3d_device,NULL,NULL);
             if(!SUCCEEDED(hr)){
                 //Handle Error!
+                std::ostringstream out;
+                out << std::hex << hr;
+
+                MessageBox(GetForegroundWindow(),(std::string("Failed to Direct3D Create Device!") + out.str()).c_str(),"Note",MB_OK);
             };
             hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED,&direct2d_factory);
             if(!SUCCEEDED(hr)){
                 //Handle Error!
             };
-            hr = direct3d_device.comPtr.As(&dxgi_device.comPtr);
+            hr = direct3d_device->QueryInterface(IID_PPV_ARGS(&dxgi_device));
             if(!SUCCEEDED(hr)){
                 //Handle Error!
+                MessageBoxA(GetForegroundWindow(),"Failed to Get DXGI Device!",NULL,MB_OK);
+            };
+            hr = dxgi_device->GetAdapter(&dxgi_adapter);
+            if(!SUCCEEDED(hr)){
+                MessageBoxA(GetForegroundWindow(),"Failed to Get DXGI Adapter",NULL,MB_OK);
+            }
+            hr = dxgi_device->SetMaximumFrameLatency(1);
+            if(!SUCCEEDED(hr)){
+                MessageBoxA(GetForegroundWindow(),"Failed to Set Frame Latency!",NULL,MB_OK);
+            }
+
+            hr = dxgi_adapter->GetParent(IID_PPV_ARGS(&dxgi_factory));
+            if(!SUCCEEDED(hr)){
+                MessageBoxA(GetForegroundWindow(),"Failed to Get DXGI Factory!",NULL,MB_OK);
+            }
+            hr = direct2d_factory->CreateDevice(dxgi_device.get(),&direct2d_device);
+            if(!SUCCEEDED(hr)){
+                MessageBoxA(GetForegroundWindow(),"Failed to Create D2Device ",NULL,MB_OK);
             };
             hr = DCompositionCreateDevice3(dxgi_device.get(),IID_PPV_ARGS(&dcomp_device));
             if(!SUCCEEDED(hr)){
@@ -211,18 +250,66 @@ namespace OmegaWTK::Composition {
 
         void setupTarget(Native::Win::HWNDItem *native_item,HWNDItemCompAssets *compAssets){
             HRESULT hr;
-            if(!compAssets->has_direct2d_hwnd_target){
-                ID2D1HwndRenderTarget *render_target;
-                 RECT rc = native_item->getClientRect();
-                auto target_size = D2D1::SizeU(rc.right - rc.left,rc.bottom - rc.top);
-                hr = direct2d_factory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(),D2D1::HwndRenderTargetProperties(native_item->getHandle(),target_size),&render_target);
+            if(!compAssets->has_dxgi_swap_chain){
+                DXGI_SWAP_CHAIN_DESC1 desc {0};
+                RECT rc = native_item->getClientRect();
+
+                desc.BufferCount = 2;
+                desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+                desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+                desc.Height = 0;
+                desc.Width = 0;
+                desc.SampleDesc.Count = 1;
+                desc.SampleDesc.Quality = 0;
+                desc.Scaling = DXGI_SCALING_NONE;
+                desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+                desc.Stereo = FALSE;
+                desc.Flags = 0;
+
+                
+                IDXGISwapChain1 *swap_chain;
+                hr = dxgi_factory->CreateSwapChainForHwnd(direct3d_device.get(),native_item->getHandle(),&desc,NULL,NULL,&swap_chain);
+                if(!SUCCEEDED(hr)){
+                    //Handle Error!
+                    std::ostringstream out;
+                    out << std::hex << hr;
+                    MessageBoxA(GetForegroundWindow(),(std::string("Failed to Create Swap Chain! CODE:") + out.str()).c_str(),NULL,MB_OK);
+                };
+                ID2D1DeviceContext *context;
+                hr = direct2d_device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,&context);
+                if(!SUCCEEDED(hr)){
+                    //Handle Error!
+                     MessageBoxA(GetForegroundWindow(),"Failed to Create Device Context!",NULL,MB_OK);
+                };
+                
+                // compAssets->direct2d_hwnd_target = render_target;
+                // compAssets->direct2d_hwnd_target->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+                // compAssets->has_direct2d_hwnd_target = true;
+                IDXGISurface *surface;
+                hr = swap_chain->GetBuffer(0,IID_PPV_ARGS(&surface));
                 if(!SUCCEEDED(hr)){
                     //Handle Error!
                 };
+
+                UINT dpi = GetDpiForWindow(native_item->getHandle());
                 
-                compAssets->direct2d_hwnd_target = render_target;
-                compAssets->direct2d_hwnd_target->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
-                compAssets->has_direct2d_hwnd_target = true;
+                ID2D1Bitmap1 *bitmap;
+                hr = context->CreateBitmapFromDxgiSurface(surface,D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_CANNOT_DRAW | D2D1_BITMAP_OPTIONS_TARGET,D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&bitmap);
+                if(!SUCCEEDED(hr)){
+                    //Handle Error!
+                };
+                compAssets->direct2d_device_context = context;
+                compAssets->direct2d_device_context->SetTarget(bitmap);
+                compAssets->has_direct2d_device_context = true;
+
+                compAssets->dxgi_chain = swap_chain;
+                compAssets->has_dxgi_swap_chain = true;
+
+                compAssets->dxgi_surface = surface;
+                compAssets->has_dxgi_surface = true;
+
+                compAssets->d2_bitmap = bitmap;
+                compAssets->has_direct2d_bitmap = true;
             }
         };
         // void setupLayer(HWNDItemCompAssets *assets){
@@ -242,13 +329,13 @@ namespace OmegaWTK::Composition {
             return  (first.r == second.r) && (first.g == second.g) && (first.b == second.b) && (first.a == second.a);
         };
 
-        void __setup_color_brush(UniqueComPtr<ID2D1HwndRenderTarget> & direct2d_hwnd_target,Core::Map<unsigned,HWNDItemCompAssets::SolidColorBrushEntry *> & solid_color_brushes,Color & color,unsigned id){
+        void __setup_color_brush(UniqueComPtr<ID2D1DeviceContext> & device_context,Core::Map<unsigned,HWNDItemCompAssets::SolidColorBrushEntry *> & solid_color_brushes,Color & color,unsigned id){
              HRESULT hr;
             auto it = solid_color_brushes.find(id);
             /// If the brush entry has not been created at all! (Initalization!)
             if(it == solid_color_brushes.end()){
                 ID2D1SolidColorBrush *solidBrush;
-                hr = direct2d_hwnd_target->CreateSolidColorBrush(color_to_d2d1_color(color),&solidBrush);
+                hr = device_context->CreateSolidColorBrush(color_to_d2d1_color(color),&solidBrush);
                 if(!SUCCEEDED(hr)){
                     //Handle Error!
                 };
@@ -264,7 +351,7 @@ namespace OmegaWTK::Composition {
                     if(!compareD2D1Colors(color_entry->get()->GetColor(),new_color)) {
                         color_entry->releaseVal();
                         ID2D1SolidColorBrush *solidBrush;
-                        hr = direct2d_hwnd_target->CreateSolidColorBrush(new_color,&solidBrush);
+                        hr = device_context->CreateSolidColorBrush(new_color,&solidBrush);
                         if(!SUCCEEDED(hr)){
                             //Handle Error!
                         };
@@ -274,7 +361,7 @@ namespace OmegaWTK::Composition {
                 /// If the brush has been released due to a bad hwnd render target!
                 else {
                     ID2D1SolidColorBrush *solidBrush;
-                    hr = direct2d_hwnd_target->CreateSolidColorBrush(color_to_d2d1_color(color),&solidBrush);
+                    hr = device_context->CreateSolidColorBrush(color_to_d2d1_color(color),&solidBrush);
                     if(!SUCCEEDED(hr)){
                     //Handle Error!
                     };
@@ -286,10 +373,10 @@ namespace OmegaWTK::Composition {
         void setupSolidColorBrush(HWNDItemCompAssets *compAssets,Color &color,unsigned id,HWNDItemCompAssets::SolidColorBrushUsage usage){
 
             if(usage == HWNDItemCompAssets::SolidColorBrushUsage::Fill) {
-                __setup_color_brush(compAssets->direct2d_hwnd_target,compAssets->fill_solid_color_brushes,color,id);
+                __setup_color_brush(compAssets->direct2d_device_context,compAssets->fill_solid_color_brushes,color,id);
             }
             else if(usage == HWNDItemCompAssets::SolidColorBrushUsage::Border){
-                __setup_color_brush(compAssets->direct2d_hwnd_target,compAssets->border_solid_color_brushes,color,id);
+                __setup_color_brush(compAssets->direct2d_device_context,compAssets->border_solid_color_brushes,color,id);
             };
             // return S_OK;
         };
@@ -363,7 +450,7 @@ namespace OmegaWTK::Composition {
             auto it = compAssets->bitmaps.find(v_id);
             if(it == compAssets->bitmaps.end()){
                 ID2D1Bitmap *bitmap_res;
-                hr = compAssets->direct2d_hwnd_target->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED)),&bitmap_res);
+                hr = compAssets->direct2d_device_context->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED)),&bitmap_res);
                 if(!SUCCEEDED(hr)){
                     //Handle Error!
                     std::stringstream s;
@@ -380,7 +467,7 @@ namespace OmegaWTK::Composition {
                     if(!(size.height == bitmap.height && size.width == bitmap.width)){
                         entry->releaseVal();
                         ID2D1Bitmap *bitmap_res;
-                        hr = compAssets->direct2d_hwnd_target->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED)),&bitmap_res);
+                        hr = compAssets->direct2d_device_context->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED)),&bitmap_res);
                         if(!SUCCEEDED(hr)){
                             //Handle Error!
                         };
@@ -389,7 +476,7 @@ namespace OmegaWTK::Composition {
                 }
                 else {
                     ID2D1Bitmap *bitmap_res;
-                    hr = compAssets->direct2d_hwnd_target->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED)),&bitmap_res);
+                    hr = compAssets->direct2d_device_context->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED)),&bitmap_res);
                     if(!SUCCEEDED(hr)){
                         //Handle Error!
                     };
@@ -556,11 +643,27 @@ namespace OmegaWTK::Composition {
         };
 
 
-        void discardAssets(HWNDItemCompAssets *assets){
-            if(assets->has_direct2d_hwnd_target){
-                Core::SafeRelease(&assets->direct2d_hwnd_target);
-                assets->has_direct2d_hwnd_target = false;
-            }
+        void discardAssets(HWNDItemCompAssets *assets,bool context_only = true){
+            if(!context_only){
+
+                if(assets->has_dxgi_swap_chain){
+                    Core::SafeRelease(&assets->dxgi_chain);
+                    assets->has_dxgi_swap_chain = false;
+                }
+                if(assets->has_dxgi_surface){
+                    Core::SafeRelease(&assets->dxgi_surface);
+                    assets->has_dxgi_surface = false;
+                };
+                if(assets->has_direct2d_bitmap){
+                    Core::SafeRelease(&assets->d2_bitmap);
+                    assets->has_direct2d_bitmap = false;
+                };
+
+            };
+            if(assets->has_direct2d_device_context){
+                Core::SafeRelease(&assets->direct2d_device_context);
+                assets->has_direct2d_device_context = false;
+            };
             // if(assets->has_direct2d_layer){
             //     Core::SafeRelease(&assets->direct2d_layer);
             //     assets->has_direct2d_layer = false;
@@ -575,7 +678,7 @@ namespace OmegaWTK::Composition {
         void drawVisual(Visual *visual,HWNDItemCompAssets *assets,HWND parent){
 
             // HRESULT hr;
-            ID2D1HwndRenderTarget * render_target = assets->direct2d_hwnd_target.get();
+            ID2D1DeviceContext * render_target = assets->direct2d_device_context.get();
             switch (visual->type) {
                     case Visual::Text : {
                        Visual::TextParams *params = (Visual::TextParams *)visual->params;
@@ -676,8 +779,8 @@ namespace OmegaWTK::Composition {
                     }
                     case Visual::Bitmap : {
                         Visual::BitmapParams *params = (Visual::BitmapParams *)visual->params;
-                        std::string info = "Width:" + std::to_string(params->img.width) + "Height:" + std::to_string(params->img.height) + "Stride:" + std::to_string(params->img.stride);
-                        MessageBox(GetForegroundWindow(),info.c_str(),"NOTE",MB_OK);
+                        // std::string info = "Width:" + std::to_string(params->img.width) + "Height:" + std::to_string(params->img.height) + "Stride:" + std::to_string(params->img.stride);
+                        // MessageBox(GetForegroundWindow(),info.c_str(),"NOTE",MB_OK);
                         setupBitmap(assets,params->img,visual->id);
                         ID2D1Bitmap *bitmap = assets->bitmaps[visual->id]->get();
                         RECT rc = core_rect_to_win_rect(params->rect,parent);
@@ -688,18 +791,25 @@ namespace OmegaWTK::Composition {
         };
 
         void doWork(){
+             DXGI_PRESENT_PARAMETERS params;
+            params.DirtyRectsCount = 0;
+            params.pDirtyRects = NULL;
+            params.pScrollOffset = NULL;
+            params.pScrollRect = NULL;
+
             auto & objects = currentLayer->getTargetVisuals();
             auto native_item = (Native::Win::HWNDItem *)currentLayer->getTargetNativePtr();
             HWNDItemCompAssets assets;
             setupTarget(native_item,&assets);
             HRESULT hr;
-            auto & render_target = assets.direct2d_hwnd_target;
+            // auto & render_target = assets.direct2d_hwnd_target;
+            auto & device_context = assets.direct2d_device_context;
+            auto & swap_chain = assets.dxgi_chain;
 
-            render_target->BeginDraw();
-            render_target->SetTransform(D2D1::IdentityMatrix());
-            render_target->Clear(color_to_d2d1_color(currentLayer->getBackgroundColor()));
+            device_context->BeginDraw();
+            device_context->SetTransform(D2D1::IdentityMatrix());
+            device_context->Clear(color_to_d2d1_color(currentLayer->getBackgroundColor()));
 
-            // render_target->PushLayer(D2D1::LayerParameters(),layer.get());
 
             auto object_it = objects.begin();
             while(object_it != objects.end()) {
@@ -708,17 +818,29 @@ namespace OmegaWTK::Composition {
                 ++object_it;
             };
 
-            // render_target->PopLayer();
-
-            hr = render_target->EndDraw();
+            hr = device_context->EndDraw();
+            /// If Device Context Failed to Draw to DXGISurface, ditch the direct2d_context only!
             if(FAILED(hr) || hr == D2DERR_RECREATE_TARGET) {
-                discardAssets(&assets);
+                discardAssets(&assets,true);
+            }
+            else {
+                hr = swap_chain->Present1(1,0,&params);
+                /// IF Presenting the DXGISurface fails, ditch all assets!
+                if(FAILED(hr) || hr == DXGI_STATUS_OCCLUDED ){
+                    discardAssets(&assets,false);
+                };
             }
             
             assets_catalog.insert(std::pair<Native::Win::HWNDItem *,HWNDItemCompAssets>(native_item,assets));
         
         };
         void doUpdate(){
+             DXGI_PRESENT_PARAMETERS params;
+            params.DirtyRectsCount = NULL;
+            params.pDirtyRects = NULL;
+            params.pScrollOffset = NULL;
+            params.pScrollRect = NULL;
+
             auto hwndItem = (Native::Win::HWNDItem *)currentLayer->getTargetNativePtr();
             auto & objects = currentLayer->getTargetVisuals();
             auto found = assets_catalog.find(hwndItem);
@@ -726,13 +848,14 @@ namespace OmegaWTK::Composition {
             if(found != assets_catalog.end()){
                 auto & hwndAssets = found->second;
                 setupTarget(hwndItem,&hwndAssets);
-                auto & render_target = hwndAssets.direct2d_hwnd_target;
+                auto & swap_chain = hwndAssets.dxgi_chain;
+                auto & device_context  = hwndAssets.direct2d_device_context;
                 // setupLayer(&hwndAssets);
                 // auto & layer = hwndAssets.direct2d_layer;
 
-                render_target->BeginDraw();
-                render_target->SetTransform(D2D1::IdentityMatrix());
-                render_target->Clear(color_to_d2d1_color(currentLayer->getBackgroundColor()));
+                device_context->BeginDraw();
+                device_context->SetTransform(D2D1::IdentityMatrix());
+                device_context->Clear(color_to_d2d1_color(currentLayer->getBackgroundColor()));
 
                 // render_target->PushLayer(D2D1::LayerParameters(),layer.get());
 
@@ -745,10 +868,18 @@ namespace OmegaWTK::Composition {
 
                 // render_target->PopLayer();
 
-                hr = render_target->EndDraw();
+                hr = device_context->EndDraw();
                 if(FAILED(hr) || hr == D2DERR_RECREATE_TARGET) {
-                    discardAssets(&hwndAssets);
+                    discardAssets(&hwndAssets,true);
                 }
+                else {
+                    hr = swap_chain->Present1(1,0,&params);
+                    /// IF Presenting the DXGISurface fails, ditch all assets!
+                    if(FAILED(hr) || hr == DXGI_STATUS_OCCLUDED ){
+                        discardAssets(&hwndAssets,false);
+                    };
+                }
+               
             }
         };
     public:

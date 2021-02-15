@@ -1,6 +1,6 @@
 #include "Main.h"
 #include <iostream>
-
+#include <windows.h>
 namespace OmegaWTK {
 class MyWidget : public Widget {
     class MyRootDelegate : public ViewDelegate {
@@ -21,7 +21,7 @@ public:
         Composition::Layer *rootLayer = rootView->getLayer();
          rootLayer->drawRect(Rect(0,0,150,150),Composition::Color::Red,Composition::Border(Composition::Color::Black,10));
         //  rootLayer->drawEllipse({{150,150},30,50},Composition::Color::Green);
-        // rootLayer->drawBitmap(Core::loadImageFromFile(Core::String("./test.png")),Rect(0,0,200,200));
+        rootLayer->drawBitmap(Core::loadImageFromFile(Core::String("./assets/test.png")),Rect(0,0,200,200));
         
     };
     
@@ -55,6 +55,8 @@ int omegaWTKMain(OmegaWTK::AppInst *app)
         })
     });
  app->menu = menu;
+    OmegaWTK::FSPath path = OmegaWTK::Core::String("./assets/test.png");
+
     // OmegaWTK::FSPath path = OmegaWTK::Core::String("./test.png");
     // MessageBoxA(GetForegroundWindow(),std::to_string(path.getTokenCount()).c_str(),"Token Count",MB_OK);
     // // MessageBoxA(GetForegroundWindow(),path.debugString().c_str(),"DEBUG STRING",MB_OK);

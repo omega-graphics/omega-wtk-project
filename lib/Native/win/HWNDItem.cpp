@@ -13,9 +13,9 @@ namespace OmegaWTK::Native::Win {
             MessageBox(HWNDFactory::appFactoryInst->getRootWnd(),"Failed to Register HWNDItem Window!",NULL,MB_OKCANCEL);
         }
         if(parent)
-            HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD | WS_VISIBLE,(void *)this,parent->hwnd);
+            HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD | WS_VISIBLE,(void *)this,parent->hwnd,WS_EX_LAYERED);
         else 
-            HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD | WS_VISIBLE,(void *)this,nullptr);
+            HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD | WS_VISIBLE,(void *)this,nullptr,WS_EX_LAYERED);
 
         currentDpi = GetDpiForWindow(hwnd);
     };

@@ -7,6 +7,8 @@
 #include <tiff.h>
 #include <tiffio.h>
 
+#include <windows.h>
+
 
 #include <iostream>
 #include <fstream>
@@ -15,11 +17,12 @@ namespace OmegaWTK::Core {
 
     class ImgCodec {
     protected:
-        const Core::String & file;
+        Core::String & file;
         BitmapImage *storage;
     public:
-        virtual void readToStorage();
-        ImgCodec(const Core::String & f,BitmapImage *res):file(f),storage(res){};
+        virtual void readToStorage() = 0;
+        ImgCodec(Core::String & f,BitmapImage *res):file(f),storage(res){};
+        ~ImgCodec(){};
     };
 
 
@@ -45,7 +48,9 @@ bool validate_signature(std::ifstream & in){
 
 
 bool load_png_from_file(){
+
    std::ifstream in(file,std::ios::binary);
+
    if(in.is_open()) {
        if(validate_signature(in)){
            png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING,NULL,NULL,NULL);
@@ -121,12 +126,12 @@ bool load_png_from_file(){
        }
    }
    else {
-      // MessageBox(GetForegroundWindow(),(std::string("Cannot Find File:") + name).c_str(),"NOTE",MB_OK);
+    //   MessageBox(GetForegroundWindow(),(std::string("Cannot Find File:") + file).c_str(),"NOTE",MB_OK);
        return false;
    };
 };
 public:
-    void readToStorage()  {
+    void readToStorage() {
         if(!load_png_from_file()){
             storage->height = 0;
             storage->bitDepth = 0;
@@ -135,7 +140,7 @@ public:
             storage->width = 0;
         };
     };
-    PNGCodec(const Core::String & name,BitmapImage *res):ImgCodec(name,res){};
+    PNGCodec(Core::String & name,BitmapImage *res):ImgCodec(name,res){};
 };
 
 class TiffCodec : public ImgCodec {
@@ -171,22 +176,25 @@ public:
             storage->width = 0;
         };
     };
-    TiffCodec(const Core::String & name,BitmapImage *res):ImgCodec(name,res){};
+    TiffCodec(Core::String & name,BitmapImage *res):ImgCodec(name,res){};
 };
 
-ImgCodec obtainCodecForImageFormat(FSPath & path,BitmapImage *img){
-    if(path.dir() == "png"){
-        return PNGCodec(path.serialize(),img);
+UniquePtr<ImgCodec> obtainCodecForImageFormat(Core::String & path,Core::String & ext,BitmapImage *img){
+    if(ext == "png"){
+        return std::make_unique<PNGCodec>(PNGCodec(path,img));
     }
-    else if(path.dir() == "tiff"){
-        return TiffCodec(path.serialize(),img);
+    else if(ext == "tiff"){
+        return std::make_unique<TiffCodec>(TiffCodec(path,img));
     };
+   
 };
     
     BitmapImage loadImageFromFile(FSPath path) {
         BitmapImage img;
-        auto codec = obtainCodecForImageFormat(path,&img);
-        codec.readToStorage();
+        auto ext = path.ext();
+        auto os_corrected_path = path.serialize();
+        auto codec = obtainCodecForImageFormat(os_corrected_path,ext,&img);
+        codec->readToStorage();
         return img;
 
     };

@@ -267,7 +267,7 @@ namespace OmegaWTK {
             };
             return out.str();
         };
-        Core::String dir();
+        // Core::String dir();
         Core::String filename();
         Core::String & ext();
         Core::String serialize();
