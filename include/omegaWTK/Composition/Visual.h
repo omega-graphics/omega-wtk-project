@@ -63,7 +63,7 @@ namespace OmegaWTK {
             Core::Rect rect;
         } TextParams;
         typedef struct {
-            Core::BitmapImage img;
+            Core::SharedPtr<Core::BitmapImage> img;
             Core::Rect rect;
         } BitmapParams;
         void * params;

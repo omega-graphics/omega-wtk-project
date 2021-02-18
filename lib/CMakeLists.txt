@@ -35,4 +35,7 @@ target_link_libraries("OmegaWTK" PUBLIC ${OmegaWTKLibs})
 set(OmegaWTKLibs ${OmegaWTKLibs} "OmegaWTK" CACHE INTERNAL "OmegaWTK Libs")
 target_include_directories("OmegaWTK" PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
 
+if(TARGET_MACOS)
+    set(METAL_LIB "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}/default.metallib" CACHE INTERNAL "Metal Library")
+endif()
 

@@ -8,7 +8,6 @@ Widget::Widget(const Core::Rect & rect,Widget *parent):parent(parent),compositor
     if(parent)
         parent->rootView->addSubView(this->rootView);
 
-    compositor->prepareDraw(rootView->layer);
 };
 void Widget::show(){
     rootView->native->enable();

@@ -8,15 +8,13 @@
 #define OMEGAWTK_COMPOSITION_MACOS_METALBACKEND_H
 
 
+
 namespace OmegaWTK::Composition {
-namespace Cocoa {
-class MetalBackend {
-    
-};
 
-CAMetalLayer *drawBitmapToMetalLayer(Core::BitmapImage img);
+void *make_metal_backend();
 
-}
+CAMetalLayer *drawBitmapToMetalLayer(Core::SharedPtr<Core::BitmapImage> & img,Core::Rect & rect,void *metal_backend,unsigned v_id);
+
 }
 
 #endif

@@ -1,6 +1,7 @@
 #include "Main.h"
 #include <iostream>
-#include <windows.h>
+
+
 namespace OmegaWTK {
 class MyWidget : public Widget {
     class MyRootDelegate : public ViewDelegate {
@@ -19,10 +20,9 @@ public:
     MyWidget(const Core::Rect & rect):Widget(rect),delegate(new MyRootDelegate()){
         rootView->setDelegate(delegate);
         Composition::Layer *rootLayer = rootView->getLayer();
-         rootLayer->drawRect(Rect(0,0,150,150),Composition::Color::Red,Composition::Border(Composition::Color::Black,10));
+         rootLayer->drawRect(Rect(0,0,150,150),Composition::Color::Red);
         //  rootLayer->drawEllipse({{150,150},30,50},Composition::Color::Green);
-        rootLayer->drawBitmap(Core::loadImageFromFile(Core::String("./assets/test.png")),Rect(0,0,200,200));
-        
+        rootLayer->drawBitmap(Core::loadImageFromFile(Core::String("./assets/test.png")),Rect(0,0,300,300));
     };
     
 };
@@ -56,13 +56,14 @@ int omegaWTKMain(OmegaWTK::AppInst *app)
     });
  app->menu = menu;
     OmegaWTK::FSPath path = OmegaWTK::Core::String("./assets/test.png");
+//
+    std::cout << path.serialize() << std::endl;
+//    // OmegaWTK::FSPath path = OmegaWTK::Core::String("./test.png");
+//    // MessageBoxA(GetForegroundWindow(),std::to_string(path.getTokenCount()).c_str(),"Token Count",MB_OK);
+//    // // MessageBoxA(GetForegroundWindow(),path.debugString().c_str(),"DEBUG STRING",MB_OK);
+//    // MessageBoxA(GetForegroundWindow(),path.serialize().c_str(),"RESULT",MB_OK);
 
-    // OmegaWTK::FSPath path = OmegaWTK::Core::String("./test.png");
-    // MessageBoxA(GetForegroundWindow(),std::to_string(path.getTokenCount()).c_str(),"Token Count",MB_OK);
-    // // MessageBoxA(GetForegroundWindow(),path.debugString().c_str(),"DEBUG STRING",MB_OK);
-    // MessageBoxA(GetForegroundWindow(),path.serialize().c_str(),"RESULT",MB_OK);
-
-    OmegaWTK::MyWidget widget({{0,0},{300,300}});
+    OmegaWTK::MyWidget widget({{0,0},{500,500}});
     widget.show();
     // OmegaWTK::MyWidget widget2({{500,0},{300,300}});
     // widget2.show();

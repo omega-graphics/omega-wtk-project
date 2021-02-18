@@ -19,6 +19,7 @@ void internal_set_root(View *view,Native::NAP ptr){
 
 void AppInst::setRoot(Widget *widget){
     rootWidget = widget;
+    widget->compositor->prepareDraw(widget->rootView->getLayer());
     internal_set_root(widget->rootView,ptr);
 };
 

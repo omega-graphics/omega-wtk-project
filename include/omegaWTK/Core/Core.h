@@ -7,6 +7,7 @@
 #include <list>
 #include <optional>
 #include <sstream>
+#include <fstream>
 #include "OmegaWTKExport.h"
 
 #ifndef OMEGAWTK_CORE_CORE_H
@@ -38,9 +39,15 @@ namespace OmegaWTK {
 
         template<class _Ty>
         using UniquePtr = std::unique_ptr<_Ty>;
+    
+        template<class _Ty>
+        using SharedPtr = std::shared_ptr<_Ty>;
 
         template<class _Ty>
         using Optional = std::optional<_Ty>;
+    
+        typedef std::istream IStream;
+        typedef std::ostream OStream;
         /// Array Reference Class!
         template<class _Ty>
         class OMEGAWTK_EXPORT ArrayRef {

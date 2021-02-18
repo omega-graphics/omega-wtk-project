@@ -3,6 +3,9 @@
 #include <algorithm>
 #include <sstream>
 #include <cctype>
+#include <iostream>
+
+
 
 
 #ifdef TARGET_WIN32
@@ -11,6 +14,7 @@
 
 #ifdef TARGET_MACOS
 #include <unistd.h>
+#include "FSCocoa.h"
 #endif
 
 namespace OmegaWTK::Core {
@@ -200,13 +204,12 @@ Core::String FSPath::filename(){
 };
 
 Core::String FSPath::serialize(){
-    #define PATH_LIMIT 100
+#ifdef TARGET_WIN32
+    #define PATH_LIMIT 200
+#endif
     std::ostringstream out;
 #ifdef TARGET_MACOS
-    char pwd[PATH_LIMIT];
-    if(getcwd(pwd,PATH_LIMIT) != nullptr){
-        out << pwd << std::flush;
-    };
+    out << get_asset_dir() << std::flush;
 #endif
     
 #ifdef TARGET_WIN32

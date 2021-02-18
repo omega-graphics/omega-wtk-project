@@ -3,8 +3,17 @@ cmake_minimum_required(VERSION 3.13)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
+# if(XCODE)
+#     if(${XCODE_VERSION} STREQUAL 12.4)
+#         set(CMAKE_OSX_SYSROOT "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk" CACHE INTERNAL "CMAKE_OSX Root")
+#     endif()
+# endif()
+
 project("OmegaWTK" C CXX)
 set(OMEGAWTK_VERSION "0.1")
+
+set(CMAKE_XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET "10.15")
+
 
 # set(CMAKE_CXX_FLAGS "-gdwarf")
 
@@ -160,6 +169,7 @@ if(CMAKE_HOST_APPLE)
 
     find_macos_framework("Cocoa")
     find_macos_framework("Metal")
+    find_macos_framework("MetalPerformanceShaders")
     find_macos_framework("AVFoundation")
     find_macos_framework("AVKit")
     find_macos_framework("QuartzCore")
@@ -176,12 +186,24 @@ set(OMEGAWTK_TARGET_UTILS_DIR ${CMAKE_SOURCE_DIR}/target)
 
 add_subdirectory("tests")
 
-install(TARGETS ${OmegaWTKLibs} EXPORT OmegaWTKTargets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
+if(TARGET_WIN32)
+    install(TARGETS ${OmegaWTKLibs} EXPORT OmegaWTKTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+endif()
+
+if(TARGET_MACOS)
+    install(TARGETS ${OmegaWTKLibs} EXPORT OmegaWTKTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        # FRAMEWORK DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+endif()
 
 export(TARGETS ${OmegaWTKLibs} 
     FILE "${CMAKE_BINARY_DIR}/cmake/OmegaWTKTargets.cmake"

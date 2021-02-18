@@ -55,6 +55,16 @@ void * CocoaItem::getBinding(){
     return reinterpret_cast<void *>(_ptr);
 };
 
+void CocoaItem::enable(){
+    if([_ptr isHidden] == YES)
+        [_ptr setHidden:NO];
+};
+
+void CocoaItem::disable(){
+    if([_ptr isHidden] == NO)
+        [_ptr setHidden:YES];
+};
+
 CocoaItem::~CocoaItem(){
     
 };

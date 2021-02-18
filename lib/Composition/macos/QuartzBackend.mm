@@ -20,6 +20,13 @@ CFStringRef core_string_to_cf_string(const Core::String & str){
 
 class QuartzBackend : public Backend {
     
+    void *metal_backend;
+public:
+    QuartzBackend():metal_backend(make_metal_backend()){
+        
+    };
+private:
+    
     struct CocoaItemCompAssets {
         Core::Map<unsigned,NSColor *> border_colors;
         Core::Map<unsigned,NSColor *> fill_colors;
@@ -50,39 +57,39 @@ class QuartzBackend : public Backend {
             };
         };
         ~CocoaItemCompAssets(){
-            free_map(borders);
-            free_map(text_objects);
-            free_map(rounded_rects);
-            free_map(rects);
-            free_map(ellipses);
-            /// Free Fill NSColors
-            auto it = fill_colors.begin();
-            while(it != fill_colors.end()){
-                auto & nscolor = it->second;
-                [nscolor dealloc];
-                ++it;
-            };
-            /// Free Border NSColors
-            auto it_1 = border_colors.begin();
-            while(it_1 != border_colors.end()){
-                auto & nscolor = it_1->second;
-                [nscolor dealloc];
-                ++it_1;
-            };
-            /// Free CGPathRefs
-            auto it_2 = paths.begin();
-            while(it_2 != paths.end()){
-                auto & path = it_2->second;
-                CGPathRelease(path);
-                ++it_2;
-            };
-            /// Free CALayers
-            auto it_3 = layers.begin();
-            while(it_3 != layers.end()){
-                auto & layer = it_3->second;
-                [layer dealloc];
-                ++it_3;
-            };
+//            free_map(borders);
+//            free_map(text_objects);
+//            free_map(rounded_rects);
+//            free_map(rects);
+//            free_map(ellipses);
+//            /// Free Fill NSColors
+//            auto it = fill_colors.begin();
+//            while(it != fill_colors.end()){
+//                auto & nscolor = it->second;
+//                [nscolor dealloc];
+//                ++it;
+//            };
+//            /// Free Border NSColors
+//            auto it_1 = border_colors.begin();
+//            while(it_1 != border_colors.end()){
+//                auto & nscolor = it_1->second;
+//                [nscolor dealloc];
+//                ++it_1;
+//            };
+//            /// Free CGPathRefs
+//            auto it_2 = paths.begin();
+//            while(it_2 != paths.end()){
+//                auto & path = it_2->second;
+//                CGPathRelease(path);
+//                ++it_2;
+//            };
+//            /// Free CALayers
+//            auto it_3 = layers.begin();
+//            while(it_3 != layers.end()){
+//                auto & layer = it_3->second;
+//                [layer dealloc];
+//                ++it_3;
+//            };
         };
         
     };
@@ -190,6 +197,7 @@ class QuartzBackend : public Backend {
                     currentLayer = shapeLayer;
                 }
                 [shapeLayer setNeedsDisplay];
+                NSLog(@"Rect has been drawn!");
                 break;
             }
             case Visual::RoundedRect :
@@ -387,6 +395,29 @@ class QuartzBackend : public Backend {
                 }
                 break;
             }
+            case Visual::Bitmap : {
+                Visual::BitmapParams *params = reinterpret_cast<Visual::BitmapParams *>(visual->params);
+                NSLog(@"Bitmap Height: %iu Width: %iu",params->img->header->height,params->img->header->width);
+                auto found = assets->layers.find(visual_id);
+                bool init = false;
+                if(found == assets->layers.end()){
+                    init = true;
+                }
+                CAMetalLayer *metalLayer = drawBitmapToMetalLayer(params->img,params->rect,metal_backend,visual_id);
+//                assets->layers.insert(CocoaItemCompAssets::MapEntry<CALayer *>(visual_id,metalLayer));
+//
+                
+//                CAMetalLayer *layer = (CAMetalLayer *)assets->layers[visual_id];
+//                if(init){
+                if(init) {
+                    [currentLayer addSublayer:metalLayer];
+                    currentLayer = metalLayer;
+                }
+//                };
+                [metalLayer setNeedsDisplay];
+                
+                break;
+            };
             default: {
                 break;
             }
@@ -394,9 +425,10 @@ class QuartzBackend : public Backend {
     };
     
     void doWork(){
-        
+        NSLog(@"Drawing");
         Native::Cocoa::CocoaItem * native_ptr = (Native::Cocoa::CocoaItem *)currentLayer->getTargetNativePtr();
         auto & visuals = currentLayer->getTargetVisuals();
+        NSLog(@"Visuals Length: %lu",visuals.size());
         /// Top Level Layer of OmegaWTKCocoaView. DO NOT EDIT!
         CALayer *nativeLayer = native_ptr->getLayer();
         nativeLayer.opaque = YES;
@@ -410,7 +442,7 @@ class QuartzBackend : public Backend {
             drawVisual(&assets,visual,visual->id,currentLayer);
             ++it;
         };
-        assets_catalog.insert(std::pair<Native::Cocoa::CocoaItem *,CocoaItemCompAssets>(native_ptr,assets));
+        assets_catalog.insert(std::pair<Native::Cocoa::CocoaItem *,CocoaItemCompAssets>(native_ptr,std::move(assets)));
         native_ptr->setNeedsDisplay();
         
     };

@@ -28,6 +28,8 @@ class CocoaItem : public NativeItem {
     Core::Rect rect;
     OmegaWTKCocoaView * _ptr;
     friend class CocoaEventHandler;
+    void enable();
+    void disable();
 public:
     typedef enum : OPT_PARAM {
         View,

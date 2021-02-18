@@ -66,7 +66,7 @@ namespace OmegaWTK {
 
             void drawEllipse(const Core::Ellipse &ellipse,const Color &color,Core::Optional<Border> border = {});
 
-            void drawBitmap(Core::BitmapImage image,const Core::Rect & rect);
+            void drawBitmap(Core::SharedPtr<Core::BitmapImage> image,const Core::Rect & rect);
             /// @}
             
             /// @name Main Action Functions!

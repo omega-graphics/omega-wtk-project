@@ -78,6 +78,11 @@ function(add_omega_wtk_app)
 			XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME ${MAC_ICON}
         )
         set(_ARG_LINK_LIBS ${_ARG_LINK_LIBS} ${Cocoa_LIB})
+        add_custom_target(metal-copy DEPENDS ${_ARG_NAME})
+        add_custom_command(
+            TARGET "metal-copy" POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy ${METAL_LIB} $<TARGET_BUNDLE_DIR:$<TARGET_NAME_IF_EXISTS:${_ARG_NAME}>>/Contents/Resources/default.metallib)
+        
     endif()
 
     target_include_directories(${_ARG_NAME} PUBLIC ${_ARG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})

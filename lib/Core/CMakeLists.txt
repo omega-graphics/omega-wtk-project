@@ -11,6 +11,11 @@ add_omega_wtk_lib(
     "ImgCodec.h"
 )
 
-target_include_directories("omegaWTKCore" PRIVATE "${PNG_INCLUDE_DIRS};${TIFF_INCLUDE_DIR}${TIFF_INCLUDE_DIRS}")
-target_link_libraries("omegaWTKCore" PRIVATE ${PNG_LIBRARIES} ${TIFF_LIBRARIES})
+if(TARGET_MACOS)
+    target_sources("omegaWTKCore" PRIVATE "FSCocoa.h" "FSCocoa.mm")
+    target_link_libraries("omegaWTKCore" PRIVATE ${Cocoa_LIB})
+endif()
+message("libpng_include_dir:${PNG_INCLUDE_DIR}")
+target_include_directories("omegaWTKCore" PRIVATE ${PNG_INCLUDE_DIR}${TIFF_INCLUDE_DIR}${TIFF_INCLUDE_DIRS})
+target_link_libraries("omegaWTKCore" PRIVATE "PNG::PNG;TIFF::TIFF")
 target_compile_definitions("omegaWTKCore" PRIVATE "${PNG_DEFINTIONS}")
