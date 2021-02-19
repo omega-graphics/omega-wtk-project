@@ -3,6 +3,7 @@
 #include <d2d1.h>
 #include <d2d1_1.h>
 #include <d2d1_1helper.h>
+#include <d2d1effects.h>
 #include <dwrite.h>
 #include <UIAnimation.h>
 #include <Uxtheme.h>
@@ -20,6 +21,7 @@
 #pragma comment(lib, "runtimeobject.lib")
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dcomp.lib")
 #pragma comment(lib, "dwrite.lib")
 #pragma comment(lib, "uxtheme.lib")
@@ -62,6 +64,28 @@ namespace OmegaWTK::Composition {
 
          rectres.bottom = ((parent_wnd_rect.bottom) - rect.pos.y * sacleFactor);
          rectres.top = rectres.bottom - (rect.dimen.minHeight * sacleFactor);
+        
+        return rectres;
+    };
+    // /// No DPI SCALE!
+    RECT core_rect_to_win_rect_dip(Core::Rect &rect,HWND parent){
+        #define DEFAULT_DPI 96.f
+        UINT dpi = GetDpiForWindow(parent);
+
+        // MessageBox(GetForegroundWindow(),(std::string("DPI :") + std::to_string(dpi)).c_str(),"Note",MB_OK);
+        RECT rectres;
+        
+        FLOAT sacleFactor = FLOAT(dpi)/DEFAULT_DPI;
+
+        RECT parent_wnd_rect;
+        GetClientRect(parent,&parent_wnd_rect);
+        // FLOAT sacleFactor = 1.0;
+
+        rectres.left = rect.pos.x;
+        rectres.right = (rectres.left + (rect.dimen.minWidth));
+
+         rectres.bottom = ((parent_wnd_rect.bottom / sacleFactor) - rect.pos.y);
+         rectres.top = rectres.bottom - (rect.dimen.minHeight);
         
         return rectres;
     };
@@ -127,7 +151,7 @@ namespace OmegaWTK::Composition {
 
             using SolidColorBrushEntry = Entry<ID2D1SolidColorBrush>;
             using TextFormatEntry = Entry<IDWriteTextFormat>;
-            using BitmapEntry = Entry<ID2D1Bitmap>;
+            using BitmapEntry = Entry<ID2D1Image>;
 
             bool has_dxgi_swap_chain;
             UniqueComPtr<IDXGISwapChain1> dxgi_chain;
@@ -381,7 +405,7 @@ namespace OmegaWTK::Composition {
             // return S_OK;
         };
 
-        DXGI_FORMAT computePixelFormat(unsigned bitDepth,unsigned channelCount){
+        DXGI_FORMAT computePixelFormat(unsigned bitDepth,unsigned channelCount,bool isrgb){
             std::string message = "BitDepth :" + std::to_string(bitDepth) + "ChannelCount:" + std::to_string(channelCount);
             MessageBox(GetForegroundWindow(),message.c_str(),"NOTE",MB_OK);
             if(bitDepth == 32){
@@ -437,50 +461,99 @@ namespace OmegaWTK::Composition {
                     //     return DXGI_FORMAT_R8G8B8_TYPELESS;
                     // };
                     case 4 : {
-                        return  DXGI_FORMAT_R8G8B8A8_TYPELESS;
+                        if(isrgb)
+                            return DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+                        else
+                            return  DXGI_FORMAT_R8G8B8A8_UNORM;
                         break;
                     };
                 }
             };
-            // return DXGI_FORMAT_UNKNOWN;
+            
         };
 
-        void setupBitmap(HWNDItemCompAssets *compAssets,Core::BitmapImage &bitmap,unsigned v_id){
+        void setupBitmap(HWNDItemCompAssets *compAssets,Core::BitmapImage &bitmap,unsigned v_id,Core::Rect & target_,HWND hwnd){
             HRESULT hr;
+
+            auto applyAdjustments = [&](ID2D1Bitmap *_bitmap){
+                ID2D1Effect *alphaFix;
+                ID2D1Effect *scaleFix;
+                // ID2D1Effect *compositeEffect;
+                hr = compAssets->direct2d_device_context->CreateEffect(CLSID_D2D1Premultiply,&alphaFix);
+                if(!SUCCEEDED(hr)){
+
+                };
+                hr = compAssets->direct2d_device_context->CreateEffect(CLSID_D2D1Scale,&scaleFix);
+                if(!SUCCEEDED(hr)){
+
+                };
+                UINT dpi = GetDpiForWindow(hwnd);
+                FLOAT scaleFactor = dpi/96.f;
+                // hr = compAssets->direct2d_device_context->CreateEffect(CLSID_D2D1Composite,&compositeEffect);
+                // if(!SUCCEEDED(hr)){
+
+                // };
+                ID2D1Image *res;
+                scaleFix->SetValue(D2D1_SCALE_PROP_INTERPOLATION_MODE,D2D1_SCALE_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR);
+                scaleFix->SetValue(D2D1_SCALE_PROP_SCALE,D2D1::Vector2F(float(target_.dimen.minWidth * scaleFactor) / float(bitmap.header->width),float(target_.dimen.minHeight * scaleFactor) / float(bitmap.header->height)));
+                auto rc = core_rect_to_win_rect_dip(target_,hwnd);
+
+                auto rcHeight = rc.bottom - rc.top;
+                auto rcWidth = rc.right - rc.left;
+
+                float imgCenterX = rc.left;
+                float imgCenterY = rc.top;
+
+                // scaleFix->SetValue(D2D1_SCALE_PROP_CENTER_POINT,D2D1::Vector2F(imgCenterX,imgCenterY));
+
+                scaleFix->SetInput(0,_bitmap);
+                scaleFix->GetOutput(&res);
+                ID2D1Image *res2;
+                alphaFix->SetInput(0,res);
+                alphaFix->GetOutput(&res2);
+                return res2;
+                // hr = compAssets->direct2d_device_context->CreateEffect(CLSID_D2D1GammaTransfer, ID2D1Effect **effect)
+            };
+
+            // MessageBoxA(hwnd,"Setting Up Bitmap!","NOTE",MB_OK);
+            auto imgHeader = bitmap.header.get();
             auto it = compAssets->bitmaps.find(v_id);
             if(it == compAssets->bitmaps.end()){
                 ID2D1Bitmap *bitmap_res;
-                hr = compAssets->direct2d_device_context->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED)),&bitmap_res);
+                hr = compAssets->direct2d_device_context->CreateBitmap(D2D1::SizeU(imgHeader->width,imgHeader->height),bitmap.data,imgHeader->stride,D2D1::BitmapProperties(D2D1::PixelFormat(computePixelFormat(imgHeader->bitDepth,imgHeader->channels,bitmap.sRGB),D2D1_ALPHA_MODE_PREMULTIPLIED)),&bitmap_res);
                 if(!SUCCEEDED(hr)){
                     //Handle Error!
                     std::stringstream s;
                     s << "Failed to Create Bitmap: Error Code:" << std::hex << hr;
                     MessageBox(GetForegroundWindow(),s.str().c_str(),NULL,MB_OK);
                 };
-                compAssets->bitmaps.insert(std::pair<unsigned,HWNDItemCompAssets::BitmapEntry *>(v_id,new HWNDItemCompAssets::BitmapEntry(bitmap_res)));
+                auto final = applyAdjustments(bitmap_res);
+                compAssets->bitmaps.insert(std::pair<unsigned,HWNDItemCompAssets::BitmapEntry *>(v_id,new HWNDItemCompAssets::BitmapEntry(final)));
             }
             else {
                 auto & entry = it->second;
                 if(entry->hasVal()){
-                    auto size = entry->get()->GetSize();
-                    /// If image has changed!
-                    if(!(size.height == bitmap.height && size.width == bitmap.width)){
-                        entry->releaseVal();
-                        ID2D1Bitmap *bitmap_res;
-                        hr = compAssets->direct2d_device_context->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED)),&bitmap_res);
-                        if(!SUCCEEDED(hr)){
-                            //Handle Error!
-                        };
-                        entry->setVal(bitmap_res);
-                    };
+                    // auto size = entry->get();
+                    // /// If image has changed!
+                    // if(!(size.height == bitmap.header->height && size.width == bitmap.header->width)){
+                    //     entry->releaseVal();
+                    //     ID2D1Bitmap *bitmap_res;
+                    //     hr = compAssets->direct2d_device_context->CreateBitmap(D2D1::SizeU(imgHeader->width,imgHeader->height),bitmap.data,imgHeader->stride,D2D1::BitmapProperties(D2D1::PixelFormat(computePixelFormat(imgHeader->bitDepth,imgHeader->channels,bitmap.sRGB),D2D1_ALPHA_MODE_PREMULTIPLIED)),&bitmap_res);
+                    //     if(!SUCCEEDED(hr)){
+                    //         //Handle Error!
+                    //     };
+                    //     bitmap_res = applyAdjustments(bitmap_res);
+                    //     entry->setVal(bitmap_res);
+                    // };
                 }
                 else {
                     ID2D1Bitmap *bitmap_res;
-                    hr = compAssets->direct2d_device_context->CreateBitmap(D2D1::SizeU(bitmap.width,bitmap.height),bitmap.data,bitmap.stride,D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED)),&bitmap_res);
+                    hr = compAssets->direct2d_device_context->CreateBitmap(D2D1::SizeU(imgHeader->width,imgHeader->height),bitmap.data,imgHeader->stride,D2D1::BitmapProperties(D2D1::PixelFormat(computePixelFormat(imgHeader->bitDepth,imgHeader->channels,bitmap.sRGB),D2D1_ALPHA_MODE_PREMULTIPLIED)),&bitmap_res);
                     if(!SUCCEEDED(hr)){
                         //Handle Error!
                     };
-                    entry->setVal(bitmap_res);
+                    auto final = applyAdjustments(bitmap_res);
+                    entry->setVal(final);
                 };
             }
         };
@@ -780,12 +853,25 @@ namespace OmegaWTK::Composition {
                     case Visual::Bitmap : {
                         Visual::BitmapParams *params = (Visual::BitmapParams *)visual->params;
                         // std::string info = "Width:" + std::to_string(params->img.width) + "Height:" + std::to_string(params->img.height) + "Stride:" + std::to_string(params->img.stride);
-                        // MessageBox(GetForegroundWindow(),info.c_str(),"NOTE",MB_OK);
-                        setupBitmap(assets,params->img,visual->id);
-                        ID2D1Bitmap *bitmap = assets->bitmaps[visual->id]->get();
-                        RECT rc = core_rect_to_win_rect(params->rect,parent);
-                        render_target->DrawBitmap(bitmap,D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom));
-                        break;
+                        // MessageBox(GetForegroundWindow(),"Drawing img!","NOTE",MB_OK);
+                        if(!params->img || !params->img->header){
+                            return;
+                            break;
+                        }
+                        else {
+                            std::string str = "Width:" + std::to_string(params->img->header->width) + ",Height:" + std::to_string(params->img->header->width);
+                            // MessageBoxA(GetForegroundWindow(),str.c_str(),"NOTE",MB_OK);
+                            setupBitmap(assets,*(params->img),visual->id,params->rect,parent);
+                            ID2D1Image *img = assets->bitmaps[visual->id]->get();
+                            RECT rect;
+                            UINT dpi = GetDpiForWindow(parent);
+                            FLOAT scaleFactor = FLOAT(dpi)/96.f;
+                            GetClientRect(parent,&rect);
+                            // unsigned height = (rect.bottom) / scaleFactor;
+                            // RECT rc = core_rect_to_win_rect_dip(params->rect,parent);
+                            render_target->DrawImage(img,D2D1::Point2F(params->rect.pos.x * scaleFactor,rect.bottom - (params->rect.dimen.minHeight * scaleFactor) - (params->rect.pos.y * scaleFactor)));
+                            break;
+                        }
                     };
                 }
         };

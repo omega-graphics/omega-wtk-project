@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
+// #include <windows.h>
 
 namespace OmegaWTK::Core {
 
@@ -89,7 +90,10 @@ class PNGCodec : public ImgCodec {
                 break;
         }
         std::cout << std::endl;
-        std::cout << "IHDR Chunk:{Width:" << width << ", Height:" << height << ", bitDepth:" << bitDepth << ", channels:" << channels << ", colorType:" << int(color_type) << ", filterType:" << filter_method << ", compressiomMethod:" << compression_method << ", interlaceType:" << interlace_type << ", rowBytes:" << rowBytes << "}" << std::endl;
+        std::stringstream ss;
+        ss << "IHDR Chunk:{Width:" << width << ", Height:" << height << ", bitDepth:" << bitDepth << ", channels:" << channels << ", colorType:" << int(color_type) << ", filterType:" << filter_method << ", compressiomMethod:" << compression_method << ", interlaceType:" << interlace_type << ", rowBytes:" << rowBytes << "}" << std::endl;
+        std::cout << ss.str();
+        // MessageBoxA(GetForegroundWindow(),ss.str().c_str(),"NOTE",MB_OK);
         
         return std::make_unique<ImgHeader>(ImgHeader({width,height,channels,bitDepth,compression_method,interlace_type,colorFormat,alphaFormat,rowBytes}));
     };
@@ -99,18 +103,20 @@ class PNGCodec : public ImgCodec {
         int compression_ty;
         png_bytep profile;
         png_uint_32 length;
+        
         if(png_get_iCCP(png_ptr,info_ptr,&name,&compression_ty,&profile,&length) == PNG_INFO_iCCP){
             std::cout << "iCCP Chunk:{" << "name:" << name << ", compression:" << compression_ty << ", length:" << length << "}" << std::endl;
             storage->sRGB = false;
             return std::make_unique<ImgProfile>(ImgProfile({name,compression_ty}));
-        };
+        }
         /// Else use SRGB!
         int srgb_intent;
         if (png_get_sRGB(png_ptr,info_ptr,&srgb_intent) == PNG_INFO_sRGB) {
             std::cout << "SRGB Chunk:{" << "srgbIntent:" << srgb_intent << "}" << std::endl;
             storage->sRGB = true;
-            return nullptr;
+            // png_set_sRGB_gAMA_and_cHRM(png_ptr,info_ptr,srgb_intent);
         }
+        return nullptr;
     };
 
 
@@ -154,6 +160,7 @@ class PNGCodec : public ImgCodec {
                UniquePtr<ImgHeader> header = read_header(png_ptr,info_ptr);
                UniquePtr<ImgProfile> profile = read_profile(png_ptr,info_ptr);
     //           png_read_update_info(png_ptr,info_ptr);
+               /// Background Chunk!
                png_color_16p background_color;
                if(png_get_bKGD(png_ptr,info_ptr,&background_color) == PNG_INFO_bKGD){
                    /// Log Background Chunk!
@@ -164,10 +171,11 @@ class PNGCodec : public ImgCodec {
                int unit;
                double phys_width;
                double phys_height;
-               
+               /// SCAL Chunk!
                if(png_get_sCAL(png_ptr,info_ptr,&unit,&phys_width,&phys_height) == PNG_INFO_sCAL){
                    std::cout << "sCAL Chunk:{" << "unit:" << unit << ", width:" << phys_width << ", height:" << phys_height << " }" << std::endl;
                };
+               /// Gamma Chunk!
                double file_gamma;
                if(png_get_gAMA(png_ptr,info_ptr,&file_gamma) == PNG_INFO_gAMA){
                    storage->hasGamma = true;
@@ -185,6 +193,8 @@ class PNGCodec : public ImgCodec {
                    log_png_color_16p(trans_color);
                    std::cout << " }" << std::endl;
                };
+
+               /// Chroma Chunk!
                double chrm_white_x , chrm_white_y;
                double chrm_red_x , chrm_red_y;
                double chrm_green_x , chrm_green_y;
@@ -228,17 +238,32 @@ class PNGCodec : public ImgCodec {
                data = new char[(header->width * header->height * header->bitDepth * header->channels)/8];
                unsigned int stride = (header->width * header->bitDepth * header->channels)/8;
                
+               #ifdef TARGET_MACOS
                for(size_t i = 0;i < header->height;i++){
                    png_uint_32 ptr = (header->height - i - 1) * stride;
+                    /// Read from bottom to Top!
                    rowPtrs[i] = (png_bytep)data + ptr;
                };
-               
+               #endif 
+
+               #ifdef TARGET_WIN32
+               for(size_t i = 0;i < header->height;i++){
+                   png_uint_32 ptr = (header->height - i - 1) * stride;
+                   /// Read from top to bottom!
+                   rowPtrs[header->height - 1 - i] = (png_bytep)data + ptr;
+               };
+               #endif
+
                png_read_image(png_ptr,rowPtrs);
                
                png_read_end(png_ptr,info_ptr);
                
                delete [] rowPtrs;
                png_destroy_read_struct(&png_ptr, &info_ptr,(png_infopp)0);
+
+            //    if(header->bitDepth == 16){
+            //        header->bitDepth = 8;
+            //    };
                
                storage->data = data;
                storage->header = std::move(header);
@@ -248,7 +273,7 @@ class PNGCodec : public ImgCodec {
 
            }
            else {
-    //                MessageBox(GetForegroundWindow(),"Invalid Signature!","NOTE",MB_OK);
+                   // MessageBox(GetForegroundWindow(),"Invalid Signature!","NOTE",MB_OK);
                return false;
            }
 };
@@ -336,7 +361,8 @@ UniquePtr<ImgCodec> obtainCodecForImageFormat(BitmapImage::Format &format,Core::
         if(in.is_open()){
             UniquePtr<ImgCodec> codec = obtainCodecForImageFormat(f,in,&img);
             codec->readToStorage();
-            in.close();
+            // in.close();
+            // MessageBox(GetForegroundWindow(),"Img has Been Read","NOTE",MB_OK);
             return std::make_shared<BitmapImage>(std::move(img));
         }
         else
