@@ -9,6 +9,12 @@ add_omega_wtk_lib(
     "Layer.cpp"
 	"Text.cpp"
     "Visual.cpp"
+    "Brush.cpp"
+    # BD Prefix --> For Backend!
+    "BDCompositionDevice.h"
+    "BDCompositionDevice.cpp"
+    "BDCompositionRenderTarget.h"
+    "BDCompositionRenderTarget.cpp"
     HEADERS 
     "Backend.h"
     "Compositor.h"
@@ -16,6 +22,7 @@ add_omega_wtk_lib(
     "Layer.h"
 	"Text.h"
     "Visual.h"
+    "Brush.h"
     LINK_LIBS 
     "omegaWTKCore"
     "omegaWTKNative"
