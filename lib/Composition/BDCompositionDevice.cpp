@@ -1,15 +1,13 @@
 #include "BDCompositionDevice.h"
 #include "BDCompositionRenderTarget.h"
 
+#ifdef TARGET_WIN32
+#include "dx/DXBDCompositionDevice.h"
+#endif
+
 namespace OmegaWTK::Composition {
 
 Core::SharedPtr<BDCompositionDevice> BDCompositionDevice::Create(){
-    
-};
-
-Core::SharedPtr<BDCompositionRenderTarget> BDCompositionDevice::makeTarget(Layer *layer){
-    auto store = BDCompositionRenderTarget::Create(this);
-    targets.insert(std::make_pair(layer,store));
-    
+    return DXBDCompositionDevice::Create();
 };
 }

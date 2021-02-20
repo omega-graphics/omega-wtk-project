@@ -9,7 +9,7 @@ namespace OmegaWTK::Composition {
 
     class Backend;
     class OMEGAWTK_EXPORT Compositor {
-        Backend *backend;
+        Core::UniquePtr<Backend> backend;
         bool allowUpdates = false;
         friend class Layer;
         void updateRequestLayer(Layer *layer);

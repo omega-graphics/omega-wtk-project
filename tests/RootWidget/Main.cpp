@@ -20,9 +20,9 @@ public:
     MyWidget(const Core::Rect & rect):Widget(rect),delegate(new MyRootDelegate()){
         rootView->setDelegate(delegate);
         Composition::Layer *rootLayer = rootView->getLayer();
-         rootLayer->drawRect(Rect(0,0,150,150),Composition::Color::Red);
+         rootLayer->drawRect(Rect(0,0,150,150),Composition::ColorBrush(Composition::Color::Red));
         //  rootLayer->drawEllipse({{150,150},30,50},Composition::Color::Green);
-        rootLayer->drawBitmap(Core::loadImageFromFile(Core::String("./assets/test.png")),Rect(0,0,300,300));
+        // rootLayer->drawBitmap(Core::loadImageFromFile(Core::String("./assets/test.png")),Rect(0,0,300,300));
     };
     
 };

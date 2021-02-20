@@ -1,9 +1,10 @@
 #include "omegaWTK/Composition/Backend.h"
 #include "omegaWTK/Composition/Layer.h"
+#include "BackendPriv.h"
 
-#ifdef TARGET_WIN32
-#include "win/DirectXBackend.h"
-#endif
+// #ifdef TARGET_WIN32
+// #include "win/DirectXBackend.h"
+// #endif
 
 #ifdef TARGET_MACOS
 #include "macos/QuartzBackend.h"
@@ -23,13 +24,8 @@ void Backend::setCurrentJob(Layer *layer){
     currentLayer = layer;
 };
 
-Backend * make_backend(){
-#ifdef TARGET_WIN32
-    return make_directx_backend();
-#endif
-#ifdef TARGET_MACOS
-    return make_quartz_backend();
-#endif
+Core::UniquePtr<Backend> make_backend(){
+    return std::make_unique<BackendImpl>(BackendImpl());
 };
 
 };

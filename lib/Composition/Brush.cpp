@@ -2,11 +2,11 @@
 
 namespace OmegaWTK::Composition {
 
-Brush::Brush(const Color & color):color(color),isColor(true),isGradient(false){
+Brush::Brush(const Color & color):isColor(true),color(color),isGradient(false){
     
 };
 
-Brush::Brush(const Gradient & gradient):color(0,0),isColor(false),gradient(gradient),isGradient(true){
+Brush::Brush(const Gradient & gradient):isColor(false),color(0,0),isGradient(true),gradient(gradient){
     
 };
 

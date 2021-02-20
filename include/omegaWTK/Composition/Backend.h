@@ -19,7 +19,7 @@ public:
     ~Backend();
 };
 
-Backend * make_backend();
+Core::UniquePtr<Backend> make_backend();
 
 };
 };

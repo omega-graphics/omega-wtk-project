@@ -13,9 +13,11 @@ class BDCompositionRenderTarget;
 class BDCompositionDevice {
     Core::Map<Layer *,Core::SharedPtr<BDCompositionRenderTarget>> targets;
 public:
+    // BDCompositionDevice(){};
     static Core::SharedPtr<BDCompositionDevice> Create();
-    Core::SharedPtr<BDCompositionRenderTarget> makeTarget(Layer *layer);
-    void destroyTarget(Layer *layer,Core::SharedPtr<BDCompositionRenderTarget> &target);
+    virtual Core::SharedPtr<BDCompositionRenderTarget> makeTarget(Layer *layer) = 0;
+    virtual void destroyTarget(Layer *layer,Core::SharedPtr<BDCompositionRenderTarget> &target) = 0;
+    // virtual ~BDCompositionDevice();
 };
 
 };

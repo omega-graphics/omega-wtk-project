@@ -58,7 +58,7 @@ namespace OmegaWTK {
             /// @{
             void setBackgroundColor(const Color & color);
 
-            void drawRect(const Core::Rect &rect,const Color & color,Core::Optional<Border> border = {});
+            void drawRect(const Core::Rect &rect,Core::SharedPtr<Brush> brush,Core::Optional<Border> border = {});
 
             void drawRoundedRect(const Core::RoundedRect & rect,const Color & color,Core::Optional<Border> border = {});
 

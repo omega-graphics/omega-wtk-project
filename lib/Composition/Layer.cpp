@@ -8,9 +8,9 @@ namespace OmegaWTK::Composition {
 Target::Target(Native::NativeItemPtr _native) : native(_native){};
 Target::~Target(){};
 
-void Layer::drawRect(const Core::Rect &rect, const Color &color,Core::Optional<Border> border) {
+void Layer::drawRect(const Core::Rect &rect,Core::SharedPtr<Brush> brush,Core::Optional<Border> border) {
   compTarget->visuals.push_back(new Visual(
-      {compTarget->id_gen,Visual::Rect, (void *)new Visual::RectParams({rect, color,border})}));
+      {compTarget->id_gen,Visual::Rect, (void *)new Visual::RectParams({rect,brush,border})}));
   ++compTarget->id_gen;
 };
 

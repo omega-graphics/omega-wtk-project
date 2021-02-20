@@ -1,6 +1,7 @@
 #include "omegaWTK/Core/Core.h"
 #include "Color.h"
 #include "Text.h"
+#include "Brush.h"
 #include "omegaWTK/Core/ImgCodec.h"
 
 #ifndef OMEGAWTK_COMPOSITION_VISUAL_H
@@ -22,10 +23,10 @@ namespace OmegaWTK {
     };
 
     struct Border {
-        Color color;
+        Core::SharedPtr<Brush> brush;
         unsigned width;
         Border() = delete;
-        Border(Color _color,unsigned _width):color(_color),width(_width){};
+        Border(Core::SharedPtr<Brush> & _brush,unsigned _width):brush(_brush),width(_width){};
     };
     /// An object drawn by a Compositor.
     struct Visual {
@@ -40,7 +41,7 @@ namespace OmegaWTK {
         Type type;
         typedef struct {
             Core::Rect rect;
-            Color color;
+            Core::SharedPtr<Brush> brush;
             Core::Optional<Border> border;
         } RectParams;
         
