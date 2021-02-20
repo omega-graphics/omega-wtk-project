@@ -14,21 +14,21 @@ void Layer::drawRect(const Core::Rect &rect,Core::SharedPtr<Brush> brush,Core::O
   ++compTarget->id_gen;
 };
 
-void Layer::drawRoundedRect(const Core::RoundedRect &rect, const Color &color,Core::Optional<Border> border){
+void Layer::drawRoundedRect(const Core::RoundedRect &rect,Core::SharedPtr<Brush> brush,Core::Optional<Border> border){
   compTarget->visuals.push_back(new Visual(
-    {compTarget->id_gen,Visual::RoundedRect,(void *) new Visual::RoundedRectParams({{rect.pos,rect.dimen},rect.radius_x,rect.radius_y,color,border})}));
+    {compTarget->id_gen,Visual::RoundedRect,(void *) new Visual::RoundedRectParams({{rect.pos,rect.dimen},rect.radius_x,rect.radius_y,brush,border})}));
     ++compTarget->id_gen;
 };
 
-void Layer::drawText(const Core::String & str,unsigned size,const Color & color,const Core::Rect & rect,const Text::Font & font){
+void Layer::drawText(const Core::String & str,unsigned size,Core::SharedPtr<Brush> brush,const Core::Rect & rect,const Text::Font & font){
     compTarget->visuals.push_back(new Visual(
-      {compTarget->id_gen,Visual::Text,(void *) new Visual::TextParams({Text({str,size,font}),color,rect})}));
+      {compTarget->id_gen,Visual::Text,(void *) new Visual::TextParams({Text({str,size,font}),brush,rect})}));
     ++compTarget->id_gen;
 };
 
-void Layer::drawEllipse(const Core::Ellipse &ellipse,const Color &color,Core::Optional<Border> border){
+void Layer::drawEllipse(const Core::Ellipse &ellipse,Core::SharedPtr<Brush> brush,Core::Optional<Border> border){
   compTarget->visuals.push_back(new Visual(
-    {compTarget->id_gen,Visual::Ellipse,(void *) new Visual::EllipseParams({ellipse,color,border})}));
+    {compTarget->id_gen,Visual::Ellipse,(void *) new Visual::EllipseParams({ellipse,brush,border})}));
   ++compTarget->id_gen;
 };
 

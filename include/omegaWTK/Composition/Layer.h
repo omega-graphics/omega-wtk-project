@@ -60,11 +60,11 @@ namespace OmegaWTK {
 
             void drawRect(const Core::Rect &rect,Core::SharedPtr<Brush> brush,Core::Optional<Border> border = {});
 
-            void drawRoundedRect(const Core::RoundedRect & rect,const Color & color,Core::Optional<Border> border = {});
+            void drawRoundedRect(const Core::RoundedRect & rect,Core::SharedPtr<Brush> brush,Core::Optional<Border> border = {});
 
-            void drawText(const Core::String & str,unsigned size,const Color & color,const Core::Rect & rect,const Text::Font & font = {"Arial",Text::Font::Regular});
+            void drawText(const Core::String & str,unsigned size,Core::SharedPtr<Brush> brush,const Core::Rect & rect,const Text::Font & font = {"Arial",Text::Font::Regular});
 
-            void drawEllipse(const Core::Ellipse &ellipse,const Color &color,Core::Optional<Border> border = {});
+            void drawEllipse(const Core::Ellipse &ellipse,Core::SharedPtr<Brush> brush,Core::Optional<Border> border = {});
 
             void drawBitmap(Core::SharedPtr<Core::BitmapImage> image,const Core::Rect & rect);
             /// @}

@@ -15,8 +15,12 @@ add_omega_wtk_lib(
     # BD Prefix --> For Backend!
     "BDCompositionDevice.h"
     "BDCompositionDevice.cpp"
+    "BDCompositionImage.h"
+    "BDCompositionImage.cpp"
     "BDCompositionRenderTarget.h"
     "BDCompositionRenderTarget.cpp"
+    "BDCompositionFontFactory.h"
+    "BDCompositionFontFactory.cpp"
     HEADERS 
     "Backend.h"
     "Compositor.h"
@@ -35,7 +39,15 @@ target_include_directories("omegaWTKComposition" PRIVATE "${CMAKE_SOURCE_DIR}/li
 
 if(TARGET_WIN32)
     # set(COMPOSITION_WIN_SOURCES "DirectXBackend.h" "DirectXBackend.cpp" "DCVisualTree.h" "DCVisualTree.cpp")
-    set(COMPOSITION_WIN_SOURCES "DXBDCompositionDevice.h" "DXBDCompositionDevice.cpp" "DXBDCompositionRenderTarget.h" "DXBDCompositionRenderTarget.cpp")
+    set(COMPOSITION_WIN_SOURCES 
+    "DXBDCompositionDevice.h" 
+    "DXBDCompositionDevice.cpp" 
+    "DXBDCompositionRenderTarget.h" 
+    "DXBDCompositionRenderTarget.cpp" 
+    "DXBDCompositionImage.h" 
+    "DXBDCompositionImage.cpp" 
+    "DXBDCompositionFontFactory.h" 
+    "DXBDCompositionFontFactory.cpp")
     list(TRANSFORM COMPOSITION_WIN_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/dx/")
     target_sources("omegaWTKComposition" PRIVATE ${COMPOSITION_WIN_SOURCES})
 endif()

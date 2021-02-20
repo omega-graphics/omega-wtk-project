@@ -1,5 +1,6 @@
 #include "DXBDCompositionDevice.h"
 #include "DXBDCompositionRenderTarget.h"
+#include "DXBDCompositionFontFactory.h"
 
 namespace OmegaWTK::Composition {
     DXBDCompositionDevice::DXBDCompositionDevice(){
@@ -45,14 +46,9 @@ namespace OmegaWTK::Composition {
         if(FAILED(hr)){
             //Handle Error!
         };
-        hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,__uuidof(IDWriteFactory),(IUnknown **)&dwrite_factory);
-        if(FAILED(hr)){
-            //Handle Error!
-        };
 
     };
     DXBDCompositionDevice::~DXBDCompositionDevice(){
-        Core::SafeRelease(&dwrite_factory);
         Core::SafeRelease(&dcomp_device);
         Core::SafeRelease(&direct2d_device);
         Core::SafeRelease(&dxgi_factory);
@@ -67,6 +63,15 @@ namespace OmegaWTK::Composition {
     Core::SharedPtr<BDCompositionRenderTarget> DXBDCompositionDevice::makeTarget(Layer *layer){
         // MessageBoxA(GetForegroundWindow(),"Making DX Render Target","",MB_OK);
         return DXBDCompositionRenderTarget::Create(this,(Native::Win::HWNDItem *)layer->getTargetNativePtr());
+    };
+    Core::SharedPtr<BDCompositionFontFactory> DXBDCompositionDevice::createFontFactory(){
+        HRESULT hr;
+        IDWriteFactory *factory;
+        hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,__uuidof(IDWriteFactory),(IUnknown **)&factory);
+        if(FAILED(hr)){
+
+        };
+        return DXBDCompositionFontFactory::Create(factory);
     };
     void DXBDCompositionDevice::destroyTarget(Layer *layer, Core::SharedPtr<BDCompositionRenderTarget> &target){
 

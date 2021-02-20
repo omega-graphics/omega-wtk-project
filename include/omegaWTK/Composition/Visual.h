@@ -49,18 +49,18 @@ namespace OmegaWTK {
             Core::Rect rect;
             unsigned rad_x;
             unsigned rad_y;
-            Color color;
+            Core::SharedPtr<Brush> brush;
             Core::Optional<Border> border;
         } RoundedRectParams;
         
         typedef struct {
             Core::Ellipse ellipse;
-            Color color;
+            Core::SharedPtr<Brush> brush;
             Core::Optional<Border> border;
         } EllipseParams;
         typedef struct {
             class Text text;
-            Color color;
+            Core::SharedPtr<Brush> brush;
             Core::Rect rect;
         } TextParams;
         typedef struct {

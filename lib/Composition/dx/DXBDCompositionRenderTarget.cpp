@@ -1,4 +1,6 @@
 #include "DXBDCompositionRenderTarget.h"
+#include "DXBDCompositionImage.h"
+#include "DXBDCompositionFontFactory.h"
 
 namespace OmegaWTK::Composition {
 
@@ -127,6 +129,7 @@ namespace OmegaWTK::Composition {
 
         recreateSwapChain = false;
         recreateDeviceContext = false;
+        newTarget = true;
     };
 
     void DXBDCompositionRenderTarget::redoDeviceContext(){
@@ -145,6 +148,7 @@ namespace OmegaWTK::Composition {
 
         recreateSwapChain = false;
         recreateDeviceContext = false;
+        newTarget = true;
     };
 
     void DXBDCompositionRenderTarget::clear(Color &clearColor){
@@ -168,6 +172,73 @@ namespace OmegaWTK::Composition {
             direct2d_device_context->FillRectangle(D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom),_brush);
             Core::SafeRelease(&_brush);
         // };
+    };
+    void DXBDCompositionRenderTarget::frameRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush, unsigned width){
+        ID2D1Brush *_brush = omegawtk_brush_to_d2d1_brush(*brush,direct2d_device_context.get());
+        RECT rc = core_rect_to_win_rect(rect,hwndItem->getHandle());
+        UINT dpi = GetDpiForWindow(hwndItem->getHandle());
+        FLOAT scaleFactor = FLOAT(dpi)/96.f;
+        direct2d_device_context->DrawRoundedRectangle(D2D1::RoundedRect(D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom),FLOAT(rect.radius_x) * scaleFactor,FLOAT(rect.radius_y) * scaleFactor),_brush,FLOAT(width) * scaleFactor);
+        Core::SafeRelease(&_brush);
+    };
+    void DXBDCompositionRenderTarget::fillRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush){
+        ID2D1Brush *_brush = omegawtk_brush_to_d2d1_brush(*brush,direct2d_device_context.get());
+        RECT rc = core_rect_to_win_rect(rect,hwndItem->getHandle());
+        UINT dpi = GetDpiForWindow(hwndItem->getHandle());
+        FLOAT scaleFactor = FLOAT(dpi)/96.f;
+        direct2d_device_context->FillRoundedRectangle(D2D1::RoundedRect(D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom),FLOAT(rect.radius_x) * scaleFactor,FLOAT(rect.radius_y) * scaleFactor),_brush);
+        Core::SafeRelease(&_brush);
+    };
+
+    Core::SharedPtr<BDCompositionImage> DXBDCompositionRenderTarget::createImageFromBitmapImage(Core::SharedPtr<Core::BitmapImage> &img,Core::Rect &newSize,unsigned v_id){
+        auto & header = img->header;
+        UINT dpi = GetDpiForWindow(hwndItem->getHandle());
+        FLOAT scaleFactor = FLOAT(dpi)/96.f;
+        ID2D1Bitmap *bitmap;
+        ID2D1Image *res, *res2;
+        hr = direct2d_device_context->CreateBitmap(D2D1::SizeU(header->width,header->height),img->data,header->stride,D2D1::BitmapProperties(D2D1::PixelFormat(computePixelFormat(header->bitDepth,header->channels,img->sRGB),D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&bitmap);
+        if(FAILED(hr)){
+
+        };
+        ID2D1Effect *alphaFix, *scaleFix;
+        hr = direct2d_device_context->CreateEffect(CLSID_D2D1Premultiply,&alphaFix);
+        if(FAILED(hr)){
+
+        };
+        hr = direct2d_device_context->CreateEffect(CLSID_D2D1Scale,&scaleFix);
+        if(FAILED(hr)){
+
+        };
+        scaleFix->SetValue(D2D1_SCALE_PROP_INTERPOLATION_MODE,D2D1_SCALE_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR);
+        scaleFix->SetValue(D2D1_SCALE_PROP_SCALE,D2D1::Vector2F(FLOAT(newSize.dimen.minWidth * scaleFactor)/FLOAT(header->width),FLOAT(newSize.dimen.minHeight * scaleFactor)/FLOAT(header->height)));
+
+        scaleFix->SetInput(0,bitmap);
+        scaleFix->GetOutput(&res);
+        alphaFix->SetInput(0,res);
+        alphaFix->GetOutput(&res2);
+        
+        auto image = DXBDCompositionImage::Create(img,newSize,this,res2);
+        images.insert(std::make_pair(v_id,image));
+        return image;
+    };
+    void DXBDCompositionRenderTarget::drawImage(Core::SharedPtr<BDCompositionImage> &img,Core::Position pos){
+        DXBDCompositionImage *compImg = reinterpret_cast<DXBDCompositionImage *>(img.get());
+        UINT dpi = GetDpiForWindow(hwndItem->getHandle());
+        FLOAT scaleFactor = FLOAT(dpi)/96.f;
+        ID2D1Image * img_ref = compImg->native_image.get();
+        RECT rc;
+        GetClientRect(hwndItem->getHandle(),&rc);
+        auto & rect = compImg->rect;
+        direct2d_device_context->DrawImage(img_ref,D2D1::Point2F(pos.x * scaleFactor,rc.bottom - (rect.dimen.minHeight * scaleFactor) - (pos.y * scaleFactor)));
+    };
+    void DXBDCompositionRenderTarget::drawText(Core::SharedPtr<BDCompositionFont> &font, Core::String &string, Core::Rect &textRect,Core::SharedPtr<Brush> & brush){
+        DXBDCompositionFont *compFont = reinterpret_cast<DXBDCompositionFont *>(font.get());
+        std::wstring w_str;
+        cpp_str_to_cpp_wstr(string,w_str);
+        ID2D1Brush *_brush = omegawtk_brush_to_d2d1_brush(*brush,direct2d_device_context.get());
+        RECT rc = core_rect_to_win_rect(textRect,hwndItem->getHandle());
+        direct2d_device_context->DrawText(w_str.c_str(),w_str.size(),compFont->textFormat.get(),D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom),_brush);
+        Core::SafeRelease(&_brush);
     };
     void DXBDCompositionRenderTarget::commit(){
         DXGI_PRESENT_PARAMETERS params;
@@ -194,6 +265,7 @@ namespace OmegaWTK::Composition {
             else {
                 recreateSwapChain = false;
                 recreateDeviceContext = false;
+                newTarget = false;
             }
         };
     };

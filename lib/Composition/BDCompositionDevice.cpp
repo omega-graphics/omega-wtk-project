@@ -8,6 +8,8 @@
 namespace OmegaWTK::Composition {
 
 Core::SharedPtr<BDCompositionDevice> BDCompositionDevice::Create(){
+    #ifdef TARGET_WIN32
     return DXBDCompositionDevice::Create();
+    #endif
 };
 }

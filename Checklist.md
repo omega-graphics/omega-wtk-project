@@ -7,7 +7,9 @@
 - [x]  Text
 - [x]  Menus.
 - [x]  Custom Icons and Diagram!
-- [ ]  Images/Bitmaps (Premulitply Alpha Channel for Windows!)
+- [x]  Images/Bitmaps (Premulitply Alpha Channel for Windows!)
+- [ ]  Implement Metal Backend
+- [ ]  JPEG/TIFF Implement
 - [ ]  Styles.
 - [ ]  Video Layer.
 - [ ]  Scroll Views (Ones with Native Scroll Bars)

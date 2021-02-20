@@ -4,6 +4,10 @@
 
 namespace OmegaWTK::Composition {
 
+    Core::SharedPtr<BDCompositionImage> & BDCompositionRenderTarget::getImage(unsigned visual_id){
+        return images[visual_id];
+    };
+
 // void BDCompositionRenderTarget::addBrush(Core::SharedPtr<Brush> & brush){
 //     brushes.push_back(brush);
 // };

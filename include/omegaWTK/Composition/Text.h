@@ -17,9 +17,27 @@ namespace OmegaWTK {
                     Bold,
                     BoldAndItalic
                 } FontStyle;
+                typedef enum : OPT_PARAM {
+                    LeftUpper,
+                    LeftCenter,
+                    LeftLower,
+                    MiddleUpper,
+                    MiddleCenter,
+                    MiddleLower,
+                    RightUpper,
+                    RightCenter,
+                    RightLower
+                }Alignment;
+                typedef enum : OPT_PARAM {
+                    None,
+                    WrapByWord,
+                    WrapByCharacter
+                } Wrapping;
                 Core::String family;
                 FontStyle style;
-                Font(Core::String _family,FontStyle _style):family(_family),style(_style){};
+                Alignment textAlignment;
+                Wrapping wrapping;
+                Font(Core::String _family,FontStyle _style,Alignment textAlignment = LeftUpper,Wrapping wrapping = WrapByWord):family(_family),style(_style),textAlignment(textAlignment),wrapping(wrapping){};
                 ~Font(){};
 
             };
@@ -27,10 +45,10 @@ namespace OmegaWTK {
             Font font;
             unsigned fontSize;
             public:
-            const Font & getFont() noexcept{
+            Font & getFont() noexcept{
                 return font;
             };
-            const unsigned getFontSize() noexcept{
+            unsigned getFontSize() noexcept{
                 return fontSize;
             };
             void setFontSize(const unsigned & new_size){
@@ -39,7 +57,7 @@ namespace OmegaWTK {
             void setFont(const Font & new_font){
                 font = new_font;
             };
-            const Core::String & getString() noexcept{ return text_val;};
+            Core::String & getString() noexcept{ return text_val;};
             void setString(const Core::String & str){
                 text_val = std::move(str);
             };

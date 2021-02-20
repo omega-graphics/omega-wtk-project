@@ -7,6 +7,7 @@
 namespace OmegaWTK::Composition {
 
 class BDCompositionRenderTarget;
+class BDCompositionFontFactory;
 /**
  A (Platform Specific) Composition Device!
  */
@@ -16,6 +17,7 @@ public:
     // BDCompositionDevice(){};
     static Core::SharedPtr<BDCompositionDevice> Create();
     virtual Core::SharedPtr<BDCompositionRenderTarget> makeTarget(Layer *layer) = 0;
+    virtual Core::SharedPtr<BDCompositionFontFactory> createFontFactory() = 0;
     virtual void destroyTarget(Layer *layer,Core::SharedPtr<BDCompositionRenderTarget> &target) = 0;
     // virtual ~BDCompositionDevice();
 };

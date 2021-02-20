@@ -29,13 +29,13 @@ namespace OmegaWTK::Composition {
         Core::UniqueComPtr<IDXGIDevice1> dxgi_device;
         Core::UniqueComPtr<IDXGIAdapter> dxgi_adapter;
         Core::UniqueComPtr<IDCompositionDevice3> dcomp_device;
-        Core::UniqueComPtr<IDWriteFactory> dwrite_factory;
         friend class DXBDCompositionRenderTarget;
         public:
         DXBDCompositionDevice();
         ~DXBDCompositionDevice();
         static Core::SharedPtr<BDCompositionDevice> Create();
         Core::SharedPtr<BDCompositionRenderTarget> makeTarget(Layer *layer);
+        Core::SharedPtr<BDCompositionFontFactory> createFontFactory();
         void destroyTarget(Layer *layer, Core::SharedPtr<BDCompositionRenderTarget> &target);
     };
 };

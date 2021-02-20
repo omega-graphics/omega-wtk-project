@@ -16,7 +16,9 @@ namespace OmegaWTK::Composition {
         Core::UniqueComPtr<IDCompositionTarget> dcomp_target;
         bool recreateDeviceContext;
         bool recreateSwapChain;
+        bool newTarget;
         Native::Win::HWNDItem *hwndItem;
+        friend class DXBDCompositionImage;
         public:
         DXBDCompositionRenderTarget(DXBDCompositionDevice * device,Native::Win::HWNDItem *hwndItem);
         bool needsSwapChain(){
@@ -25,6 +27,9 @@ namespace OmegaWTK::Composition {
         bool needsDeviceContext(){
             return recreateDeviceContext;
         };
+        bool targetIsFresh(){
+            return newTarget;
+        };
         void redoSwapChain();
         void redoDeviceContext();
         ~DXBDCompositionRenderTarget();
@@ -32,6 +37,11 @@ namespace OmegaWTK::Composition {
         void clear(Color &clearColor);
         void frameRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush, unsigned int width);
         void fillRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush);
+        void frameRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush, unsigned int width);
+        void fillRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush);
+        Core::SharedPtr<BDCompositionImage> createImageFromBitmapImage(Core::SharedPtr<Core::BitmapImage> &img,Core::Rect &newSize,unsigned v_id);
+        void drawImage(Core::SharedPtr<BDCompositionImage> &img,Core::Position pos);
+        void drawText(Core::SharedPtr<BDCompositionFont> &font, Core::String &string, Core::Rect &textRect,Core::SharedPtr<Brush> & brush);
         void commit();
     };
 }
