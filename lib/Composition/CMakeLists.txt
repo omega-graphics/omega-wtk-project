@@ -53,7 +53,17 @@ if(TARGET_WIN32)
 endif()
 
 if(TARGET_MACOS)
-    set(COMPOSITION_MAC_SOURCES "QuartzBackend.h" "QuartzBackend.mm" "MetalBackend.h" "MetalBackend.mm" "MetalBridgeHeader.h" "OmegaWTKShaders.metal")
+    # set(COMPOSITION_MAC_SOURCES "QuartzBackend.h" "QuartzBackend.mm" "MetalBackend.h" "MetalBackend.mm" "MetalBridgeHeader.h" "OmegaWTKShaders.metal")
+    set(COMPOSITION_MAC_SOURCES 
+    "MTLBackend.h" 
+    "MTLBDCompositionDevice.h" 
+    "MTLBDCompositionDevice.mm" 
+    "MTLBDCompositionRenderTarget.h"
+    "MTLBDCompositionRenderTarget.mm"
+    "MTLBDTriangulator.h"
+    "MTLBDTriangulator.mm"
+    "MetalBridgeHeader.h" 
+    "OmegaWTKShaders.metal")
     list(TRANSFORM COMPOSITION_MAC_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/mtl/")
     set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/mtl/OmegaWTKShaders.metal" PROPERTIES LANGUAGE METAL)
     target_link_libraries("omegaWTKComposition" PRIVATE ${Metal_LIB} ${MetalPerformanceShaders_LIB})

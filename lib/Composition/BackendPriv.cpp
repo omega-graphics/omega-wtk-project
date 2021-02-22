@@ -69,7 +69,8 @@ namespace OmegaWTK::Composition {
     void BackendImpl::doWork(){
         auto target = global_device->makeTarget(currentLayer);
         auto & visuals = currentLayer->getTargetVisuals();
-
+        
+        target->clear(currentLayer->getBackgroundColor());
         for(auto & visual : visuals){
             drawVisual(target,visual,false);
         };

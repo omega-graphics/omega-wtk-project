@@ -24,7 +24,7 @@ public:
         //  rootLayer->drawRoundedRect(RoundedRect(0,0,100,100,25,25),Composition::ColorBrush(Composition::Color::Green));
         //  rootLayer->drawEllipse({{150,150},30,50},Composition::Color::Green);
         // rootLayer->drawBitmap(Core::loadImageFromFile(Core::String("./assets/test.png")),Rect(0,0,300,300));
-        rootLayer->drawText("Hello World!",30,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,150,150),Composition::Text::Font("Times New Roman",Composition::Text::Font::Bold));
+//        rootLayer->drawText("Hello World!",30,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,150,150),Composition::Text::Font("Times New Roman",Composition::Text::Font::Bold));
     };
     
 };

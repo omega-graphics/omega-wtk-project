@@ -12,6 +12,7 @@ class BDCompositionFontFactory;
  A (Platform Specific) Composition Device!
  */
 class BDCompositionDevice {
+protected:
     Core::Map<Layer *,Core::SharedPtr<BDCompositionRenderTarget>> targets;
 public:
     // BDCompositionDevice(){};

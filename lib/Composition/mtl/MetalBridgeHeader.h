@@ -9,7 +9,14 @@
 
 typedef struct {
     simd_float2 position;
+    simd_float4 color;
+} MTLBDSolidColorVertex;
+
+typedef struct {
+    simd_float2 position;
     simd_float2 textureCoord;
-} OmegaWTKMetalVertex;
+} MTLBDTexture2DVertex;
+
+
 
 #endif

@@ -4,22 +4,54 @@
 
 using namespace metal;
 
-struct RasterData {
+/**
+ Solid Color Shaders.
+ */
+
+struct SolidColorRasterData {
+    simd_float4 pos [[position]];
+    simd_float4 color;
+};
+
+vertex SolidColorRasterData solidColorVertex(unsigned v_id[[vertex_id]],constant MTLBDSolidColorVertex *vertices[[buffer(OMEGAWTK_METAL_VERICES_BUFFER)]]){
+    MTLBDSolidColorVertex _v = vertices[v_id];
+    SolidColorRasterData out;
+    out.pos = simd_float4(_v.position,0,1.0);
+    out.color = _v.color;
+    return out;
+};
+
+fragment simd_float4 solidColorFragment(SolidColorRasterData interpolated [[stage_in]]){
+    return interpolated.color;
+};
+
+/**
+ Texture 2D Shaders.
+ */
+
+struct Texture2DRasterData {
     simd_float4 pos [[position]];
 //    simd_float4 color;
     simd_float2 texture2dCoordinate;
 };
 
-vertex RasterData solidRectVertex(unsigned v_id [[vertex_id]],constant OmegaWTKMetalVertex *vertices [[buffer(OMEGAWTK_METAL_VERICES_BUFFER)]]){
-    OmegaWTKMetalVertex _v = vertices[v_id];
-    RasterData out;
+vertex Texture2DRasterData texture2DVertex(unsigned v_id [[vertex_id]],constant MTLBDTexture2DVertex *vertices [[buffer(OMEGAWTK_METAL_VERICES_BUFFER)]]){
+    MTLBDTexture2DVertex _v = vertices[v_id];
+    Texture2DRasterData out;
     out.pos = simd_float4(_v.position,0,1.0);
     out.texture2dCoordinate = _v.textureCoord;
     return out;
 };
 
 
-fragment simd_float4 solidRectFragment(RasterData interpolated [[stage_in]],texture2d<half> texture [[texture(OMEGAWTK_METAL_TEXTURE_BUFFER)]],constant simd_float4 * backgroundColor [[buffer(OMEGAWTK_METAL_BACKGROUND_COLOR_BUFFER)]]){
+fragment simd_float4 texture2DFragment(Texture2DRasterData interpolated [[stage_in]],texture2d<half> texture [[texture(OMEGAWTK_METAL_TEXTURE_BUFFER)]]){
+    constexpr sampler textureSampler (filter::linear);
+    const simd_half4 textureColor = texture.sample(textureSampler,interpolated.texture2dCoordinate);
+    return simd_float4(textureColor);
+}
+
+
+fragment simd_float4 texture2DFragmentWithBkgrd(Texture2DRasterData interpolated [[stage_in]],texture2d<half> texture [[texture(OMEGAWTK_METAL_TEXTURE_BUFFER)]],constant simd_float4 * backgroundColor [[buffer(OMEGAWTK_METAL_BACKGROUND_COLOR_BUFFER)]]){
     constexpr sampler textureSampler (filter::linear);
     const simd_half4 textureColor = texture.sample(textureSampler,interpolated.texture2dCoordinate);
     const simd_float4 color = simd_float4(textureColor);

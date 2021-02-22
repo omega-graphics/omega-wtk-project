@@ -25,12 +25,12 @@ namespace OmegaWTK::Native {
 namespace Cocoa {
 
 class CocoaItem : public NativeItem {
-    Core::Rect rect;
     OmegaWTKCocoaView * _ptr;
     friend class CocoaEventHandler;
     void enable();
     void disable();
 public:
+    Core::Rect rect;
     typedef enum : OPT_PARAM {
         View,
         Button
