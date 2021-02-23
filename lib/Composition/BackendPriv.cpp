@@ -2,6 +2,8 @@
 #include "BDCompositionRenderTarget.h"
 #include "BDCompositionFontFactory.h"
 
+#include <iostream>
+
 namespace OmegaWTK::Composition {
     Core::SharedPtr<BDCompositionDevice> global_device;
     Core::SharedPtr<BDCompositionFontFactory> global_font_factory;

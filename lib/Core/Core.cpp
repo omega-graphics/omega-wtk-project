@@ -89,15 +89,15 @@ bool Ellipse::compare(Ellipse & other){
 
 namespace OmegaWTK {
 
-Core::Rect Rect(unsigned x,unsigned y,unsigned width,unsigned height){
-    return {{x,y},{width,height}};
+Core::Rect Rect(unsigned x,unsigned y,unsigned width,unsigned height,float angle){
+    return {{x,y},{width,height},angle};
 };
 Core::Ellipse Ellipse(unsigned x,unsigned y,unsigned radius_x,unsigned radius_y){
     return {{x,y},radius_x,radius_y};
 };
 
-Core::RoundedRect RoundedRect(unsigned x,unsigned y,unsigned width,unsigned height,unsigned radius_x,unsigned radius_y) {
-    return {Rect(x,y,width,height),radius_x,radius_y};
+Core::RoundedRect RoundedRect(unsigned x,unsigned y,unsigned width,unsigned height,unsigned radius_x,unsigned radius_y,float angle) {
+    return {Rect(x,y,width,height,angle),radius_x,radius_y};
 }
 
 void FSPath::parse(const Core::String & str){

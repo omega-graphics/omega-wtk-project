@@ -62,6 +62,10 @@ if(TARGET_MACOS)
     "MTLBDCompositionRenderTarget.mm"
     "MTLBDTriangulator.h"
     "MTLBDTriangulator.mm"
+    "MTLBDCompositionImage.h"
+    "MTLBDCompositionImage.mm"
+    "MTLBDCompositionFontFactory.h"
+    "MTLBDCompositionFontFactory.mm"
     "MetalBridgeHeader.h" 
     "OmegaWTKShaders.metal")
     list(TRANSFORM COMPOSITION_MAC_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/mtl/")

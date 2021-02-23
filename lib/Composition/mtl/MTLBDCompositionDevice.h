@@ -15,7 +15,8 @@ public:
      Pipeline States
      */
     id<MTLRenderPipelineState> solidColorPrimitive;
-//    id<MTLRenderPipelineState> texture2DPrimitive;
+    id<MTLRenderPipelineState> texture2DPrimitive;
+    id<MTLRenderPipelineState> texture2DPrimitiveWithBkgrd;
 private:
 //    Core::Vector<id<MTLCommandQueue>> metal_command_queues;
     id<MTLCommandQueue> metal_command_queue;

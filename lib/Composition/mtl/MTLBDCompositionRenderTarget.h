@@ -23,6 +23,8 @@ namespace OmegaWTK::Composition {
         Core::Vector<id<MTLCommandBuffer>> commandBuffers;
         Core::Vector<id<MTLBuffer>> vertexBuffers;
         Color clearColor;
+        Core::Map<unsigned,id<MTLTexture>> textures;
+        
         struct RenderPipeline {
             id<MTLRenderPipelineState> pipelineState;
             std::function<void(id<MTLRenderCommandEncoder> encoder,unsigned v_id)> setupCallback;

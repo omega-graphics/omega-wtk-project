@@ -93,7 +93,8 @@ namespace OmegaWTK {
             Position pos;
             Dimensions dimen;
             bool compare(Rect & other);
-            Rect(Position _pos,Dimensions _dimen):pos(_pos),dimen(_dimen){};
+            float angle;
+            Rect(Position _pos,Dimensions _dimen,float angle = 0):pos(_pos),dimen(_dimen),angle(angle){};
         };
     
         struct OMEGAWTK_EXPORT RoundedRect : public Rect {
@@ -271,9 +272,9 @@ namespace OmegaWTK {
         };
         #endif
     };
-    Core::Rect Rect(unsigned x,unsigned y,unsigned width,unsigned height);
+    Core::Rect Rect(unsigned x,unsigned y,unsigned width,unsigned height,float angle = 0);
     Core::Ellipse Ellipse(unsigned x,unsigned y,unsigned radius_x,unsigned radius_y);
-    Core::RoundedRect RoundedRect(unsigned x,unsigned y,unsigned width,unsigned height,unsigned radius_x,unsigned radius_y);
+    Core::RoundedRect RoundedRect(unsigned x,unsigned y,unsigned width,unsigned height,unsigned radius_x,unsigned radius_y,float angle = 0);
 
 
     class FSPath {

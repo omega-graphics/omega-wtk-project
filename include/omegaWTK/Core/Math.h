@@ -6,6 +6,9 @@
 
 namespace OmegaWTK::Core {
     namespace Math {
+    
+    const long double PI = std::acos(-1);
+    
         template<class _Num_Ty,typename _Angle_Ty>
         class Vector2D_Base {
             _Num_Ty i;
@@ -62,6 +65,13 @@ namespace OmegaWTK::Core {
 
         struct Point2D {
             unsigned x,y;
+        };
+    
+        struct Arc {
+            Point2D center;
+            float radians;
+            unsigned radius_x;
+            unsigned radius_y;
         };
         struct Point3D {
             unsigned x,y,z;

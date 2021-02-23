@@ -2,6 +2,7 @@
 #import "MTLBDCompositionDevice.h"
 #import "MTLBackend.h"
 #import "MTLBDCompositionRenderTarget.h"
+#import "MTLBDCompositionFontFactory.h"
 
 namespace OmegaWTK::Composition {
 
@@ -18,10 +19,13 @@ MTLBDCompositionDevice::MTLBDCompositionDevice(){
     id<MTLFunction> solidColorVertex = [metal_default_library newFunctionWithName:@"solidColorVertex"];
     id<MTLFunction> solidColorFragment = [metal_default_library newFunctionWithName:@"solidColorFragment"];
     
-//    id<MTLFunction> texture2DVertex = [metal_default_library newFunctionWithName:@""];
-//    id<MTLFunction> texture2DFragment = [metal_default_library newFunctionWithName:@""];
+    id<MTLFunction> texture2DVertex = [metal_default_library newFunctionWithName:@"texture2DVertex"];
+    id<MTLFunction> texture2DFragment = [metal_default_library newFunctionWithName:@"texture2DFragment"];
+    id<MTLFunction> texture2DFragmentWithBkgrd = [metal_default_library newFunctionWithName:@"texture2DFragmentWithBkgrd"];
     
     solidColorPrimitive = setupPipelineState(solidColorVertex,solidColorFragment,MTLPixelFormatBGRA8Unorm);
+    texture2DPrimitive = setupPipelineState(texture2DVertex,texture2DFragment,MTLPixelFormatBGRA8Unorm);
+    texture2DPrimitiveWithBkgrd = setupPipelineState(texture2DVertex,texture2DFragmentWithBkgrd,MTLPixelFormatBGRA8Unorm);
 };
 
 inline id<MTLRenderPipelineState> MTLBDCompositionDevice::setupPipelineState(id<MTLFunction> vertexFunc,id<MTLFunction> fragmentFunc,MTLPixelFormat pixelFormat){
@@ -29,7 +33,13 @@ inline id<MTLRenderPipelineState> MTLBDCompositionDevice::setupPipelineState(id<
     desc.vertexFunction =  vertexFunc;
     desc.fragmentFunction = fragmentFunc;
     desc.rasterSampleCount = 1;
+    desc.sampleCount = 1;
+    /// Enable Alpha Blending!!!
     desc.colorAttachments[0].pixelFormat = pixelFormat;
+    desc.colorAttachments[0].blendingEnabled = YES;
+    desc.colorAttachments[0].alphaBlendOperation = desc.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
+    desc.colorAttachments[0].sourceRGBBlendFactor = desc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorSourceAlpha;
+    desc.colorAttachments[0].destinationRGBBlendFactor = desc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
     NSError *error;
     auto rc = [metal_device newRenderPipelineStateWithDescriptor:desc error:&error];
     if(error.code >= 0){
@@ -71,7 +81,7 @@ Core::SharedPtr<BDCompositionRenderTarget> MTLBDCompositionDevice::makeTarget(La
 };
 
 Core::SharedPtr<BDCompositionFontFactory> MTLBDCompositionDevice::createFontFactory(){
-    return nullptr;
+    return MTLBDCompositionFontFactory::Create();
 };
 
 void MTLBDCompositionDevice::destroyTarget(Layer *layer,Core::SharedPtr<BDCompositionRenderTarget> &target){
