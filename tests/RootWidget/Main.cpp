@@ -21,11 +21,13 @@ public:
         rootView->setDelegate(delegate);
         auto black = Composition::ColorBrush(Composition::Color::Black);
         Composition::Layer *rootLayer = rootView->getLayer();
-//        rootLayer->drawRect(Rect(0,0,250,250),Composition::ColorBrush(Composition::Color::Red),Composition::Border(black,5));
+//        rootLayer->setBackgroundColor(Composition::Color::Blue);
+//        rootLayer->drawRect(Rect(0,0,100,100),Composition::ColorBrush(Composition::Color::Red),Composition::Border(black,5));
 //          rootLayer->drawRoundedRect(RoundedRect(0,0,200,200,25,25),Composition::ColorBrush(Composition::Color::Green));
         //  rootLayer->drawEllipse({{150,150},30,50},Composition::Color::Green);
-//         rootLayer->drawBitmap(Core::loadImageFromFile(Core::String("./assets/test.png")),Rect(0,0,300,300));
-        rootLayer->drawText("Hello World!",50,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,300));
+//          rootLayer->drawBitmap(Core::loadImageFromFile(Core::String("./assets/test.png")),Rect(0,0,300,300));
+        rootLayer->drawText("Hello World!",25,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,300));
+        rootLayer->drawText("Hello World!",50,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,200));
     };
     
 };

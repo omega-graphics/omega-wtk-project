@@ -1,6 +1,7 @@
 #import "MTLBDCompositionFontFactory.h"
 
-#include <ttyent.h>
+#import <Cocoa/Cocoa.h>
+
 namespace OmegaWTK::Composition {
 
 CFStringRef core_string_to_cf_string_ref(Core::String & str){
@@ -36,7 +37,9 @@ Core::SharedPtr<BDCompositionFont> MTLBDCompositionFontFactory::createFont(Text:
             break;
     }
     
-    CTFontRef _font_final = CTFontCreateCopyWithSymbolicTraits(_font,CGFloat(fontSize),NULL,kCTFontTraitBold | kCTFontTraitItalic, fontTraits);
+    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+    
+    CTFontRef _font_final = CTFontCreateCopyWithSymbolicTraits(_font,CGFloat(fontSize * scaleFactor),NULL,kCTFontTraitBold | kCTFontTraitItalic, fontTraits);
     CFRelease(_font);
     
     return std::make_shared<MTLBDCompositionFont>(_font_final,font);

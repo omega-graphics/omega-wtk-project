@@ -26,6 +26,8 @@ namespace OmegaWTK::Composition {
         Core::Map<unsigned,id<MTLTexture>> textures;
         
         struct RenderPipeline {
+            bool multiSampled = false;
+            unsigned sampleCount = 0;
             id<MTLRenderPipelineState> pipelineState;
             std::function<void(id<MTLRenderCommandEncoder> encoder,unsigned v_id)> setupCallback;
         };

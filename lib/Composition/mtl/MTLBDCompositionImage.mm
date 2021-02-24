@@ -1,11 +1,11 @@
 #import "MTLBDCompositionImage.h"
 
 namespace OmegaWTK::Composition {
-MTLBDCompositionImage::MTLBDCompositionImage(Core::SharedPtr<Core::BitmapImage> & _img,Core::Rect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img):BDCompositionImage(_img),rect(rect),desc(desc),img(img){
+MTLBDCompositionImage::MTLBDCompositionImage(Core::SharedPtr<Core::BitmapImage> & _img,Core::FRect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img):BDCompositionImage(_img),rect(rect),desc(desc),img(img){
     
 };
 
-Core::SharedPtr<BDCompositionImage> MTLBDCompositionImage::Create(Core::SharedPtr<Core::BitmapImage> & _img,Core::Rect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img){
+Core::SharedPtr<BDCompositionImage> MTLBDCompositionImage::Create(Core::SharedPtr<Core::BitmapImage> & _img,Core::FRect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img){
     return std::make_shared<MTLBDCompositionImage>(_img,rect,desc,img);
 };
 

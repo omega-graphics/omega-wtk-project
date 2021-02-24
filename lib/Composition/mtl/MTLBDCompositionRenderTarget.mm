@@ -47,10 +47,15 @@ id<MTLBuffer> textured_mesh_to_mtl_vertex_buffer(MTLBDTriangulator::Textured2DMe
 
 MTLBDCompositionRenderTarget::MTLBDCompositionRenderTarget(MTLBDCompositionDevice *device,Native::Cocoa::CocoaItem *native_item):device(device),native_item(native_item),clearColor(0,0){
     metalLayer = [CAMetalLayer layer];
-    [metalLayer setDrawableSize:CGSizeMake(native_item->rect.dimen.minWidth,native_item->rect.dimen.minHeight)];
-    metalLayer.frame = Native::Cocoa::core_rect_to_cg_rect(native_item->rect);
+    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+    auto rect = Native::Cocoa::core_rect_to_cg_rect(native_item->rect);
+    metalLayer.frame = rect;
+    metalLayer.bounds = rect;
     metalLayer.device = device->metal_device;
     metalLayer.presentsWithTransaction = YES;
+//    metalLayer.position = rect.origin;
+    NSLog(@"Position: x%f, y%f",metalLayer.position.x,metalLayer.position.y);
+    metalLayer.contentsScale = [NSScreen mainScreen].backingScaleFactor;
     OmegaWTKCocoaView *nativeView = (OmegaWTKCocoaView *)native_item->getBinding();
     nativeView.layer = metalLayer;
     triangulator = std::make_unique<MTLBDTriangulator>(native_item->rect);
@@ -66,7 +71,16 @@ void MTLBDCompositionRenderTarget::clear(Color & clear_color){
 };
 
 void MTLBDCompositionRenderTarget::fillRect(Core::Rect &rect,Core::SharedPtr<Brush> & brush){
-    auto mesh = triangulator->triangulateToSolidColorMesh(rect);
+    /// Ensure proper antialiased rendering on a high DPI monitor!
+    float scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+    
+    auto floatRect = FRect(float(rect.pos.x) * scaleFactor,float(rect.pos.y) * scaleFactor, float(rect.dimen.minWidth) * scaleFactor,float(rect.dimen.minHeight) * scaleFactor);
+    
+    
+    NSLog(@"Rect: x:%f, y:%f, w:%f, h:%f",floatRect.pos.x,floatRect.pos.y,floatRect.dimen.minWidth,floatRect.dimen.minHeight);
+    
+    auto mesh = triangulator->triangulateToSolidColorMesh(floatRect,false,0);
+    
     NSColor *rectColor = color_to_ns_color(brush->color);
     simd_float4 metalColor = {float(rectColor.redComponent),float(rectColor.greenComponent),float(rectColor.blueComponent),float(rectColor.alphaComponent)};
     for(auto & triangle : *mesh){
@@ -88,7 +102,12 @@ void MTLBDCompositionRenderTarget::fillRect(Core::Rect &rect,Core::SharedPtr<Bru
 };
 
 void MTLBDCompositionRenderTarget::frameRect(Core::Rect &rect,Core::SharedPtr<Brush> & brush,unsigned width){
-    auto mesh = triangulator->triangulateToSolidColorMesh(rect,true,width);
+    float scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+    auto frect = FRect(float(rect.pos.x) * scaleFactor,float(rect.pos.y) * scaleFactor,float(rect.dimen.minWidth) * scaleFactor,float(rect.dimen.minHeight) * scaleFactor);
+//
+    NSLog(@"Rect: x:%f, y:%f, w:%f, h:%f",frect.pos.x,frect.pos.y,frect.dimen.minWidth,frect.dimen.minHeight);
+    
+    auto mesh = triangulator->triangulateToSolidColorMesh(frect,true,width);
     NSColor *rectColor = color_to_ns_color(brush->color);
     simd_float4 metalColor = {float(rectColor.redComponent),float(rectColor.greenComponent),float(rectColor.blueComponent),float(rectColor.alphaComponent)};
     for(auto & triangle : *mesh){
@@ -109,7 +128,10 @@ void MTLBDCompositionRenderTarget::frameRect(Core::Rect &rect,Core::SharedPtr<Br
 };
 
 void MTLBDCompositionRenderTarget::fillRoundedRect(Core::RoundedRect & rect, Core::SharedPtr<Brush> & brush){
-    auto res = triangulator->triangulateToSolidColorMeshes(rect);
+    float scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+    auto frect = FRoundedRect(float(rect.pos.x) * scaleFactor,float(rect.pos.y) * scaleFactor,float(rect.dimen.minWidth) * scaleFactor,float(rect.dimen.minHeight) * scaleFactor,float(rect.radius_x) * scaleFactor,float(rect.radius_y) * scaleFactor);
+    
+    auto res = triangulator->triangulateToSolidColorMeshes(frect);
     NSColor *rectColor = color_to_ns_color(brush->color);
     simd_float4 metalColor = {float(rectColor.redComponent),float(rectColor.greenComponent),float(rectColor.blueComponent),float(rectColor.alphaComponent)};
     for(auto & mesh : res){
@@ -227,28 +249,35 @@ void MTLBDCompositionRenderTarget::drawText(Core::SharedPtr<BDCompositionFont> &
         [textBlock setVerticalAlignment:vAlignment];
     };
     
+    float scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+    auto ftextRect = FRect(float(textRect.pos.x) * scaleFactor,float(textRect.pos.y) * scaleFactor,float(textRect.dimen.minWidth) * scaleFactor,float(textRect.dimen.minHeight) * scaleFactor);
+    
     // Draw Text to CGBitmap!
     
     CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)[[NSAttributedString alloc] initWithString:Native::Cocoa::core_string_to_ns_string(string) attributes:@{NSParagraphStyleAttributeName:paragraphStyle,NSFontAttributeName:(__bridge id)ct_font->font}]);
-    CTFrameRef ctFrame =  CTFramesetterCreateFrame(framesetter,CFRangeMake(0,string.size()),CGPathCreateWithRect(Native::Cocoa::core_rect_to_cg_rect(textRect),NULL),NULL);
+    CTFrameRef ctFrame = CTFramesetterCreateFrame(framesetter,CFRangeMake(0,string.size()),CGPathCreateWithRect(CGRectMake(ftextRect.pos.x,ftextRect.pos.y, ftextRect.dimen.minWidth, ftextRect.dimen.minHeight),NULL),NULL);
     
     typedef unsigned char Byte;
-    void *data = new Byte[textRect.dimen.minWidth * textRect.dimen.minHeight * 4];
+    void *data = new Byte[ftextRect.dimen.minWidth * ftextRect.dimen.minHeight * 4];
     /// Setup CGContext!
-    CGContextRef context = CGBitmapContextCreate(data,textRect.dimen.minWidth,textRect.dimen.minHeight,8,textRect.dimen.minWidth * 4,CGColorSpaceCreateDeviceRGB(),kCGImageAlphaPremultipliedLast);
+    CGContextRef context = CGBitmapContextCreate(data,ftextRect.dimen.minWidth,ftextRect.dimen.minHeight,8,ftextRect.dimen.minWidth * 4,CGColorSpaceCreateDeviceRGB(),kCGImageAlphaPremultipliedLast);
     CGContextSetTextMatrix(context,CGAffineTransformIdentity);
-    CGContextTranslateCTM(context,0,textRect.dimen.minHeight);
+    CGContextTranslateCTM(context,0,ftextRect.dimen.minHeight);
     CGContextScaleCTM(context,1.0,-1.0);
+    CGContextSetInterpolationQuality(context,kCGInterpolationHigh);
     CGContextSetAllowsAntialiasing(context,true);
     CGContextSetAllowsFontSmoothing(context,true);
+    CGContextSetAllowsFontSubpixelPositioning(context,true);
+    CGContextSetAllowsFontSubpixelQuantization(context,true);
     CGContextSetShouldAntialias(context,true);
     CGContextSetShouldSmoothFonts(context,true);
-    
+    CGContextSetShouldSubpixelPositionFonts(context,true);
+    CGContextSetShouldSubpixelQuantizeFonts(context,true);
     CTFrameDraw(ctFrame,context);
     CGContextRelease(context);
     /// Triangulate Rect for Text!
     
-    auto mesh_ptr = triangulator->triangulateToTexturedMesh(textRect);
+    auto mesh_ptr = triangulator->triangulateToTexturedMesh(ftextRect);
     auto & mesh = *mesh_ptr;
     auto & tri1 = mesh[0];
     auto & tri2 = mesh[1];
@@ -260,10 +289,12 @@ void MTLBDCompositionRenderTarget::drawText(Core::SharedPtr<BDCompositionFont> &
     id<MTLBuffer> v_buffer = textured_mesh_to_mtl_vertex_buffer(mesh_ptr.get(),device->metal_device);
     vertexBuffers.push_back(v_buffer);
     
-    MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm width:textRect.dimen.minWidth height:textRect.dimen.minHeight mipmapped:NO];
+    MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm width:ftextRect.dimen.minWidth height:ftextRect.dimen.minHeight mipmapped:NO];
+    desc.textureType = MTLTextureType2D;
+//    desc.storageMode = MTLStorageModePrivate;
     desc.sampleCount = 1;
     id<MTLTexture> texture = [device->metal_device newTextureWithDescriptor:desc];
-    [texture replaceRegion:MTLRegionMake2D(0,0,textRect.dimen.minWidth,textRect.dimen.minHeight) mipmapLevel:0 withBytes:data bytesPerRow:textRect.dimen.minWidth * 4];
+    [texture replaceRegion:MTLRegionMake2D(0,0,ftextRect.dimen.minWidth,ftextRect.dimen.minHeight) mipmapLevel:0 withBytes:data bytesPerRow:ftextRect.dimen.minWidth * 4];
     
     delete [] (Byte *) data;
     
@@ -271,9 +302,11 @@ void MTLBDCompositionRenderTarget::drawText(Core::SharedPtr<BDCompositionFont> &
     
     textures.insert(std::make_pair(_v_id,texture));
     
-    /// Push Render Pass to Queue to be committed to the gpu.
+    /// Push Multi Sampled Render Pass to Queue to be committed to the gpu.
     RenderPipeline rp;
     rp.pipelineState = device->texture2DPrimitive;
+//    rp.multiSampled = true;
+//    rp.sampleCount = 4;
     rp.setupCallback = [=](id<MTLRenderCommandEncoder> encoder,unsigned v_id){
         [encoder setLabel:@"Textured Rectangle with Text Pipeline"];
         [encoder setVertexBuffer:vertexBuffers[v_id] offset:0 atIndex:OMEGAWTK_METAL_VERICES_BUFFER];
@@ -293,18 +326,21 @@ Core::SharedPtr<BDCompositionImage> MTLBDCompositionRenderTarget::createImageFro
     textureDesc.textureType = MTLTextureType2D;
     id<MTLTexture> texture = [device->metal_device newTextureWithDescriptor:textureDesc];
     [texture replaceRegion:MTLRegionMake2D(0,0,imgHeader->width,imgHeader->height) mipmapLevel:0 withBytes:img->data bytesPerRow:imgHeader->stride];
-
+    
+    float scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+    auto fnewSize = FRect(float(newSize.pos.x) * scaleFactor,float(newSize.pos.y) * scaleFactor,float(newSize.dimen.minWidth) * scaleFactor,float(newSize.dimen.minHeight) * scaleFactor);
 
     MPSScaleTransform transform;
-    transform.scaleX = double(newSize.dimen.minWidth)/double(imgHeader->width);
-    transform.scaleY = double(newSize.dimen.minHeight)/double(imgHeader->height);
+    NSLog(@"ScaleX:%f , ScaleY:%f",fnewSize.dimen.minWidth/float(imgHeader->width),fnewSize.dimen.minHeight/float(imgHeader->height));
+    transform.scaleX = fnewSize.dimen.minWidth/float(imgHeader->width);
+    transform.scaleY = fnewSize.dimen.minHeight/float(imgHeader->height);
     transform.translateX = transform.translateY = double(0);
     MPSImageLanczosScale *scaleFix = [[MPSImageLanczosScale alloc] initWithDevice:device->metal_device];
     scaleFix.scaleTransform = &transform;
 
     id<MTLCommandBuffer> commandBuffer = device->makeNewMTLCommandBuffer();
 
-    MTLTextureDescriptor *destTextureDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm width:newSize.dimen.minWidth height:newSize.dimen.minHeight mipmapped:NO];
+    MTLTextureDescriptor *destTextureDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm width:fnewSize.dimen.minWidth height:fnewSize.dimen.minHeight mipmapped:NO];
     destTextureDesc.usage = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
     id<MTLTexture> destTexture = [device->metal_device newTextureWithDescriptor:destTextureDesc];
 
@@ -313,13 +349,15 @@ Core::SharedPtr<BDCompositionImage> MTLBDCompositionRenderTarget::createImageFro
 //    [commandBuffer waitUntilCompleted];
     commandBuffers.push_back(commandBuffer);
 
-    auto rc = MTLBDCompositionImage::Create(img,newSize,destTextureDesc,destTexture);
+    auto rc = MTLBDCompositionImage::Create(img,fnewSize,destTextureDesc,destTexture);
     images.insert(std::make_pair(v_id,rc));
     return rc;
 };
 
 void MTLBDCompositionRenderTarget::drawImage(Core::SharedPtr<BDCompositionImage> &img,Core::Position pos){
     MTLBDCompositionImage *mtlimg = reinterpret_cast<MTLBDCompositionImage *>(img.get());
+    
+    
     auto rc = triangulator->triangulateToTexturedMesh(mtlimg->rect);
     auto & mesh = *rc;
     auto & tri1 = mesh[0];
@@ -351,6 +389,8 @@ void MTLBDCompositionRenderTarget::commit(){
 //    NSLog(@"Commit!!!");
 //        NSLog(@"Commit!!!");
     
+    float scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+    
     @autoreleasepool {
         
         for(auto & buffer : commandBuffers){
@@ -370,22 +410,39 @@ void MTLBDCompositionRenderTarget::commit(){
             MTLRenderPassDescriptor *initialRenderPassDesc = [MTLRenderPassDescriptor renderPassDescriptor];
             initialRenderPassDesc.colorAttachments[0].clearColor = MTLClearColorMake(nscolor.redComponent,nscolor.greenComponent,nscolor.blueComponent,nscolor.alphaComponent);
             initialRenderPassDesc.colorAttachments[0].loadAction = MTLLoadActionClear;
-            initialRenderPassDesc.renderTargetWidth = native_item->rect.dimen.minWidth;
-            initialRenderPassDesc.renderTargetHeight = native_item->rect.dimen.minHeight;
+            initialRenderPassDesc.renderTargetWidth = float(native_item->rect.dimen.minWidth) * scaleFactor;
+            initialRenderPassDesc.renderTargetHeight = float(native_item->rect.dimen.minHeight) * scaleFactor;
             initialRenderPassDesc.renderTargetArrayLength = 1;
-//            initialRenderPassDesc.colorAttachments[0].storeAction = MTLStoreActionStore;
-    //        initialRenderPassDesc.defaultRasterSampleCount = 0;
+            initialRenderPassDesc.colorAttachments[0].storeAction = MTLStoreActionStore;
+//            initialRenderPassDesc.defaultRasterSampleCount = 0;
             initialRenderPassDesc.colorAttachments[0].texture = drawable.texture;
             
             MTLRenderPassDescriptor *mainRenderPassDesc = [MTLRenderPassDescriptor renderPassDescriptor];
-    //        mainRenderPassDesc.colorAttachments[0].clearColor = MTLClearColorMake(nscolor.redComponent,nscolor.greenComponent,nscolor.blueComponent,nscolor.alphaComponent);
+            mainRenderPassDesc.colorAttachments[0].clearColor = MTLClearColorMake(nscolor.redComponent,nscolor.greenComponent,nscolor.blueComponent,nscolor.alphaComponent);
             mainRenderPassDesc.colorAttachments[0].loadAction = MTLLoadActionLoad;
-            mainRenderPassDesc.renderTargetWidth = native_item->rect.dimen.minWidth;
-            mainRenderPassDesc.renderTargetHeight = native_item->rect.dimen.minHeight;
-//            mainRenderPassDesc.colorAttachments[0].storeAction = MTLStoreActionStore;
+            mainRenderPassDesc.renderTargetWidth = float(native_item->rect.dimen.minWidth) * scaleFactor;
+            mainRenderPassDesc.renderTargetHeight = float(native_item->rect.dimen.minHeight) * scaleFactor;
+            mainRenderPassDesc.colorAttachments[0].storeAction = MTLStoreActionStore;
             mainRenderPassDesc.renderTargetArrayLength = 1;
             mainRenderPassDesc.defaultRasterSampleCount = 0;
             mainRenderPassDesc.colorAttachments[0].texture = drawable.texture;
+            
+            MTLRenderPassDescriptor *multiSampledRenderPassDesc = [MTLRenderPassDescriptor renderPassDescriptor];
+            multiSampledRenderPassDesc.colorAttachments[0].loadAction = MTLLoadActionLoad;
+            multiSampledRenderPassDesc.colorAttachments[0].clearColor = MTLClearColorMake(nscolor.redComponent,nscolor.greenComponent,nscolor.blueComponent,nscolor.alphaComponent);
+            multiSampledRenderPassDesc.colorAttachments[0].resolveTexture = drawable.texture;
+            multiSampledRenderPassDesc.renderTargetWidth = float(native_item->rect.dimen.minWidth) * scaleFactor;
+            multiSampledRenderPassDesc.renderTargetHeight = float(native_item->rect.dimen.minHeight) * scaleFactor;
+            multiSampledRenderPassDesc.colorAttachments[0].storeAction = MTLStoreActionStoreAndMultisampleResolve;
+            multiSampledRenderPassDesc.renderTargetArrayLength = 1;
+            
+            MTLTextureDescriptor *multiSampleTextureDesc = [[MTLTextureDescriptor alloc] init];
+            multiSampleTextureDesc.textureType = MTLTextureType2DMultisample;
+            multiSampleTextureDesc.storageMode = MTLStorageModePrivate;
+            multiSampleTextureDesc.width = float(native_item->rect.dimen.minWidth) * scaleFactor;
+            multiSampleTextureDesc.height = float(native_item->rect.dimen.minHeight) * scaleFactor;
+            multiSampleTextureDesc.pixelFormat = MTLPixelFormatBGRA8Unorm;
+            multiSampleTextureDesc.usage = MTLTextureUsageRenderTarget;
             
             id<MTLRenderCommandEncoder> initialRenderPass = [finalCommandBuffer renderCommandEncoderWithDescriptor:initialRenderPassDesc];
             [initialRenderPass endEncoding];
@@ -393,8 +450,16 @@ void MTLBDCompositionRenderTarget::commit(){
             while(!renderPasses.empty()){
                 auto renderPass = renderPasses.front();
                 renderPasses.pop();
-
-                id<MTLRenderCommandEncoder> rp = [finalCommandBuffer renderCommandEncoderWithDescriptor:mainRenderPassDesc];
+                id<MTLRenderCommandEncoder> rp;
+                if(renderPass.multiSampled){
+                    multiSampleTextureDesc.sampleCount = renderPass.sampleCount;
+                    id<MTLTexture> msTexture = [device->metal_device newTextureWithDescriptor:multiSampleTextureDesc];
+                    multiSampledRenderPassDesc.colorAttachments[0].texture = msTexture;
+                    rp = [finalCommandBuffer renderCommandEncoderWithDescriptor:multiSampledRenderPassDesc];
+                }
+                else {
+                    rp = [finalCommandBuffer renderCommandEncoderWithDescriptor:mainRenderPassDesc];
+                };
                 [rp setRenderPipelineState:renderPass.pipelineState];
                 renderPass.setupCallback(rp,idx);
                 [rp endEncoding];

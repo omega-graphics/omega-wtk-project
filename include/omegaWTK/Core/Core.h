@@ -110,6 +110,30 @@ namespace OmegaWTK {
             unsigned radius_y;
             bool compare(Ellipse & other);
         };
+        struct OMEGAWTK_EXPORT FPosition {
+            float x;
+            float y;
+        };
+        struct OMEGAWTK_EXPORT FDimensions {
+            float minWidth;
+            float minHeight;
+        };
+        struct OMEGAWTK_EXPORT FRect {
+            FPosition pos;
+            FDimensions dimen;
+            float angle;
+            FRect(FPosition pos,FDimensions dimen,float angle = 0):pos(pos),dimen(dimen),angle(angle){};
+        };
+        struct OMEGAWTK_EXPORT FRoundedRect : public FRect {
+            float radius_x;
+            float radius_y;
+            FRoundedRect(const FRect & rect,float radius_x,float radius_y):FRect(rect),radius_x(radius_x),radius_y(radius_y){};
+        };
+        struct OMEGAWTK_EXPORT FEllipse {
+            FPosition pos;
+            float radius_x;
+            float radius_y;
+        };
         /// A vector that acts like a queue (first in , first out), but has control over every element and its order in the container.
         template<class _Ty>
         class OMEGAWTK_EXPORT QueueVector
@@ -275,6 +299,10 @@ namespace OmegaWTK {
     Core::Rect Rect(unsigned x,unsigned y,unsigned width,unsigned height,float angle = 0);
     Core::Ellipse Ellipse(unsigned x,unsigned y,unsigned radius_x,unsigned radius_y);
     Core::RoundedRect RoundedRect(unsigned x,unsigned y,unsigned width,unsigned height,unsigned radius_x,unsigned radius_y,float angle = 0);
+     
+    Core::FRect FRect(float x,float y,float w,float h,float angle = 0);
+    Core::FEllipse FEllipse(float x,float y,float rad_x,float rad_y);
+    Core::FRoundedRect FRoundedRect(float x,float y,float w,float h,float rad_x,float rad_y,float angle = 0);
 
 
     class FSPath {

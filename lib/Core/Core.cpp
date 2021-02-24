@@ -100,6 +100,19 @@ Core::RoundedRect RoundedRect(unsigned x,unsigned y,unsigned width,unsigned heig
     return {Rect(x,y,width,height,angle),radius_x,radius_y};
 }
 
+Core::FRect FRect(float x,float y,float w,float h,float angle){
+    return {{x,y},{w,h},angle};
+};
+
+Core::FEllipse FEllipse(float x,float y,float rad_x,float rad_y){
+    return {{x,y},rad_x,rad_y};
+};
+
+Core::FRoundedRect FRoundedRect(float x,float y,float w,float h,float rad_x,float rad_y,float angle){
+    return {FRect(x,y,w,h,angle),rad_x,rad_y};
+};
+
+
 void FSPath::parse(const Core::String & str){
     unsigned idx = 0;
     

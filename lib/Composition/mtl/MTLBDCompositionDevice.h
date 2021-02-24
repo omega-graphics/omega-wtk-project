@@ -17,12 +17,21 @@ public:
     id<MTLRenderPipelineState> solidColorPrimitive;
     id<MTLRenderPipelineState> texture2DPrimitive;
     id<MTLRenderPipelineState> texture2DPrimitiveWithBkgrd;
+    /**
+     Metal Library Functions
+     */
+    id<MTLFunction> solidColorVertex;
+    id<MTLFunction> solidColorFragment;
+    id<MTLFunction> texture2DVertex;
+    id<MTLFunction> texture2DFragment;
+    id<MTLFunction> texture2DFragmentWithBkgrd;
 private:
 //    Core::Vector<id<MTLCommandQueue>> metal_command_queues;
     id<MTLCommandQueue> metal_command_queue;
     unsigned bufferCount;
     inline id<MTLRenderPipelineState> setupPipelineState(id<MTLFunction> vertexFunc,id<MTLFunction> fragmentFunc,MTLPixelFormat pixelFormat);
-public:
+public: 
+    id<MTLRenderPipelineState> makeMultiSampledPipelineState(bool textured,unsigned sampleCount,NSString *label);
     MTLBDCompositionDevice();
     id<MTLCommandBuffer> makeNewMTLCommandBuffer();
     static Core::SharedPtr<BDCompositionDevice> Create();

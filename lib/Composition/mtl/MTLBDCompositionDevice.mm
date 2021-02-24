@@ -16,12 +16,12 @@ MTLBDCompositionDevice::MTLBDCompositionDevice(){
     /**
      Setup Pipeline States
      */
-    id<MTLFunction> solidColorVertex = [metal_default_library newFunctionWithName:@"solidColorVertex"];
-    id<MTLFunction> solidColorFragment = [metal_default_library newFunctionWithName:@"solidColorFragment"];
+    solidColorVertex = [metal_default_library newFunctionWithName:@"solidColorVertex"];
+    solidColorFragment = [metal_default_library newFunctionWithName:@"solidColorFragment"];
     
-    id<MTLFunction> texture2DVertex = [metal_default_library newFunctionWithName:@"texture2DVertex"];
-    id<MTLFunction> texture2DFragment = [metal_default_library newFunctionWithName:@"texture2DFragment"];
-    id<MTLFunction> texture2DFragmentWithBkgrd = [metal_default_library newFunctionWithName:@"texture2DFragmentWithBkgrd"];
+    texture2DVertex = [metal_default_library newFunctionWithName:@"texture2DVertex"];
+    texture2DFragment = [metal_default_library newFunctionWithName:@"texture2DFragment"];
+    texture2DFragmentWithBkgrd = [metal_default_library newFunctionWithName:@"texture2DFragmentWithBkgrd"];
     
     solidColorPrimitive = setupPipelineState(solidColorVertex,solidColorFragment,MTLPixelFormatBGRA8Unorm);
     texture2DPrimitive = setupPipelineState(texture2DVertex,texture2DFragment,MTLPixelFormatBGRA8Unorm);
@@ -65,6 +65,33 @@ id<MTLCommandBuffer> MTLBDCompositionDevice::makeNewMTLCommandBuffer(){
 //    ++bufferCount;
 //    return [latest commandBuffer];
     return [metal_command_queue commandBuffer];
+};
+
+id<MTLRenderPipelineState> MTLBDCompositionDevice::makeMultiSampledPipelineState(bool textured,unsigned sampleCount,NSString *label){
+    MTLRenderPipelineDescriptor *desc = [[MTLRenderPipelineDescriptor alloc] init];
+    desc.label = label;
+    if(textured){
+        desc.vertexFunction = texture2DVertex;
+        desc.fragmentFunction = texture2DFragment;
+    }
+    else {
+        desc.vertexFunction = solidColorVertex;
+        desc.fragmentFunction = solidColorFragment;
+    };
+    desc.sampleCount = sampleCount;
+    desc.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
+    desc.colorAttachments[0].blendingEnabled = YES;
+    desc.colorAttachments[0].alphaBlendOperation = desc.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
+    desc.colorAttachments[0].sourceRGBBlendFactor = desc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorSourceAlpha;
+    desc.colorAttachments[0].destinationRGBBlendFactor = desc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+    NSError *error;
+    auto rc = [metal_device newRenderPipelineStateWithDescriptor:desc error:&error];
+    if(error.code >= 0){
+        return rc;
+    }
+    else {
+        NSLog(@"Failed to Create Mutli Sampled Render Pipeline State:%@",error);
+    };
 };
 
 Core::SharedPtr<BDCompositionDevice> MTLBDCompositionDevice::Create(){
