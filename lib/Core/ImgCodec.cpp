@@ -7,8 +7,8 @@
 //#include <tiff.h>
 #include <tiffio.hxx>
 
-#include <jpeglib.h>
-#include <turbojpeg.h>
+// #include <jpeglib.h>
+// #include <turbojpeg.h>
 
 #include <iostream>
 #include <fstream>
@@ -377,16 +377,16 @@ public:
 };
 
 
-class JPEGCodec : public ImgCodec {
-    bool load_jped_from_file(){
+// class JPEGCodec : public ImgCodec {
+//     bool load_jpeg_from_file(){
         
-    };
-public:
-    void readToStorage(){
+//     };
+// public:
+//     void readToStorage(){
         
-    };
-    JPEGCodec(Core::IStream & stream,BitmapImage *res):ImgCodec(stream,res){};
-};
+//     };
+//     JPEGCodec(Core::IStream & stream,BitmapImage *res):ImgCodec(stream,res){};
+// };
 
 
 

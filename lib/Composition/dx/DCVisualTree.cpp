@@ -2,7 +2,7 @@
 #include <iostream>
 
 namespace OmegaWTK::Composition {
-
+    
     DCVisual::DCVisual(IDCompositionVisual *ptr,bool _layerChildrenAbove):native(ptr),layerChildrenAbove(_layerChildrenAbove){
 
     };
