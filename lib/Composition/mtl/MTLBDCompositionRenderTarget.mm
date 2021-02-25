@@ -55,11 +55,10 @@ MTLBDCompositionRenderTarget::MTLBDCompositionRenderTarget(MTLBDCompositionDevic
     metalLayer.bounds = rect;
     metalLayer.device = device->metal_device;
     metalLayer.presentsWithTransaction = YES;
-//    metalLayer.position = rect.origin;
     NSLog(@"Position: x%f, y%f",metalLayer.position.x,metalLayer.position.y);
     metalLayer.contentsScale = [NSScreen mainScreen].backingScaleFactor;
     OmegaWTKCocoaView *nativeView = (OmegaWTKCocoaView *)native_item->getBinding();
-    nativeView.layer = metalLayer;
+    [nativeView.layer addSublayer:metalLayer];
     triangulator = std::make_unique<MTLBDTriangulator>(native_item->rect);
 };
 

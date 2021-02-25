@@ -17,6 +17,9 @@ class CocoaItem;
 -(CALayer *) getCALayer;
 @end
 
+@interface OmegaWTKCocoaScrollView : NSScrollView
+@end
+
 @class CALayer;
 
 
@@ -29,11 +32,13 @@ class CocoaItem : public NativeItem {
     friend class CocoaEventHandler;
     void enable();
     void disable();
+    void addChildNativeItem(NativeItem *nativeItem);
+    void removeChildNativeItem(NativeItem *nativeItem);
 public:
     Core::Rect rect;
     typedef enum : OPT_PARAM {
         View,
-        Button
+        ScrollView
     } Type;
 private:
     Type type;

@@ -19,11 +19,11 @@ namespace OmegaWTK::Native {
 // typedef NativeAppMenu *NAM;
 
 class NativeApp {
-    NativeItemPtr ptr;
+    Core::Vector<void *> root_native_items;
 public:
     NativeApp();
-    void setNativeItemPtr(NativeItemPtr _ptr);
-    void *getNativeItemNativeBinding();
+    void addNativeItemPtr(NativeItemPtr _ptr);
+    std::vector<void *> & getNativeItemsWithBindings();
     ~NativeApp();
 };
 typedef NativeApp *NAP;

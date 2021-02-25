@@ -19,6 +19,8 @@ namespace OmegaWTK {
             protected:
             NativeLayer *parentLayer;
             public:
+            virtual void addChildNativeItem(NativeItem *nativeItem) = 0;
+            virtual void removeChildNativeItem(NativeItem *nativeItem) = 0;
             void sendEventToEmitter(NativeEvent *ptr);
             bool hasEventEmitter();
             void setParentLayer(NativeLayer *layer){ parentLayer = layer;};

@@ -49,6 +49,7 @@ Layer::Layer(const Core::Rect &rect, Native::NativeItemPtr native_ptr,
 void Layer::addSubLayer(Layer *layer) {
   layer->parent_ptr = this;
   children.push_back(layer);
+  compTarget->native->addChildNativeItem(layer->getTargetNativePtr());
 };
 
 void Layer::removeSubLayer(Layer *layer) {
@@ -58,6 +59,7 @@ void Layer::removeSubLayer(Layer *layer) {
     if (l == layer) {
       children.erase(it);
       layer->parent_ptr = nullptr;
+      compTarget->native->removeChildNativeItem(layer->getTargetNativePtr());
       return;
       break;
     };

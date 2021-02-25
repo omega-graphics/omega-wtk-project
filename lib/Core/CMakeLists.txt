@@ -18,6 +18,6 @@ if(TARGET_MACOS)
     target_link_libraries("omegaWTKCore" PRIVATE ${Cocoa_LIB})
 endif()
 message("libpng_include_dir:${PNG_INCLUDE_DIR}")
-target_include_directories("omegaWTKCore" PRIVATE ${PNG_INCLUDE_DIR}${TIFF_INCLUDE_DIR}${TIFF_INCLUDE_DIRS}${JPEG_INCLUDE_DIR}${FFMPEG_INCLUDE_DIRS})
-target_link_libraries("omegaWTKCore" PRIVATE "PNG::PNG;TIFF::TIFF;${JPEG_LIBRARIES}${FFMPEG_LIBRARIES}")
+target_include_directories("omegaWTKCore" PRIVATE ${PNG_INCLUDE_DIR}${TIFF_INCLUDE_DIR}${TIFF_INCLUDE_DIRS}${JPEG_INCLUDE_DIR})
+target_link_libraries("omegaWTKCore" PRIVATE "PNG::PNG;TIFF::TIFF;${JPEG_LIBRARIES}") #${FFMPEG_INCLUDE_DIRS} ${FFMPEG_LIBRARIES}
 target_compile_definitions("omegaWTKCore" PRIVATE "${PNG_DEFINTIONS}")

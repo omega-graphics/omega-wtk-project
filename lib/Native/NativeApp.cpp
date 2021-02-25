@@ -11,12 +11,12 @@ NativeApp::NativeApp(){
     
 };
 
-void NativeApp::setNativeItemPtr(NativeItemPtr _ptr){
-    ptr = _ptr;
+void NativeApp::addNativeItemPtr(NativeItemPtr _ptr){
+    root_native_items.push_back(_ptr->getBinding());
 };
 
-void * NativeApp::getNativeItemNativeBinding(){
-    return ptr->getBinding();
+std::vector<void *> & NativeApp::getNativeItemsWithBindings(){
+    return root_native_items;
 };
 
 NativeApp::~NativeApp(){

@@ -1,6 +1,7 @@
 #import "AppDelegate.h"
 #import "@APPENTRY@"
 #import <OmegaWTK.h>
+#include <vector>
 
 @interface OmegaWTKRootView : NSView
 @end
@@ -37,9 +38,12 @@
         OmegaWTK::AppInst inst;
         omegaWTKMain(&inst);
         
-        NSView * root = (NSView *)inst.getNAP()->getNativeItemNativeBinding();
+        std::vector<void *> bindings = inst.getNAP()->getNativeItemsWithBindings();
         OmegaWTKRootView *global = [[OmegaWTKRootView alloc] init];
-        [global addSubview:root];
+        for(void * view : bindings){
+
+            [global addSubview:(NSView *)view];
+        };
         [window setContentView:global];
         if(inst.menu != nullptr) {
             NSMenu *menu = (NSMenu *)inst.menu->getNativeMenu()->getNativeBinding();

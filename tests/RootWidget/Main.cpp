@@ -25,8 +25,8 @@ public:
 //        rootLayer->drawRect(Rect(0,0,100,100),Composition::ColorBrush(Composition::Color::Red),Composition::Border(black,5));
 //          rootLayer->drawRoundedRect(RoundedRect(0,0,200,200,25,25),Composition::ColorBrush(Composition::Color::Green));
         //  rootLayer->drawEllipse({{150,150},30,50},Composition::Color::Green);
-          rootLayer->drawBitmap(IMPORT_IMG("test.png"),Rect(0,0,300,300));
-//        rootLayer->drawText("Hello World!",25,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,300));
+//          rootLayer->drawBitmap(IMPORT_IMG("test.png"),Rect(0,0,300,300));
+        rootLayer->drawText("Hello World!",25,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,200,200));
 //        rootLayer->drawText("Hello World!",50,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,200));
     };
     
@@ -75,11 +75,13 @@ int omegaWTKMain(AppInst *app)
 //    // // MessageBoxA(GetForegroundWindow(),path.debugString().c_str(),"DEBUG STRING",MB_OK);
 //    // MessageBoxA(GetForegroundWindow(),path.serialize().c_str(),"RESULT",MB_OK);
 
-    OmegaWTK::MyWidget widget({{0,0},{500,500}});
+    MyWidget widget({{0,0},{200,200}});
+    MyWidget widget2({{200,0},{200,200}});
     widget.show();
     // OmegaWTK::MyWidget widget2({{500,0},{300,300}});
     // widget2.show();
-    app->setRoot(&widget);
+    app->addWidgetToRoot(&widget);
+    app->addWidgetToRoot(&widget2);
     return 0;
 }
 

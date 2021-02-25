@@ -37,6 +37,7 @@ namespace OmegaWTK {
             Target * compTarget;
             bool enabled;
             Compositor *ownerCompositor;
+            friend class Compositor;
             friend class LayerTree;
             public:
             /// @name Base Functions

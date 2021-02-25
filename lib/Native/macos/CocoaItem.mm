@@ -13,6 +13,7 @@
     if(self = [super initWithFrame:rect]){
         self.wantsLayer = YES;
         self.layer = [CALayer layer];
+        self.layer.masksToBounds = NO;
         _delegate = delegate;
     };
     return self;
@@ -63,6 +64,15 @@ void CocoaItem::enable(){
 void CocoaItem::disable(){
     if([_ptr isHidden] == NO)
         [_ptr setHidden:YES];
+};
+
+void CocoaItem::addChildNativeItem(NativeItemPtr native_item){
+    OmegaWTKCocoaView *cocoaview = (OmegaWTKCocoaView *)native_item;
+    [_ptr addSubview:cocoaview];
+};
+
+void CocoaItem::removeChildNativeItem(NativeItemPtr native_item){
+    [_ptr replaceSubview:(OmegaWTKCocoaView *)native_item with:[[NSView alloc] initWithFrame:NSZeroRect]];
 };
 
 CocoaItem::~CocoaItem(){
