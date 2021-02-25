@@ -1,6 +1,7 @@
 
 // Core Exports
 #include "omegaWTK/Core/Core.h"
+#include "omegaWTK/Core/Math.h"
 // Native Exports
 
 // Composition Exports

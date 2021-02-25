@@ -65,8 +65,12 @@ if(PNG_FOUND)
 else()
     message(FATAL_ERROR "libpng not found! libpng is required to build OmegaWTK")
 endif()
-# find_package(JPEG REQUIRED)
-# endif()
+
+find_package(JPEG REQUIRED)
+if(JPEG_FOUND)
+    message("Found libjpeg-turbo:${JPEG_VERSION_STRING}")
+endif()
+
 find_package(TIFF REQUIRED)
 if(TIFF_FOUND)
     message("Found libtiff")
@@ -86,6 +90,12 @@ endif()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 include(OmegaWTKUtils)
+include(FindFFMPEG)
+
+find_package(FFMPEG)
+if(FFMPEG_FOUND)
+    message("Found FFMPEG")
+endif()
 
 function(add_omega_wtk_lib)
     cmake_parse_arguments("_ARG" "STATIC;SHARED;OBJECT" "NAME" "SOURCES;HEADERS;LINK_LIBS" ${ARGN})

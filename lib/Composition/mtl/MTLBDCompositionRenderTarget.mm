@@ -4,6 +4,8 @@
 #import "MTLBDCompositionFontFactory.h"
 
 #import <MetalPerformanceShaders/MetalPerformanceShaders.h>
+#import <CoreImage/CoreImage.h>
+
 #include <iostream>
 
 namespace OmegaWTK::Composition {
@@ -343,13 +345,25 @@ Core::SharedPtr<BDCompositionImage> MTLBDCompositionRenderTarget::createImageFro
     MTLTextureDescriptor *destTextureDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm width:fnewSize.dimen.minWidth height:fnewSize.dimen.minHeight mipmapped:NO];
     destTextureDesc.usage = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
     id<MTLTexture> destTexture = [device->metal_device newTextureWithDescriptor:destTextureDesc];
+    id<MTLTexture> fin;
 
     [scaleFix encodeToCommandBuffer:commandBuffer sourceTexture:texture destinationTexture:destTexture];
+//    if(img->hasGamma){
+//        id<MTLTexture> finalTexture = [device->metal_device newTextureWithDescriptor:destTextureDesc];
+//        CIImage *ci_img = [CIImage imageWithMTLTexture:destTexture options:@{}];
+////        CIImage *f_img = [ci_img imageByApplyingFilter:@"CIGammaAdjust" withInputParameters:@{@"inputImage":ci_img,@"inputPower":[NSNumber numberWithDouble:]}];
+//        CIContext *ci_context = [CIContext contextWithMTLDevice:device->metal_device];
+//        [ci_context render:f_img toMTLTexture:finalTexture commandBuffer:commandBuffer bounds:f_img.extent colorSpace:f_img.colorSpace];
+//        fin = finalTexture;
+//    }
+//    else {
+    fin = destTexture;
+//    };
     [commandBuffer commit];
 //    [commandBuffer waitUntilCompleted];
     commandBuffers.push_back(commandBuffer);
 
-    auto rc = MTLBDCompositionImage::Create(img,fnewSize,destTextureDesc,destTexture);
+    auto rc = MTLBDCompositionImage::Create(img,fnewSize,destTextureDesc,fin);
     images.insert(std::make_pair(v_id,rc));
     return rc;
 };

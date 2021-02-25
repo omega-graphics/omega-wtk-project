@@ -7,13 +7,24 @@
 //#include <tiff.h>
 #include <tiffio.hxx>
 
+#include <jpeglib.h>
+#include <turbojpeg.h>
 
 #include <iostream>
 #include <fstream>
 #include <memory>
-// #include <windows.h>
+
+
 
 namespace OmegaWTK::Core {
+
+#ifdef TARGET_WIN32
+#define DEFAULT_SCREEN_GAMMA 2.2
+#endif
+
+#ifdef TARGET_MACOS
+#define DEFAULT_SCREEN_GAMMA 2.2
+#endif
 
     class ImgCodec {
     protected:
@@ -28,6 +39,10 @@ namespace OmegaWTK::Core {
 
     
 class PNGCodec : public ImgCodec {
+    int srgb_intent;
+    bool hasPalette;
+    int num_palette;
+    png_colorp palette;
     static void userReadData(png_structp png_ptr, png_bytep data, png_size_t length){
         png_voidp stream = png_get_io_ptr(png_ptr);
         ((std::istream *)stream)->read((char *)data,length);
@@ -75,15 +90,24 @@ class PNGCodec : public ImgCodec {
                 break;
             }
             case PNG_COLOR_TYPE_RGB : {
-//                if(png_get_valid(png_ptr,info_ptr,PNG_INFO_tRNS)){
-//                    png_set_tRNS_to_alpha(png_ptr);
-//                    alphaFormat = BitmapImage::AlphaFormat::Straight;
-//                    colorFormat = BitmapImage::ColorFormat::RGBA;
-//                }
-//                else {
-//                    colorFormat = BitmapImage::ColorFormat::RGB;
-//                    alphaFormat = BitmapImage::AlphaFormat::Ingore;
-//                };
+                png_bytep trans_alpha;
+                int num_trans;
+                png_color_16p trans_color;
+                if(png_get_tRNS(png_ptr,info_ptr,&trans_alpha,&num_trans,&trans_color) == PNG_INFO_tRNS){
+                    colorFormat = BitmapImage::ColorFormat::RGBA;
+                    png_set_tRNS_to_alpha(png_ptr);
+                };
+                
+                break;
+            }
+            case PNG_COLOR_TYPE_GRAY : {
+                png_set_gray_to_rgb(png_ptr);
+                break;
+            };
+            case PNG_COLOR_TYPE_PALETTE : {
+                if(png_get_PLTE(png_ptr,info_ptr,&palette,&num_palette) == PNG_INFO_PLTE){
+                    png_set_palette_to_rgb(png_ptr);
+                };
                 break;
             }
             default:
@@ -114,6 +138,7 @@ class PNGCodec : public ImgCodec {
         if (png_get_sRGB(png_ptr,info_ptr,&srgb_intent) == PNG_INFO_sRGB) {
             std::cout << "SRGB Chunk:{" << "srgbIntent:" << srgb_intent << "}" << std::endl;
             storage->sRGB = true;
+            this->srgb_intent = srgb_intent;
             // png_set_sRGB_gAMA_and_cHRM(png_ptr,info_ptr,srgb_intent);
         }
         return nullptr;
@@ -179,8 +204,13 @@ class PNGCodec : public ImgCodec {
                double file_gamma;
                if(png_get_gAMA(png_ptr,info_ptr,&file_gamma) == PNG_INFO_gAMA){
                    storage->hasGamma = true;
-                   storage->gamma = float(file_gamma);
+                   storage->gamma = file_gamma;
                    std::cout << "gAMA Chunk:{" << "fileGamma:" << file_gamma << " }" << std::endl;
+                   if(!storage->sRGB){
+                       char * gamma_str;
+                       double screen_gamma;
+                       png_set_gamma(png_ptr,DEFAULT_SCREEN_GAMMA,file_gamma);
+                   };
                }
                else {
                    storage->hasGamma = false;
@@ -201,6 +231,16 @@ class PNGCodec : public ImgCodec {
                double chrm_blue_x , chrm_blue_y;
                if(png_get_cHRM(png_ptr,info_ptr,&chrm_white_x,&chrm_white_y,&chrm_red_x, &chrm_red_y, &chrm_green_x, &chrm_green_y, &chrm_blue_x,&chrm_blue_y) == PNG_INFO_cHRM){
                    std::cout << "cHRM Chunk:{" << "whiteX:" << chrm_white_x << ", whiteY:" << chrm_white_y << ", redX:" << chrm_red_x << ", redY:" << chrm_red_y << ", greenX:" << chrm_green_x << ", greenY:" << chrm_green_y << ", blueX:" << chrm_blue_x << ", blueY:" << chrm_blue_y << " }" << std::endl;
+               };
+               /// If SRGB colorspace is used!
+               if(storage->sRGB){
+                   if(png_get_valid(png_ptr,info_ptr,PNG_INFO_cHRM) && png_get_valid(png_ptr,info_ptr,PNG_INFO_gAMA)) {
+                       png_set_sRGB_gAMA_and_cHRM(png_ptr,info_ptr,srgb_intent);
+                       storage->hasGamma = false;
+                   }
+                   else
+                       png_set_sRGB(png_ptr,info_ptr,srgb_intent);
+                   storage->sRGB = false;
                };
                png_charp purpose;
                png_int_32 X0;
@@ -289,39 +329,66 @@ public:
     ~PNGCodec(){};
 };
 
-//class TiffCodec : public ImgCodec {
-//    bool load_tiff_from_file(){
-//        TIFF *tiff = TIFFOpen(file.c_str(),"r");
-//
-//        uint32_t width,height,bitDepth,channelCount;
-//
-//
-//        TIFFGetField(tiff,TIFFTAG_IMAGEWIDTH,&width);
-//        TIFFGetField(tiff,TIFFTAG_IMAGELENGTH,&height);
-//        TIFFGetField(tiff,TIFFTAG_BITSPERSAMPLE,&bitDepth);
-//        TIFFGetField(tiff,TIFFTAG_SAMPLESPERPIXEL,&channelCount);
-//
-//        size_t pixelCount = width * height;
-//        uint32_t * buffer = (uint32_t *)_TIFFmalloc(pixelCount * sizeof(uint32_t));
-//        if(buffer != nullptr){
-//            if(TIFFReadRGBAImage(tiff,width,height,buffer,0)){
-//
-//            };
+class TiffCodec : public ImgCodec {
+    bool load_tiff_from_file(){
+        TIFF *tiff = TIFFStreamOpen("r",&in);
+
+        uint32_t width,height,bitDepth,channelCount,compression;
+        
+        ImgHeader header;
+
+        TIFFGetField(tiff,TIFFTAG_IMAGEWIDTH,&width);
+        TIFFGetField(tiff,TIFFTAG_IMAGELENGTH,&height);
+        TIFFGetField(tiff,TIFFTAG_BITSPERSAMPLE,&bitDepth);
+        TIFFGetField(tiff,TIFFTAG_SAMPLESPERPIXEL,&channelCount);
+        TIFFGetField(tiff,TIFFTAG_COMPRESSION,&compression);
+        
+        header.color_format = BitmapImage::ColorFormat::RGBA;
+        header.bitDepth = bitDepth;
+        header.channels = channelCount;
+        header.width = width;
+        header.height = height;
+        
+        bool rc = false;
+
+        size_t pixelCount = width * height;
+        uint32_t * buffer = (uint32_t *)_TIFFmalloc(pixelCount * sizeof(uint32_t));
+        if(buffer != nullptr){
+            if(TIFFReadRGBAImage(tiff,width,height,buffer,0)){
+                storage->data = buffer;
+                storage->header =std::make_unique<ImgHeader>(std::move(header));
+                storage->profile = nullptr;
+                rc = true;
+            };
 //            _TIFFfree(buffer);
-//        };
-//        TIFFClose(tiff);
-//
-//    };
-//public:
-//    void readToStorage(){
-//        if(!load_tiff_from_file()){
-//            storage->data = nullptr;
-//            storage->header = nullptr;
-//            storage->profile = nullptr;
-//        };
-//    };
-//    TiffCodec(Core::String & name,BitmapImage *res):ImgCodec(name,res){};
-//};
+        };
+        TIFFClose(tiff);
+        return rc;
+    };
+public:
+    void readToStorage(){
+        if(!load_tiff_from_file()){
+            storage->data = nullptr;
+            storage->header = nullptr;
+            storage->profile = nullptr;
+        };
+    };
+    TiffCodec(Core::IStream & stream,BitmapImage *res):ImgCodec(stream,res){};
+};
+
+
+class JPEGCodec : public ImgCodec {
+    bool load_jped_from_file(){
+        
+    };
+public:
+    void readToStorage(){
+        
+    };
+    JPEGCodec(Core::IStream & stream,BitmapImage *res):ImgCodec(stream,res){};
+};
+
+
 
 UniquePtr<ImgCodec> obtainCodecForImageFormat(BitmapImage::Format &format,Core::IStream &in,BitmapImage *img){
     switch (format) {

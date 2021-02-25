@@ -25,9 +25,9 @@ public:
 //        rootLayer->drawRect(Rect(0,0,100,100),Composition::ColorBrush(Composition::Color::Red),Composition::Border(black,5));
 //          rootLayer->drawRoundedRect(RoundedRect(0,0,200,200,25,25),Composition::ColorBrush(Composition::Color::Green));
         //  rootLayer->drawEllipse({{150,150},30,50},Composition::Color::Green);
-//          rootLayer->drawBitmap(Core::loadImageFromFile(Core::String("./assets/test.png")),Rect(0,0,300,300));
-        rootLayer->drawText("Hello World!",25,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,300));
-        rootLayer->drawText("Hello World!",50,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,200));
+          rootLayer->drawBitmap(IMPORT_IMG("test.png"),Rect(0,0,300,300));
+//        rootLayer->drawText("Hello World!",25,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,300));
+//        rootLayer->drawText("Hello World!",50,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,200));
     };
     
 };
@@ -46,22 +46,29 @@ public:
 
 };
 
+using namespace OmegaWTK;
 
-
-int omegaWTKMain(OmegaWTK::AppInst *app)
+int omegaWTKMain(AppInst *app)
 {
-    auto menu = new OmegaWTK::Menu("AppMenu",{
-        OmegaWTK::CategoricalMenu("File",{
-            OmegaWTK::SubMenu("Inside",{
-                new OmegaWTK::MenuItem("Here!",false,nullptr),
-                OmegaWTK::MenuSeperatorItem(),
-                new OmegaWTK::MenuItem("Test!",false,nullptr)
-            },new OmegaWTK::MyMenuDelegate())
+    auto menu = new Menu("AppMenu",{
+        CategoricalMenu("File",{
+            SubMenu("Inside",{
+                new MenuItem("Here!",false,nullptr),
+                MenuSeperatorItem(),
+                new MenuItem("Test!",false,nullptr)
+            },new MyMenuDelegate())
         })
     });
  app->menu = menu;
-    OmegaWTK::FSPath path = OmegaWTK::Core::String("./assets/test.png");
-//
+    FSPath path = Core::String("./assets/test.png");
+    
+    
+    Core::Math::VectorPath2D vectorPath ({0,0});
+    vectorPath.append({50,50});
+    vectorPath.append({100,100});
+    vectorPath.append({250,175});
+    std::cout << vectorPath.toStr();
+    
     std::cout << path.serialize() << std::endl;
 //    // OmegaWTK::FSPath path = OmegaWTK::Core::String("./test.png");
 //    // MessageBoxA(GetForegroundWindow(),std::to_string(path.getTokenCount()).c_str(),"Token Count",MB_OK);

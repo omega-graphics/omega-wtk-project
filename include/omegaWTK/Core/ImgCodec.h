@@ -28,7 +28,7 @@ namespace OmegaWTK {
             };
             bool sRGB;
             bool hasGamma;
-            float gamma;
+            double gamma;
             typedef enum : OPT_PARAM {
                 PNG,
                 TIFF,
@@ -48,6 +48,7 @@ namespace OmegaWTK {
             size_t stride;
         };
         SharedPtr<BitmapImage> loadImageFromFile(FSPath path);
+    #define IMPORT_IMG(img) OmegaWTK::Core::loadImageFromFile(OmegaWTK::Core::String("./assets/") + img)
     };
 };
 
