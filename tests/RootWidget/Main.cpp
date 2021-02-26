@@ -26,8 +26,8 @@ public:
 //          rootLayer->drawRoundedRect(RoundedRect(0,0,200,200,25,25),Composition::ColorBrush(Composition::Color::Green));
         //  rootLayer->drawEllipse({{150,150},30,50},Composition::Color::Green);
           rootLayer->drawBitmap(IMPORT_IMG("test.png"),Rect(0,0,300,300));
-//        rootLayer->drawText("Hello World!",25,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,300));
-//        rootLayer->drawText("Hello World!",50,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,200));
+    //    rootLayer->drawText("Hello World!",25,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,300));
+    //    rootLayer->drawText("Hello World!",50,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,200));
     };
     
 };
@@ -68,7 +68,7 @@ int omegaWTKMain(AppInst *app)
     vectorPath.append({100,100});
     vectorPath.append({250,175});
     std::cout << vectorPath.toStr();
-    
+
     std::cout << path.serialize() << std::endl;
 //    // OmegaWTK::FSPath path = OmegaWTK::Core::String("./test.png");
 //    // MessageBoxA(GetForegroundWindow(),std::to_string(path.getTokenCount()).c_str(),"Token Count",MB_OK);
