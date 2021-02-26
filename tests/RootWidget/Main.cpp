@@ -76,8 +76,9 @@ int omegaWTKMain(AppInst *app)
 //    // MessageBoxA(GetForegroundWindow(),path.serialize().c_str(),"RESULT",MB_OK);
 
     MyWidget widget({{0,0},{200,200}});
-    MyWidget widget2({{200,0},{200,200}});
+    MyWidget widget2({{250,0},{200,200}});
     widget.show();
+    widget2.show();
     // OmegaWTK::MyWidget widget2({{500,0},{300,300}});
     // widget2.show();
     app->addWidgetToRoot(&widget);

@@ -40,6 +40,7 @@ typedef NativeApp *NAP;
 void * __create_hwnd_factory(void *hinst,void *hwndroot);
 void * __hwnd_factory_get_all_hwnds(void * hwnd_factory);
 void __free_hwnd_factory(void *hwnd_factory);
+RECT __get_hwnd_real_coords(HWND hwnd);
 #endif
 #endif
 

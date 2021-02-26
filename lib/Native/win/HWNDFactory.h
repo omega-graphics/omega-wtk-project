@@ -26,6 +26,7 @@ namespace OmegaWTK::Native{
             HWNDFactory(HINSTANCE hinst,HWND rootHwnd);
             ~HWNDFactory();
         };
+        void *getHWNDUserData(HWND hwnd);
     };
 };
 

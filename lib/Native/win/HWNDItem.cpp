@@ -137,6 +137,12 @@ namespace OmegaWTK::Native::Win {
     DWORD HWNDItem::getStyle(){
         return GetWindowLongPtr(hwnd,GWL_STYLE);
     };
+    void HWNDItem::addChildNativeItem(NativeItem *nativeItem){
+        SetParent(((HWNDItem *)nativeItem)->hwnd,hwnd);
+    };
+    void HWNDItem::removeChildNativeItem(NativeItem * nativeItem){
+        SetParent(((HWNDItem *)nativeItem)->hwnd,NULL);
+    };
     // void HWNDItem::show(int nCmdShow){
     //     ShowWindow(hwnd,nCmdShow);
     // };

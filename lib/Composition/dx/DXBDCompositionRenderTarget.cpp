@@ -104,7 +104,7 @@ namespace OmegaWTK::Composition {
         desc.Scaling = DXGI_SCALING_NONE;
         desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
         desc.Stereo = FALSE;
-        desc.Flags = 0;
+        desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
 
         hr = device->dxgi_factory->CreateSwapChainForHwnd(device->direct3d_device.get(),hwndItem->getHandle(),&desc,NULL,NULL,&dxgi_swap_chain);
         if(FAILED(hr)){

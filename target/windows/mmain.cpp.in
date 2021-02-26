@@ -2,6 +2,7 @@
 #include "@APPENTRY@"
 #include <OmegaWTK.h>
 #include <wrl.h>
+#include <debugapi.h>
 
 #pragma comment(lib, "runtimeobject.lib")
 
@@ -21,8 +22,19 @@ void updateAllHWNDPos(UINT root_wnd_height){
      auto it = all_hwnds->begin();
      while(it != all_hwnds->end()){
          HWND hwnd = *it;
-         GetClientRect(hwnd,&rc);
-         SetWindowPos(hwnd,hwnd,rc.left,(root_wnd_height - rc.bottom), rc.right - rc.left,rc.bottom - rc.top,SWP_NOZORDER | SWP_NOACTIVATE);
+         rc = get_hwnd_item_coords((void *)hwnd);
+         UINT dpi = GetDpiForWindow(hwnd);
+         FLOAT scaleFactor = FLOAT(dpi)/96.f;
+        //  auto str = std::string("Coords:{") + "l:" + std::to_string(rc.left) + ",b:" + std::to_string(rc.bottom) + ",r:" + std::to_string(rc.right) + ",t:" + std::to_string(rc.top) + "}";
+         
+        //  MessageBoxA(GetForegroundWindow(),str.c_str(),"NOTE",MB_OK);
+         auto h = rc.top - rc.bottom;
+         auto w = rc.right - rc.left;
+
+        //  auto n_str = std::string("RECT {") + "x:" + std::to_string(rc.left * scaleFactor) + ",y:" + std::to_string(root_wnd_height - (rc.top* scaleFactor)) + ",w:" + std::to_string(w * scaleFactor) + ",h:" + std::to_string(h* scaleFactor) + "}";
+        //   MessageBoxA(GetForegroundWindow(),n_str.c_str(),"NOTE",MB_OK);
+
+         SetWindowPos(hwnd,hwnd,rc.left * scaleFactor,(root_wnd_height - (rc.top* scaleFactor)),w * scaleFactor,h* scaleFactor,SWP_NOZORDER | SWP_NOACTIVATE);
          ++it;
      };
  };
@@ -125,7 +137,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLi
 
     RegisterClassEx(&wndclass);
 
-    
+    OutputDebugStringA("Test Str");
 
     HWND hwndWindow = CreateWindowA(szWindowClass,szTitle,WS_OVERLAPPEDWINDOW,CW_USEDEFAULT,CW_USEDEFAULT,1500,1500,NULL,NULL,hInstance,NULL);
    
@@ -136,7 +148,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLi
    
     omegaWTKMain(&app);
 
-     all_hwnds = (OmegaWTK::Core::Vector<HWND> *)hwnd_factory_get_all_hwnds(factory);
+     all_hwnds = (std::vector<HWND> *)&app.getNAP()->getNativeItemsWithBindings();
+    //  for(HWND hwnd : *all_hwnds){
+    //      SetParent(hwnd,hwndWindow);
+    //  };
     if(app.menu != nullptr) {
         HMENU menu = (HMENU)app.menu->getNativeMenu()->getNativeBinding();
         if(!SetMenu(hwndWindow,menu)){

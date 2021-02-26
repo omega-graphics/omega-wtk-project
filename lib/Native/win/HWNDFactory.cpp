@@ -63,9 +63,9 @@ namespace OmegaWTK::Native::Win {
         
         // unsigned wndHeight = rc.bottom - rc.top;
         // unsigned height = rect.dimen.minHeight * scaleFactor;
-        HWND hwnd = CreateWindowA(MAKEINTATOM(atom),name,base_style,rect.pos.x,(rc.bottom - (rect.dimen.minHeight) * scaleFactor) - rect.pos.y,rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor,wind_parent,NULL,hInst,custom_params);
-        if(parent == nullptr)
-            all_hwnds.push_back(hwnd);
+        HWND hwnd = CreateWindowA(MAKEINTATOM(atom),name,base_style,rect.pos.x *scaleFactor,(rc.bottom - (rect.dimen.minHeight) * scaleFactor) - (rect.pos.y * scaleFactor),rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor,wind_parent,NULL,hInst,custom_params);
+        // if(parent == nullptr)
+        //     all_hwnds.push_back(hwnd);
         return hwnd;
         #undef DEFAULT_DPI
         
@@ -82,7 +82,7 @@ namespace OmegaWTK::Native::Win {
         ex.lpszMenuName = NULL;
         ex.cbClsExtra = 0;
         ex.cbWndExtra = 0;
-        ex.hbrBackground = (HBRUSH)COLOR_WINDOW+1;
+        ex.hbrBackground = (HBRUSH)COLOR_WINDOW;
         ex.hInstance = hInst;
         ex.hCursor = LoadCursor(NULL,IDC_ARROW);
         ex.hIcon = NULL;

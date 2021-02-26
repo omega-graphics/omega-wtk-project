@@ -48,6 +48,10 @@ void free_hwnd_factory(void *factory){
     return __free_hwnd_factory(factory);
 };
 
+RECT get_hwnd_item_coords(void * hwnd){
+    return __get_hwnd_real_coords((HWND)hwnd);
+};
+
 
 #endif
 #endif

@@ -30,7 +30,7 @@ namespace OmegaWTK::Composition {
         if(FAILED(hr)){
             //Handle Error!
         };
-        hr = dxgi_device->SetMaximumFrameLatency(1);
+        hr = dxgi_device->SetMaximumFrameLatency(3);
         if(FAILED(hr)){
             //Handle Error!
         };

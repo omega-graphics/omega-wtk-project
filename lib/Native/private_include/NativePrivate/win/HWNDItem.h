@@ -9,7 +9,6 @@ namespace OmegaWTK::Native {
         class HWNDFactory;
         class HWNDItem : public NativeItem {
             HWND hwnd;
-            Core::Rect wndrect;
             UINT currentDpi;
             bool isTracking;
             bool hovered;
@@ -24,7 +23,10 @@ namespace OmegaWTK::Native {
             void disable(){
                 ShowWindow(hwnd,SW_HIDE);
             };
+            void addChildNativeItem(NativeItem *nativeItem);
+            void removeChildNativeItem(NativeItem *nativeItem);
             public:
+            Core::Rect wndrect;
             ATOM getAtom();
             HWND getHandle();
             bool isExtended();
