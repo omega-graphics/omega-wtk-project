@@ -62,12 +62,13 @@ int omegaWTKMain(AppInst *app)
  app->menu = menu;
     FSPath path = Core::String("./assets/test.png");
     
+    auto ellipseFrame = Composition::EllipseFrame(Ellipse(200,200,100,50),20);
     
-    Core::Math::VectorPath2D vectorPath ({0,0});
-    vectorPath.append({50,50});
-    vectorPath.append({100,100});
-    vectorPath.append({250,175});
-    std::cout << vectorPath.toStr();
+//    Core::Math::VectorPath2D vectorPath ({0,0});
+//    vectorPath.append({50,50});
+//    vectorPath.append({100,100});
+//    vectorPath.append({250,175});
+//    std::cout << vectorPath.toStr();
     
     std::cout << path.serialize() << std::endl;
 //    // OmegaWTK::FSPath path = OmegaWTK::Core::String("./test.png");
@@ -76,7 +77,7 @@ int omegaWTKMain(AppInst *app)
 //    // MessageBoxA(GetForegroundWindow(),path.serialize().c_str(),"RESULT",MB_OK);
 
     MyWidget widget({{0,0},{200,200}});
-    MyWidget widget2({{250,0},{200,200}});
+    MyWidget widget2({{200,0},{200,200}});
     widget.show();
     widget2.show();
     // OmegaWTK::MyWidget widget2({{500,0},{300,300}});

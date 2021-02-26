@@ -207,7 +207,7 @@ namespace OmegaWTK::Core {
             };
             VectorPath_Base() = delete;
             VectorPath_Base(const VectorPath_Base<_Pt_Ty> &) = delete;
-            VectorPath_Base(VectorPath_Base<_Pt_Ty> &&) = delete;
+            VectorPath_Base(VectorPath_Base<_Pt_Ty> && other):first(other.first),len(other.len){};
             ~VectorPath_Base(){
                 delete first;
             };

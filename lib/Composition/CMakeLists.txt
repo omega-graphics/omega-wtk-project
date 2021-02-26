@@ -12,6 +12,7 @@ add_omega_wtk_lib(
 	"Text.cpp"
     "Visual.cpp"
     "Brush.cpp"
+    "GeometricGraphicsPath.cpp"
     # BD Prefix --> For Backend!
     "BDCompositionDevice.h"
     "BDCompositionDevice.cpp"
@@ -29,6 +30,7 @@ add_omega_wtk_lib(
 	"Text.h"
     "Visual.h"
     "Brush.h"
+    "GeometricGraphicsPath.h"
     LINK_LIBS 
     "omegaWTKCore"
     "omegaWTKNative"
