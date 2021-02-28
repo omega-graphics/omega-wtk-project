@@ -10,6 +10,13 @@ namespace OmegaWTK::Composition {
     protected:
         Core::SharedPtr<Core::BitmapImage> bitmapImage;
     public:
+        /**
+         Create a Blank Composition Image
+         */
+        BDCompositionImage();
+        /**
+         Create a Composition Image from a Core::BitmapImage
+         */
         BDCompositionImage(Core::SharedPtr<Core::BitmapImage> & img);
         #ifdef TARGET_WIN32
         virtual void redoImage() = 0;

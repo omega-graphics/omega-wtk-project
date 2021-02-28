@@ -7,7 +7,7 @@ namespace OmegaWTK::Composition {
 MTLBDTriangulator::MTLBDTriangulator(Core::Rect &targetFrame):targetFrame(targetFrame){};
 
 Core::Math::Point2D MTLBDTriangulator::getRenderTargetCenter(){
-    return {targetFrame.dimen.minWidth/2,targetFrame.dimen.minHeight/2};
+    return {static_cast<float>(targetFrame.dimen.minWidth/2),static_cast<float>(targetFrame.dimen.minHeight/2)};
 };
 
 void MTLBDTriangulator::triangulateRect(Core::FRect rect,SolidColor2DMesh &res){

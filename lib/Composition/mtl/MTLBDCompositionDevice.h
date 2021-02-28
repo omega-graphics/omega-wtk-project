@@ -1,4 +1,5 @@
 #include "../BDCompositionDevice.h"
+#include "../BDCompositionRenderTarget.h"
 
 #import <Metal/Metal.h>
 
@@ -35,7 +36,9 @@ public:
     MTLBDCompositionDevice();
     id<MTLCommandBuffer> makeNewMTLCommandBuffer();
     static Core::SharedPtr<BDCompositionDevice> Create();
-    Core::SharedPtr<BDCompositionRenderTarget> makeTarget(Layer *layer);
+    Core::SharedPtr<BDCompositionLayerRenderTarget> makeLayerRenderTarget(Layer *layer);
+    Core::SharedPtr<BDCompositionImageRenderTarget> makeImageRenderTarget(Core::Rect &size);
+    Core::SharedPtr<BDCompositionImageRenderTarget> makeImageRenderTarget(Core::SharedPtr<BDCompositionImage> &img) ;
     Core::SharedPtr<BDCompositionFontFactory> createFontFactory();
     void destroyTarget(Layer *layer,Core::SharedPtr<BDCompositionRenderTarget> &target);
 };

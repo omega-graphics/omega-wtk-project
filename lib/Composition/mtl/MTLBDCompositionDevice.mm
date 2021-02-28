@@ -3,6 +3,7 @@
 #import "MTLBackend.h"
 #import "MTLBDCompositionRenderTarget.h"
 #import "MTLBDCompositionFontFactory.h"
+#import "MTLBDCompositionImage.h"
 
 namespace OmegaWTK::Composition {
 
@@ -103,8 +104,32 @@ Core::SharedPtr<BDCompositionDevice> CreateMTLBDCompositonDevice(){
     return MTLBDCompositionDevice::Create();
 };
 
-Core::SharedPtr<BDCompositionRenderTarget> MTLBDCompositionDevice::makeTarget(Layer *layer){
-    return MTLBDCompositionRenderTarget::Create(this,(Native::Cocoa::CocoaItem *)layer->getTargetNativePtr());
+Core::SharedPtr<BDCompositionLayerRenderTarget> MTLBDCompositionDevice::makeLayerRenderTarget(Layer *layer){
+    return MTLBDCompositionLayerRenderTarget::Create(this,(Native::Cocoa::CocoaItem *)layer->getTargetNativePtr());
+};
+
+Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionDevice::makeImageRenderTarget(Core::Rect & size){
+    float scaleFactor =  [NSScreen mainScreen].backingScaleFactor;
+    MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm width:size.dimen.minWidth * scaleFactor height:size.dimen.minHeight * scaleFactor mipmapped:NO];
+    desc.usage = MTLTextureUsageRenderTarget | MTLTextureUsagePixelFormatView;
+    desc.storageMode = MTLStorageModeShared;
+    id<MTLTexture> target = [metal_device newTextureWithDescriptor:desc];
+    return MTLBDCompositionImageRenderTarget::Create(this,size,target);
+};
+
+Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionDevice::makeImageRenderTarget(Core::SharedPtr<BDCompositionImage> & img){
+    MTLBDCompositionImage *mtl_img = (MTLBDCompositionImage *)img.get();
+    MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm width:mtl_img->img.width height:mtl_img->img.height mipmapped:NO];
+    desc.usage = MTLTextureUsageRenderTarget | MTLTextureUsagePixelFormatView;
+    desc.storageMode = MTLStorageModeShared;
+    id<MTLTexture> target = [metal_device newTextureWithDescriptor:desc];
+    id<MTLCommandBuffer> commandBuffer = makeNewMTLCommandBuffer();
+    id<MTLBlitCommandEncoder> blitEncoder = [commandBuffer blitCommandEncoder];
+    [blitEncoder copyFromTexture:mtl_img->img toTexture:target];
+    [blitEncoder endEncoding];
+    [commandBuffer commit];
+    [commandBuffer waitUntilCompleted];
+    return MTLBDCompositionImageRenderTarget::Create(this,mtl_img->n_rect,target);
 };
 
 Core::SharedPtr<BDCompositionFontFactory> MTLBDCompositionDevice::createFontFactory(){

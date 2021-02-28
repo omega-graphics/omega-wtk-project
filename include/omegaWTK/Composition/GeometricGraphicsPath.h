@@ -11,8 +11,8 @@ class GeometricGraphicsPath {
 public:
     GeometricGraphicsPath(Core::Math::VectorPath2D & path_a,Core::Math::VectorPath2D & path_b);
 };
-Core::SharedPtr<GeometricGraphicsPath> RoundedRectFrame(Core::RoundedRect rect,unsigned width);
-Core::SharedPtr<GeometricGraphicsPath> EllipseFrame(Core::Ellipse ellipse,unsigned width);
+Core::SharedPtr<GeometricGraphicsPath> RoundedRectFrame(Core::FRoundedRect rect,unsigned width);
+Core::SharedPtr<GeometricGraphicsPath> EllipseFrame(Core::FEllipse ellipse,unsigned width);
 Core::SharedPtr<GeometricGraphicsPath> Arc(Core::Math::Arc arc,unsigned width);
 
 };

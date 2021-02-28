@@ -8,10 +8,16 @@
 
 namespace OmegaWTK::Composition {
 
+template<class _Ty>
+class MTLBDCompositionRenderTarget;
+
 class MTLBDCompositionFont : public BDCompositionFont {
     CTFontRef font;
     Text::Font omegawtkFont;
-    friend class MTLBDCompositionRenderTarget;
+    /// Layer Render Target
+    friend class MTLBDCompositionRenderTarget<BDCompositionLayerRenderTarget>;
+    /// Image Render Target
+    friend class MTLBDCompositionRenderTarget<BDCompositionImageRenderTarget>;
 public:
     MTLBDCompositionFont(CTFontRef font,Text::Font & omegawtkFont);
 };

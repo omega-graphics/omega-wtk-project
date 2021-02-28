@@ -1,12 +1,20 @@
 #import "MTLBDCompositionImage.h"
 
 namespace OmegaWTK::Composition {
-MTLBDCompositionImage::MTLBDCompositionImage(Core::SharedPtr<Core::BitmapImage> & _img,Core::FRect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img):BDCompositionImage(_img),rect(rect),desc(desc),img(img){
+MTLBDCompositionImage::MTLBDCompositionImage(Core::SharedPtr<Core::BitmapImage> & _img,Core::FRect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img):BDCompositionImage(_img),n_rect(Rect(rect.pos.x,rect.pos.y,rect.dimen.minWidth,rect.dimen.minHeight)),rect(rect),desc(desc),img(img){
+    
+};
+
+MTLBDCompositionImage::MTLBDCompositionImage(Core::Rect &rect,id<MTLTexture> img):BDCompositionImage(),n_rect(rect),rect(FRect(rect.pos.x,rect.pos.y,rect.dimen.minWidth,rect.dimen.minHeight)),desc(nullptr),img(img){
     
 };
 
 Core::SharedPtr<BDCompositionImage> MTLBDCompositionImage::Create(Core::SharedPtr<Core::BitmapImage> & _img,Core::FRect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img){
     return std::make_shared<MTLBDCompositionImage>(_img,rect,desc,img);
+};
+
+Core::SharedPtr<BDCompositionImage> MTLBDCompositionImage::Create(Core::Rect & rect, id<MTLTexture> img){
+    return std::make_shared<MTLBDCompositionImage>(rect,img);
 };
 
 MTLPixelFormat computePixelFormat(unsigned bitDepth,unsigned channelCount,bool isrgb){

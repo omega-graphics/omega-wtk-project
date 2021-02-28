@@ -17,7 +17,7 @@ namespace OmegaWTK::Composition {
             global_font_factory = global_device->createFontFactory();
         }
     };
-    void BackendImpl::drawVisual(Core::SharedPtr<BDCompositionRenderTarget> & target,Visual *visual,bool updatePass){
+    void BackendImpl::drawVisual(BDCompositionRenderTarget * target,Visual *visual,bool updatePass){
         // MessageBoxA(GetForegroundWindow(),"Will Draw Rect","NOTE",MB_OK);
         switch (visual->type) {
         case Visual::Rect : {
@@ -69,12 +69,12 @@ namespace OmegaWTK::Composition {
         }
     };
     void BackendImpl::doWork(){
-        auto target = global_device->makeTarget(currentLayer);
+        auto target = global_device->makeLayerRenderTarget(currentLayer);
         auto & visuals = currentLayer->getTargetVisuals();
         
         target->clear(currentLayer->getBackgroundColor());
         for(auto & visual : visuals){
-            drawVisual(target,visual,false);
+            drawVisual(target.get(),visual,false);
         };
         target->commit();
         targets.insert(std::make_pair(currentLayer,target));
@@ -82,7 +82,7 @@ namespace OmegaWTK::Composition {
     };
     void BackendImpl::doUpdate(){
         auto & target = targets[currentLayer];
-
+        
         #ifdef TARGET_WIN32
         if(target->needsSwapChain()){
             target->redoSwapChain();
@@ -95,7 +95,7 @@ namespace OmegaWTK::Composition {
         target->clear(currentLayer->getBackgroundColor());
         auto & visuals = currentLayer->getTargetVisuals();
         for(auto & visual : visuals){
-            drawVisual(target,visual);
+            drawVisual(target.get(),visual);
         };
         target->commit();
     };

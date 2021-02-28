@@ -66,7 +66,7 @@ namespace OmegaWTK::Core {
         typedef Vector2D_Base<int,float> IVector2D;
 
         struct Point2D {
-            unsigned x,y;
+            float x,y;
         };
     
         struct Arc {

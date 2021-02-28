@@ -62,7 +62,7 @@ int omegaWTKMain(AppInst *app)
  app->menu = menu;
     FSPath path = Core::String("./assets/test.png");
     
-    auto ellipseFrame = Composition::EllipseFrame(Ellipse(200,200,100,50),20);
+    auto r_rectFrame = Composition::RoundedRectFrame(FRoundedRect(200.f,200.f,100.f,75.f,20.f,20.f),5.f);
     
 //    Core::Math::VectorPath2D vectorPath ({0,0});
 //    vectorPath.append({50,50});

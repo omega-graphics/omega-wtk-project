@@ -18,13 +18,6 @@ protected:
     Core::Map<unsigned,Core::SharedPtr<BDCompositionImage>> images;
 public:
     //static Core::SharedPtr<BDCompositionRenderTarget> Create(BDCompositionDevice * device,Layer *layer);
-#ifdef TARGET_WIN32
-    virtual bool targetIsFresh() = 0;
-    virtual bool needsSwapChain() = 0;
-    virtual bool needsDeviceContext() = 0;
-    virtual void redoSwapChain() = 0;
-    virtual void redoDeviceContext() = 0;
-#endif
     // /**
     //  Adds a Brush to the Render Target's Brush Catalog.
     //  */
@@ -48,6 +41,31 @@ public:
     virtual void commit() = 0;
     /// @}
     // virtual ~BDCompositionRenderTarget();
+};
+
+class BDCompositionLayerRenderTarget : public BDCompositionRenderTarget {
+public:
+#ifdef TARGET_WIN32
+    virtual bool targetIsFresh() = 0;
+    virtual bool needsSwapChain() = 0;
+    virtual bool needsDeviceContext() = 0;
+    virtual void redoSwapChain() = 0;
+    virtual void redoDeviceContext() = 0;
+#endif
+};
+
+class BDCompositionImageRenderTarget : public BDCompositionRenderTarget {
+    
+public:
+#ifdef TARGET_WIN32
+    virtual bool targetIsFresh() = 0;
+    virtual bool needsDeviceContext() = 0;
+    virtual void redoDeviceContext() = 0;
+#endif
+    /**
+     Gets the underlying image!
+     */
+    virtual Core::SharedPtr<BDCompositionImage> getImg() = 0;
 };
 
 }
