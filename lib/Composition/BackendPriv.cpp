@@ -70,11 +70,11 @@ namespace OmegaWTK::Composition {
     };
     void BackendImpl::doWork(){
         auto target = global_device->makeLayerRenderTarget(currentLayer);
-        auto & visuals = currentLayer->getTargetVisuals();
+        auto & style = currentLayer->getStyle();
         
         target->clear(currentLayer->getBackgroundColor());
-        for(auto & visual : visuals){
-            drawVisual(target.get(),visual,false);
+        for(auto & visual : style.visuals){
+            drawVisual(target.get(),visual.get(),false);
         };
         target->commit();
         targets.insert(std::make_pair(currentLayer,target));
@@ -93,9 +93,9 @@ namespace OmegaWTK::Composition {
         #endif
 
         target->clear(currentLayer->getBackgroundColor());
-        auto & visuals = currentLayer->getTargetVisuals();
-        for(auto & visual : visuals){
-            drawVisual(target.get(),visual);
+        auto & style = currentLayer->getStyle();
+        for(auto & visual : style.visuals){
+            drawVisual(target.get(),visual.get());
         };
         target->commit();
     };

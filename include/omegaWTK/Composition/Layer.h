@@ -19,7 +19,7 @@ namespace OmegaWTK {
     
     class Target {
         unsigned id_gen = 0;
-        Core::Vector<Visual *> visuals;
+        Core::UniquePtr<Style> style;
         Native::NativeItemPtr native;
         friend class Layer;
     public:
@@ -34,7 +34,7 @@ namespace OmegaWTK {
             Layer * parent_ptr = nullptr;
             Core::Rect surface_rect;
             Color background = Color(Color::White);
-            Target * compTarget;
+            Core::UniquePtr<Target> compTarget;
             bool enabled;
             Compositor *ownerCompositor;
             friend class Compositor;
@@ -43,10 +43,11 @@ namespace OmegaWTK {
             /// @name Base Functions
             /// @{
             Native::NativeItemPtr getTargetNativePtr(){return compTarget->native;};
-            auto & getTargetVisuals(){return compTarget->visuals;};
+            void setStyle(Style & style){
+                compTarget->style.reset(new Style(std::move(style)));
+            };
+            auto & getStyle(){return *compTarget->style;};
             auto & getBackgroundColor(){ return background;};
-            
-            auto & getVisualByIdx(unsigned idx){ return compTarget->visuals[idx];};
             const Core::Rect & getLayerRect(){return surface_rect;};
             void setEnabled(bool state){enabled = state;};
             bool isChildLayer(){return parent_ptr != nullptr;};
@@ -59,15 +60,8 @@ namespace OmegaWTK {
             /// @{
             void setBackgroundColor(const Color & color);
 
-            void drawRect(const Core::Rect &rect,Core::SharedPtr<Brush> brush,Core::Optional<Border> border = {});
-
-            void drawRoundedRect(const Core::RoundedRect & rect,Core::SharedPtr<Brush> brush,Core::Optional<Border> border = {});
-
-            void drawText(const Core::String & str,unsigned size,Core::SharedPtr<Brush> brush,const Core::Rect & rect,const Text::Font & font = {"Arial",Text::Font::Regular});
-
-            void drawEllipse(const Core::Ellipse &ellipse,Core::SharedPtr<Brush> brush,Core::Optional<Border> border = {});
-
-            void drawBitmap(Core::SharedPtr<Core::BitmapImage> image,const Core::Rect & rect);
+            void setStyle();
+            
             /// @}
             
             /// @name Main Action Functions!

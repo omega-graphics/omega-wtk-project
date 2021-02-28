@@ -184,6 +184,7 @@ void MTLBDCompositionImageRenderTarget::commit(){
         MTLRenderPassDescriptor *renderPassDesc = [MTLRenderPassDescriptor renderPassDescriptor];
         renderPassDesc.colorAttachments[0].loadAction = MTLLoadActionLoad;
         renderPassDesc.colorAttachments[0].storeAction = MTLStoreActionStore;
+        renderPassDesc.colorAttachments[0].texture = target;
         renderPassDesc.defaultRasterSampleCount = 1;
         renderPassDesc.renderTargetWidth = target.width;
         renderPassDesc.renderTargetHeight = target.height;

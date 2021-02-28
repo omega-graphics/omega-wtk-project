@@ -45,4 +45,28 @@ void Visual::setRect(const Core::Rect &new_rect){
 // VPVR Visual::getFont(){
 
 // };
+Style::Style(){
+    
+};
+
+void Style::add(Visual::RectParams params,std::initializer_list<VisualEffect> effects){
+    _construct_visual(Visual::Rect,params,effects);
+};
+
+void Style::add(Visual::RoundedRectParams params,std::initializer_list<VisualEffect> effects){
+    _construct_visual(Visual::RoundedRect,params,effects);
+};
+
+void Style::add(Visual::EllipseParams params,std::initializer_list<VisualEffect> effects){
+    _construct_visual(Visual::Ellipse,params,effects);
+};
+
+void Style::add(Visual::BitmapParams params,std::initializer_list<VisualEffect> effects){
+    _construct_visual(Visual::Bitmap,params,effects);
+};
+
+void Style::add(Visual::TextParams params, std::initializer_list<VisualEffect> effects){
+    _construct_visual(Visual::Text,params,effects);
+};
+
 }

@@ -7,7 +7,7 @@
 namespace OmegaWTK::Composition {
 
 class BackendImpl : public Backend {
-    Core::Map<Layer *,Core::SharedPtr<BDCompositionRenderTarget>> targets;
+    Core::Map<Layer *,Core::SharedPtr<BDCompositionLayerRenderTarget>> targets;
     void drawVisual(BDCompositionRenderTarget * target,Visual * visual,bool updatePass = true);
     public:
     void doWork();

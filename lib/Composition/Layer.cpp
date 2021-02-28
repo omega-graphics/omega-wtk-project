@@ -5,43 +5,12 @@
 namespace OmegaWTK::Composition {
 
 
-Target::Target(Native::NativeItemPtr _native) : native(_native){};
+Target::Target(Native::NativeItemPtr _native) : native(_native),style(nullptr){};
 Target::~Target(){};
-
-void Layer::drawRect(const Core::Rect &rect,Core::SharedPtr<Brush> brush,Core::Optional<Border> border) {
-  compTarget->visuals.push_back(new Visual(
-      {compTarget->id_gen,Visual::Rect, (void *)new Visual::RectParams({rect,brush,border})}));
-  ++compTarget->id_gen;
-};
-
-void Layer::drawRoundedRect(const Core::RoundedRect &rect,Core::SharedPtr<Brush> brush,Core::Optional<Border> border){
-  compTarget->visuals.push_back(new Visual(
-    {compTarget->id_gen,Visual::RoundedRect,(void *) new Visual::RoundedRectParams({{rect.pos,rect.dimen},rect.radius_x,rect.radius_y,brush,border})}));
-    ++compTarget->id_gen;
-};
-
-void Layer::drawText(const Core::String & str,unsigned size,Core::SharedPtr<Brush> brush,const Core::Rect & rect,const Text::Font & font){
-    compTarget->visuals.push_back(new Visual(
-      {compTarget->id_gen,Visual::Text,(void *) new Visual::TextParams({Text({str,size,font}),brush,rect})}));
-    ++compTarget->id_gen;
-};
-
-void Layer::drawEllipse(const Core::Ellipse &ellipse,Core::SharedPtr<Brush> brush,Core::Optional<Border> border){
-  compTarget->visuals.push_back(new Visual(
-    {compTarget->id_gen,Visual::Ellipse,(void *) new Visual::EllipseParams({ellipse,brush,border})}));
-  ++compTarget->id_gen;
-};
-
-void Layer::drawBitmap(Core::SharedPtr<Core::BitmapImage> image,const Core::Rect & rect){
-  compTarget->visuals.push_back(new Visual(
-    {compTarget->id_gen,Visual::Bitmap,(void *)new Visual::BitmapParams({std::move(image),rect})
-  }));
-  ++compTarget->id_gen;
-};
 
 Layer::Layer(const Core::Rect &rect, Native::NativeItemPtr native_ptr,
              Compositor *compPtr)
-    : surface_rect(rect), compTarget(new Target(native_ptr)),
+    : surface_rect(rect), compTarget(std::make_unique<Target>(native_ptr)),
       ownerCompositor(compPtr) {
   native_ptr->setParentLayer(this);
 };
@@ -72,7 +41,7 @@ void Layer::setBackgroundColor(const Color &color) { background = color; };
 
 void Layer::redraw() { ownerCompositor->updateRequestLayer(this); };
 
-Layer::~Layer() { delete compTarget; };
+Layer::~Layer() { };
 
 void LayerTree::_recursive_trav(LayerTreeTraversalCallback &callback,
                                 Layer *current) {
