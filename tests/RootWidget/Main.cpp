@@ -102,7 +102,6 @@ int omegaWTKMain(AppInst *app)
     widget.show();
     widget2.show();
     // OmegaWTK::MyWidget widget2({{500,0},{300,300}});
-     widget2.show();
     app->addWidgetToRoot(&widget);
     app->addWidgetToRoot(&widget2);
     return 0;

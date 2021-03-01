@@ -1,6 +1,7 @@
 #include "DXBDCompositionDevice.h"
 #include "DXBDCompositionRenderTarget.h"
 #include "DXBDCompositionFontFactory.h"
+#include "DXBDCompositionImage.h"
 
 namespace OmegaWTK::Composition {
     DXBDCompositionDevice::DXBDCompositionDevice(){
@@ -60,9 +61,34 @@ namespace OmegaWTK::Composition {
     Core::SharedPtr<BDCompositionDevice> DXBDCompositionDevice::Create(){
         return std::make_shared<DXBDCompositionDevice>();
     };
-    Core::SharedPtr<BDCompositionRenderTarget> DXBDCompositionDevice::makeTarget(Layer *layer){
+    Core::SharedPtr<BDCompositionLayerRenderTarget> DXBDCompositionDevice::makeLayerRenderTarget(Layer *layer){
         // MessageBoxA(GetForegroundWindow(),"Making DX Render Target","",MB_OK);
-        return DXBDCompositionRenderTarget::Create(this,(Native::Win::HWNDItem *)layer->getTargetNativePtr());
+        return DXBDCompositionLayerRenderTarget::Create(this,(Native::Win::HWNDItem *)layer->getTargetNativePtr());
+    };
+    Core::SharedPtr<BDCompositionImageRenderTarget> DXBDCompositionDevice::makeImageRenderTarget(Core::Rect &size){
+        UINT dpi = GetDpiForWindow(GetForegroundWindow());
+        ID2D1DeviceContext *device_context;
+        ID2D1Bitmap *bitmap;
+        HRESULT hr;
+        hr = direct2d_device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,&device_context);
+        if(FAILED(hr)){
+
+        };
+        hr = device_context->CreateBitmap(D2D1::SizeU(size.dimen.minWidth,size.dimen.minHeight),D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&bitmap);
+        if(FAILED(hr)){
+
+        };
+        return DXBDCompositionImageRenderTarget::Create(this,size,bitmap,device_context);
+    };
+    Core::SharedPtr<BDCompositionImageRenderTarget> DXBDCompositionDevice::makeImageRenderTarget(Core::SharedPtr<BDCompositionImage> &img){
+        DXBDCompositionImage *dxImg = (DXBDCompositionImage *)img.get();
+        ID2D1DeviceContext *device_context;
+        HRESULT hr;
+        hr = direct2d_device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,&device_context);
+        if(FAILED(hr)){
+
+        };
+        return DXBDCompositionImageRenderTarget::Create(this,dxImg->rect,dxImg->native_image.get(),device_context);
     };
     Core::SharedPtr<BDCompositionFontFactory> DXBDCompositionDevice::createFontFactory(){
         HRESULT hr;

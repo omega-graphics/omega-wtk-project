@@ -76,23 +76,15 @@ namespace OmegaWTK::Composition {
         return res;
     };
 
-    DXBDCompositionRenderTarget::DXBDCompositionRenderTarget(DXBDCompositionDevice *device,Native::Win::HWNDItem *hwndItem):device(device),hwndItem(hwndItem){
+    DXBDCompositionLayerRenderTarget::DXBDCompositionLayerRenderTarget(DXBDCompositionDevice *device,Native::Win::HWNDItem *hwndItem):IDXBDCompositionRenderTarget<BDCompositionLayerRenderTarget>(device),hwndItem(hwndItem){
         redoSwapChain();
     };
-    
-    Core::SharedPtr<BDCompositionRenderTarget> DXBDCompositionRenderTarget::Create(DXBDCompositionDevice *device, Native::Win::HWNDItem *item){
-        return std::make_shared<DXBDCompositionRenderTarget>(DXBDCompositionRenderTarget(device,item));
-    };
-    
-    DXBDCompositionRenderTarget::~DXBDCompositionRenderTarget(){
-        Core::SafeRelease(&dcomp_target);
-        Core::SafeRelease(&direct2d_bitmap);
-        Core::SafeRelease(&direct2d_device_context);
-        Core::SafeRelease(&dxgi_surface);
-        Core::SafeRelease(&dxgi_swap_chain);
+
+    Core::SharedPtr<BDCompositionLayerRenderTarget> DXBDCompositionLayerRenderTarget::Create(DXBDCompositionDevice *device, Native::Win::HWNDItem *item){
+        return std::make_shared<DXBDCompositionLayerRenderTarget>(DXBDCompositionLayerRenderTarget(device,item));
     };
 
-    void DXBDCompositionRenderTarget::redoSwapChain(){
+    void DXBDCompositionLayerRenderTarget::redoSwapChain(){
         DXGI_SWAP_CHAIN_DESC1 desc {0};
         desc.BufferCount = 2;
         desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -132,7 +124,7 @@ namespace OmegaWTK::Composition {
         newTarget = true;
     };
 
-    void DXBDCompositionRenderTarget::redoDeviceContext(){
+    void DXBDCompositionLayerRenderTarget::redoDeviceContext(){
         hr = device->direct2d_device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,&direct2d_device_context);
         if(FAILED(hr)){
             /// Handle Error!
@@ -145,18 +137,13 @@ namespace OmegaWTK::Composition {
 
         direct2d_device_context->SetTarget(direct2d_bitmap.get());
 
-
+        
         recreateSwapChain = false;
         recreateDeviceContext = false;
         newTarget = true;
     };
 
-    void DXBDCompositionRenderTarget::clear(Color &clearColor){
-        direct2d_device_context->BeginDraw();
-        direct2d_device_context->SetTransform(D2D1::IdentityMatrix());
-        direct2d_device_context->Clear(color_to_d2d1_color(clearColor));
-    };
-    void DXBDCompositionRenderTarget::frameRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush, unsigned width){
+    void DXBDCompositionLayerRenderTarget::frameRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush, unsigned width){
         // if(hasBrush(brush)){
             ID2D1Brush *_brush = omegawtk_brush_to_d2d1_brush(*brush,direct2d_device_context.get());
             RECT rc = core_rect_to_win_rect(rect,hwndItem->getHandle());
@@ -165,7 +152,7 @@ namespace OmegaWTK::Composition {
             direct2d_device_context->DrawRectangle(D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom),_brush,FLOAT(width) * scaleFactor);
         // };
     };
-    void DXBDCompositionRenderTarget::fillRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush){
+    void DXBDCompositionLayerRenderTarget::fillRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush){
         // if(hasBrush(brush)){
             ID2D1Brush *_brush = omegawtk_brush_to_d2d1_brush(*brush,direct2d_device_context.get());
             RECT rc = core_rect_to_win_rect(rect,hwndItem->getHandle());
@@ -173,7 +160,7 @@ namespace OmegaWTK::Composition {
             Core::SafeRelease(&_brush);
         // };
     };
-    void DXBDCompositionRenderTarget::frameRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush, unsigned width){
+    void DXBDCompositionLayerRenderTarget::frameRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush, unsigned width){
         ID2D1Brush *_brush = omegawtk_brush_to_d2d1_brush(*brush,direct2d_device_context.get());
         RECT rc = core_rect_to_win_rect(rect,hwndItem->getHandle());
         UINT dpi = GetDpiForWindow(hwndItem->getHandle());
@@ -181,7 +168,7 @@ namespace OmegaWTK::Composition {
         direct2d_device_context->DrawRoundedRectangle(D2D1::RoundedRect(D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom),FLOAT(rect.radius_x) * scaleFactor,FLOAT(rect.radius_y) * scaleFactor),_brush,FLOAT(width) * scaleFactor);
         Core::SafeRelease(&_brush);
     };
-    void DXBDCompositionRenderTarget::fillRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush){
+    void DXBDCompositionLayerRenderTarget::fillRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush){
         ID2D1Brush *_brush = omegawtk_brush_to_d2d1_brush(*brush,direct2d_device_context.get());
         RECT rc = core_rect_to_win_rect(rect,hwndItem->getHandle());
         UINT dpi = GetDpiForWindow(hwndItem->getHandle());
@@ -190,7 +177,7 @@ namespace OmegaWTK::Composition {
         Core::SafeRelease(&_brush);
     };
 
-    Core::SharedPtr<BDCompositionImage> DXBDCompositionRenderTarget::createImageFromBitmapImage(Core::SharedPtr<Core::BitmapImage> &img,Core::Rect &newSize,unsigned v_id){
+    Core::SharedPtr<BDCompositionImage> DXBDCompositionLayerRenderTarget::createImageFromBitmapImage(Core::SharedPtr<Core::BitmapImage> &img,Core::Rect &newSize,unsigned v_id){
         auto & header = img->header;
         UINT dpi = GetDpiForWindow(hwndItem->getHandle());
         FLOAT scaleFactor = FLOAT(dpi)/96.f;
@@ -221,7 +208,7 @@ namespace OmegaWTK::Composition {
         images.insert(std::make_pair(v_id,image));
         return image;
     };
-    void DXBDCompositionRenderTarget::drawImage(Core::SharedPtr<BDCompositionImage> &img,Core::Position pos){
+    void DXBDCompositionLayerRenderTarget::drawImage(Core::SharedPtr<BDCompositionImage> &img,Core::Position pos){
         DXBDCompositionImage *compImg = reinterpret_cast<DXBDCompositionImage *>(img.get());
         UINT dpi = GetDpiForWindow(hwndItem->getHandle());
         FLOAT scaleFactor = FLOAT(dpi)/96.f;
@@ -231,7 +218,7 @@ namespace OmegaWTK::Composition {
         auto & rect = compImg->rect;
         direct2d_device_context->DrawImage(img_ref,D2D1::Point2F(pos.x * scaleFactor,rc.bottom - (rect.dimen.minHeight * scaleFactor) - (pos.y * scaleFactor)));
     };
-    void DXBDCompositionRenderTarget::drawText(Core::SharedPtr<BDCompositionFont> &font, Core::String &string, Core::Rect &textRect,Core::SharedPtr<Brush> & brush){
+    void DXBDCompositionLayerRenderTarget::drawText(Core::SharedPtr<BDCompositionFont> &font, Core::String &string, Core::Rect &textRect,Core::SharedPtr<Brush> & brush){
         DXBDCompositionFont *compFont = reinterpret_cast<DXBDCompositionFont *>(font.get());
         std::wstring w_str;
         cpp_str_to_cpp_wstr(string,w_str);
@@ -240,7 +227,9 @@ namespace OmegaWTK::Composition {
         direct2d_device_context->DrawText(w_str.c_str(),w_str.size(),compFont->textFormat.get(),D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom),_brush);
         Core::SafeRelease(&_brush);
     };
-    void DXBDCompositionRenderTarget::commit(){
+    
+
+    void DXBDCompositionLayerRenderTarget::commit(){
         DXGI_PRESENT_PARAMETERS params;
         params.DirtyRectsCount = NULL;
         params.pDirtyRects = NULL;
@@ -268,6 +257,68 @@ namespace OmegaWTK::Composition {
                 newTarget = false;
             }
         };
+    };
+
+    DXBDCompositionLayerRenderTarget::~DXBDCompositionLayerRenderTarget(){
+        Core::SafeRelease(&dxgi_surface);
+        Core::SafeRelease(&dxgi_swap_chain);
+        Core::SafeRelease(&direct2d_bitmap);
+    };
+
+    DXBDCompositionImageRenderTarget::DXBDCompositionImageRenderTarget(DXBDCompositionDevice *device,Core::Rect &rect,ID2D1Image *img,ID2D1DeviceContext *device_context):IDXBDCompositionRenderTarget<BDCompositionImageRenderTarget>(device),rect(rect),img(img){
+        direct2d_device_context = device_context;
+        direct2d_device_context->SetTarget(img);
+    };
+
+    void DXBDCompositionImageRenderTarget::redoDeviceContext(){
+        Core::SafeRelease(&direct2d_device_context);
+        hr = device->direct2d_device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,&direct2d_device_context);
+        if(FAILED(hr)){
+
+        };
+        direct2d_device_context->SetTarget(img);
+    };
+
+    Core::SharedPtr<BDCompositionImageRenderTarget> DXBDCompositionImageRenderTarget::Create(DXBDCompositionDevice *device, Core::Rect &rect, ID2D1Image *img,ID2D1DeviceContext *device_context){
+        return std::make_shared<DXBDCompositionImageRenderTarget>(device,rect,img,device_context);
+    };
+
+    void DXBDCompositionImageRenderTarget::frameRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush, unsigned int width){
+
+    };
+    void DXBDCompositionImageRenderTarget::fillRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush){
+
+    };
+    void DXBDCompositionImageRenderTarget::frameRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush, unsigned int width){
+
+    };
+    void DXBDCompositionImageRenderTarget::fillRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush){
+
+    };
+    Core::SharedPtr<BDCompositionImage> DXBDCompositionImageRenderTarget::createImageFromBitmapImage(Core::SharedPtr<Core::BitmapImage> &img, Core::Rect &newSize, unsigned int v_id){
+        return nullptr;
+    };
+    void DXBDCompositionImageRenderTarget::drawImage(Core::SharedPtr<BDCompositionImage> &img, Core::Position pos){
+
+    };
+    void DXBDCompositionImageRenderTarget::drawText(Core::SharedPtr<BDCompositionFont> &font, Core::String &string, Core::Rect &textRect, Core::SharedPtr<Brush> &brush){
+
+    };
+
+    void DXBDCompositionImageRenderTarget::commit(){
+        hr = direct2d_device_context->EndDraw();
+        if(FAILED(hr) || hr == D2DERR_RECREATE_TARGET){
+            Core::SafeRelease(&direct2d_device_context);
+            recreateDeviceContext = true;
+        }
+    };
+
+    Core::SharedPtr<BDCompositionImage> DXBDCompositionImageRenderTarget::getImg(){
+        return nullptr;
+    };
+
+    DXBDCompositionImageRenderTarget::~DXBDCompositionImageRenderTarget(){
+
     };
 
 };

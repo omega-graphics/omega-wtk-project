@@ -21,6 +21,9 @@
 
 
 namespace OmegaWTK::Composition {
+     class None {};
+    class DXBDCompositionLayerRenderTarget;
+    class DXBDCompositonImageRenderTarget;
     class DXBDCompositionDevice : public BDCompositionDevice {
         Core::UniqueComPtr<ID3D11Device> direct3d_device;
         Core::UniqueComPtr<ID2D1Factory1> direct2d_factory;
@@ -29,12 +32,15 @@ namespace OmegaWTK::Composition {
         Core::UniqueComPtr<IDXGIDevice1> dxgi_device;
         Core::UniqueComPtr<IDXGIAdapter> dxgi_adapter;
         Core::UniqueComPtr<IDCompositionDevice3> dcomp_device;
-        friend class DXBDCompositionRenderTarget;
+        friend class DXBDCompositionLayerRenderTarget;
+        friend class DXBDCompositionImageRenderTarget;
         public:
         DXBDCompositionDevice();
         ~DXBDCompositionDevice();
         static Core::SharedPtr<BDCompositionDevice> Create();
-        Core::SharedPtr<BDCompositionRenderTarget> makeTarget(Layer *layer);
+        Core::SharedPtr<BDCompositionLayerRenderTarget> makeLayerRenderTarget(Layer *layer);
+        Core::SharedPtr<BDCompositionImageRenderTarget> makeImageRenderTarget(Core::Rect &size);
+        Core::SharedPtr<BDCompositionImageRenderTarget> makeImageRenderTarget(Core::SharedPtr<BDCompositionImage> &img);
         Core::SharedPtr<BDCompositionFontFactory> createFontFactory();
         void destroyTarget(Layer *layer, Core::SharedPtr<BDCompositionRenderTarget> &target);
     };
