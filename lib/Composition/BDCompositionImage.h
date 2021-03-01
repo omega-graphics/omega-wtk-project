@@ -1,5 +1,6 @@
 #include "omegaWTK/Core/Core.h"
 #include "omegaWTK/Core/ImgCodec.h"
+#include "omegaWTK/Composition/Visual.h"
 
 #ifndef OMEGAWTK_COMPOSITION_BDCOMPOSITIONIMAGE_H
 #define OMEGAWTK_COMPOSITION_BDCOMPOSITIONIMAGE_H
@@ -21,7 +22,7 @@ namespace OmegaWTK::Composition {
         #ifdef TARGET_WIN32
         virtual void redoImage() = 0;
         #endif
-        // static Core::SharedPtr<BDCompositionImage> Create(Core::SharedPtr<Core::BitmapImage> & img);
+        virtual void applyEffect(VisualEffect &effect) = 0;
     };
 };
 

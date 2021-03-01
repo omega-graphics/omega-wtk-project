@@ -28,6 +28,7 @@ public:
     MTLBDCompositionImage(Core::Rect & rect,id<MTLTexture> img);
     static Core::SharedPtr<BDCompositionImage> Create(Core::SharedPtr<Core::BitmapImage> & _img,Core::FRect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img);
     static Core::SharedPtr<BDCompositionImage> Create(Core::Rect & rect,id<MTLTexture> img);
+    void applyEffect(VisualEffect &effect);
 };
 
 MTLPixelFormat computePixelFormat(unsigned bitDepth,unsigned channelCount,bool isrgb);

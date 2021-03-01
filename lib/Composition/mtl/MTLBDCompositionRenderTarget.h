@@ -38,7 +38,7 @@ namespace OmegaWTK::Composition {
         Core::Queue<RenderPipeline> renderPasses;
     public:
         MTLBDCompositionRenderTarget(MTLBDCompositionDevice *device,Color init_clear_color,Core::Rect &target_frame);
-        void clear(Color &clear_color);
+        virtual void clear(Color &clear_color);
         void frameRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush, unsigned width);
         void frameRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush, unsigned width);
         void fillRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush);
@@ -61,7 +61,7 @@ MTLBDCompositionRenderTarget<_Ty>::MTLBDCompositionRenderTarget(MTLBDComposition
 template<class _Ty>
 void MTLBDCompositionRenderTarget<_Ty>::clear(Color & clear_color){
 //    NSLog(@"OmegaWTK Color: R %i G %i B %i A %i",clear_color.r,clear_color.g,clear_color.b,clear_color.a);
-    clearColor = clear_color;
+    clearColor = std::move(clear_color);
 };
 template<class _Ty>
 void MTLBDCompositionRenderTarget<_Ty>::fillRect(Core::Rect &rect,Core::SharedPtr<Brush> & brush){
@@ -399,10 +399,12 @@ void MTLBDCompositionRenderTarget<_Ty>::drawImage(Core::SharedPtr<BDCompositionI
 class MTLBDCompositionLayerRenderTarget : public MTLBDCompositionRenderTarget<BDCompositionLayerRenderTarget> {
     CAMetalLayer *metalLayer;
     Native::Cocoa::CocoaItem *native_item;
+    id<CAMetalDrawable> currentDrawable = nil;
 #ifdef TARGET_MACOS
 //    CVDisplayLink *displayLink;
 #endif
 public:
+    void clear(Color &clear_color);
     MTLBDCompositionLayerRenderTarget(MTLBDCompositionDevice *device,Native::Cocoa::CocoaItem *item);
     static Core::SharedPtr<BDCompositionLayerRenderTarget> Create(MTLBDCompositionDevice *device,Native::Cocoa::CocoaItem *item);
     void commit();

@@ -37,9 +37,12 @@ namespace OmegaWTK {
             Transformation,
             MotionBlur
         } Type;
+        Type type;
         void * params;
         typedef struct {
-            
+            float x_offset, y_offset;
+            float radius;
+            float blurAmount;
         } DropShadowParams;
         typedef struct {
             
@@ -134,7 +137,7 @@ namespace OmegaWTK {
          Adds A Text Object to the Style!
          */
         void add(Visual::TextParams params,std::initializer_list<VisualEffect> initialEffects);
-        void setBrush(unsigned id,Core::SharedPtr<Brush> & new_brush);
+        void setBrush(unsigned id,const Core::SharedPtr<Brush> & new_brush);
         VisualEffect & getVisualEffect(unsigned id,unsigned idx);
     };
     

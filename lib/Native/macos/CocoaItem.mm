@@ -24,17 +24,25 @@
     };
 };
 
+- (BOOL)acceptsFirstResponder {
+    return YES;
+};
+
 - (void)mouseDown:(NSEvent *)event{
     [self emitEventIfPossible:event];
+    [super mouseDown:event];
 };
 - (void)mouseUp:(NSEvent *)event{
     [self emitEventIfPossible:event];
+    [super mouseUp:event];
 };
 - (void)mouseEntered:(NSEvent *)event{
     [self emitEventIfPossible:event];
+    [super mouseEntered:event];
 };
 - (void)mouseExited:(NSEvent *)event {
     [self emitEventIfPossible:event];
+    [super mouseExited:event];
 };
 
 - (void)drawRect:(NSRect)dirtyRect{

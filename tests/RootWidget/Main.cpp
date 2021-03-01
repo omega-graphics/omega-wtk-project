@@ -4,26 +4,43 @@
 
 namespace OmegaWTK {
 class MyWidget : public Widget {
+    bool selected = false;
     class MyRootDelegate : public ViewDelegate {
+        bool * state;
         void onLeftMouseDown(Native::NativeEventPtr event) {
-            // Composition::Layer *layer = view->getLayer();
-            // Composition::Visual *text = layer->getVisualByIdx(1);
-            // text->setColor(Composition::Color::Green);
-            // layer->redraw();
+//            if(!*state) {
+                std::cout << "On" << std::endl;
+                Composition::Layer *layer = view->getLayer();
+                Composition::Style & style = layer->getStyle();
+                style.setBrush(0,Composition::ColorBrush(Composition::Color(0xBB0000)));
+                layer->redraw();
+                *state = !*(state);
+//            };
+            std::cout << "State:" << *state << std::endl;
         };
         void onLeftMouseUp(Native::NativeEventPtr event) {
-            
+//            if(*state){
+                std::cout << "Off" << std::endl;
+                Composition::Layer *layer = view->getLayer();
+                Composition::Style & style = layer->getStyle();
+                style.setBrush(0,Composition::ColorBrush(Composition::Color::Red));
+                layer->redraw();
+                *state = !*(state);
+//            };
+            std::cout << "State:" << *state << std::endl;
         };
+    public:
+        MyRootDelegate(bool * state):state(state){};
     };
     MyRootDelegate *delegate;
 public:
-    MyWidget(const Core::Rect & rect):Widget(rect),delegate(new MyRootDelegate()){
+    MyWidget(const Core::Rect & rect):Widget(rect),delegate(new MyRootDelegate(&selected)){
         rootView->setDelegate(delegate);
         auto black = Composition::ColorBrush(Composition::Color::Black);
         using namespace Composition;
         Layer *rootLayer = rootView->getLayer();
         Style layerStyle;
-        layerStyle.add(VISUAL_RECT(Rect(0,0,100,100),ColorBrush(Composition::Color::Red)),{});
+        layerStyle.add(VISUAL_RECT(Rect(0,0,200,200),ColorBrush(Composition::Color::Red)),{});
 //        rootLayer->setBackgroundColor(Composition::Color::Blue);
         //        rootLayer->drawRect(Rect(0,0,100,100),Composition::ColorBrush(Composition::Color::Red),Composition::Border(black,5));
         //          rootLayer->drawRoundedRect(RoundedRect(0,0,200,200,25,25),Composition::ColorBrush(Composition::Color::Green));
@@ -81,11 +98,11 @@ int omegaWTKMain(AppInst *app)
 //    // MessageBoxA(GetForegroundWindow(),path.serialize().c_str(),"RESULT",MB_OK);
 
     MyWidget widget({{0,0},{200,200}});
-    MyWidget widget2({{200,0},{200,200}});
+    MyWidget widget2({{300,0},{200,200}});
     widget.show();
     widget2.show();
     // OmegaWTK::MyWidget widget2({{500,0},{300,300}});
-    // widget2.show();
+     widget2.show();
     app->addWidgetToRoot(&widget);
     app->addWidgetToRoot(&widget2);
     return 0;

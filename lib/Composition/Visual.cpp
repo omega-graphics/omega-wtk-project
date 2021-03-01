@@ -69,4 +69,17 @@ void Style::add(Visual::TextParams params, std::initializer_list<VisualEffect> e
     _construct_visual(Visual::Text,params,effects);
 };
 
+void Style::setBrush(unsigned id,const Core::SharedPtr<Brush> & new_brush){
+    auto visual = visuals[id].get();
+    switch (visual->type) {
+        case Visual::Rect :{
+            Visual::RectParams *params = (Visual::RectParams *)visual->params;
+            params->brush.reset(new Brush(*new_brush));
+            break;
+        }
+        default:
+            break;
+    }
+};
+
 }
