@@ -8,7 +8,7 @@
 namespace OmegaWTK::Native {
     namespace Win {
         NativeItemPtr make_item_win(Core::Rect & dimen,ItemType type,NativeItemPtr parent);
-        NWH make_win_window(Core::Rect & rect);
+        NWH make_win_window(Core::Rect & rect,NativeEventEmitter *emitter);
     };
 };
 

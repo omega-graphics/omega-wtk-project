@@ -24,11 +24,12 @@ class AppWindowManager;
             
         };
 
-        class WindowLayer : public Native::NativeEventEmitter {
+        class WindowLayer : public Native::NativeEventEmitter, public Native::NativeLayer {
             Native::NWH native_window_ptr;
             Core::Rect & rect;
             friend class OmegaWTK::AppWindow;
             friend class OmegaWTK::AppWindowManager;
+            void redraw();
         public:
             WindowLayer(Core::Rect & rect,Native::NWH native_window_ptr);
         };

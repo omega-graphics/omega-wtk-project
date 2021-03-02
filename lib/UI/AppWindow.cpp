@@ -5,10 +5,17 @@
 
 namespace OmegaWTK {
     namespace Composition {
-        WindowLayer::WindowLayer(Core::Rect & rect,Native::NWH native_window_ptr):native_window_ptr(native_window_ptr),rect(rect){};
+        WindowLayer::WindowLayer(Core::Rect & rect,Native::NWH native_window_ptr):native_window_ptr(native_window_ptr),rect(rect){
+            // MessageBoxA(HWND_DESKTOP,"Creating Window Layer!","NOTE",MB_OK);
+            native_window_ptr->setNativeLayer(this);
+        };
+        void WindowLayer::redraw(){
+            
+        };
     }
 
     AppWindow::AppWindow(Core::Rect rect,AppWindowDelegate *delegate):layer(std::make_unique<Composition::WindowLayer>(rect,Native::make_native_window(rect,this))),delegate(delegate),rect(rect){
+        // MessageBoxA(HWND_DESKTOP,"Create Window Layer!","NOTE",MB_OK);
         if(delegate) {
             setReciever(delegate);
             delegate->window = this;
@@ -31,7 +38,7 @@ void AppWindow::_add_widget(SharedHandle<Widget> * handle){
     };
 
     UniqueHandle<Native::NativeNoteDialog> AppWindow::openNoteDialog(){
-
+        return nullptr;
     };
 
 AppWindowManager::AppWindowManager():rootWindow(nullptr){};

@@ -6,18 +6,6 @@
 
 namespace OmegaWTK::Native {
 
-// class NativeAppMenuItem {};
-
-// typedef NativeAppMenuItem *NAMI;
-
-// class NativeAppMenu {
-//     public:
-//     virtual void addMenuItem(NAMI menu_item);
-//     virtual void insertMenuItem(NAMI menu_item,unsigned idx);
-// };
-
-// typedef NativeAppMenu *NAM;
-
 class NativeApp {
 public:
     virtual void terminate() = 0;
@@ -37,7 +25,7 @@ NAP make_native_app();
 #ifdef TARGET_WIN32 
 #ifdef WINDOWS_PRIVATE
 
-void * __create_hwnd_factory(void *hinst,void *hwndroot);
+void * __create_hwnd_factory(void *hinst);
 void * __hwnd_factory_get_all_hwnds(void * hwnd_factory);
 void __free_hwnd_factory(void *hwnd_factory);
 RECT __get_hwnd_real_coords(HWND hwnd);

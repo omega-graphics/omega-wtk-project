@@ -13,13 +13,19 @@ namespace OmegaWTK::Native::Win {
         atom = HWNDFactory::appFactoryInst->registerWindow();
         if(!atom)
         {
-            MessageBox(HWNDFactory::appFactoryInst->getRootWnd(),"Failed to Register HWNDItem Window!",NULL,MB_OKCANCEL);
+            // MessageBox(HWND_DESKTOP,"Failed to Register HWNDItem Window!",NULL,MB_OKCANCEL);
         }
+        else {
+            // MessageBoxA(HWND_DESKTOP,"Registered HWNDItem Window!","NOTE",MB_OK);
+        };
         if(parent)
-            HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD | WS_VISIBLE,(void *)this,parent->hwnd,WS_EX_LAYERED);
+            HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD,(void *)this,parent->hwnd,WS_EX_LAYERED);
         else 
-            HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD | WS_VISIBLE,(void *)this,nullptr,WS_EX_LAYERED);
+            HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD,(void *)this,nullptr,WS_EX_LAYERED);
 
+        if(hwnd == NULL){
+            // MessageBoxA(HWND_DESKTOP,"Failed to Create HWNDItem Window!","NOTE",MB_OK);
+        };
         currentDpi = GetDpiForWindow(hwnd);
         isTracking = false;
         hovered = false;
@@ -141,17 +147,28 @@ namespace OmegaWTK::Native::Win {
         return GetWindowLongPtr(hwnd,GWL_STYLE);
     };
     void HWNDItem::addChildNativeItem(NativeItem *nativeItem){
-        SetParent(((HWNDItem *)nativeItem)->hwnd,hwnd);
+        children.push_back(nativeItem);
+        HWND child = ((HWNDItem *)nativeItem)->hwnd;
+        raw_children.push_back(child);
+        SetParent(child,hwnd);
     };
     void HWNDItem::removeChildNativeItem(NativeItem * nativeItem){
-        SetParent(((HWNDItem *)nativeItem)->hwnd,NULL);
+        auto _ni_ptr_it = children.begin();
+        auto _hwnd_it = raw_children.begin();
+        while(_ni_ptr_it != children.end() && _hwnd_it != raw_children.end()){
+            auto _native_item = *_ni_ptr_it;
+            if(_native_item == nativeItem){
+                children.erase(_ni_ptr_it);
+                raw_children.erase(_hwnd_it);
+                HWND child = ((HWNDItem *)nativeItem)->hwnd;
+                SetParent(child,NULL);
+                return;
+                break;
+            }; 
+            ++_ni_ptr_it;
+            ++_hwnd_it;
+        };
     };
-    // void HWNDItem::show(int nCmdShow){
-    //     ShowWindow(hwnd,nCmdShow);
-    // };
-    // void HWNDItem::update(){
-    //     UpdateWindow(hwnd);
-    // };
     RECT HWNDItem::getClientRect(){
         RECT r;
         GetClientRect(hwnd,&r);

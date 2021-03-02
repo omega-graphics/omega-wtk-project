@@ -8,111 +8,12 @@
 
 #define MAX_LOADSTRING 100
 
-LPCSTR szTitle = "@APPNAME@";                
-LPCSTR szWindowClass = "@APPNAME@"; 
-
-OmegaWTK::Core::Vector<HWND> * all_hwnds ;
-
-OmegaWTK::AppInst app;
-bool hasLoaded = false;
-bool mainWindowHasMenu = false;
-
-void updateAllHWNDPos(UINT root_wnd_height){
-     RECT rc;
-     auto it = all_hwnds->begin();
-     while(it != all_hwnds->end()){
-         HWND hwnd = *it;
-         rc = get_hwnd_item_coords((void *)hwnd);
-         UINT dpi = GetDpiForWindow(hwnd);
-         FLOAT scaleFactor = FLOAT(dpi)/96.f;
-        //  auto str = std::string("Coords:{") + "l:" + std::to_string(rc.left) + ",b:" + std::to_string(rc.bottom) + ",r:" + std::to_string(rc.right) + ",t:" + std::to_string(rc.top) + "}";
-         
-        //  MessageBoxA(GetForegroundWindow(),str.c_str(),"NOTE",MB_OK);
-         auto h = rc.top - rc.bottom;
-         auto w = rc.right - rc.left;
-
-        //  auto n_str = std::string("RECT {") + "x:" + std::to_string(rc.left * scaleFactor) + ",y:" + std::to_string(root_wnd_height - (rc.top* scaleFactor)) + ",w:" + std::to_string(w * scaleFactor) + ",h:" + std::to_string(h* scaleFactor) + "}";
-        //   MessageBoxA(GetForegroundWindow(),n_str.c_str(),"NOTE",MB_OK);
-
-         SetWindowPos(hwnd,hwnd,rc.left * scaleFactor,(root_wnd_height - (rc.top* scaleFactor)),w * scaleFactor,h* scaleFactor,SWP_NOZORDER | SWP_NOACTIVATE);
-         ++it;
-     };
- };
-
-LRESULT CALLBACK WndProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam){
-    LRESULT lr = 0;
-    if(mainWindowHasMenu){
-        if(umsg == WM_MENUCOMMAND){
-            UINT idx = wParam;
-            HMENU hmenu = (HMENU)lParam;
-
-            MENUINFO info;
-            info.cbSize = sizeof(info);
-            info.fMask = MIM_MENUDATA;
-            GetMenuInfo(hmenu,&info);
-            void * WinMenu = (void *) info.dwMenuData;
-            select_item_on_win_menu(WinMenu,idx);
-            return 0;
-        };
-    };
-    switch(umsg)
-    {
-        // case WM_CREATE : {
-        //     break;
-        // }
-         case WM_SIZING : {
-            if(hasLoaded) {
-                if(wParam == WMSZ_BOTTOM) {
-                   RECT rc;
-                    GetClientRect(hwnd,&rc);
-                    updateAllHWNDPos(rc.bottom - rc.top);
-                };
-           }
-            break;
-        }
-         case WM_SIZE : {
-            if(hasLoaded) {
-                 UINT width = LOWORD(lParam);
-                 UINT height = HIWORD(lParam);
-                 updateAllHWNDPos(height);
-              }
-             break;
-        }
-        case WM_DPICHANGED : {
-            UINT newDpi = HIWORD(wParam);
-
-            RECT* const prcNewWindow = (RECT*)lParam;
-            SetWindowPos(hwnd,
-                NULL,
-                prcNewWindow ->left,
-                prcNewWindow ->top,
-                prcNewWindow->right - prcNewWindow->left,
-                prcNewWindow->bottom - prcNewWindow->top,
-                SWP_NOZORDER | SWP_NOACTIVATE);
-            break;
-        }
-        case WM_PAINT : {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hwnd,&ps);
-            EndPaint(hwnd,&ps);
-            break;
-        }
-        case WM_DESTROY : {
-            PostQuitMessage(0);
-            break;
-        }
-        default : {
-            return DefWindowProc(hwnd,umsg,wParam,lParam);
-            break;
-        }
-    }
-    return lr;
-};
+// LPCSTR szTitle = "@APPNAME@";                
+// LPCSTR szWindowClass = "@APPNAME@"; 
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLine, int nShowCmd){
 
-    // LoadString(hInstance,IDS_APP_TITLE,szTitle,MAX_LOADSTRING);
-    // LoadString(hInstance,IDC_@APPNAME@,szWindowClass,MAX_LOADSTRING);
+    // MessageBoxA(HWND_DESKTOP,"LoadingApp","NOTE",MB_OK);
 
     HRESULT hr;
     hr = CoInitializeEx(NULL,COINIT_MULTITHREADED);
@@ -120,69 +21,12 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLi
     {
         //Handle Error!
     }
-
-    WNDCLASSEX wndclass;
-    wndclass.cbSize = sizeof(wndclass);
-    wndclass.lpszClassName = szWindowClass;
-    wndclass.lpfnWndProc = WndProc;
-    wndclass.cbClsExtra     = 0;
-    wndclass.cbWndExtra     = 0;
-    wndclass.style =  CS_HREDRAW | CS_VREDRAW;
-    wndclass.hbrBackground = (HBRUSH)COLOR_WINDOW;
-    wndclass.hIcon = LoadIcon(hInstance,MAKEINTRESOURCE(IDI_@APPNAME@));
-    wndclass.hCursor = LoadCursor(nullptr,IDC_ARROW);
-    wndclass.hInstance = hInstance;
-    wndclass.hIconSm = LoadIcon(hInstance,MAKEINTRESOURCE(IDI_SMALL));
-    wndclass.lpszMenuName = NULL;
-
-    RegisterClassEx(&wndclass);
-
-    OutputDebugStringA("Test Str");
-
-    HWND hwndWindow = CreateWindowA(szWindowClass,szTitle,WS_OVERLAPPEDWINDOW,CW_USEDEFAULT,CW_USEDEFAULT,1500,1500,NULL,NULL,hInstance,NULL);
    
-    
-    void *factory = create_hwnd_factory((void *)hInstance,(void *)hwndWindow);
-
+    void *factory = create_hwnd_factory((void *)hInstance);
+    OmegaWTK::AppInst *appInst = new OmegaWTK::AppInst();
    
    
-    omegaWTKMain(&app);
-
-     all_hwnds = (std::vector<HWND> *)&app.getNAP()->getNativeItemsWithBindings();
-    //  for(HWND hwnd : *all_hwnds){
-    //      SetParent(hwnd,hwndWindow);
-    //  };
-    if(app.menu != nullptr) {
-        HMENU menu = (HMENU)app.menu->getNativeMenu()->getNativeBinding();
-        if(!SetMenu(hwndWindow,menu)){
-            return 0;
-        };
-        mainWindowHasMenu = true;
-    };
-    /// Intial Windows Coordinate System Correction!
-    RECT rc;
-    GetClientRect(hwndWindow,&rc);
-    updateAllHWNDPos(rc.bottom - rc.top);
-
-
-     ShowWindow(hwndWindow,nShowCmd);
-    UpdateWindow(hwndWindow);
-
-
-
-
-    hasLoaded = true;
-    
-    
-
-   
-
-
-   // HWND rootHWND = (HWND)app.getNAP()->getNativeItemNativeBinding();
-
-   // SetParent(rootHWND,hwndWindow);
-   // ShowWindow(rootHWND,SW_SHOW);
- 
+    omegaWTKMain(appInst);
 
     HACCEL hAccelTable = LoadAccelerators(hInstance,MAKEINTRESOURCE(IDC_@APPNAME@));
 
@@ -201,6 +45,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLi
     free_hwnd_factory(factory);
 
     CoUninitialize();
+
+    delete appInst;
 
     return msg.wParam;
 

@@ -9,7 +9,7 @@ namespace OmegaWTK::Native::Win {
         };
         return new HWNDItem(rect,win_type,(HWNDItem *)parent);
     };
-    NWH make_win_window(Core::Rect &rect){
-       return new WinAppWindow(rect);
+    NWH make_win_window(Core::Rect &rect,NativeEventEmitter *emitter){
+       return new WinAppWindow(rect,emitter);
     };
 };

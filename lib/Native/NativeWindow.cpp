@@ -12,9 +12,11 @@ namespace OmegaWTK::Native {
     #ifdef TARGET_MACOS
     NativeWindow::NativeWindow(Core::Rect & rect):rect(rect){};
     #endif
+    #ifdef TARGET_MACOS
     bool NativeWindow::hasEventEmitter() {
         return event_emitter != nullptr;
     };
+    #endif
     void NativeWindow::setMenu(NM menu){
         this->menu = menu;
     };

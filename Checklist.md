@@ -8,12 +8,13 @@
 - [x]  Menus.
 - [x]  Custom Icons and Diagram!
 - [x]  Images/Bitmaps (Premulitply Alpha Channel for Windows!)
-- [ ]  Implement Metal Backend
+- [x]  Implement Metal Backend
 - [ ]  JPEG/TIFF Implement
-- [ ]  Styles.
+- [x]  Layer Styles.
 - [ ]  Video Layer.
 - [ ]  Scroll Views (Ones with Native Scroll Bars)
-- [ ]  Windows
+- [x]  Windows
+- [ ]  Window/Menu Styles
 - [ ]  Camera Capture (For Songalong)
 - [ ]  Animation/Transtions.
 - [ ]  Cross widget messaging.

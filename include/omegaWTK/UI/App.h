@@ -29,9 +29,9 @@ public:
     static AppInst *instance;
     AppInst();
     void terminate();
-#ifdef TARGET_WIN32
-    AppInst(void * windows_inst);
-#endif
+// #ifdef TARGET_WIN32
+//     AppInst(void * windows_inst);
+// #endif
     Native::NativeApp * getNAP(){ return ptr;};
     ~AppInst();
 };
@@ -43,7 +43,7 @@ public:
 #ifdef TARGET_WIN32 
 #ifdef WINDOWS_PRIVATE
 
-void * create_hwnd_factory(void * hinst,void *hwndroot);
+void * create_hwnd_factory(void * hinst);
 void * hwnd_factory_get_all_hwnds(void *hwnd_factory);
 void free_hwnd_factory(void *factory);
 RECT get_hwnd_item_coords(void * hwnd);

@@ -10,11 +10,17 @@ namespace OmegaWTK::Native {
     class NativeWindow {
         friend class AppWindow;
     protected:
-        NativeEventEmitter *event_emitter = nullptr;
         Core::Vector<NativeItemPtr> windowWidgetRootViews;
         NM menu = nullptr;
+        NativeLayer *window_native_layer = nullptr;
     public:
+        void setNativeLayer(NativeLayer *layer){ window_native_layer = layer;};
+#ifdef TARGET_MACOS
         bool hasEventEmitter();
+    protected:
+        NativeEventEmitter *eventEmitter = nullptr;
+    public:
+#endif
         virtual void enable() = 0;
         virtual void disable() = 0;
         virtual void initialDisplay() = 0;

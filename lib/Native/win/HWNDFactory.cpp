@@ -1,15 +1,38 @@
 #include "HWNDFactory.h"
 #include "NativePrivate/win/HWNDItem.h"
 #include "WinAppWindow.h"
+#include "omegaWTK/Native/NativeApp.h"
 
 namespace OmegaWTK::Native::Win {
+
+    void updateAllHWNDPos(UINT root_wnd_height,Core::Vector<HWND> * hwnds_to_update){
+     RECT rc;
+     auto it = hwnds_to_update->begin();
+     while(it != hwnds_to_update->end()){
+         HWND hwnd = *it;
+         rc = __get_hwnd_real_coords(hwnd);
+         UINT dpi = GetDpiForWindow(hwnd);
+         FLOAT scaleFactor = FLOAT(dpi)/96.f;
+        //  auto str = std::string("Coords:{") + "l:" + std::to_string(rc.left) + ",b:" + std::to_string(rc.bottom) + ",r:" + std::to_string(rc.right) + ",t:" + std::to_string(rc.top) + "}";
+         
+        //  MessageBoxA(GetForegroundWindow(),str.c_str(),"NOTE",MB_OK);
+         auto h = rc.top - rc.bottom;
+         auto w = rc.right - rc.left;
+
+        //  auto n_str = std::string("RECT {") + "x:" + std::to_string(rc.left * scaleFactor) + ",y:" + std::to_string(root_wnd_height - (rc.top* scaleFactor)) + ",w:" + std::to_string(w * scaleFactor) + ",h:" + std::to_string(h* scaleFactor) + "}";
+        //   MessageBoxA(GetForegroundWindow(),n_str.c_str(),"NOTE",MB_OK);
+
+         SetWindowPos(hwnd,hwnd,rc.left * scaleFactor,(root_wnd_height - (rc.top* scaleFactor)),w * scaleFactor,h* scaleFactor,SWP_NOZORDER | SWP_NOACTIVATE);
+         ++it;
+     };
+ };
 
     int windowID = 0;
     std::string str = "OmegaWTKWinView_";
 
     HWNDFactory * HWNDFactory::appFactoryInst;
 
-    HWNDFactory::HWNDFactory(HINSTANCE hinst,HWND rootHwnd):rootWindow(rootHwnd),hInst(hinst){
+    HWNDFactory::HWNDFactory(HINSTANCE hinst):hInst(hinst){
        
     };
 
@@ -23,7 +46,7 @@ namespace OmegaWTK::Native::Win {
         return (void *)GetWindowLongPtr(hwnd,GWLP_USERDATA);
     };
 
-    HWND HWNDFactory::getRootWnd(){ return rootWindow;};
+    /// HWND HWNDFactory::getRootWnd(){ return rootWindow;};
 
     LRESULT HWNDFactory::WndProc(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam){
         HWNDItem *hwndItem;
@@ -36,27 +59,37 @@ namespace OmegaWTK::Native::Win {
         else {
             hwndItem = (HWNDItem *)getHWNDUserData(hwnd);
         };
+
+        if(!hwndItem)
+            return 0;
+
+       // MessageBoxA(HWND_DESKTOP,"Std WndProc","NOTE",MB_OK);
         
         return hwndItem->ProcessWndMsg(uMsg,wParam,lParam);
     };
 
     LRESULT HWNDFactory::WndProc2(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam){
-        WinAppWindow *hwndItem;
+        WinAppWindow *hwndItem = nullptr;
         if(uMsg == WM_NCCREATE){
+            // MessageBoxA(HWND_DESKTOP,"WM_NCCREATE","NOTE",MB_OK);
             CREATESTRUCT *ctstrt = (CREATESTRUCT *)lParam;
-            hwndItem = (WinAppWindow*)ctstrt->lpCreateParams;
+            hwndItem = (WinAppWindow *)ctstrt->lpCreateParams;
             setHWNDUserData(hwnd,(void *)hwndItem);
             hwndItem->hwnd = hwnd;
         }
         else {
             hwndItem = (WinAppWindow *)getHWNDUserData(hwnd);
         };
+
+        if(!hwndItem)
+            return 0;
+        
+        // MessageBoxA(HWND_DESKTOP,"Std WndProc","NOTE",MB_OK);
         
         return hwndItem->ProcessWndMsg(uMsg,wParam,lParam);
     };
 
     void HWNDFactory::setRootWindowAndHINST(HWND root,HINSTANCE hinst){
-        rootWindow = root;
         hInst = hinst;
     };
     HWND HWNDFactory::makeWindow(ATOM atom,LPCSTR name,Core::Rect rect,DWORD base_style,LPVOID custom_params,HWND parent,DWORD ext_style){
@@ -64,7 +97,7 @@ namespace OmegaWTK::Native::Win {
         if(parent != nullptr)
             wind_parent = parent;
         else 
-            wind_parent = rootWindow;
+            wind_parent = GetForegroundWindow();
 
         UINT dpi = GetDpiForWindow(wind_parent);
 
@@ -88,11 +121,12 @@ namespace OmegaWTK::Native::Win {
     };
     HWND HWNDFactory::makeAppWindow(ATOM atom,LPCSTR name,Core::Rect & rect,DWORD base_style,DWORD ext_style,LPVOID custom_params){
         RECT rc;
-        GetClientRect(GetDesktopWindow(),&rc);
+        GetClientRect(HWND_DESKTOP,&rc);
         UINT dpi = GetDpiFromDpiAwarenessContext(GetThreadDpiAwarenessContext());
-
+        // MessageBox(HWND_DESKTOP,"Making Window from Atom","NOTE",MB_OK);
         FLOAT scaleFactor = FLOAT(dpi)/96.f;
-        HWND hwnd = CreateWindowExA(ext_style,MAKEINTATOM(atom),"",base_style,rect.pos.x *scaleFactor,(rc.bottom - (rect.dimen.minHeight) * scaleFactor) - (rect.pos.y * scaleFactor),rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor,NULL,NULL,hInst,custom_params);
+        HWND hwnd = CreateWindowA(MAKEINTATOM(atom),name,base_style,CW_USEDEFAULT,CW_USEDEFAULT,int(rect.dimen.minWidth),int(rect.dimen.minHeight),HWND_DESKTOP,NULL,hInst,custom_params);
+        // MessageBox(HWND_DESKTOP,"Created Window!","NOTE",MB_OK);
         return hwnd;
     };
     ATOM HWNDFactory::registerWindow(){
@@ -134,7 +168,7 @@ namespace OmegaWTK::Native::Win {
         ex.hCursor = LoadCursor(NULL,IDC_ARROW);
         ex.hIcon = NULL;
         ex.hIconSm = NULL;
-        ex.lpfnWndProc = WndProc;
+        ex.lpfnWndProc = WndProc2;
         ex.style = CS_HREDRAW | CS_VREDRAW;
         return RegisterClassEx(&ex);
     };

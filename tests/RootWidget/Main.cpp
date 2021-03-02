@@ -102,7 +102,7 @@ int omegaWTKMain(AppInst *app)
     auto widget2 = make<MyWidget>(MyWidget({{300,0},{200,200}}));
     widget->show();
     widget2->show();
-    
+
     auto mainWindow = make<AppWindow>(Rect(0,0,1000,1000),new MyWindowDelegate(app));
     mainWindow->addWidget(widget);
     mainWindow->addWidget(widget2);

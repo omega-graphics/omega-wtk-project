@@ -15,9 +15,9 @@ namespace OmegaWTK {
         /// Null Object Placeholder for native object!
         class NativeItem {
             friend void set_native_item_event_emitter(NativeItem * ptr,NativeEventEmitter * emitter);
-            NativeEventEmitter *event_emitter;
             protected:
             NativeLayer *parentLayer;
+             NativeEventEmitter *event_emitter;
             public:
             virtual void addChildNativeItem(NativeItem *nativeItem) = 0;
             virtual void removeChildNativeItem(NativeItem *nativeItem) = 0;

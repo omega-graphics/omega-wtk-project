@@ -11,10 +11,12 @@ namespace OmegaWTK::Native {
             public:
             HWND hwnd;
             protected:
+            Core::Vector<HWND> raw_children;
+            Core::Vector<NativeItemPtr> children;
             UINT currentDpi;
             bool isTracking;
             bool hovered;
-            LRESULT ProcessWndMsg(UINT,WPARAM,LPARAM);
+            virtual LRESULT ProcessWndMsg(UINT,WPARAM,LPARAM);
             virtual BOOL ProcessWndMsgImpl(HWND,UINT,WPARAM,LPARAM,LRESULT *);
             ATOM atom;
             void emitIfPossible(NativeEventPtr event);
@@ -25,8 +27,8 @@ namespace OmegaWTK::Native {
             void disable(){
                 ShowWindow(hwnd,SW_HIDE);
             };
-            void addChildNativeItem(NativeItem *nativeItem);
-            void removeChildNativeItem(NativeItem *nativeItem);
+            void addChildNativeItem(NativeItemPtr nativeItem);
+            void removeChildNativeItem(NativeItemPtr nativeItem);
             public:
             Core::Rect wndrect;
             ATOM getAtom();

@@ -1,9 +1,14 @@
 #include "omegaWTK/Native/NativeApp.h"
 
+#ifdef TARGET_WIN32
+#include "win/WinApp.h"
+#endif
+
 
 #ifdef TARGET_MACOS
 #include "macos/CocoaApp.h"
 #endif
+
 
 namespace OmegaWTK::Native {
 
@@ -17,7 +22,7 @@ NativeApp::~NativeApp(){
 
 NAP make_native_app(){
 #ifdef TARGET_WIN32
-    
+    return Win::make_win_app();
 #endif
     
 #ifdef TARGET_MACOS
@@ -34,8 +39,8 @@ NAP make_native_app(){
 #include "win/HWNDFactory.h"
 #include "NativePrivate/win/HWNDItem.h"
 
-void *__create_hwnd_factory(void *hinst,void *hwndroot){
-    auto ptr = new OmegaWTK::Native::Win::HWNDFactory((HINSTANCE)hinst,(HWND)hwndroot);
+void *__create_hwnd_factory(void *hinst){
+    auto ptr = new OmegaWTK::Native::Win::HWNDFactory((HINSTANCE)hinst);
     OmegaWTK::Native::Win::HWNDFactory::appFactoryInst = ptr;
     return ptr;
 };
