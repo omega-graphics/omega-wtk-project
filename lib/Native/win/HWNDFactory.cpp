@@ -1,5 +1,6 @@
 #include "HWNDFactory.h"
 #include "NativePrivate/win/HWNDItem.h"
+#include "WinAppWindow.h"
 
 namespace OmegaWTK::Native::Win {
 
@@ -39,6 +40,21 @@ namespace OmegaWTK::Native::Win {
         return hwndItem->ProcessWndMsg(uMsg,wParam,lParam);
     };
 
+    LRESULT HWNDFactory::WndProc2(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam){
+        WinAppWindow *hwndItem;
+        if(uMsg == WM_NCCREATE){
+            CREATESTRUCT *ctstrt = (CREATESTRUCT *)lParam;
+            hwndItem = (WinAppWindow*)ctstrt->lpCreateParams;
+            setHWNDUserData(hwnd,(void *)hwndItem);
+            hwndItem->hwnd = hwnd;
+        }
+        else {
+            hwndItem = (WinAppWindow *)getHWNDUserData(hwnd);
+        };
+        
+        return hwndItem->ProcessWndMsg(uMsg,wParam,lParam);
+    };
+
     void HWNDFactory::setRootWindowAndHINST(HWND root,HINSTANCE hinst){
         rootWindow = root;
         hInst = hinst;
@@ -70,6 +86,15 @@ namespace OmegaWTK::Native::Win {
         #undef DEFAULT_DPI
         
     };
+    HWND HWNDFactory::makeAppWindow(ATOM atom,LPCSTR name,Core::Rect & rect,DWORD base_style,DWORD ext_style,LPVOID custom_params){
+        RECT rc;
+        GetClientRect(GetDesktopWindow(),&rc);
+        UINT dpi = GetDpiFromDpiAwarenessContext(GetThreadDpiAwarenessContext());
+
+        FLOAT scaleFactor = FLOAT(dpi)/96.f;
+        HWND hwnd = CreateWindowExA(ext_style,MAKEINTATOM(atom),"",base_style,rect.pos.x *scaleFactor,(rc.bottom - (rect.dimen.minHeight) * scaleFactor) - (rect.pos.y * scaleFactor),rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor,NULL,NULL,hInst,custom_params);
+        return hwnd;
+    };
     ATOM HWNDFactory::registerWindow(){
 
         str.append(std::to_string(windowID));
@@ -91,6 +116,27 @@ namespace OmegaWTK::Native::Win {
         ex.style = CS_HREDRAW | CS_VREDRAW;
         return RegisterClassEx(&ex);
 
+    };
+
+    ATOM HWNDFactory::registerAppWindow(){
+        str.append(std::to_string(windowID));
+        ++windowID;
+
+        wndclassregistry.push_back(str);
+        WNDCLASSEX ex;
+        ex.cbSize = sizeof(ex);
+        ex.lpszClassName = str.c_str();
+        ex.lpszMenuName = NULL;
+        ex.cbClsExtra = 0;
+        ex.cbWndExtra = 0;
+        ex.hbrBackground = (HBRUSH)COLOR_WINDOW;
+        ex.hInstance = hInst;
+        ex.hCursor = LoadCursor(NULL,IDC_ARROW);
+        ex.hIcon = NULL;
+        ex.hIconSm = NULL;
+        ex.lpfnWndProc = WndProc;
+        ex.style = CS_HREDRAW | CS_VREDRAW;
+        return RegisterClassEx(&ex);
     };
 
 };

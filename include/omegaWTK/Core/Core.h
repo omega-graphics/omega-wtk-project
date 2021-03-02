@@ -337,4 +337,19 @@ namespace OmegaWTK {
     };
 };
 
+template<class _Ty>
+OMEGAWTK_EXPORT using SharedHandle = OmegaWTK::Core::SharedPtr<_Ty>;
+/**Creates a Shared Instance of _Ty and returns it*/
+template<class _Ty,typename ..._Args>
+OMEGAWTK_EXPORT SharedHandle<_Ty> make(_Args && ...args){
+    return std::make_shared<_Ty>(args...);
+};
+template<class _Ty>
+OMEGAWTK_EXPORT using UniqueHandle = OmegaWTK::Core::UniquePtr<_Ty>;
+/**Creates a Unique Instance of _Ty and returns it*/
+template<class _Ty,typename ..._Args>
+OMEGAWTK_EXPORT UniqueHandle<_Ty> construct(_Args && ...args){
+    return std::make_unique<>
+};
+
 #endif

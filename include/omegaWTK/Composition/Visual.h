@@ -137,6 +137,9 @@ namespace OmegaWTK {
          Adds A Text Object to the Style!
          */
         void add(Visual::TextParams params,std::initializer_list<VisualEffect> initialEffects);
+        /**
+        Changes/Sets the brush for the visual at the provided index.
+        */
         void setBrush(unsigned id,const Core::SharedPtr<Brush> & new_brush);
         VisualEffect & getVisualEffect(unsigned id,unsigned idx);
     };

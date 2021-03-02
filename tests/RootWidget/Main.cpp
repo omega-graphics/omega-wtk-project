@@ -92,10 +92,6 @@ int omegaWTKMain(AppInst *app)
 //    std::cout << vectorPath.toStr();
     
     std::cout << path.serialize() << std::endl;
-//    // OmegaWTK::FSPath path = OmegaWTK::Core::String("./test.png");
-//    // MessageBoxA(GetForegroundWindow(),std::to_string(path.getTokenCount()).c_str(),"Token Count",MB_OK);
-//    // // MessageBoxA(GetForegroundWindow(),path.debugString().c_str(),"DEBUG STRING",MB_OK);
-//    // MessageBoxA(GetForegroundWindow(),path.serialize().c_str(),"RESULT",MB_OK);
 
     MyWidget widget({{0,0},{200,200}});
     MyWidget widget2({{300,0},{200,200}});
@@ -104,6 +100,31 @@ int omegaWTKMain(AppInst *app)
     // OmegaWTK::MyWidget widget2({{500,0},{300,300}});
     app->addWidgetToRoot(&widget);
     app->addWidgetToRoot(&widget2);
+
+
+
+
+    // short x = 0; // 2 Bytes -2^15 to 2^15
+
+
+    // int a = 5; // 4 bytes -2^31 to 2^31 **
+    // long d = -786940332; // 8 Bytes -2^63 to 2^63
+
+    // unsigned long long // 8 bytes 0 to 2^63
+
+    // unsigned int u = 2; // 4 bytes 0 to 4^31 **
+    
+
+    // float b = 0.4f; // 4 bytes **
+    // double c = 0.4444444; // 8 bytes
+
+    // /// Containers
+    // /// Array
+    
+
+    // // Heap
+
+
     return 0;
 }
 

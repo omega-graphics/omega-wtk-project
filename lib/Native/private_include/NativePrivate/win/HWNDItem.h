@@ -8,12 +8,14 @@ namespace OmegaWTK::Native {
     namespace Win {
         class HWNDFactory;
         class HWNDItem : public NativeItem {
+            public:
             HWND hwnd;
+            protected:
             UINT currentDpi;
             bool isTracking;
             bool hovered;
             LRESULT ProcessWndMsg(UINT,WPARAM,LPARAM);
-            BOOL ProcessWndMsgImpl(HWND,UINT,WPARAM,LPARAM,LRESULT *);
+            virtual BOOL ProcessWndMsgImpl(HWND,UINT,WPARAM,LPARAM,LRESULT *);
             ATOM atom;
             void emitIfPossible(NativeEventPtr event);
             friend class HWNDFactory;
@@ -45,6 +47,13 @@ namespace OmegaWTK::Native {
             private:
             Type type;
             public:
+            /**
+            Constructs a null HWNDItem! (Sets the Core::Rect only)
+            */
+            HWNDItem(Core::Rect & rect);
+             /**
+            Constructs/Registers an HWND and returns an HWNDItem!
+            */
             HWNDItem(Core::Rect & rect,Type _type,HWNDItem *parent);
             ~HWNDItem(){};
         };
