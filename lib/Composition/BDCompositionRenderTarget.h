@@ -17,8 +17,10 @@ class BDCompositionRenderTarget {
 protected:
     Core::Map<unsigned,Core::SharedPtr<BDCompositionImage>> images;
 public:
+#ifdef TARGET_WIN32
     virtual bool targetIsFresh() = 0;
     virtual bool needsDeviceContext() = 0;
+#endif
     //static Core::SharedPtr<BDCompositionRenderTarget> Create(BDCompositionDevice * device,Layer *layer);
     // /**
     //  Adds a Brush to the Render Target's Brush Catalog.

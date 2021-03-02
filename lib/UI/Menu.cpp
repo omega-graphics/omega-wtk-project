@@ -31,7 +31,7 @@ void MenuItem::disable(){
     native->setState(false);
 };
 
-Menu::Menu(const Core::String & name,std::initializer_list<MenuItem *> menu_items,MenuDelegate * delegate):name(name),menuItems(menu_items),native(Native::make_native_menu(name)),delegate(delegate),hasDelegate(delegate != nullptr){
+Menu::Menu(Core::String name,std::initializer_list<MenuItem *> menu_items,MenuDelegate * delegate):name(name),menuItems(menu_items),native(Native::make_native_menu(name)),delegate(delegate),hasDelegate(delegate != nullptr){
     auto it = menu_items.begin();
     while(it != menu_items.end()){
         auto & menu_item = *it;

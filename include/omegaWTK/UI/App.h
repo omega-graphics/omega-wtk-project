@@ -1,6 +1,6 @@
 #include "omegaWTK/Core/Core.h"
 // #include "omegaWTK/Native/NativeApp.h"
-#include "Widget.h"
+#include "AppWindow.h"
 
 #ifndef OMEGAWTK_UI_APP_H
 #define OMEGAWTK_UI_APP_H
@@ -22,18 +22,16 @@ namespace OmegaWTK {
         class NativeApp;
     };
 
-class Menu;
-
 class OMEGAWTK_EXPORT AppInst {
     Native::NativeApp * ptr;
 public:
+    UniqueHandle<AppWindowManager> windowManager;
     static AppInst *instance;
-    Menu *menu = nullptr;
     AppInst();
+    void terminate();
 #ifdef TARGET_WIN32
     AppInst(void * windows_inst);
 #endif
-    void addWidgetToRoot(Widget *widget);
     Native::NativeApp * getNAP(){ return ptr;};
     ~AppInst();
 };

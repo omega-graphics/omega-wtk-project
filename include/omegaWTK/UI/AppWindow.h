@@ -13,6 +13,9 @@ namespace OmegaWTK {
         typedef NativeWindow *NWH;
     };
 
+class AppWindow;
+class AppWindowManager;
+
     namespace Composition {
 
         class WindowStyle {
@@ -24,6 +27,8 @@ namespace OmegaWTK {
         class WindowLayer : public Native::NativeEventEmitter {
             Native::NWH native_window_ptr;
             Core::Rect & rect;
+            friend class OmegaWTK::AppWindow;
+            friend class OmegaWTK::AppWindowManager;
         public:
             WindowLayer(Core::Rect & rect,Native::NWH native_window_ptr);
         };
@@ -36,19 +41,27 @@ namespace OmegaWTK {
         SharedHandle<AppWindowDelegate> delegate;
         Core::Rect rect;
         Core::Vector<SharedHandle<Widget>> rootWidgets;
-        UniqueHandle<Menu> menu;
+        SharedHandle<Menu> menu;
         friend class AppWindowDelegate;
+        friend class AppWindowManager;
+        void _add_widget(SharedHandle<Widget> * widget);
     public:
-        void setMenu(UniqueHandle<Menu> && menu);
+        void setMenu(SharedHandle<Menu> & menu);
         UniqueHandle<Native::NativeFSDialog> openFSDialog();
         UniqueHandle<Native::NativeNoteDialog> openNoteDialog();
-        AppWindow(Core::Rect rect,AppWindowDelegate * delegate);
+        template<class _Ty,std::enable_if_t<std::is_base_of_v<Widget,_Ty>,int> = 0>
+        void addWidget(SharedHandle<_Ty> & widget){
+            _add_widget((SharedHandle<Widget> *)&widget);
+        };
+        AppWindow(Core::Rect rect,AppWindowDelegate * delegate = nullptr);
     };
 
-    class AppWindowManager {
-        UniqueHandle<AppWindow> rootWindow;
+    class OMEGAWTK_EXPORT AppWindowManager {
+        SharedHandle<AppWindow> rootWindow;
         public:
-        void setRootWindow(UniqueHandle<AppWindow> && handle);
+        AppWindowManager();
+        void setRootWindow(SharedHandle<AppWindow> & handle);
+        void displayRootWindow();
     };
     
 
@@ -58,8 +71,7 @@ namespace OmegaWTK {
         friend class AppWindow;
     protected:
        AppWindow * window;
-    public:
-        AppWindowDelegate();
+        virtual void windowWillClose(Native::NativeEventPtr event);
     };
 
 

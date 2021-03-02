@@ -340,16 +340,18 @@ namespace OmegaWTK {
 template<class _Ty>
 OMEGAWTK_EXPORT using SharedHandle = OmegaWTK::Core::SharedPtr<_Ty>;
 /**Creates a Shared Instance of _Ty and returns it*/
-template<class _Ty,typename ..._Args>
-OMEGAWTK_EXPORT SharedHandle<_Ty> make(_Args && ...args){
+template<class _Ty,class... _Args>
+OMEGAWTK_EXPORT inline SharedHandle<_Ty> make(_Args && ...args){
+    static_assert(std::is_constructible<_Ty,_Args...>::value,"Cannot construct item");
     return std::make_shared<_Ty>(args...);
 };
 template<class _Ty>
 OMEGAWTK_EXPORT using UniqueHandle = OmegaWTK::Core::UniquePtr<_Ty>;
 /**Creates a Unique Instance of _Ty and returns it*/
-template<class _Ty,typename ..._Args>
-OMEGAWTK_EXPORT UniqueHandle<_Ty> construct(_Args && ...args){
-    return std::make_unique<>
+template<class _Ty,class... _Args>
+OMEGAWTK_EXPORT inline UniqueHandle<_Ty> && construct(_Args && ...args){
+    static_assert(std::is_constructible<_Ty,_Args...>::value,"Cannot construct item");
+    return std::make_unique<_Ty>(args...);
 };
 
 #endif

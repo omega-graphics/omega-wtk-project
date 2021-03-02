@@ -44,7 +44,7 @@ class OMEGAWTK_EXPORT Menu {
 public:
     Native::NM getNativeMenu(){ return native;};
     MenuItem *getItemByIdx(unsigned idx){ return menuItems[idx];};
-    Menu(const Core::String & name,std::initializer_list<MenuItem *> menu_items,MenuDelegate *delegate = nullptr);
+    Menu(Core::String name,std::initializer_list<MenuItem *> menu_items,MenuDelegate *delegate = nullptr);
 //    ~Menu();
 };
 

@@ -7,7 +7,7 @@
 
 namespace OmegaWTK {
 
-class AppInst;
+class AppWindow;
 
 class OMEGAWTK_EXPORT Widget {
 protected:
@@ -15,7 +15,7 @@ protected:
     Widget *parent = nullptr;
 private:
     Composition::Compositor *compositor;
-    friend class AppInst;
+    friend class AppWindow;
 public:
     void show();
     void hide();

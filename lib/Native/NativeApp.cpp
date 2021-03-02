@@ -11,23 +11,20 @@ NativeApp::NativeApp(){
     
 };
 
-void NativeApp::addNativeItemPtr(NativeItemPtr _ptr){
-    root_native_items.push_back(_ptr->getBinding());
-};
-
-std::vector<void *> & NativeApp::getNativeItemsWithBindings(){
-    return root_native_items;
-};
-
 NativeApp::~NativeApp(){
     
 };
 
-// #ifdef TARGET_MACOS
-// int cocoa_app_init(int argc,char * argv[]){
-//     return Native::Cocoa::nsapp_init(argc,const_cast<const char **>(argv));
-// };
-// #endif
+NAP make_native_app(){
+#ifdef TARGET_WIN32
+    
+#endif
+    
+#ifdef TARGET_MACOS
+    return Cocoa::make_cocoa_app();
+#endif
+};
+
 
 };
 

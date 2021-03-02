@@ -1,8 +1,8 @@
 #include "Main.h"
 #include <iostream>
 
+using namespace OmegaWTK;
 
-namespace OmegaWTK {
 class MyWidget : public Widget {
     bool selected = false;
     class MyRootDelegate : public ViewDelegate {
@@ -53,6 +53,15 @@ public:
     
 };
 
+class MyWindowDelegate : public AppWindowDelegate {
+    AppInst *inst;
+public:
+    void windowWillClose(Native::NativeEventPtr event) {
+        inst->terminate();
+    };
+    MyWindowDelegate(AppInst *inst):inst(inst){};
+};
+
 class MyMenuDelegate : public MenuDelegate {
 public:
     void onSelectItem(unsigned int itemIndex) {
@@ -65,13 +74,9 @@ public:
     MyMenuDelegate(){};
 };
 
-};
-
-using namespace OmegaWTK;
-
 int omegaWTKMain(AppInst *app)
 {
-    auto menu = new Menu("AppMenu",{
+    auto menu = make<Menu>(Menu("AppMenu",{
         CategoricalMenu("File",{
             SubMenu("Inside",{
                 new MenuItem("Here!",false,nullptr),
@@ -79,8 +84,8 @@ int omegaWTKMain(AppInst *app)
                 new MenuItem("Test!",false,nullptr)
             },new MyMenuDelegate())
         })
-    });
- app->menu = menu;
+    }));
+
     FSPath path = Core::String("./assets/test.png");
     
     auto r_rectFrame = Composition::RoundedRectFrame(FRoundedRect(200.f,200.f,100.f,75.f,20.f,20.f),5.f);
@@ -93,38 +98,17 @@ int omegaWTKMain(AppInst *app)
     
     std::cout << path.serialize() << std::endl;
 
-    MyWidget widget({{0,0},{200,200}});
-    MyWidget widget2({{300,0},{200,200}});
-    widget.show();
-    widget2.show();
-    // OmegaWTK::MyWidget widget2({{500,0},{300,300}});
-    app->addWidgetToRoot(&widget);
-    app->addWidgetToRoot(&widget2);
-
-
-
-
-    // short x = 0; // 2 Bytes -2^15 to 2^15
-
-
-    // int a = 5; // 4 bytes -2^31 to 2^31 **
-    // long d = -786940332; // 8 Bytes -2^63 to 2^63
-
-    // unsigned long long // 8 bytes 0 to 2^63
-
-    // unsigned int u = 2; // 4 bytes 0 to 4^31 **
+    auto widget = make<MyWidget>(MyWidget({{0,0},{200,200}}));
+    auto widget2 = make<MyWidget>(MyWidget({{300,0},{200,200}}));
+    widget->show();
+    widget2->show();
     
-
-    // float b = 0.4f; // 4 bytes **
-    // double c = 0.4444444; // 8 bytes
-
-    // /// Containers
-    // /// Array
-    
-
-    // // Heap
-
-
+    auto mainWindow = make<AppWindow>(Rect(0,0,1000,1000),new MyWindowDelegate(app));
+    mainWindow->addWidget(widget);
+    mainWindow->addWidget(widget2);
+    mainWindow->setMenu(menu);
+    app->windowManager->setRootWindow(mainWindow);
+    app->windowManager->displayRootWindow();
     return 0;
 }
 

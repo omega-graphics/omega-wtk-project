@@ -9,17 +9,12 @@ namespace OmegaWTK {
 
 AppInst * AppInst::instance;
 
-AppInst::AppInst():ptr(new Native::NativeApp()){
+AppInst::AppInst():ptr(Native::make_native_app()),windowManager(std::make_unique<AppWindowManager>()){
     instance = this;
 };
 
-void internal_add_to_root(View *view,Native::NAP ptr){
-    ptr->addNativeItemPtr(view->getLayer()->getTargetNativePtr());
-};
-
-void AppInst::addWidgetToRoot(Widget *widget){
-    widget->compositor->prepareDraw(widget->rootView->getLayer());
-    internal_add_to_root(widget->rootView,ptr);
+void AppInst::terminate() {
+    ptr->terminate();
 };
 
 // void AppInst::updateRootWidget()

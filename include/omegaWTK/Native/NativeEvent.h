@@ -12,6 +12,7 @@ typedef void* NativeEventParams;
 class NativeEvent {
 public:
     typedef enum : OPT_PARAM {
+        /**View Events*/
         CursorEnter,
         CursorExit,
         LMouseDown,
@@ -20,6 +21,11 @@ public:
         RMouseUp,
         KeyDown,
         KeyUp,
+        /** Window Events*/
+        WindowWillClose,
+        WindowWillResize,
+        WindowHasResized,
+        WindowHasFinishedResize
     } EventType;
     EventType type;
     NativeEventParams params;
