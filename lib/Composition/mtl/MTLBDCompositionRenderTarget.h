@@ -21,8 +21,8 @@
 namespace OmegaWTK::Composition {
     template<class _Parent>
     class MTLBDCompositionRenderTarget : public _Parent {
-        Core::UniquePtr<MTLBDTriangulator> triangulator;
     protected:
+        Core::UniquePtr<MTLBDTriangulator> triangulator;
         MTLBDCompositionDevice *device;
         Core::Vector<id<MTLCommandBuffer>> commandBuffers;
         Core::Vector<id<MTLBuffer>> vertexBuffers;

@@ -50,6 +50,7 @@ Core::SharedPtr<MTLBDCompositionViewRenderTarget> MTLBDCompositionViewRenderTarg
 /// Metal Composition Render Target!
 
 MTLBDCompositionViewRenderTarget::MTLBDCompositionViewRenderTarget(MTLBDCompositionDevice *device,Core::Rect & _rect):MTLBDCompositionRenderTarget(device,Color(0,0,0,0),_rect),rect(_rect){
+    triangulator->setScaleFactor(1.0);
     metalLayer = [CAMetalLayer layer];
 //    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
     auto rect = Native::Cocoa::core_rect_to_cg_rect(_rect);
@@ -63,7 +64,7 @@ MTLBDCompositionViewRenderTarget::MTLBDCompositionViewRenderTarget(MTLBDComposit
     metalLayer.opaque = YES;
 //    metalLayer.presentsWithTransaction = YES;
     NSLog(@"Position: x%f, y%f",metalLayer.frame.origin.x,metalLayer.frame.origin.y);
-    metalLayer.contentsScale = 1.0;
+//    metalLayer.contentsScale;
     metalLayer.framebufferOnly = YES;
 //    metalLayer.allowsNextDrawableTimeout = YES;
 };
@@ -176,6 +177,7 @@ void MTLBDCompositionViewRenderTarget::commit(){
 /// Metal Image Render Target!
 
 MTLBDCompositionImageRenderTarget::MTLBDCompositionImageRenderTarget(MTLBDCompositionDevice * device,Core::Rect & rect,id<MTLTexture> target):MTLBDCompositionRenderTarget(device,Color(0,0,0,0),rect),target(target),rect(rect){
+    triangulator->setScaleFactor([NSScreen mainScreen].backingScaleFactor);
 };
 
 Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionImageRenderTarget::Create(MTLBDCompositionDevice *device,Core::Rect & rect,id<MTLTexture> texture){

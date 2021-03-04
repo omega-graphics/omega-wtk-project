@@ -4,7 +4,7 @@
 
 namespace OmegaWTK::Composition {
 
-MTLBDTriangulator::MTLBDTriangulator(Core::Rect &targetFrame):targetFrame(targetFrame){};
+MTLBDTriangulator::MTLBDTriangulator(Core::Rect &targetFrame):targetFrame(targetFrame),scaleFactor(0.0){};
 
 Core::Math::Point2D MTLBDTriangulator::getRenderTargetCenter(){
     return {static_cast<float>(targetFrame.dimen.minWidth/2),static_cast<float>(targetFrame.dimen.minHeight/2)};
@@ -16,14 +16,13 @@ void MTLBDTriangulator::triangulateRect(Core::FRect rect,SolidColor2DMesh &res){
     
 //    auto center = getRenderTargetCenter();
 //    NSLog(@"Target Center: x:%i , y:%i",center.x,center.y);
-    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
     NSLog(@"Scale Factor:%f",scaleFactor);
     NSLog(@"Coords: x:%f, y:%f, w:%f, h:%f",rect.pos.x,rect.pos.y,rect.dimen.minWidth,rect.dimen.minHeight);
-    float mtl_coord_x = (rect.pos.x)/(float(targetFrame.dimen.minWidth)) - 1.f;
-    float mtl_coord_y = (rect.pos.y)/(float(targetFrame.dimen.minHeight)) - 1.f;
+    float mtl_coord_x = (rect.pos.x * scaleFactor)/(float(targetFrame.dimen.minWidth)) - (1.f);
+    float mtl_coord_y = (rect.pos.y * scaleFactor)/(float(targetFrame.dimen.minHeight)) - (1.f);
     
-    float mtl_height = (rect.dimen.minHeight)/(float(targetFrame.dimen.minHeight));
-    float mtl_width = (rect.dimen.minWidth)/(float(targetFrame.dimen.minWidth));
+    float mtl_height = (rect.dimen.minHeight * scaleFactor)/(float(targetFrame.dimen.minHeight));
+    float mtl_width = (rect.dimen.minWidth * scaleFactor)/(float(targetFrame.dimen.minWidth));
     
     NSLog(@"Metal Coords: x:%f , y:%f, w:%f , h:%f",mtl_coord_x,mtl_coord_y,mtl_width,mtl_height);
     
@@ -44,7 +43,6 @@ void MTLBDTriangulator::triangulateRect(Core::FRect rect,Textured2DMesh & res){
     
 //    auto center = getRenderTargetCenter();
 //    NSLog(@"Target Center: x:%i , y:%i",center.x,center.y);
-    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
     NSLog(@"Scale Factor:%f",scaleFactor);
 //    NSLog(@"Coords: x:%i, y:%i, w:%u, h:%u",rect.pos.x,rect.pos.y,rect.dimen.minWidth,rect.dimen.minHeight);
     float mtl_coord_x = (rect.pos.x)/(float(targetFrame.dimen.minWidth)) - 1.f;

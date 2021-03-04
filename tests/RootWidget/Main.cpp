@@ -40,7 +40,7 @@ public:
         using namespace Composition;
         auto rootLayer = rootView->getLayerTreeLimb()->getRootLayer();
         auto layerStyle = make<LayerStyle>();
-        layerStyle->add(VISUAL_RECT(Rect(0,0,50,50),ColorBrush(Composition::Color::Red)));
+        layerStyle->add(VISUAL_RECT(Rect(0,0,100,100),ColorBrush(Composition::Color::Red)));
 //        rootLayer->setBackgroundColor(Composition::Color::Blue);
         //        rootLayer->drawRect(Rect(0,0,100,100),Composition::ColorBrush(Composition::Color::Red),Composition::Border(black,5));
         //          rootLayer->drawRoundedRect(RoundedRect(0,0,200,200,25,25),Composition::ColorBrush(Composition::Color::Green));

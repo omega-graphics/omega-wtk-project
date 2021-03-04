@@ -13,6 +13,7 @@ namespace OmegaWTK::Composition {
 class MTLBDTriangulator {
     Core::Rect & targetFrame;
     Core::Math::Point2D getRenderTargetCenter();
+    CGFloat scaleFactor;
 public:
     template<typename _Vertex_Ty>
     struct Triangle {
@@ -46,6 +47,7 @@ private:
     
     void triangulateArc(Core::Math::Arc & arc,SolidColor2DMesh &res,float startAngle);
 public:
+    void setScaleFactor(CGFloat scaleFactor){ this->scaleFactor = scaleFactor;};
     Core::UniquePtr<SolidColor2DMesh> triangulateToSolidColorMesh(Core::FRect & rect,bool frame = false,unsigned frameWidth = 0);
     TriangulationResult<SolidColor2DMesh> triangulateToSolidColorMeshes(Core::FRoundedRect &rect,bool frame = false,unsigned frameWidth = 0);
     Core::UniquePtr<SolidColor2DMesh> triangulateToSolidColorMesh(Core::FEllipse &ellipse,bool frame = false,unsigned frameWidth = 0);
