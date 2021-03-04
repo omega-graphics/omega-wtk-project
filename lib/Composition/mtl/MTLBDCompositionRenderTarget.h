@@ -362,7 +362,12 @@ Core::SharedPtr<BDCompositionImage> MTLBDCompositionRenderTarget<_Ty>::createIma
 template<class _Ty>
 void MTLBDCompositionRenderTarget<_Ty>::drawImage(Core::SharedPtr<BDCompositionImage> &img,Core::Position pos){
     MTLBDCompositionImage *mtlimg = reinterpret_cast<MTLBDCompositionImage *>(img.get());
-    
+    auto scaledRect = mtlimg->rect;
+    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+//    scaledRect.pos.x *= scaleFactor;
+//    scaledRect.pos.y *= scaleFactor;
+//    scaledRect.dimen.minWidth *= scaleFactor;
+//    scaledRect.dimen.minHeight *= scaleFactor;
     
     auto rc = triangulator->triangulateToTexturedMesh(mtlimg->rect);
     auto & mesh = *rc;

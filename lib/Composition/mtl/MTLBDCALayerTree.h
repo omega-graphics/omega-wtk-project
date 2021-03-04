@@ -25,6 +25,7 @@ namespace OmegaWTK::Composition {
             CAMetalLayer *metalLayer;
             CATransformLayer *transformLayer;
             Core::SharedPtr<BDCompositionImage> img;
+            Core::Position pos;
             bool attachTransformLayer;
         };
     public:

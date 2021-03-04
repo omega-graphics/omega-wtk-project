@@ -40,7 +40,7 @@ public:
         using namespace Composition;
         auto rootLayer = rootView->getLayerTreeLimb()->getRootLayer();
         auto layerStyle = make<LayerStyle>();
-        layerStyle->add(VISUAL_RECT(Rect(0,0,200,200),ColorBrush(Composition::Color::Red)));
+        layerStyle->add(VISUAL_RECT(Rect(0,0,50,50),ColorBrush(Composition::Color::Red)));
 //        rootLayer->setBackgroundColor(Composition::Color::Blue);
         //        rootLayer->drawRect(Rect(0,0,100,100),Composition::ColorBrush(Composition::Color::Red),Composition::Border(black,5));
         //          rootLayer->drawRoundedRect(RoundedRect(0,0,200,200,25,25),Composition::ColorBrush(Composition::Color::Green));
@@ -105,13 +105,13 @@ int omegaWTKMain(AppInst *app)
     std::cout << path.serialize() << std::endl;
 
     auto widget = make<MyWidget>(MyWidget({{0,0},{200,200}}));
-    // auto widget2 = make<MyWidget>(MyWidget({{300,0},{200,200}}));
+    auto widget2 = make<MyWidget>(MyWidget({{400,0},{200,200}}));
     widget->show();
-    // widget2->show();
+    widget2->show();
 
     auto mainWindow = make<AppWindow>(Rect(0,0,1000,1000),new MyWindowDelegate(app));
     mainWindow->addWidget(widget);
-    // mainWindow->addWidget(widget2);
+    mainWindow->addWidget(widget2);
     mainWindow->setMenu(menu);
     app->windowManager->setRootWindow(mainWindow);
     app->windowManager->displayRootWindow();

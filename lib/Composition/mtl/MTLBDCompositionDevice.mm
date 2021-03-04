@@ -117,9 +117,11 @@ Core::SharedPtr<MTLBDCompositionViewRenderTarget> MTLBDCompositionDevice::makeCA
 
 Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionDevice::makeImageRenderTarget(Core::Rect & size){
     float scaleFactor =  [NSScreen mainScreen].backingScaleFactor;
-    MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm width:size.dimen.minWidth * scaleFactor height:size.dimen.minHeight * scaleFactor mipmapped:NO];
+    MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm width:size.dimen.minWidth *= scaleFactor height:size.dimen.minHeight *= scaleFactor mipmapped:NO];
     desc.usage = MTLTextureUsageRenderTarget | MTLTextureUsagePixelFormatView | MTLTextureUsageShaderRead;
 //    desc.storageMode = MTLStorageModeShared;
+    size.pos.x *= scaleFactor;
+    size.pos.y *= scaleFactor;
     id<MTLTexture> target = [metal_device newTextureWithDescriptor:desc];
     return MTLBDCompositionImageRenderTarget::Create(this,size,target);
 };
@@ -127,8 +129,7 @@ Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionDevice::makeImag
 Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionDevice::makeImageRenderTarget(Core::SharedPtr<BDCompositionImage> & img){
     MTLBDCompositionImage *mtl_img = (MTLBDCompositionImage *)img.get();
     MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm width:mtl_img->img.width height:mtl_img->img.height mipmapped:NO];
-    desc.usage = MTLTextureUsageRenderTarget | MTLTextureUsagePixelFormatView;
-    desc.storageMode = MTLStorageModeShared;
+    desc.usage = MTLTextureUsageRenderTarget | MTLTextureUsagePixelFormatView | MTLTextureUsageShaderRead;
     id<MTLTexture> target = [metal_device newTextureWithDescriptor:desc];
     id<MTLCommandBuffer> commandBuffer = makeNewMTLCommandBuffer();
     id<MTLBlitCommandEncoder> blitEncoder = [commandBuffer blitCommandEncoder];
@@ -150,13 +151,21 @@ Core::SharedPtr<BDCompositionVisualTree> MTLBDCompositionDevice::createVisualTre
 void MTLBDCompositionDevice::renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> & visualTree,ViewRenderTarget *renderTarget){
     auto cocoaItem = (Native::Cocoa::CocoaItem *)renderTarget->getNativePtr();
     CALayer *viewLayer = cocoaItem->getLayer();
-    viewLayer.bounds = Native::Cocoa::core_rect_to_cg_rect(cocoaItem->rect);
+//    viewLayer.bounds = Native::Cocoa::core_rect_to_cg_rect(cocoaItem->rect);
     MTLBDCALayerTree *caLayerTree = (MTLBDCALayerTree *)visualTree.get();
     MTLBDCALayerTree::Visual *root = (MTLBDCALayerTree::Visual *)caLayerTree->root_v.get();
-    if(root->attachTransformLayer)
+    MTLBDCompositionImage *img = (MTLBDCompositionImage *)root->img.get();
+    if(root->attachTransformLayer) {
         [viewLayer addSublayer:root->transformLayer];
-    else
+    }
+    else {
         [viewLayer addSublayer:root->metalLayer];
+        root->metalLayer.position = CGPointMake(root->metalLayer.bounds.size.width/2,root->metalLayer.bounds.size.height/2);
+    }
+    
+    NSLog(@"View Layer's Pos: {x:%f ,y:%f}",viewLayer.position.x,viewLayer.position.y);
+    NSLog(@"Metal Layer's Pos: {x:%f ,y:%f}",root->metalLayer.position.x,root->metalLayer.position.y);
+//    [viewLayer setContentsScale:[NSScreen mainScreen].backingScaleFactor];
     [viewLayer setNeedsDisplay];
 };
 

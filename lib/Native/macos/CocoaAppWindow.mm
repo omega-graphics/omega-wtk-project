@@ -41,6 +41,7 @@ void CocoaAppWindow::enable(){
 
 void CocoaAppWindow::attachWidgets(){
     NSView *rootView = [[NSView alloc] initWithFrame:NSZeroRect];
+    rootView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
     auto it = windowWidgetRootViews.begin();
     while(it != windowWidgetRootViews.end()){
         CocoaItem *item = (CocoaItem *)*it;

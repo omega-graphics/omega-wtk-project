@@ -51,17 +51,19 @@ Core::SharedPtr<MTLBDCompositionViewRenderTarget> MTLBDCompositionViewRenderTarg
 
 MTLBDCompositionViewRenderTarget::MTLBDCompositionViewRenderTarget(MTLBDCompositionDevice *device,Core::Rect & _rect):MTLBDCompositionRenderTarget(device,Color(0,0,0,0),_rect),rect(_rect){
     metalLayer = [CAMetalLayer layer];
-    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+//    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
     auto rect = Native::Cocoa::core_rect_to_cg_rect(_rect);
 //    rect.origin.x /= scaleFactor;
 //    rect.origin.y /= scaleFactor;
     
     metalLayer.frame = rect;
-    metalLayer.bounds = CGRectMake(0,0,rect.size.width,rect.size.height);
+    metalLayer.bounds = rect;
+//    metalLayer.bounds = CGRectMake(0,0,rect.size.width,rect.size.height);
     metalLayer.device = device->metal_device;
+    metalLayer.opaque = YES;
 //    metalLayer.presentsWithTransaction = YES;
     NSLog(@"Position: x%f, y%f",metalLayer.frame.origin.x,metalLayer.frame.origin.y);
-    metalLayer.contentsScale = [NSScreen mainScreen].backingScaleFactor;
+    metalLayer.contentsScale = 1.0;
     metalLayer.framebufferOnly = YES;
 //    metalLayer.allowsNextDrawableTimeout = YES;
 };
@@ -96,8 +98,8 @@ void MTLBDCompositionViewRenderTarget::commit(){
                 MTLRenderPassDescriptor *initialRenderPassDesc = [MTLRenderPassDescriptor renderPassDescriptor];
                 initialRenderPassDesc.colorAttachments[0].clearColor = MTLClearColorMake(nscolor.redComponent,nscolor.greenComponent,nscolor.blueComponent,nscolor.alphaComponent);
                 initialRenderPassDesc.colorAttachments[0].loadAction = MTLLoadActionClear;
-                initialRenderPassDesc.renderTargetWidth = float(rect.dimen.minWidth) * scaleFactor;
-                initialRenderPassDesc.renderTargetHeight = float(rect.dimen.minHeight) * scaleFactor;
+                initialRenderPassDesc.renderTargetWidth = float(rect.dimen.minWidth);
+                initialRenderPassDesc.renderTargetHeight = float(rect.dimen.minHeight);
                 initialRenderPassDesc.renderTargetArrayLength = 1;
     //            initialRenderPassDesc.colorAttachments[0].storeAction = MTLStoreActionStore;
     //            initialRenderPassDesc.defaultRasterSampleCount = 0;
@@ -106,8 +108,8 @@ void MTLBDCompositionViewRenderTarget::commit(){
                 MTLRenderPassDescriptor *mainRenderPassDesc = [MTLRenderPassDescriptor renderPassDescriptor];
                 mainRenderPassDesc.colorAttachments[0].clearColor = MTLClearColorMake(nscolor.redComponent,nscolor.greenComponent,nscolor.blueComponent,nscolor.alphaComponent);
                 mainRenderPassDesc.colorAttachments[0].loadAction = MTLLoadActionLoad;
-                mainRenderPassDesc.renderTargetWidth = float(rect.dimen.minWidth) * scaleFactor;
-                mainRenderPassDesc.renderTargetHeight = float(rect.dimen.minHeight) * scaleFactor;
+                mainRenderPassDesc.renderTargetWidth = float(rect.dimen.minWidth);
+                mainRenderPassDesc.renderTargetHeight = float(rect.dimen.minHeight);
                 mainRenderPassDesc.colorAttachments[0].storeAction = MTLStoreActionStore;
                 mainRenderPassDesc.renderTargetArrayLength = 1;
                 mainRenderPassDesc.defaultRasterSampleCount = 0;
