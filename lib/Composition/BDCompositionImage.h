@@ -22,7 +22,7 @@ namespace OmegaWTK::Composition {
         #ifdef TARGET_WIN32
         virtual void redoImage() = 0;
         #endif
-        virtual void applyEffect(VisualEffect &effect) = 0;
+        virtual void applyEffect(LayerEffect &effect) = 0;
     };
 };
 

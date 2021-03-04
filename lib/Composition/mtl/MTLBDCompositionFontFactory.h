@@ -14,8 +14,8 @@ class MTLBDCompositionRenderTarget;
 class MTLBDCompositionFont : public BDCompositionFont {
     CTFontRef font;
     Text::Font omegawtkFont;
-    /// Layer Render Target
-    friend class MTLBDCompositionRenderTarget<BDCompositionLayerRenderTarget>;
+    /// View Render Target
+    friend class MTLBDCompositionRenderTarget<BDCompositionViewRenderTarget>;
     /// Image Render Target
     friend class MTLBDCompositionRenderTarget<BDCompositionImageRenderTarget>;
 public:

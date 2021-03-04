@@ -2,19 +2,11 @@
 #include "omegaWTK/UI/Widget.h"
 #include "omegaWTK/Native/NativeWindow.h"
 #include "omegaWTK/Native/NativeDialog.h"
+#include "omegaWTK/Composition/Compositor.h"
 
 namespace OmegaWTK {
-    namespace Composition {
-        WindowLayer::WindowLayer(Core::Rect & rect,Native::NWH native_window_ptr):native_window_ptr(native_window_ptr),rect(rect){
-            // MessageBoxA(HWND_DESKTOP,"Creating Window Layer!","NOTE",MB_OK);
-            native_window_ptr->setNativeLayer(this);
-        };
-        void WindowLayer::redraw(){
-            
-        };
-    }
 
-    AppWindow::AppWindow(Core::Rect rect,AppWindowDelegate *delegate):layer(std::make_unique<Composition::WindowLayer>(rect,Native::make_native_window(rect,this))),delegate(delegate),rect(rect){
+    AppWindow::AppWindow(Core::Rect rect,AppWindowDelegate *delegate):compositor(new Composition::Compositor()),layer(std::make_unique<Composition::WindowLayer>(rect,Native::make_native_window(rect,this))),delegate(delegate),rect(rect){
         // MessageBoxA(HWND_DESKTOP,"Create Window Layer!","NOTE",MB_OK);
         if(delegate) {
             setReciever(delegate);
@@ -27,10 +19,18 @@ void AppWindow::setMenu(SharedHandle<Menu> & menu){
     layer->native_window_ptr->setMenu(this->menu->getNativeMenu());
 };
 
+void AppWindow::setLayerStyle(SharedHandle<Composition::WindowStyle> & style){
+    layer->setWindowStyle(style);
+};
+
+void AppWindow::setMenuStyle(SharedHandle<Composition::MenuStyle> & style){
+    menuStyle = style;
+};
+
 void AppWindow::_add_widget(SharedHandle<Widget> * handle){
-    (*handle)->compositor->prepareDraw((*handle)->rootView->getLayer());
+    (*handle)->compositor->prepareDraw((*handle)->layerTree.get());
     rootWidgets.push_back(*handle);
-    layer->native_window_ptr->addNativeItem((*handle)->rootView->getLayer()->getTargetNativePtr());
+    layer->native_window_ptr->addNativeItem((*handle)->rootView->renderTarget->getNativePtr());
 };
 
     UniqueHandle<Native::NativeFSDialog> AppWindow::openFSDialog(){

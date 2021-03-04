@@ -3,29 +3,39 @@
 #include "omegaWTK/Composition/Layer.h"
 
 namespace OmegaWTK::Composition {
-Compositor::Compositor():backend(make_backend()){};
+Compositor::Compositor():backend(make_backend()){
+    
+};
 
-void Compositor::prepareDraw(Layer *root){
-    backend->setCurrentJob(root);
-    backend->doWork();
-    auto layer_it = root->children.begin();
-    while(layer_it != root->children.end()){
-        backend->setCurrentJob(*layer_it);
+void Compositor::__drawChildLimbs(LayerTree::Limb *limb,LayerTree *layerTree){
+    auto count = layerTree->getParentLimbChildCount(limb);
+    auto size = count;
+    while(count > 0){
+        unsigned idx = size - count;
+        auto childLimb = layerTree->getLimbAtIndexFromParent(idx,limb);
+        backend->setCurrentJob(childLimb);
         backend->doWork();
-        ++layer_it;
+        __drawChildLimbs(childLimb,layerTree);
+        --count;
     };
-    backend->setCurrentJob(nullptr);
+};
+
+void Compositor::prepareDraw(LayerTree *layerTree){
+    
+    /// Draw LayerTree
+    auto rootLimb = layerTree->getTreeRoot();
+    backend->setCurrentJob(rootLimb);
+    backend->doWork();
+    __drawChildLimbs(rootLimb,layerTree);
+    
     allowUpdates = true;
 };
 void Compositor::prepareCleanup(){
     allowUpdates = false;
 };
 
-void Compositor::updateRequestLayer(Layer *layer){
-    if(allowUpdates){
-        backend->setCurrentJob(layer);
-        backend->doUpdate();
-    };
+void Compositor::updateRequestedLayerTreeLimb(LayerTree::Limb *limb){
+    
 };
 
 Compositor::~Compositor(){

@@ -31,7 +31,7 @@ namespace OmegaWTK {
         Border(Core::SharedPtr<Brush> & _brush,unsigned _width):brush(_brush),width(_width){};
     };
     
-    struct VisualEffect {
+    struct LayerEffect {
         typedef enum : OPT_PARAM {
             DropShadow,
             Transformation,
@@ -63,7 +63,6 @@ namespace OmegaWTK {
             Bitmap
         } Type;
         Type type;
-        Core::Vector<VisualEffect> effects;
         typedef struct {
             Core::Rect rect;
             Core::SharedPtr<Brush> brush;
@@ -94,7 +93,7 @@ namespace OmegaWTK {
         } BitmapParams;
         void * params;
         Visual() = delete;
-        Visual(unsigned id,Type type,std::initializer_list<VisualEffect> & effects,void * params):id(id),type(type),effects(effects),params(params){};
+        Visual(unsigned id,Type type,void * params):id(id),type(type),params(params){};
         void setColor(const Color & new_color);
         void setRect(const Core::Rect & bew_rect);
         void setFont(const Text::Font & new_font);
@@ -108,40 +107,53 @@ namespace OmegaWTK {
     
     class BackendImpl;
     
-    class Style {
+    class LayerStyle {
         Core::Vector<Core::UniquePtr<Visual>> visuals;
+        Core::Vector<SharedHandle<LayerEffect>> effects;
+        Color background = Color(Color::White);
         template<class _Ty>
-        void _construct_visual(Visual::Type type,_Ty & params,std::initializer_list<VisualEffect> & effects){
-            visuals.push_back(std::make_unique<Visual>(visuals.size(),type,effects,(void *)new _Ty(params)));
+        void _construct_visual(Visual::Type type,_Ty & params){
+            visuals.push_back(std::make_unique<Visual>(visuals.size(),type,(void *)new _Ty(params)));
         };
         friend class BackendImpl;
     public:
-        Style();
+        LayerStyle();
         /**
          Adds A Rect to the Style!
          */
-        void add(Visual::RectParams params,std::initializer_list<VisualEffect> initialEffects);
+        void add(Visual::RectParams params);
         /**
          Adds A Rounded Rect to the Style!
          */
-        void add(Visual::RoundedRectParams params,std::initializer_list<VisualEffect> initialEffects);
+        void add(Visual::RoundedRectParams params);
         /**
          Adds An Ellipse to the Style!
          */
-        void add(Visual::EllipseParams params,std::initializer_list<VisualEffect> initialEffects);
+        void add(Visual::EllipseParams params);
         /**
          Adds A Bitmap to the Style!
          */
-        void add(Visual::BitmapParams params,std::initializer_list<VisualEffect> initialEffects);
+        void add(Visual::BitmapParams params);
         /**
          Adds A Text Object to the Style!
          */
-        void add(Visual::TextParams params,std::initializer_list<VisualEffect> initialEffects);
+        void add(Visual::TextParams params);
         /**
         Changes/Sets the brush for the visual at the provided index.
         */
         void setBrush(unsigned id,const Core::SharedPtr<Brush> & new_brush);
-        VisualEffect & getVisualEffect(unsigned id,unsigned idx);
+        void setBackgroundColor(const Color & color){ background = color;};
+        void addEffect(SharedHandle<LayerEffect> & effect);
+    };
+    
+    class WindowStyle {
+        Core::Vector<Core::UniquePtr<Visual>> visuals;
+    public:
+        
+    };
+    
+    class MenuStyle {
+        
     };
     
 };

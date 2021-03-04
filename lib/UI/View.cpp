@@ -1,10 +1,18 @@
 #include "omegaWTK/UI/View.h"
 
 namespace OmegaWTK {
-    LayerOwner::LayerOwner(const Core::Rect & rect,Composition::Layer * layer):layer(layer){};
 
-    View::View(const Core::Rect & rect,Composition::Layer *layer_to_use,Native::NativeItemPtr item):LayerOwner(rect,layer_to_use),rect(rect),native(item){
-        Native::set_native_item_event_emitter(native,this);
+
+    View::View(const Core::Rect & rect,Composition::LayerTree *layerTree,View *parent):widgetLayerTree(layerTree),rect(rect),parent_ptr(parent),renderTarget(std::make_unique<Composition::ViewRenderTarget>(Native::make_native_item(rect))){
+        layerTreeLimb = widgetLayerTree->createLimb(rect,renderTarget.get());
+        Native::set_native_item_event_emitter(renderTarget->getNativePtr(),this);
+        
+        if(parent_ptr) {
+            parent->addSubView(this);
+            layerTree->addChildLimb(layerTreeLimb,parent->layerTreeLimb.get());
+        }
+        else
+            layerTree->setRootLimb(layerTreeLimb);
     };
     bool View::hasDelegate(){
         return delegate != nullptr;
@@ -14,29 +22,22 @@ namespace OmegaWTK {
         delegate->view = this;
         setReciever(delegate);
     };
-    void View::addSubView(View *view){
-        subviews.push_back(view);
-        view->parent_ptr = this;
-        this->layer->addSubLayer(view->layer);
+    void View::addSubView(View * view){
+        subviews.push_back(SharedHandle<View>(view));
+        renderTarget->getNativePtr()->addChildNativeItem(view->renderTarget->getNativePtr());
     };
     void View::removeSubView(View *view){
         auto it  = subviews.begin();
         while(it != subviews.end()){
             auto v = *it;
-            if(v == view){
+            if(v.get() == view){
                 subviews.erase(it);
+                renderTarget->getNativePtr()->removeChildNativeItem(view->renderTarget->getNativePtr());
                 view->parent_ptr = nullptr;
-                this->layer->removeSubLayer(view->layer);
                 return;
                 break;
             };
         };
-    };
-
-
-    View *make_view(const Core::Rect & rect,Composition::Compositor *widgetCompositor){
-        Native::NativeItemPtr native = Native::make_native_item(rect);
-        return new View(rect,new Composition::Layer(rect,native,widgetCompositor),native);
     };
 
 ViewDelegate::ViewDelegate(){};

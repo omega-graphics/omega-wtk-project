@@ -64,10 +64,12 @@ MenuItem *CategoricalMenu(const Core::String & name,std::initializer_list<MenuIt
  Creates a SubMenu under a Categorical Menu
  */
 MenuItem *SubMenu(const Core::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate = nullptr);
+
+MenuItem *ButtonMenuItem(const Core::String & name);
 /**
  Creates a Menu Seperator Item!
 */
-MenuItem *MenuSeperatorItem();
+MenuItem *MenuItemSeperator();
 
 };
 

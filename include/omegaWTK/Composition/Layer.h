@@ -1,11 +1,12 @@
 /**
  @file Layer.h
  
- Defines the Composition::Layer.
+ Defines the ViewRenderTarget, Layer, and LayerTree.
  */
 
 #include "omegaWTK/Core/Core.h"
 #include "omegaWTK/Native/NativeItem.h"
+#include "omegaWTK/Native/NativeWindow.h"
 #include "Visual.h"
 #include <functional>
 
@@ -13,79 +14,144 @@
 #define OMEGAWTK_COMPOSITION_LAYER_H
 
 namespace OmegaWTK {
+
+class AppWindow;
+class AppWindowManager;
+
     namespace Composition {
 
     class Compositor;
-    
-    class Target {
-        unsigned id_gen = 0;
-        Core::UniquePtr<Style> style;
+    /**
+     The Compositor's interface for composing to a widget's view.
+     */
+    class OMEGAWTK_EXPORT ViewRenderTarget {
         Native::NativeItemPtr native;
-        friend class Layer;
     public:
-        Target(Native::NativeItemPtr _native);
-        ~Target();
+        Native::NativeItemPtr getNativePtr();
+        ViewRenderTarget(Native::NativeItemPtr _native);
+        ~ViewRenderTarget();
     };
         /**
-            A surface which visuals can draw upon!
+            A mutlifeatured surface for composing visuals on.
          */
-        class OMEGAWTK_EXPORT Layer : public Native::NativeLayer {
-            Core::Vector<Layer *> children;
-            Layer * parent_ptr = nullptr;
+        class OMEGAWTK_EXPORT Layer {
+            unsigned id_gen = 0;
+            SharedHandle<LayerStyle> style;
+            Core::Vector<SharedHandle<Layer>> children;
+            Layer * parent_ptr;
             Core::Rect surface_rect;
-            Color background = Color(Color::White);
-            Core::UniquePtr<Target> compTarget;
             bool enabled;
             Compositor *ownerCompositor;
             friend class Compositor;
+            friend class BackendImpl;
             friend class LayerTree;
+            void addSubLayer(SharedHandle<Layer> & layer);
+            void removeSubLayer(SharedHandle<Layer> & layer);
             public:
             /// @name Base Functions
             /// @{
-            Native::NativeItemPtr getTargetNativePtr(){return compTarget->native;};
-            void setStyle(Style & style){
-                compTarget->style.reset(new Style(std::move(style)));
-            };
-            auto & getStyle(){return *compTarget->style;};
-            auto & getBackgroundColor(){ return background;};
-            const Core::Rect & getLayerRect(){return surface_rect;};
+//            Native::NativeItemPtr getTargetNativePtr(){return compTarget->native;};
+//            void setStyle(Style & style){
+//                compTarget->style.reset(new Style(std::move(style)));
+//            };
+//            auto & getStyle(){return *compTarget->style;};
+            Core::Rect & getLayerRect(){return surface_rect;};
             void setEnabled(bool state){enabled = state;};
-            bool isChildLayer(){return parent_ptr != nullptr;};
-            void addSubLayer(Layer *layer);
-            void removeSubLayer(Layer *layer);
+            bool isChildLayer(){return parent_ptr != nullptr;}
             /// @}
             
             /// @name Composing Functions!
             /// Draws on to its target!
             /// @{
             void setBackgroundColor(const Color & color);
-
-            void setStyle();
-            
+            void setStyle(SharedHandle<LayerStyle> & style);
             /// @}
-            
+                
             /// @name Main Action Functions!
             /// @{
             void redraw();
             /// @}
             
             
-            Layer(const Core::Rect & rect,Native::NativeItemPtr native_ptr,Compositor *compPtr);
+            Layer(const Core::Rect & rect,Compositor *compPtr);
+//            Layer(Layer &layer);
             ~Layer();
         };
     
-    typedef std::function<bool(Layer *)> LayerTreeTraversalCallback;
-        
-        class OMEGAWTK_EXPORT LayerTree {
-            Layer *root;
-            void _recursive_trav(LayerTreeTraversalCallback &callback,Layer *current);
+//    typedef std::function<bool(Layer *)> LayerTreeTraversalCallback;
+    /**
+     An entire widget's layer construct
+     */
+    class OMEGAWTK_EXPORT LayerTree {
+        Compositor *widgetCompositor;
+    public:
+        class Limb : public Native::NativeLayerTreeLimb {
+            Layer *limbRoot;
+            bool enabled;
+            ViewRenderTarget *renderTarget;
+            friend class BackendImpl;
         public:
-            void traverse(LayerTreeTraversalCallback callback);
-            bool hasChildLayer(Layer *layer);
-            LayerTree(Layer *_root);
-            ~LayerTree();
+            using iterator = Core::Vector<SharedHandle<Layer>>::iterator;
+            Layer *getRootLayer();
+            void addLayer(SharedHandle<Layer> layer);
+            /**
+             Constructs a LayerTree::Limb
+             @param rect The Root Layer's Rect
+             @param compPtr A Pointer to the Widget's Compositor.
+             @returns A Limb
+             */
+            Limb(const Core::Rect & rect,Compositor *compPtr,ViewRenderTarget *renderTarget);
+            iterator begin();
+            iterator end();
+            void disable();
+            void enable();
+            void redraw();
         };
+    private:
+        SharedHandle<Limb> rootLimb;
+        Core::Map<Limb *,Core::Vector<SharedHandle<Limb>>> body;
+    public:
+        Limb *getTreeRoot();
+        unsigned getParentLimbChildCount(Limb *parent);
+        Limb *getLimbAtIndexFromParent(unsigned idx,Limb *parent);
+        /**
+         Creates a Limb for the Layer Tree
+         */
+        SharedHandle<Limb> createLimb(const Core::Rect &rect_for_root_layer,ViewRenderTarget *renderTarget);
+        /**
+         Adds a Limb to the Layer Tree.
+         @param limb
+         @param parent Assumes the root limb is the parent unless this value is specified
+         */
+        void addChildLimb(SharedHandle<Limb> & limb,Limb *parent = nullptr);
+        /**
+         NOTE: Only Call this function once!!
+         */
+        void setRootLimb(SharedHandle<Limb> & limb);
+        LayerTree(Compositor *compPtr);
+        ~LayerTree();
     };
+    /**
+     A singular surface
+     */
+    class WindowLayer {
+        Native::NWH native_window_ptr;
+        Core::Rect & rect;
+        SharedHandle<WindowStyle> style;
+        SharedHandle<MenuStyle> menuStyle;
+        friend class OmegaWTK::AppWindow;
+        friend class OmegaWTK::AppWindowManager;
+        friend class Compositor;
+        void redraw();
+        void setWindowStyle(SharedHandle<WindowStyle> & style);
+        void setMenuStyle(SharedHandle<MenuStyle> & style);
+    public:
+        WindowLayer(Core::Rect & rect,Native::NWH native_window_ptr);
+    };
+    
+    };
+
+
 };
 
 #endif

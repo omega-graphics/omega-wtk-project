@@ -8,24 +8,24 @@ class MyWidget : public Widget {
     class MyRootDelegate : public ViewDelegate {
         bool * state;
         void onLeftMouseDown(Native::NativeEventPtr event) {
-//            if(!*state) {
-                std::cout << "On" << std::endl;
-                Composition::Layer *layer = view->getLayer();
-                Composition::Style & style = layer->getStyle();
-                style.setBrush(0,Composition::ColorBrush(Composition::Color(0xBB0000)));
-                layer->redraw();
-                *state = !*(state);
-//            };
+////            if(!*state) {
+//                std::cout << "On" << std::endl;
+//                Composition::Layer *layer = view->getLayer();
+//                Composition::Style & style = layer->getStyle();
+//                style.setBrush(0,Composition::ColorBrush(Composition::Color(0xBB0000)));
+//                layer->redraw();
+//                *state = !*(state);
+////            };
             std::cout << "State:" << *state << std::endl;
         };
         void onLeftMouseUp(Native::NativeEventPtr event) {
-//            if(*state){
-                std::cout << "Off" << std::endl;
-                Composition::Layer *layer = view->getLayer();
-                Composition::Style & style = layer->getStyle();
-                style.setBrush(0,Composition::ColorBrush(Composition::Color::Red));
-                layer->redraw();
-                *state = !*(state);
+////            if(*state){
+//                std::cout << "Off" << std::endl;
+//                Composition::Layer *layer = view->getLayer();
+//                Composition::Style & style = layer->getStyle();
+//                style.setBrush(0,Composition::ColorBrush(Composition::Color::Red));
+//                layer->redraw();
+//                *state = !*(state);
 //            };
             std::cout << "State:" << *state << std::endl;
         };
@@ -38,9 +38,9 @@ public:
         rootView->setDelegate(delegate);
         auto black = Composition::ColorBrush(Composition::Color::Black);
         using namespace Composition;
-        Layer *rootLayer = rootView->getLayer();
-        Style layerStyle;
-        layerStyle.add(VISUAL_RECT(Rect(0,0,200,200),ColorBrush(Composition::Color::Red)),{});
+        auto rootLayer = rootView->getLayerTreeLimb()->getRootLayer();
+        auto layerStyle = make<LayerStyle>();
+        layerStyle->add(VISUAL_RECT(Rect(0,0,200,200),ColorBrush(Composition::Color::Red)));
 //        rootLayer->setBackgroundColor(Composition::Color::Blue);
         //        rootLayer->drawRect(Rect(0,0,100,100),Composition::ColorBrush(Composition::Color::Red),Composition::Border(black,5));
         //          rootLayer->drawRoundedRect(RoundedRect(0,0,200,200,25,25),Composition::ColorBrush(Composition::Color::Green));
@@ -76,12 +76,18 @@ public:
 
 int omegaWTKMain(AppInst *app)
 {
+#ifdef TARGET_MACOS
+    auto appMenu = CategoricalMenu("RootWidgetTest",{new MenuItem("Here",false,nullptr)});
+#endif
     auto menu = make<Menu>(Menu("AppMenu",{
+#ifdef TARGET_MACOS
+        appMenu,
+#endif
         CategoricalMenu("File",{
             SubMenu("Inside",{
-                new MenuItem("Here!",false,nullptr),
-                MenuSeperatorItem(),
-                new MenuItem("Test!",false,nullptr)
+                ButtonMenuItem("Here!"),
+                MenuItemSeperator(),
+                ButtonMenuItem("Test!")
             },new MyMenuDelegate())
         })
     }));
@@ -99,13 +105,13 @@ int omegaWTKMain(AppInst *app)
     std::cout << path.serialize() << std::endl;
 
     auto widget = make<MyWidget>(MyWidget({{0,0},{200,200}}));
-    auto widget2 = make<MyWidget>(MyWidget({{300,0},{200,200}}));
+    // auto widget2 = make<MyWidget>(MyWidget({{300,0},{200,200}}));
     widget->show();
-    widget2->show();
+    // widget2->show();
 
     auto mainWindow = make<AppWindow>(Rect(0,0,1000,1000),new MyWindowDelegate(app));
     mainWindow->addWidget(widget);
-    mainWindow->addWidget(widget2);
+    // mainWindow->addWidget(widget2);
     mainWindow->setMenu(menu);
     app->windowManager->setRootWindow(mainWindow);
     app->windowManager->displayRootWindow();

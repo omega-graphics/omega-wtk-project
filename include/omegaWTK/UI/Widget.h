@@ -12,16 +12,18 @@ class AppWindowManager;
 
 class OMEGAWTK_EXPORT Widget {
 protected:
-    View *rootView;
-    Widget *parent = nullptr;
+    SharedHandle<View> rootView;
+    SharedHandle<Widget> parent;
+    SharedHandle<Composition::LayerTree> layerTree;
 private:
-    Composition::Compositor *compositor;
+    Composition::Compositor * compositor;
     friend class AppWindow;
     friend class AppWindowManager;
 public:
     void show();
     void hide();
-    Widget(const Core::Rect & rect,Widget *parent = nullptr);
+    Widget(const Core::Rect & rect,SharedHandle<Widget> parent = nullptr);
+//    Widget(Widget &widget);
     ~Widget();
 };
 

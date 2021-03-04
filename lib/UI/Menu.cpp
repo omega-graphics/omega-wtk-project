@@ -57,6 +57,10 @@ MenuItem *CategoricalMenu(const Core::String & name,std::initializer_list<MenuIt
 #endif
 };
 
+MenuItem *ButtonMenuItem(const Core::String & name){
+    return new MenuItem(name,false,nullptr);
+};
+
 MenuItem *SubMenu(const Core::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate){
     #ifdef TARGET_WIN32
         return new MenuItem(name,true,new Menu("",items,delegate));
@@ -66,7 +70,7 @@ MenuItem *SubMenu(const Core::String & name,std::initializer_list<MenuItem *> it
     #endif
 };
 
-MenuItem *MenuSeperatorItem(){
+MenuItem *MenuItemSeperator(){
     return new MenuItem();
 };
 

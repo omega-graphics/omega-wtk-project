@@ -4,6 +4,9 @@
 #import "MTLBDCompositionRenderTarget.h"
 #import "MTLBDCompositionFontFactory.h"
 #import "MTLBDCompositionImage.h"
+#import "MTLBDCALayerTree.h"
+
+#include "NativePrivate/macos/CocoaItem.h"
 
 namespace OmegaWTK::Composition {
 
@@ -104,15 +107,19 @@ Core::SharedPtr<BDCompositionDevice> CreateMTLBDCompositonDevice(){
     return MTLBDCompositionDevice::Create();
 };
 
-Core::SharedPtr<BDCompositionLayerRenderTarget> MTLBDCompositionDevice::makeLayerRenderTarget(Layer *layer){
-    return MTLBDCompositionLayerRenderTarget::Create(this,(Native::Cocoa::CocoaItem *)layer->getTargetNativePtr());
+Core::SharedPtr<BDCompositionViewRenderTarget> MTLBDCompositionDevice::makeViewRenderTarget(Layer *layer){
+//    return MTLBDCompositionViewRenderTarget::Create(this,(Native::Cocoa::CocoaItem *)layer->getTargetNativePtr());
+};
+
+Core::SharedPtr<MTLBDCompositionViewRenderTarget> MTLBDCompositionDevice::makeCALayerRenderTarget(Core::Rect & rect){
+    return MTLBDCompositionViewRenderTarget::Create(this,rect);
 };
 
 Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionDevice::makeImageRenderTarget(Core::Rect & size){
     float scaleFactor =  [NSScreen mainScreen].backingScaleFactor;
     MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm width:size.dimen.minWidth * scaleFactor height:size.dimen.minHeight * scaleFactor mipmapped:NO];
-    desc.usage = MTLTextureUsageRenderTarget | MTLTextureUsagePixelFormatView;
-    desc.storageMode = MTLStorageModeShared;
+    desc.usage = MTLTextureUsageRenderTarget | MTLTextureUsagePixelFormatView | MTLTextureUsageShaderRead;
+//    desc.storageMode = MTLStorageModeShared;
     id<MTLTexture> target = [metal_device newTextureWithDescriptor:desc];
     return MTLBDCompositionImageRenderTarget::Create(this,size,target);
 };
@@ -134,6 +141,23 @@ Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionDevice::makeImag
 
 Core::SharedPtr<BDCompositionFontFactory> MTLBDCompositionDevice::createFontFactory(){
     return MTLBDCompositionFontFactory::Create();
+};
+
+Core::SharedPtr<BDCompositionVisualTree> MTLBDCompositionDevice::createVisualTree(){
+    return MTLBDCALayerTree::Create(this);
+};
+
+void MTLBDCompositionDevice::renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> & visualTree,ViewRenderTarget *renderTarget){
+    auto cocoaItem = (Native::Cocoa::CocoaItem *)renderTarget->getNativePtr();
+    CALayer *viewLayer = cocoaItem->getLayer();
+    viewLayer.bounds = Native::Cocoa::core_rect_to_cg_rect(cocoaItem->rect);
+    MTLBDCALayerTree *caLayerTree = (MTLBDCALayerTree *)visualTree.get();
+    MTLBDCALayerTree::Visual *root = (MTLBDCALayerTree::Visual *)caLayerTree->root_v.get();
+    if(root->attachTransformLayer)
+        [viewLayer addSublayer:root->transformLayer];
+    else
+        [viewLayer addSublayer:root->metalLayer];
+    [viewLayer setNeedsDisplay];
 };
 
 void MTLBDCompositionDevice::destroyTarget(Layer *layer,Core::SharedPtr<BDCompositionRenderTarget> &target){

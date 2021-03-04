@@ -14,52 +14,35 @@
 namespace OmegaWTK {
     class Widget;
     class AppInst;
-    /**
-        A class that owns a layer.
-        NOTE: This is only implemented by a few classes including the View, and the Window.
-        @relates View
-     */
-    class OMEGAWTK_EXPORT LayerOwner {
-        protected:
-        Composition::Layer *layer;
-        public:
-        /**
-            Constructs a Layer using the Rect param provided!
-            @param rect The Rect to Use!
-            @param layer The Later to take control of
-            @returns A LayerOwner
-        */
-        LayerOwner(const Core::Rect & rect,Composition::Layer * layer);
-        Composition::Layer *getLayer(){ return layer;};
-    };
     class ViewDelegate;
     /**
         A Global View class that controls all the basic functions of a Widget!
         @relates Widget
         
      */
-    class OMEGAWTK_EXPORT View : public LayerOwner , Native::NativeEventEmitter {
-        Core::Vector<View *> subviews;
-        View *parent_ptr = nullptr;
+    class OMEGAWTK_EXPORT View: public Native::NativeEventEmitter {
+        Core::Vector<SharedHandle<View>> subviews;
+        UniqueHandle<Composition::ViewRenderTarget> renderTarget;
+        Composition::LayerTree *widgetLayerTree;
+        View * parent_ptr;
         Core::Rect rect;
-        Native::NativeItemPtr native;
         ViewDelegate *delegate = nullptr;
         bool hasDelegate();
+        void addSubView(View *view);
+        void removeSubView(View * view);
         friend class Widget;
-        friend void internal_set_root(View *view,Native::NAP ptr);
+        friend class AppWindow;
+        SharedHandle<Composition::LayerTree::Limb> layerTreeLimb;
     public:
+        Composition::LayerTree::Limb * getLayerTreeLimb(){ return layerTreeLimb.get();};
         bool isRootView(){return parent_ptr == nullptr;};
         void setDelegate(ViewDelegate *_delegate);
-        void addSubView(View *view);
-        void removeSubView(View *view);
         /**
-            Constructs a View using a Rect param, a ptr to a Layer, and a ptr to a NativeItem;
+            Constructs a View using a Rect param;
             @param rect The Rect to use
-            @param layer_to_use The Composition Layer to use
-            @param item The NativeItemPtr to use
             @returns A View!
          */
-        View(const Core::Rect & rect,Composition::Layer *layer_to_use,Native::NativeItemPtr item);
+        View(const Core::Rect & rect,Composition::LayerTree *layerTree,View *parent = nullptr);
     };
     /// The Root View delegate class!
     class OMEGAWTK_EXPORT ViewDelegate : public Native::NativeEventProcessor {
@@ -109,8 +92,6 @@ namespace OmegaWTK {
         ViewDelegate();
         ~ViewDelegate();
     };
-    View *make_view(const Core::Rect & rect,Composition::Compositor *widgetCompositor);
-
 };
 
 #endif

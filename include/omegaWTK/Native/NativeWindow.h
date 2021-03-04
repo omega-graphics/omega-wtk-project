@@ -12,9 +12,9 @@ namespace OmegaWTK::Native {
     protected:
         Core::Vector<NativeItemPtr> windowWidgetRootViews;
         NM menu = nullptr;
-        NativeLayer *window_native_layer = nullptr;
+//        NativeLayerTreeLimb *window_native_layer = nullptr;
     public:
-        void setNativeLayer(NativeLayer *layer){ window_native_layer = layer;};
+//        void setNativeLayer(NativeLayer *layer){ window_native_layer = layer;};
 #ifdef TARGET_MACOS
         bool hasEventEmitter();
     protected:

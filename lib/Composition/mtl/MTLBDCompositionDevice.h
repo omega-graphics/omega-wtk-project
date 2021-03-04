@@ -8,6 +8,8 @@
 
 namespace OmegaWTK::Composition {
 
+class MTLBDCompositionViewRenderTarget;
+
 class MTLBDCompositionDevice : public BDCompositionDevice {
 public:
     id<MTLDevice> metal_device;
@@ -36,10 +38,15 @@ public:
     MTLBDCompositionDevice();
     id<MTLCommandBuffer> makeNewMTLCommandBuffer();
     static Core::SharedPtr<BDCompositionDevice> Create();
-    Core::SharedPtr<BDCompositionLayerRenderTarget> makeLayerRenderTarget(Layer *layer);
+    Core::SharedPtr<BDCompositionViewRenderTarget> makeViewRenderTarget(Layer *layer);
+    
+    Core::SharedPtr<MTLBDCompositionViewRenderTarget> makeCALayerRenderTarget(Core::Rect & rect);
+    
     Core::SharedPtr<BDCompositionImageRenderTarget> makeImageRenderTarget(Core::Rect &size);
-    Core::SharedPtr<BDCompositionImageRenderTarget> makeImageRenderTarget(Core::SharedPtr<BDCompositionImage> &img) ;
+    Core::SharedPtr<BDCompositionImageRenderTarget> makeImageRenderTarget(Core::SharedPtr<BDCompositionImage> &img);
     Core::SharedPtr<BDCompositionFontFactory> createFontFactory();
+    Core::SharedPtr<BDCompositionVisualTree> createVisualTree();
+    void renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> &visualTree, ViewRenderTarget *view);
     void destroyTarget(Layer *layer,Core::SharedPtr<BDCompositionRenderTarget> &target);
 };
 

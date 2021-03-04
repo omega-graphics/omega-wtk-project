@@ -12,7 +12,7 @@
 
 namespace OmegaWTK::Composition {
 
-Backend::Backend():currentLayer(nullptr){
+Backend::Backend():currentLimb(nullptr){
     
 };
 
@@ -20,12 +20,12 @@ Backend::~Backend(){
     
 };
 
-void Backend::setCurrentJob(Layer *layer){
-    currentLayer = layer;
+void Backend::setCurrentJob(LayerTree::Limb *limb){
+    currentLimb = limb;
 };
 
 Core::UniquePtr<Backend> make_backend(){
-    return std::make_unique<BackendImpl>(BackendImpl());
+    return std::make_unique<BackendImpl>();
 };
 
 };

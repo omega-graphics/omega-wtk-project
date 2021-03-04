@@ -8,7 +8,7 @@ namespace OmegaWTK {
         class NativeEventEmitter;
         class NativeEvent;
 
-        class NativeLayer {
+        class NativeLayerTreeLimb {
             public:
             virtual void redraw() = 0;
         };
@@ -16,14 +16,14 @@ namespace OmegaWTK {
         class NativeItem {
             friend void set_native_item_event_emitter(NativeItem * ptr,NativeEventEmitter * emitter);
             protected:
-            NativeLayer *parentLayer;
+            NativeLayerTreeLimb *layerTreelimb;
              NativeEventEmitter *event_emitter;
             public:
             virtual void addChildNativeItem(NativeItem *nativeItem) = 0;
             virtual void removeChildNativeItem(NativeItem *nativeItem) = 0;
             void sendEventToEmitter(NativeEvent *ptr);
             bool hasEventEmitter();
-            void setParentLayer(NativeLayer *layer){ parentLayer = layer;};
+            void setLayerTreeLimb(NativeLayerTreeLimb *limb){ layerTreelimb = limb;};
             virtual void *getBinding() = 0;
             virtual void enable() = 0;
             virtual void disable() = 0;

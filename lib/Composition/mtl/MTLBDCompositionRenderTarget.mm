@@ -44,15 +44,15 @@ id<MTLBuffer> textured_mesh_to_mtl_vertex_buffer(MTLBDTriangulator::Textured2DMe
     return buffer;
 };
 
-Core::SharedPtr<BDCompositionLayerRenderTarget> MTLBDCompositionLayerRenderTarget::Create(MTLBDCompositionDevice *device,Native::Cocoa::CocoaItem *item){
-    return std::make_shared<MTLBDCompositionLayerRenderTarget>(device,item);
+Core::SharedPtr<MTLBDCompositionViewRenderTarget> MTLBDCompositionViewRenderTarget::Create(MTLBDCompositionDevice *device,Core::Rect & rect){
+    return std::make_shared<MTLBDCompositionViewRenderTarget>(device,rect);
 };
 /// Metal Composition Render Target!
 
-MTLBDCompositionLayerRenderTarget::MTLBDCompositionLayerRenderTarget(MTLBDCompositionDevice *device,Native::Cocoa::CocoaItem *native_item):MTLBDCompositionRenderTarget(device,Color(0,0,0,0),native_item->rect),native_item(native_item){
+MTLBDCompositionViewRenderTarget::MTLBDCompositionViewRenderTarget(MTLBDCompositionDevice *device,Core::Rect & _rect):MTLBDCompositionRenderTarget(device,Color(0,0,0,0),_rect),rect(_rect){
     metalLayer = [CAMetalLayer layer];
     auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
-    auto rect = Native::Cocoa::core_rect_to_cg_rect(native_item->rect);
+    auto rect = Native::Cocoa::core_rect_to_cg_rect(_rect);
 //    rect.origin.x /= scaleFactor;
 //    rect.origin.y /= scaleFactor;
     
@@ -63,19 +63,14 @@ MTLBDCompositionLayerRenderTarget::MTLBDCompositionLayerRenderTarget(MTLBDCompos
     NSLog(@"Position: x%f, y%f",metalLayer.frame.origin.x,metalLayer.frame.origin.y);
     metalLayer.contentsScale = [NSScreen mainScreen].backingScaleFactor;
     metalLayer.framebufferOnly = YES;
-    metalLayer.allowsNextDrawableTimeout = YES;
-    OmegaWTKCocoaView *nativeView = (OmegaWTKCocoaView *)native_item->getBinding();
-    nativeView.layer = metalLayer;
-#ifdef TARGET_MACOS
-   
-#endif
+//    metalLayer.allowsNextDrawableTimeout = YES;
 };
 
-void MTLBDCompositionLayerRenderTarget::clear(Color & clear_color){
+void MTLBDCompositionViewRenderTarget::clear(Color & clear_color){
     clearColor = std::move(clear_color);
 };
 
-void MTLBDCompositionLayerRenderTarget::commit(){
+void MTLBDCompositionViewRenderTarget::commit(){
 //    NSLog(@"Commit!!!");
 //        NSLog(@"Commit!!!");
     
@@ -101,8 +96,8 @@ void MTLBDCompositionLayerRenderTarget::commit(){
                 MTLRenderPassDescriptor *initialRenderPassDesc = [MTLRenderPassDescriptor renderPassDescriptor];
                 initialRenderPassDesc.colorAttachments[0].clearColor = MTLClearColorMake(nscolor.redComponent,nscolor.greenComponent,nscolor.blueComponent,nscolor.alphaComponent);
                 initialRenderPassDesc.colorAttachments[0].loadAction = MTLLoadActionClear;
-                initialRenderPassDesc.renderTargetWidth = float(native_item->rect.dimen.minWidth) * scaleFactor;
-                initialRenderPassDesc.renderTargetHeight = float(native_item->rect.dimen.minHeight) * scaleFactor;
+                initialRenderPassDesc.renderTargetWidth = float(rect.dimen.minWidth) * scaleFactor;
+                initialRenderPassDesc.renderTargetHeight = float(rect.dimen.minHeight) * scaleFactor;
                 initialRenderPassDesc.renderTargetArrayLength = 1;
     //            initialRenderPassDesc.colorAttachments[0].storeAction = MTLStoreActionStore;
     //            initialRenderPassDesc.defaultRasterSampleCount = 0;
@@ -111,30 +106,30 @@ void MTLBDCompositionLayerRenderTarget::commit(){
                 MTLRenderPassDescriptor *mainRenderPassDesc = [MTLRenderPassDescriptor renderPassDescriptor];
                 mainRenderPassDesc.colorAttachments[0].clearColor = MTLClearColorMake(nscolor.redComponent,nscolor.greenComponent,nscolor.blueComponent,nscolor.alphaComponent);
                 mainRenderPassDesc.colorAttachments[0].loadAction = MTLLoadActionLoad;
-                mainRenderPassDesc.renderTargetWidth = float(native_item->rect.dimen.minWidth) * scaleFactor;
-                mainRenderPassDesc.renderTargetHeight = float(native_item->rect.dimen.minHeight) * scaleFactor;
+                mainRenderPassDesc.renderTargetWidth = float(rect.dimen.minWidth) * scaleFactor;
+                mainRenderPassDesc.renderTargetHeight = float(rect.dimen.minHeight) * scaleFactor;
                 mainRenderPassDesc.colorAttachments[0].storeAction = MTLStoreActionStore;
                 mainRenderPassDesc.renderTargetArrayLength = 1;
                 mainRenderPassDesc.defaultRasterSampleCount = 0;
                 mainRenderPassDesc.colorAttachments[0].texture = currentDrawable.texture;
                 
-                MTLRenderPassDescriptor *multiSampledRenderPassDesc = [MTLRenderPassDescriptor renderPassDescriptor];
-                multiSampledRenderPassDesc.colorAttachments[0].loadAction = MTLLoadActionLoad;
-                multiSampledRenderPassDesc.colorAttachments[0].clearColor = MTLClearColorMake(nscolor.redComponent,nscolor.greenComponent,nscolor.blueComponent,nscolor.alphaComponent);
-                multiSampledRenderPassDesc.colorAttachments[0].resolveTexture = currentDrawable.texture;
-                multiSampledRenderPassDesc.renderTargetWidth = float(native_item->rect.dimen.minWidth) * scaleFactor;
-                multiSampledRenderPassDesc.renderTargetHeight = float(native_item->rect.dimen.minHeight) * scaleFactor;
-                multiSampledRenderPassDesc.colorAttachments[0].storeAction = MTLStoreActionStoreAndMultisampleResolve;
-                multiSampledRenderPassDesc.renderTargetArrayLength = 1;
+//                MTLRenderPassDescriptor *multiSampledRenderPassDesc = [MTLRenderPassDescriptor renderPassDescriptor];
+//                multiSampledRenderPassDesc.colorAttachments[0].loadAction = MTLLoadActionLoad;
+//                multiSampledRenderPassDesc.colorAttachments[0].clearColor = MTLClearColorMake(nscolor.redComponent,nscolor.greenComponent,nscolor.blueComponent,nscolor.alphaComponent);
+//                multiSampledRenderPassDesc.colorAttachments[0].resolveTexture = currentDrawable.texture;
+//                multiSampledRenderPassDesc.renderTargetWidth = float(native_item->rect.dimen.minWidth) * scaleFactor;
+//                multiSampledRenderPassDesc.renderTargetHeight = float(native_item->rect.dimen.minHeight) * scaleFactor;
+//                multiSampledRenderPassDesc.colorAttachments[0].storeAction = MTLStoreActionStoreAndMultisampleResolve;
+//                multiSampledRenderPassDesc.renderTargetArrayLength = 1;
                 
-                MTLTextureDescriptor *multiSampleTextureDesc = [[MTLTextureDescriptor alloc] init];
-                multiSampleTextureDesc.textureType = MTLTextureType2DMultisample;
-                multiSampleTextureDesc.storageMode = MTLStorageModePrivate;
-                multiSampleTextureDesc.width = float(native_item->rect.dimen.minWidth) * scaleFactor;
-                multiSampleTextureDesc.height = float(native_item->rect.dimen.minHeight) * scaleFactor;
-                multiSampleTextureDesc.pixelFormat = MTLPixelFormatBGRA8Unorm;
-                multiSampleTextureDesc.usage = MTLTextureUsageRenderTarget;
-                
+//                MTLTextureDescriptor *multiSampleTextureDesc = [[MTLTextureDescriptor alloc] init];
+//                multiSampleTextureDesc.textureType = MTLTextureType2DMultisample;
+//                multiSampleTextureDesc.storageMode = MTLStorageModePrivate;
+//                multiSampleTextureDesc.width = float(native_item->rect.dimen.minWidth) * scaleFactor;
+//                multiSampleTextureDesc.height = float(native_item->rect.dimen.minHeight) * scaleFactor;
+//                multiSampleTextureDesc.pixelFormat = MTLPixelFormatBGRA8Unorm;
+//                multiSampleTextureDesc.usage = MTLTextureUsageRenderTarget;
+//
                 id<MTLRenderCommandEncoder> initialRenderPass = [finalCommandBuffer renderCommandEncoderWithDescriptor:initialRenderPassDesc];
                 [initialRenderPass endEncoding];
                 unsigned idx = 0;
@@ -142,15 +137,15 @@ void MTLBDCompositionLayerRenderTarget::commit(){
                     auto renderPass = renderPasses.front();
                     renderPasses.pop();
                     id<MTLRenderCommandEncoder> rp;
-                    if(renderPass.multiSampled){
-                        multiSampleTextureDesc.sampleCount = renderPass.sampleCount;
-                        id<MTLTexture> msTexture = [device->metal_device newTextureWithDescriptor:multiSampleTextureDesc];
-                        multiSampledRenderPassDesc.colorAttachments[0].texture = msTexture;
-                        rp = [finalCommandBuffer renderCommandEncoderWithDescriptor:multiSampledRenderPassDesc];
-                    }
-                    else {
-                        rp = [finalCommandBuffer renderCommandEncoderWithDescriptor:mainRenderPassDesc];
-                    };
+//                    if(renderPass.multiSampled){
+//                        multiSampleTextureDesc.sampleCount = renderPass.sampleCount;
+//                        id<MTLTexture> msTexture = [device->metal_device newTextureWithDescriptor:multiSampleTextureDesc];
+//                        multiSampledRenderPassDesc.colorAttachments[0].texture = msTexture;
+//                        rp = [finalCommandBuffer renderCommandEncoderWithDescriptor:multiSampledRenderPassDesc];
+//                    }
+//                    else {
+                    rp = [finalCommandBuffer renderCommandEncoderWithDescriptor:mainRenderPassDesc];
+//                    };
                     [rp setRenderPipelineState:renderPass.pipelineState];
                     renderPass.setupCallback(rp,idx);
                     [rp endEncoding];
@@ -160,17 +155,17 @@ void MTLBDCompositionLayerRenderTarget::commit(){
             
             [finalCommandBuffer presentDrawable:currentDrawable];
             [finalCommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer){
-                    auto buffer_it = vertexBuffers.begin();
-                    while(buffer_it != vertexBuffers.end()){
-                        id<MTLBuffer> buffer = *buffer_it;
-                        [buffer setPurgeableState:MTLPurgeableStateEmpty];
-                        ++buffer_it;
-                    };
+//                    auto buffer_it = vertexBuffers.begin();
+//                    while(buffer_it != vertexBuffers.end()){
+//                        id<MTLBuffer> buffer = *buffer_it;
+//                        [buffer setPurgeableState:MTLPurgeableStateEmpty];
+//                        ++buffer_it;
+//                    };
                     vertexBuffers.clear();
                 NSLog(@"Completed!");
             }];
             [finalCommandBuffer commit];
-            [metalLayer setNeedsDisplay];
+//            [metalLayer setNeedsDisplay];
         };
     };
 

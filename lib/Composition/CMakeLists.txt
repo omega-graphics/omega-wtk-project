@@ -22,6 +22,8 @@ add_omega_wtk_lib(
     "BDCompositionRenderTarget.cpp"
     "BDCompositionFontFactory.h"
     "BDCompositionFontFactory.cpp"
+    "BDCompositionVisualTree.h"
+    "BDCompositionVisualTree.cpp"
     HEADERS 
     "Backend.h"
     "Compositor.h"
@@ -68,6 +70,8 @@ if(TARGET_MACOS)
     "MTLBDCompositionImage.mm"
     "MTLBDCompositionFontFactory.h"
     "MTLBDCompositionFontFactory.mm"
+    "MTLBDCALayerTree.h"
+    "MTLBDCALayerTree.mm"
     "MetalBridgeHeader.h" 
     "OmegaWTKShaders.metal")
     list(TRANSFORM COMPOSITION_MAC_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/mtl/")

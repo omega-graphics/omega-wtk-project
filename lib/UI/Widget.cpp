@@ -2,22 +2,26 @@
 
 namespace OmegaWTK {
 
-Widget::Widget(const Core::Rect & rect,Widget *parent):parent(parent),compositor(new Composition::Compositor()){
-    rootView = make_view(rect,compositor);
-
+Widget::Widget(const Core::Rect & rect,SharedHandle<Widget> parent):parent(parent),compositor(new Composition::Compositor()){
+    layerTree = std::make_shared<Composition::LayerTree>(compositor);
+    rootView = std::make_shared<View>(rect,layerTree.get(),nullptr);
     if(parent)
-        parent->rootView->addSubView(this->rootView);
-
+        parent->rootView->addSubView(this->rootView.get());
 };
+
+//Widget::Widget(Widget & widget):parent(std::move(widget.parent)),compositor(std::move(widget.compositor)),rootView(std::move(widget.rootView)){
+//    
+//};
+
 void Widget::show(){
-    rootView->native->enable();
+    rootView->renderTarget->getNativePtr()->enable();
 };
 void Widget::hide(){
-   rootView->native->disable();
+    rootView->renderTarget->getNativePtr()->disable();
 };
 
 Widget::~Widget(){
-    //  compositor->prepareCleanup();
+  
 };
 
 }

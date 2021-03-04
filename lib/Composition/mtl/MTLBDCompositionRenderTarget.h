@@ -396,17 +396,19 @@ void MTLBDCompositionRenderTarget<_Ty>::drawImage(Core::SharedPtr<BDCompositionI
 
 
 
-class MTLBDCompositionLayerRenderTarget : public MTLBDCompositionRenderTarget<BDCompositionLayerRenderTarget> {
+class MTLBDCompositionViewRenderTarget : public MTLBDCompositionRenderTarget<BDCompositionViewRenderTarget> {
     CAMetalLayer *metalLayer;
     Native::Cocoa::CocoaItem *native_item;
     id<CAMetalDrawable> currentDrawable = nil;
+    friend class MTLBDCALayerTree;
+    Core::Rect & rect;
 #ifdef TARGET_MACOS
 //    CVDisplayLink *displayLink;
 #endif
 public:
     void clear(Color &clear_color);
-    MTLBDCompositionLayerRenderTarget(MTLBDCompositionDevice *device,Native::Cocoa::CocoaItem *item);
-    static Core::SharedPtr<BDCompositionLayerRenderTarget> Create(MTLBDCompositionDevice *device,Native::Cocoa::CocoaItem *item);
+    MTLBDCompositionViewRenderTarget(MTLBDCompositionDevice *device,Core::Rect & rect);
+    static Core::SharedPtr<MTLBDCompositionViewRenderTarget> Create(MTLBDCompositionDevice *device,Core::Rect & rect);
     void commit();
 };
 

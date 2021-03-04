@@ -15,7 +15,8 @@ namespace OmegaWTK::Native::Cocoa {
 
 
 CocoaAppWindow::CocoaAppWindow(Core::Rect & rect,NativeEventEmitter *emitter):NativeWindow(rect){
-    event_emitter = emitter;
+    eventEmitter = emitter;
+
     windowDelegate = [[OmegaWTKNativeCocoaAppWindowDelegate alloc] init];
     windowController = [[OmegaWTKNativeCocoaAppWindowController alloc] initWithRect:core_rect_to_cg_rect(rect) delegate:windowDelegate];
     windowDelegate.cppBinding = this;
@@ -23,7 +24,7 @@ CocoaAppWindow::CocoaAppWindow(Core::Rect & rect,NativeEventEmitter *emitter):Na
 };
 
 NativeEventEmitter * CocoaAppWindow::getEmitter() {
-    return event_emitter;
+    return eventEmitter;
 };
 
 void CocoaAppWindow::disable(){
@@ -56,6 +57,7 @@ void CocoaAppWindow::initialDisplay(){
     if(menu){
         NSMenu * windowMenu = (NSMenu *)menu->getNativeBinding();
         [window setMenu:windowMenu];
+        [NSApp setMainMenu:windowMenu];
     };
     
     [windowController showWindow:NSApp.delegate];

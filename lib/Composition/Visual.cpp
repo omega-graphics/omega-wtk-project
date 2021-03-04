@@ -45,31 +45,31 @@ void Visual::setRect(const Core::Rect &new_rect){
 // VPVR Visual::getFont(){
 
 // };
-Style::Style(){
+LayerStyle::LayerStyle(){
     
 };
 
-void Style::add(Visual::RectParams params,std::initializer_list<VisualEffect> effects){
-    _construct_visual(Visual::Rect,params,effects);
+void LayerStyle::add(Visual::RectParams params){
+    _construct_visual(Visual::Rect,params);
 };
 
-void Style::add(Visual::RoundedRectParams params,std::initializer_list<VisualEffect> effects){
-    _construct_visual(Visual::RoundedRect,params,effects);
+void LayerStyle::add(Visual::RoundedRectParams params){
+    _construct_visual(Visual::RoundedRect,params);
 };
 
-void Style::add(Visual::EllipseParams params,std::initializer_list<VisualEffect> effects){
-    _construct_visual(Visual::Ellipse,params,effects);
+void LayerStyle::add(Visual::EllipseParams params){
+    _construct_visual(Visual::Ellipse,params);
 };
 
-void Style::add(Visual::BitmapParams params,std::initializer_list<VisualEffect> effects){
-    _construct_visual(Visual::Bitmap,params,effects);
+void LayerStyle::add(Visual::BitmapParams params){
+    _construct_visual(Visual::Bitmap,params);
 };
 
-void Style::add(Visual::TextParams params, std::initializer_list<VisualEffect> effects){
-    _construct_visual(Visual::Text,params,effects);
+void LayerStyle::add(Visual::TextParams params){
+    _construct_visual(Visual::Text,params);
 };
 
-void Style::setBrush(unsigned id,const Core::SharedPtr<Brush> & new_brush){
+void LayerStyle::setBrush(unsigned id,const Core::SharedPtr<Brush> & new_brush){
     auto visual = visuals[id].get();
     switch (visual->type) {
         case Visual::Rect :{
@@ -80,6 +80,10 @@ void Style::setBrush(unsigned id,const Core::SharedPtr<Brush> & new_brush){
         default:
             break;
     }
+};
+
+void LayerStyle::addEffect(SharedHandle<LayerEffect> & effect){
+    effects.push_back(effect);
 };
 
 }

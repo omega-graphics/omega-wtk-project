@@ -1,6 +1,8 @@
 #include "omegaWTK/Core/Core.h"
 #include "View.h"
 #include "Menu.h"
+#include "omegaWTK/Composition/Layer.h"
+#include "omegaWTK/Composition/Visual.h"
 
 #ifndef OMEGAWTK_UI_WINDOW_H
 #define OMEGAWTK_UI_WINDOW_H
@@ -16,38 +18,22 @@ namespace OmegaWTK {
 class AppWindow;
 class AppWindowManager;
 
-    namespace Composition {
-
-        class WindowStyle {
-            Core::Vector<Core::UniquePtr<Visual>> visuals;
-        public:
-            
-        };
-
-        class WindowLayer : public Native::NativeEventEmitter, public Native::NativeLayer {
-            Native::NWH native_window_ptr;
-            Core::Rect & rect;
-            friend class OmegaWTK::AppWindow;
-            friend class OmegaWTK::AppWindowManager;
-            void redraw();
-        public:
-            WindowLayer(Core::Rect & rect,Native::NWH native_window_ptr);
-        };
-
-    };
-
     class AppWindowDelegate;
     class OMEGAWTK_EXPORT AppWindow : public Native::NativeEventEmitter {
         UniqueHandle<Composition::WindowLayer> layer;
+        Composition::Compositor * compositor;
         SharedHandle<AppWindowDelegate> delegate;
         Core::Rect rect;
         Core::Vector<SharedHandle<Widget>> rootWidgets;
         SharedHandle<Menu> menu;
+        SharedHandle<Composition::MenuStyle> menuStyle;
         friend class AppWindowDelegate;
         friend class AppWindowManager;
         void _add_widget(SharedHandle<Widget> * widget);
     public:
         void setMenu(SharedHandle<Menu> & menu);
+        void setLayerStyle(SharedHandle<Composition::WindowStyle> & style);
+        void setMenuStyle(SharedHandle<Composition::MenuStyle> & style);
         UniqueHandle<Native::NativeFSDialog> openFSDialog();
         UniqueHandle<Native::NativeNoteDialog> openNoteDialog();
         template<class _Ty,std::enable_if_t<std::is_base_of_v<Widget,_Ty>,int> = 0>

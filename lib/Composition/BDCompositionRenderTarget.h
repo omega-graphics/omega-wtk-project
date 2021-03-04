@@ -47,7 +47,7 @@ public:
     // virtual ~BDCompositionRenderTarget();
 };
 
-class BDCompositionLayerRenderTarget : public BDCompositionRenderTarget {
+class BDCompositionViewRenderTarget : public BDCompositionRenderTarget {
 public:
 #ifdef TARGET_WIN32
     virtual void redoSwapChain() = 0;

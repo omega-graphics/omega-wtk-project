@@ -1,4 +1,5 @@
 #include "omegaWTK/Core/Core.h"
+#include "Layer.h"
 
 #ifndef OMEGAWTK_COMPOSITION_BACKEND_H
 #define OMEGAWTK_COMPOSITION_BACKEND_H
@@ -10,9 +11,9 @@ class Layer;
 
 class OMEGAWTK_EXPORT Backend {
 protected:
-    Layer *currentLayer;
+    LayerTree::Limb *currentLimb;
 public:
-    void setCurrentJob(Layer *layer);
+    void setCurrentJob(LayerTree::Limb *limb);
     virtual void doWork() = 0;
     virtual void doUpdate() = 0;
     Backend();

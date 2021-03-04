@@ -8,14 +8,16 @@ namespace OmegaWTK::Composition {
 
 template<class _Ty>
 class MTLBDCompositionRenderTarget;
+class MTLBDCALayerTree;
 
 class MTLBDCompositionImage : public BDCompositionImage {
     MTLTextureDescriptor *desc;
     Core::Rect n_rect;
     Core::FRect rect;
-    friend class MTLBDCompositionRenderTarget<BDCompositionLayerRenderTarget>;
+    friend class MTLBDCompositionRenderTarget<BDCompositionViewRenderTarget>;
     friend class MTLBDCompositionRenderTarget<BDCompositionImageRenderTarget>;
     friend class MTLBDCompositionDevice;
+    friend class MTLBDCALayerTree;
 public:
     id<MTLTexture> img;
     /**
@@ -28,7 +30,7 @@ public:
     MTLBDCompositionImage(Core::Rect & rect,id<MTLTexture> img);
     static Core::SharedPtr<BDCompositionImage> Create(Core::SharedPtr<Core::BitmapImage> & _img,Core::FRect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img);
     static Core::SharedPtr<BDCompositionImage> Create(Core::Rect & rect,id<MTLTexture> img);
-    void applyEffect(VisualEffect &effect);
+    void applyEffect(LayerEffect &effect);
 };
 
 MTLPixelFormat computePixelFormat(unsigned bitDepth,unsigned channelCount,bool isrgb);

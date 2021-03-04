@@ -1,6 +1,7 @@
 #include "BackendPriv.h"
 #include "BDCompositionRenderTarget.h"
 #include "BDCompositionFontFactory.h"
+#include "BDCompositionVisualTree.h"
 
 #include <iostream>
 
@@ -17,6 +18,9 @@ namespace OmegaWTK::Composition {
             global_font_factory = global_device->createFontFactory();
         }
     };
+    /**
+     Draws basic visuals onto a render target
+     */
     void BackendImpl::drawVisual(BDCompositionRenderTarget * target,Visual *visual,bool updatePass){
         // MessageBoxA(GetForegroundWindow(),"Will Draw Rect","NOTE",MB_OK);
         switch (visual->type) {
@@ -69,34 +73,62 @@ namespace OmegaWTK::Composition {
         }
     };
     void BackendImpl::doWork(){
-        auto target = global_device->makeLayerRenderTarget(currentLayer);
-        auto & style = currentLayer->getStyle();
+        auto visualTree = global_device->createVisualTree();
         
-        target->clear(currentLayer->getBackgroundColor());
-        for(auto & visual : style.visuals){
-            drawVisual(target.get(),visual.get(),false);
+        Layer * rootLayer = currentLimb->limbRoot;
+        auto rootImgTarget = global_device->makeImageRenderTarget(rootLayer->getLayerRect());
+        rootImgTarget->clear(rootLayer->style->background);
+        auto __visual_it = rootLayer->style->visuals.begin();
+        while(__visual_it != rootLayer->style->visuals.end()){
+            drawVisual(rootImgTarget.get(),__visual_it->get());
+            ++__visual_it;
         };
-        target->commit();
-        targets.insert(std::make_pair(currentLayer,target));
-
+        rootImgTarget->commit();
+        Core::SharedPtr<BDCompositionImage> rootImg = rootImgTarget->getImg();
+        auto visual = visualTree->makeVisual(rootImg);
+        visualTree->setRootVisual(visual);
+        layerTargets.insert(std::make_pair(rootLayer,rootImgTarget));
+        {
+            /// TODO: Eventually Change to Branch Iteration Model!
+            auto it = currentLimb->begin();
+            while(it != currentLimb->end()){
+                Layer *layer = it->get();
+                auto imgTarget = global_device->makeImageRenderTarget(layer->getLayerRect());
+                imgTarget->clear(layer->style->background);
+                auto __visual_it = layer->style->visuals.begin();
+                while(__visual_it != layer->style->visuals.end()){
+                    drawVisual(imgTarget.get(),__visual_it->get());
+                    ++__visual_it;
+                };
+                imgTarget->commit();
+                Core::SharedPtr<BDCompositionImage> resultImg = imgTarget->getImg();
+                auto visual = visualTree->makeVisual(resultImg);
+                visualTree->addVisual(visual);
+                layerTargets.insert(std::make_pair(layer,imgTarget));
+                ++it;
+            };
+        }
+        
+        global_device->renderVisualTreeToView(visualTree,currentLimb->renderTarget);
+        visualTrees.insert(std::make_pair(currentLimb->renderTarget,visualTree));
     };
     void BackendImpl::doUpdate(){
-        auto & target = targets[currentLayer];
-        
-        #ifdef TARGET_WIN32
-        if(target->needsSwapChain()){
-            target->redoSwapChain();
-        }
-        else if(target->needsDeviceContext()){
-            target->redoDeviceContext();
-        };
-        #endif
-
-        target->clear(currentLayer->getBackgroundColor());
-        auto & style = currentLayer->getStyle();
-        for(auto & visual : style.visuals){
-            drawVisual(target.get(),visual.get());
-        };
-        target->commit();
+//        auto & target = targets[currentLayer];
+//
+//        #ifdef TARGET_WIN32
+//        if(target->needsSwapChain()){
+//            target->redoSwapChain();
+//        }
+//        else if(target->needsDeviceContext()){
+//            target->redoDeviceContext();
+//        };
+//        #endif
+//
+//        target->clear(currentLayer->getBackgroundColor());
+//        auto & style = currentLayer->getStyle();
+//        for(auto & visual : style.visuals){
+//            drawVisual(target.get(),visual.get());
+//        };
+//        target->commit();
     };
 };
