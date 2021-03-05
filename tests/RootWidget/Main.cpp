@@ -34,14 +34,15 @@ class MyWidget : public Widget {
     };
     MyRootDelegate *delegate;
 public:
-    MyWidget(const Core::Rect & rect):Widget(rect),delegate(new MyRootDelegate(&selected)){
+    MyWidget(const Core::Rect & rect,SharedImageHandle & img):Widget(rect),delegate(new MyRootDelegate(&selected)){
         rootView->setDelegate(delegate);
         auto black = Composition::ColorBrush(Composition::Color::Black);
         using namespace Composition;
         auto rootLayer = rootView->getLayerTreeLimb()->getRootLayer();
         auto layerStyle = make<LayerStyle>();
-        layerStyle->add(VISUAL_RECT(Rect(0,0,100,100),ColorBrush(Composition::Color::Green)));
-//        layerStyle->add(VISUAL_IMG(IMPORT_IMG("test.png"),Rect(0,0,300,300)));
+        layerStyle->add(VISUAL_RECT(Rect(0,0,300,300),ColorBrush(Composition::Color::Green)));
+        layerStyle->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(0,0,200,200),25,Composition::Text::Font("Arial",OmegaWTK::Composition::Text::Font::Regular)));
+        layerStyle->add(VISUAL_IMG(img,Rect(100,0,100,100)));
 //        rootLayer->setBackgroundColor(Composition::Color::Blue);
         //        rootLayer->drawRect(Rect(0,0,100,100),Composition::ColorBrush(Composition::Color::Red),Composition::Border(black,5));
         //          rootLayer->drawRoundedRect(RoundedRect(0,0,200,200,25,25),Composition::ColorBrush(Composition::Color::Green));
@@ -103,10 +104,14 @@ int omegaWTKMain(AppInst *app)
 //    vectorPath.append({250,175});
 //    std::cout << vectorPath.toStr();
     
+    
     std::cout << path.serialize() << std::endl;
+    
+    auto img = IMPORT_IMG("test.png");
+    auto img2 = IMPORT_IMG("test-1.png");
 
-    auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}}));
-    auto widget2 = make<MyWidget>(MyWidget({{500,0},{400,400}}));
+    auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}},img));
+    auto widget2 = make<MyWidget>(MyWidget({{700,0},{400,400}},img2));
     widget->show();
     widget2->show();
 

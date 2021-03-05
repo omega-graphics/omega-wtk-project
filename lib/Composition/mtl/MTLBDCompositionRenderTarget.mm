@@ -204,12 +204,24 @@ void MTLBDCompositionImageRenderTarget::commit(){
         renderPassDesc.renderTargetWidth = target.width;
         renderPassDesc.renderTargetHeight = target.height;
         renderPassDesc.renderTargetArrayLength = 1;
+        
+        MTLRenderPassDescriptor *renderPassDesc2 = [MTLRenderPassDescriptor renderPassDescriptor];
+        renderPassDesc2.colorAttachments[0].loadAction = MTLLoadActionLoad;
+//        renderPassDesc2.colorAttachments[0].clearColor = MTLClearColorMake(_clearColor.redComponent,_clearColor.greenComponent,_clearColor.blueComponent,_clearColor.alphaComponent);
+        renderPassDesc2.colorAttachments[0].storeAction = MTLStoreActionStore;
+        renderPassDesc2.colorAttachments[0].texture = target;
+        renderPassDesc2.defaultRasterSampleCount = 1;
+        renderPassDesc2.renderTargetWidth = target.width;
+        renderPassDesc2.renderTargetHeight = target.height;
+        renderPassDesc2.renderTargetArrayLength = 1;
         id<MTLCommandBuffer> finalCommandBuffer = device->makeNewMTLCommandBuffer();
+        id<MTLRenderCommandEncoder> clearRp = [finalCommandBuffer renderCommandEncoderWithDescriptor:renderPassDesc];
+        [clearRp endEncoding];
         unsigned idx = 0;
         while(!renderPasses.empty()){
             auto renderPass = renderPasses.front();
             renderPasses.pop();
-            id<MTLRenderCommandEncoder> rp = [finalCommandBuffer renderCommandEncoderWithDescriptor:renderPassDesc];
+            id<MTLRenderCommandEncoder> rp = [finalCommandBuffer renderCommandEncoderWithDescriptor:renderPassDesc2];
             [rp setRenderPipelineState:renderPass.pipelineState];
             renderPass.setupCallback(rp,idx);
             [rp endEncoding];

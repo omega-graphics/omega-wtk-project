@@ -50,6 +50,7 @@ namespace OmegaWTK {
         SharedPtr<BitmapImage> loadImageFromFile(FSPath path);
     #define IMPORT_IMG(img) OmegaWTK::Core::loadImageFromFile(OmegaWTK::Core::String("./assets/") + img)
     };
+typedef Core::SharedPtr<Core::BitmapImage> SharedImageHandle;
 };
 
 #endif
