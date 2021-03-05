@@ -23,7 +23,7 @@ Core::SharedPtr<BDCompositionVisualTree::Visual> MTLBDCALayerTree::makeVisual(Co
     auto caLayerRenderTarget = device->makeCALayerRenderTarget(mtlImg->n_rect);
     Color bkgrd {Composition::Color::Black,0x00};
     caLayerRenderTarget->clear(bkgrd);
-    caLayerRenderTarget->drawImage(img,{0,0});
+    caLayerRenderTarget->drawImage(img,Core::FPosition({0.f,0.f}));
     caLayerRenderTarget->commit();
     CAMetalLayer *metalLayer = caLayerRenderTarget->metalLayer;
 //    metalLayer.anchorPoint = CGPointMake(0.0,0.0);

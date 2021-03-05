@@ -118,8 +118,8 @@ Core::SharedPtr<MTLBDCompositionViewRenderTarget> MTLBDCompositionDevice::makeCA
 Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionDevice::makeImageRenderTarget(Core::Rect & size){
     float scaleFactor =  [NSScreen mainScreen].backingScaleFactor;
     MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm width:int(size.dimen.minWidth *= scaleFactor) height:int(size.dimen.minHeight *= scaleFactor) mipmapped:NO];
-    desc.usage = MTLTextureUsageRenderTarget | MTLTextureUsagePixelFormatView | MTLTextureUsageShaderRead;
-//    desc.storageMode = MTLStorageModeShared;
+    desc.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
+    // desc.storageMode = MTLStorageModeShared;
     size.pos.x *= scaleFactor;
     size.pos.y *= scaleFactor;
     id<MTLTexture> target = [metal_device newTextureWithDescriptor:desc];

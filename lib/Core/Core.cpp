@@ -134,6 +134,10 @@ void FSPath::parse(const Core::String & str){
         buffer_ptr = buffer;
     };
     
+    auto isAlnumAndOther = [&](char c){
+        return isalnum(c) ||  (c == '-') || (c == '_');
+    };
+    
     char c;
     /// A Boolean to decide whether to continue!
     bool cont = true;
@@ -166,10 +170,10 @@ void FSPath::parse(const Core::String & str){
                 break;
             }
             default : {
-                if(isalnum(c)){
+                if(isAlnumAndOther(c)){
                     *buffer_ptr = c;
                     ++buffer_ptr;
-                    if(!isalnum(ahead_char())){
+                    if(!isAlnumAndOther(ahead_char())){
                         clear_buffer(Token::ID);
                     };
                 };

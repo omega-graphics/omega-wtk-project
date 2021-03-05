@@ -46,6 +46,7 @@ namespace OmegaWTK::Composition {
         void drawText(Core::SharedPtr<BDCompositionFont> &font, Core::String &string, Core::Rect &textRect, Core::SharedPtr<Brush> &brush);
         Core::SharedPtr<BDCompositionImage> createImageFromBitmapImage(Core::SharedPtr<Core::BitmapImage> &img, Core::Rect &newSize, unsigned v_id);
         void drawImage(Core::SharedPtr<BDCompositionImage> &img, Core::Position pos);
+        void drawImage(Core::SharedPtr<BDCompositionImage> &img, Core::FPosition pos);
     };
 
 NSColor * color_to_ns_color(Color & color);
@@ -363,20 +364,59 @@ template<class _Ty>
 void MTLBDCompositionRenderTarget<_Ty>::drawImage(Core::SharedPtr<BDCompositionImage> &img,Core::Position pos){
     MTLBDCompositionImage *mtlimg = reinterpret_cast<MTLBDCompositionImage *>(img.get());
     auto scaledRect = mtlimg->rect;
+    scaledRect.pos = {float(pos.x),float(pos.y)};
     auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
 //    scaledRect.pos.x *= scaleFactor;
-//    scaledRect.pos.y *= scaleFactor;
+//    scaledRect.pos.y *= 1.3f;
 //    scaledRect.dimen.minWidth *= scaleFactor;
 //    scaledRect.dimen.minHeight *= scaleFactor;
     
-    auto rc = triangulator->triangulateToTexturedMesh(mtlimg->rect);
+    auto rc = triangulator->triangulateToTexturedMesh(scaledRect);
     auto & mesh = *rc;
     auto & tri1 = mesh[0];
     auto & tri2 = mesh[1];
-    tri2.a.textureCoord = tri1.a.textureCoord = {0.f,1.f};
-    tri1.b.textureCoord = {1.f,1.f};
-    tri2.b.textureCoord = {0.f,0.f};
-    tri2.c.textureCoord = tri1.c.textureCoord = {1.f,0.f};
+    tri2.a.textureCoord = tri1.a.textureCoord = {0.f,0.f};
+    tri1.b.textureCoord = {1.f,0.f};
+    tri2.b.textureCoord = {0.f,1.f};
+    tri2.c.textureCoord = tri1.c.textureCoord = {1.f,1.f};
+    id<MTLBuffer> vertexBuffer = textured_mesh_to_mtl_vertex_buffer(rc.get(),device->metal_device);
+    vertexBuffers.push_back(vertexBuffer);
+    auto _v_id = vertexBuffers.size()-1;
+
+    textures.insert(std::make_pair(_v_id,mtlimg->img));
+
+    RenderPipeline rp;
+    rp.pipelineState = device->texture2DPrimitive;
+    rp.setupCallback = [=](id<MTLRenderCommandEncoder> encoder,unsigned v_id){
+        [encoder setLabel:@"Textured Rectangle Pipeline"];
+        [encoder setVertexBuffer:vertexBuffers[v_id] offset:0 atIndex:OMEGAWTK_METAL_VERICES_BUFFER];
+        [encoder setFragmentTexture:textures[v_id] atIndex:OMEGAWTK_METAL_TEXTURE_BUFFER];
+        [encoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:6];
+        textures.erase(textures.find(v_id));
+    };
+
+    renderPasses.push(std::move(rp));
+};
+
+template<class _Ty>
+void MTLBDCompositionRenderTarget<_Ty>::drawImage(Core::SharedPtr<BDCompositionImage> &img,Core::FPosition pos){
+    MTLBDCompositionImage *mtlimg = reinterpret_cast<MTLBDCompositionImage *>(img.get());
+    auto scaledRect = mtlimg->rect;
+    scaledRect.pos = pos;
+    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+//    scaledRect.pos.x *= scaleFactor;
+//    scaledRect.pos.y *= 1.3f;
+//    scaledRect.dimen.minWidth *= scaleFactor;
+//    scaledRect.dimen.minHeight *= scaleFactor;
+    
+    auto rc = triangulator->triangulateToTexturedMesh(scaledRect);
+    auto & mesh = *rc;
+    auto & tri1 = mesh[0];
+    auto & tri2 = mesh[1];
+    tri2.a.textureCoord = tri1.a.textureCoord = {0.f,0.f};
+    tri1.b.textureCoord = {1.f,0.f};
+    tri2.b.textureCoord = {0.f,1.f};
+    tri2.c.textureCoord = tri1.c.textureCoord = {1.f,1.f};
     id<MTLBuffer> vertexBuffer = textured_mesh_to_mtl_vertex_buffer(rc.get(),device->metal_device);
     vertexBuffers.push_back(vertexBuffer);
     auto _v_id = vertexBuffers.size()-1;

@@ -13,13 +13,13 @@
     if(self = [super initWithFrame:rect]){
         self.wantsLayer = YES;
         self.layer = [CALayer layer];
-        self.layer.backgroundColor = [NSColor blueColor].CGColor;
+//        self.layer.backgroundColor = [NSColor blueColor].CGColor;
         self.layer.masksToBounds = YES;
         self.layer.frame = rect;
         NSLog(@"Old Origin: { x:%f, y:%f}",self.layer.anchorPoint.x,self.layer.anchorPoint.y);
         self.layer.anchorPoint = CGPointMake(0.0,0.0);
         self.layer.position = rect.origin;
-        self.layer.contentsScale = [NSScreen mainScreen].backingScaleFactor;
+        self.layer.contentsScale = 1.0f;
         NSLog(@"New Origin: { x:%f, y:%f}",self.layer.anchorPoint.x,self.layer.anchorPoint.y);
         _delegate = delegate;
     };

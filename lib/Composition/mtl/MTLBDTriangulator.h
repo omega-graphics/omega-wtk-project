@@ -15,6 +15,7 @@ class MTLBDTriangulator {
     Core::Math::Point2D getRenderTargetCenter();
     CGFloat scaleFactor;
 public:
+    bool isImageTarget = false;
     template<typename _Vertex_Ty>
     struct Triangle {
         _Vertex_Ty a;

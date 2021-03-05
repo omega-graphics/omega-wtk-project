@@ -278,21 +278,21 @@ class PNGCodec : public ImgCodec {
                data = new char[(header->width * header->height * header->bitDepth * header->channels)/8];
                unsigned int stride = (header->width * header->bitDepth * header->channels)/8;
                
-               #ifdef TARGET_MACOS
-               for(size_t i = 0;i < header->height;i++){
-                   png_uint_32 ptr = (header->height - i - 1) * stride;
-                    /// Read from bottom to Top!
-                   rowPtrs[i] = (png_bytep)data + ptr;
-               };
-               #endif 
+//               #ifdef TARGET_MACOS
+//               for(size_t i = 0;i < header->height;i++){
+//                   png_uint_32 ptr = (header->height - i - 1) * stride;
+//                    /// Read from bottom to Top!
+//                   rowPtrs[i] = (png_bytep)data + ptr;
+//               };
+//               #endif
 
-               #ifdef TARGET_WIN32
+               // #ifdef TARGET_WIN32
                for(size_t i = 0;i < header->height;i++){
                    png_uint_32 ptr = (header->height - i - 1) * stride;
                    /// Read from top to bottom!
                    rowPtrs[header->height - 1 - i] = (png_bytep)data + ptr;
                };
-               #endif
+               // #endif
 
                png_read_image(png_ptr,rowPtrs);
                

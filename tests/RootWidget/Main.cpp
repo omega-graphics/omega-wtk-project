@@ -40,7 +40,8 @@ public:
         using namespace Composition;
         auto rootLayer = rootView->getLayerTreeLimb()->getRootLayer();
         auto layerStyle = make<LayerStyle>();
-        layerStyle->add(VISUAL_RECT(Rect(0,0,100,100),ColorBrush(Composition::Color::Red)));
+        layerStyle->add(VISUAL_RECT(Rect(0,0,100,100),ColorBrush(Composition::Color::Green)));
+//        layerStyle->add(VISUAL_IMG(IMPORT_IMG("test.png"),Rect(0,0,300,300)));
 //        rootLayer->setBackgroundColor(Composition::Color::Blue);
         //        rootLayer->drawRect(Rect(0,0,100,100),Composition::ColorBrush(Composition::Color::Red),Composition::Border(black,5));
         //          rootLayer->drawRoundedRect(RoundedRect(0,0,200,200,25,25),Composition::ColorBrush(Composition::Color::Green));
@@ -104,8 +105,8 @@ int omegaWTKMain(AppInst *app)
     
     std::cout << path.serialize() << std::endl;
 
-    auto widget = make<MyWidget>(MyWidget({{0,0},{200,200}}));
-    auto widget2 = make<MyWidget>(MyWidget({{400,0},{200,200}}));
+    auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}}));
+    auto widget2 = make<MyWidget>(MyWidget({{500,0},{400,400}}));
     widget->show();
     widget2->show();
 

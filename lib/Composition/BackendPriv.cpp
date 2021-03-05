@@ -80,7 +80,7 @@ namespace OmegaWTK::Composition {
         rootImgTarget->clear(rootLayer->style->background);
         auto __visual_it = rootLayer->style->visuals.begin();
         while(__visual_it != rootLayer->style->visuals.end()){
-            drawVisual(rootImgTarget.get(),__visual_it->get());
+            drawVisual(rootImgTarget.get(),__visual_it->get(),false);
             ++__visual_it;
         };
         rootImgTarget->commit();
@@ -97,7 +97,7 @@ namespace OmegaWTK::Composition {
                 imgTarget->clear(layer->style->background);
                 auto __visual_it = layer->style->visuals.begin();
                 while(__visual_it != layer->style->visuals.end()){
-                    drawVisual(imgTarget.get(),__visual_it->get());
+                    drawVisual(imgTarget.get(),__visual_it->get(),false);
                     ++__visual_it;
                 };
                 imgTarget->commit();

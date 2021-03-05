@@ -18,8 +18,8 @@ void MTLBDTriangulator::triangulateRect(Core::FRect rect,SolidColor2DMesh &res){
 //    NSLog(@"Target Center: x:%i , y:%i",center.x,center.y);
     NSLog(@"Scale Factor:%f",scaleFactor);
     NSLog(@"Coords: x:%f, y:%f, w:%f, h:%f",rect.pos.x,rect.pos.y,rect.dimen.minWidth,rect.dimen.minHeight);
-    float mtl_coord_x = (rect.pos.x * scaleFactor)/(float(targetFrame.dimen.minWidth)) - (1.f);
-    float mtl_coord_y = (rect.pos.y * scaleFactor)/(float(targetFrame.dimen.minHeight)) - (1.f);
+    float mtl_coord_x = (rect.pos.x)/(float(targetFrame.dimen.minWidth)) - (1.f);
+    float mtl_coord_y = (rect.pos.y)/(float(targetFrame.dimen.minHeight)) - (1.f);
     
     float mtl_height = (rect.dimen.minHeight * scaleFactor)/(float(targetFrame.dimen.minHeight));
     float mtl_width = (rect.dimen.minWidth * scaleFactor)/(float(targetFrame.dimen.minWidth));
@@ -41,17 +41,27 @@ void MTLBDTriangulator::triangulateRect(Core::FRect rect,Textured2DMesh & res){
     TexturedTriangle tri1;
     TexturedTriangle tri2;
     
+    float mtl_coord_x;
+    float mtl_coord_y;
+//    if(!isImageTarget) {
+//        NSLog(@"Image TARGET!!");
+//        mtl_coord_x = ((rect.pos.x)/(float(targetFrame.dimen.minWidth)) - 1.f);
+//        mtl_coord_y = ((rect.pos.y)/(float(targetFrame.dimen.minHeight)) - 1.f);
+//    }
+//    else {
+    mtl_coord_x = ((rect.pos.x)/(float(targetFrame.dimen.minWidth)) - 1.f);
+    mtl_coord_y = ((rect.pos.y)/(float(targetFrame.dimen.minHeight)) - 1.f);
+//    };
 //    auto center = getRenderTargetCenter();
 //    NSLog(@"Target Center: x:%i , y:%i",center.x,center.y);
     NSLog(@"Scale Factor:%f",scaleFactor);
 //    NSLog(@"Coords: x:%i, y:%i, w:%u, h:%u",rect.pos.x,rect.pos.y,rect.dimen.minWidth,rect.dimen.minHeight);
-    float mtl_coord_x = (rect.pos.x)/(float(targetFrame.dimen.minWidth)) - 1.f;
-    float mtl_coord_y = (rect.pos.y)/(float(targetFrame.dimen.minHeight)) - 1.f;
     
-    float mtl_height = (rect.dimen.minHeight)/(float(targetFrame.dimen.minHeight));
-    float mtl_width = (rect.dimen.minWidth)/(float(targetFrame.dimen.minWidth));
     
-//    NSLog(@"Metal Coords: x:%f , y:%f, w:%f , h:%f",mtl_coord_x,mtl_coord_y,mtl_width,mtl_height);
+    float mtl_height = (rect.dimen.minHeight * scaleFactor)/(float(targetFrame.dimen.minHeight));
+    float mtl_width = (rect.dimen.minWidth * scaleFactor)/(float(targetFrame.dimen.minWidth));
+    
+    NSLog(@"Metal Coords: x:%f , y:%f, w:%f , h:%f",mtl_coord_x,mtl_coord_y,mtl_width,mtl_height);
     
     tri2.a.position = tri1.a.position = {mtl_coord_x,mtl_coord_y + mtl_height};
     
