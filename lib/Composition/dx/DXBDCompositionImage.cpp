@@ -2,7 +2,7 @@
 #include "DXBDCompositionRenderTarget.h"
 
 namespace OmegaWTK::Composition {
-DXBDCompositionImage::DXBDCompositionImage(Core::SharedPtr<Core::BitmapImage> & _img,Core::Rect & rect,DXBDCompositionLayerRenderTarget *renderTarget,ID2D1Image *img):BDCompositionImage(_img),layerRenderTarget(renderTarget),createdByImageRenderTarget(false),createdByLayerRenderTarget(true),createdFromBitmap(true),rect(rect),native_image(img){
+DXBDCompositionImage::DXBDCompositionImage(Core::SharedPtr<Core::BitmapImage> & _img,Core::Rect & rect,DXBDCompositionViewRenderTarget *renderTarget,ID2D1Image *img):BDCompositionImage(_img),viewRenderTarget(renderTarget),createdByImageRenderTarget(false),createdByLayerRenderTarget(true),createdFromBitmap(true),rect(rect),native_image(img){
 
 };
 
@@ -10,7 +10,7 @@ DXBDCompositionImage::DXBDCompositionImage(Core::SharedPtr<Core::BitmapImage> & 
 
 };
 
-DXBDCompositionImage::DXBDCompositionImage(Core::Rect & rect,DXBDCompositionLayerRenderTarget *renderTarget,ID2D1Image *img):BDCompositionImage(),layerRenderTarget(renderTarget),createdByImageRenderTarget(false),createdByLayerRenderTarget(true),createdFromBitmap(false),rect(rect),native_image(img){
+DXBDCompositionImage::DXBDCompositionImage(Core::Rect & rect,DXBDCompositionViewRenderTarget *renderTarget,ID2D1Image *img):BDCompositionImage(),viewRenderTarget(renderTarget),createdByImageRenderTarget(false),createdByLayerRenderTarget(true),createdFromBitmap(false),rect(rect),native_image(img){
 
 };
 
@@ -18,7 +18,7 @@ DXBDCompositionImage::DXBDCompositionImage(Core::Rect & rect,DXBDCompositionImag
 
 };
 
-Core::SharedPtr<BDCompositionImage> DXBDCompositionImage::Create(Core::SharedPtr<Core::BitmapImage> & _img,Core::Rect & rect,DXBDCompositionLayerRenderTarget *renderTarget,ID2D1Image *img){
+Core::SharedPtr<BDCompositionImage> DXBDCompositionImage::Create(Core::SharedPtr<Core::BitmapImage> & _img,Core::Rect & rect,DXBDCompositionViewRenderTarget *renderTarget,ID2D1Image *img){
     return std::make_shared<DXBDCompositionImage>(_img,rect,renderTarget,img);
 };
 
@@ -26,7 +26,7 @@ Core::SharedPtr<BDCompositionImage> DXBDCompositionImage::Create(Core::SharedPtr
     return std::make_shared<DXBDCompositionImage>(_img,rect,renderTarget,img);
 };
 
-Core::SharedPtr<BDCompositionImage> DXBDCompositionImage::Create(Core::Rect & rect,DXBDCompositionLayerRenderTarget *renderTarget,ID2D1Image *img){
+Core::SharedPtr<BDCompositionImage> DXBDCompositionImage::Create(Core::Rect & rect,DXBDCompositionViewRenderTarget *renderTarget,ID2D1Image *img){
     return std::make_shared<DXBDCompositionImage>(rect,renderTarget,img);
 };
 
@@ -36,7 +36,7 @@ Core::SharedPtr<BDCompositionImage> DXBDCompositionImage::Create(Core::Rect & re
 
 DXBDCompositionRenderTarget *DXBDCompositionImage::getTarget(){
     if(createdByLayerRenderTarget)
-        return (DXBDCompositionRenderTarget *)layerRenderTarget;
+        return (DXBDCompositionRenderTarget *)viewRenderTarget;
     else 
         return (DXBDCompositionRenderTarget *)imageRenderTarget;
 };
@@ -94,9 +94,9 @@ void DXBDCompositionImage::redoImage(){
 
 };
 
-void DXBDCompositionImage::applyEffect(VisualEffect &effect){
+// void DXBDCompositionImage::applyEffect(LayerEffect &effect){
     
-};
+// };
 
 DXGI_FORMAT computePixelFormat(unsigned bitDepth,unsigned channelCount,bool isrgb){
             // std::string message = "BitDepth :" + std::to_string(bitDepth) + "ChannelCount:" + std::to_string(channelCount);

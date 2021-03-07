@@ -22,10 +22,10 @@ protected:
 public:
     // BDCompositionDevice(){};
     static Core::SharedPtr<BDCompositionDevice> Create();
-    /**
-     Creates a Render Target for a Composition::Layer
-     */
-    virtual Core::SharedPtr<BDCompositionViewRenderTarget> makeViewRenderTarget(Layer *layer) = 0;
+    // /**
+    //  Creates a Render Target for a Composition::Layer
+    //  */
+    // virtual Core::SharedPtr<BDCompositionViewRenderTarget> makeViewRenderTarget(Layer *layer) = 0;
     /**
      Creates a Render Target for a `new` BDCompositionImage
      */

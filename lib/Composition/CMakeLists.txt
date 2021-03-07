@@ -42,6 +42,12 @@ add_omega_wtk_lib(
 target_include_directories("omegaWTKComposition" PRIVATE "${CMAKE_SOURCE_DIR}/lib/Native/private_include")
 
 if(TARGET_WIN32)
+    message("Windows Ver:${CMAKE_HOST_SYSTEM_VERSION}")
+    if(${CMAKE_HOST_SYSTEM_VERSION} GREATER_EQUAL 10)
+        target_compile_definitions("omegaWTKComposition" PRIVATE DIRECT3D_12)
+    # elseif(${CMAKE_HOST_SYSTEM_VERSION} LESS 10)
+
+    endif()
     # set(COMPOSITION_WIN_SOURCES "DirectXBackend.h" "DirectXBackend.cpp" "DCVisualTree.h" "DCVisualTree.cpp")
     set(COMPOSITION_WIN_SOURCES 
     "DXBDCompositionDevice.h" 
@@ -51,7 +57,9 @@ if(TARGET_WIN32)
     "DXBDCompositionImage.h" 
     "DXBDCompositionImage.cpp" 
     "DXBDCompositionFontFactory.h" 
-    "DXBDCompositionFontFactory.cpp")
+    "DXBDCompositionFontFactory.cpp"
+    "DCVisualTree.h"
+    "DCVisualTree.cpp")
     list(TRANSFORM COMPOSITION_WIN_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/dx/")
     target_sources("omegaWTKComposition" PRIVATE ${COMPOSITION_WIN_SOURCES})
 endif()

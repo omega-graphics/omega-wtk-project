@@ -121,7 +121,7 @@ namespace OmegaWTK::Native::Win {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd,&ps);
 
-            parentLayer->redraw();
+            layerTreelimb->redraw();
 
             EndPaint(hwnd,&ps);
             break;

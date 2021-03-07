@@ -10,6 +10,7 @@ namespace OmegaWTK::Composition {
     template<class _Parent>
     class IDXBDCompositionRenderTarget : public _Parent {
         protected:
+        UINT dpi;
         HRESULT hr;
         DXBDCompositionDevice *device;
         Core::UniqueComPtr<ID2D1DeviceContext> direct2d_device_context;
@@ -24,9 +25,12 @@ namespace OmegaWTK::Composition {
         bool needsDeviceContext(){
             return recreateDeviceContext;
         };
-        IDXBDCompositionRenderTarget(DXBDCompositionDevice *device):device(device){};
+        IDXBDCompositionRenderTarget(DXBDCompositionDevice *device):device(device){
+            dpi = GetDpiFromDpiAwarenessContext(GetThreadDpiAwarenessContext());
+        };
         ~IDXBDCompositionRenderTarget();
         void clear(Color &clearColor);
+        void setNewDpi(UINT dpi){ this->dpi = dpi;};
         virtual void frameRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush, unsigned int width) = 0;
         virtual void fillRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush) = 0;
         virtual void frameRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush, unsigned int width) = 0;
@@ -37,10 +41,14 @@ namespace OmegaWTK::Composition {
         virtual void commit() = 0;
     };
 
-    class DXBDCompositionLayerRenderTarget : public IDXBDCompositionRenderTarget<BDCompositionLayerRenderTarget> {
+    class DXBDCompositionViewRenderTarget : public IDXBDCompositionRenderTarget<BDCompositionViewRenderTarget> {
         bool recreateSwapChain;
-          Native::Win::HWNDItem *hwndItem;
+        Native::Win::HWNDItem *hwndItem;
+        #ifdef DIRECT3D_12
+        Core::UniqueComPtr<IDXGISwapChain2> dxgi_swap_chain;
+        #else
         Core::UniqueComPtr<IDXGISwapChain1> dxgi_swap_chain;
+        #endif
         Core::UniqueComPtr<ID2D1Bitmap1> direct2d_bitmap;
         Core::UniqueComPtr<IDXGISurface> dxgi_surface;
     public:
@@ -56,16 +64,32 @@ namespace OmegaWTK::Composition {
          Core::SharedPtr<BDCompositionImage> createImageFromBitmapImage(Core::SharedPtr<Core::BitmapImage> &img, Core::Rect &newSize, unsigned int v_id);
          void drawImage(Core::SharedPtr<BDCompositionImage> &img, Core::Position pos);
          void drawText(Core::SharedPtr<BDCompositionFont> &font, Core::String &string, Core::Rect &textRect, Core::SharedPtr<Brush> &brush);
-        DXBDCompositionLayerRenderTarget(DXBDCompositionDevice * device,Native::Win::HWNDItem *hwndItem);
-        static Core::SharedPtr<BDCompositionLayerRenderTarget> Create(DXBDCompositionDevice *device,Native::Win::HWNDItem *item);
-        ~DXBDCompositionLayerRenderTarget();
+        DXBDCompositionViewRenderTarget(DXBDCompositionDevice * device,Native::Win::HWNDItem *hwndItem);
+        static Core::SharedPtr<BDCompositionViewRenderTarget> Create(DXBDCompositionDevice *device,Native::Win::HWNDItem *item);
+        ~DXBDCompositionViewRenderTarget();
         void commit();
     };
     class DXBDCompositionImageRenderTarget : public IDXBDCompositionRenderTarget<BDCompositionImageRenderTarget> {
+        bool recreateSwapChain;
         Core::Rect rect;
-        ID2D1Image *img;
+         bool needsSwapChain(){
+            return recreateSwapChain;
+        };
+        #ifdef DIRECT3D_12
+        Core::UniqueComPtr<IDXGISwapChain2> dxgi_swap_chain;
+        #else
+        Core::UniqueComPtr<IDXGISwapChain1> dxgi_swap_chain;
+        #endif
+        Core::UniqueComPtr<ID2D1Bitmap> first_target;
+        Core::UniqueComPtr<ID2D1Bitmap1> direct2d_bitmap;
+        Core::UniqueComPtr<IDXGISurface> dxgi_surface;
+        friend class DCVisualTree;
     public:
+        #ifdef TARGET_WIN32
+            void applyEffectToImage(LayerEffect &effect);
+        #endif
          void redoDeviceContext();
+          void redoSwapChain();
          void frameRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush, unsigned int width);
          void frameRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush, unsigned int width);
          void fillRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush);
@@ -73,11 +97,11 @@ namespace OmegaWTK::Composition {
          Core::SharedPtr<BDCompositionImage> createImageFromBitmapImage(Core::SharedPtr<Core::BitmapImage> &img, Core::Rect &newSize, unsigned int v_id);
          void drawImage(Core::SharedPtr<BDCompositionImage> &img, Core::Position pos);
          void drawText(Core::SharedPtr<BDCompositionFont> &font, Core::String &string, Core::Rect &textRect, Core::SharedPtr<Brush> &brush);
-        DXBDCompositionImageRenderTarget(DXBDCompositionDevice * device,Core::Rect & rect,ID2D1Image *img,ID2D1DeviceContext *device_context);
-        static Core::SharedPtr<BDCompositionImageRenderTarget> Create(DXBDCompositionDevice *device,Core::Rect & rect,ID2D1Image *img,ID2D1DeviceContext *device_context);
+        DXBDCompositionImageRenderTarget(DXBDCompositionDevice * device,Core::Rect & rect);
+        static Core::SharedPtr<BDCompositionImageRenderTarget> Create(DXBDCompositionDevice *device,Core::Rect & rect);
         ~DXBDCompositionImageRenderTarget();
         void commit();
-        Core::SharedPtr<BDCompositionImage> getImg();
+        // Core::SharedPtr<BDCompositionImage> getImg();
     };
 
     template<class _Ty>

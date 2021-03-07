@@ -60,12 +60,17 @@ class BDCompositionImageRenderTarget : public BDCompositionRenderTarget {
     
 public:
 #ifdef TARGET_WIN32
+    virtual bool needsSwapChain() = 0;
     virtual void redoDeviceContext() = 0;
+    virtual void redoSwapChain() = 0;
+    virtual void applyEffectToImage(LayerEffect &effect) = 0;
 #endif
     /**
      Gets the underlying image!
      */
+    #if !defined(TARGET_WIN32)
     virtual Core::SharedPtr<BDCompositionImage> getImg() = 0;
+    #endif
 };
 
 }

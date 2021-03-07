@@ -1,75 +1,77 @@
 #include "DCVisualTree.h"
 #include <iostream>
+#include "DXBDCompositionRenderTarget.h"
 
 namespace OmegaWTK::Composition {
     
-    DCVisual::DCVisual(IDCompositionVisual *ptr,bool _layerChildrenAbove):native(ptr),layerChildrenAbove(_layerChildrenAbove){
+    DCVisualTree::DCVisualTree(DXBDCompositionDevice *device):device(device),hwndTarget(nullptr){};
 
-    };
-    
-    void DCVisual::setContent(IDCompositionSurface *surface_ptr){
-        native->SetContent(surface_ptr);
-        content = surface_ptr;
+    DCVisualTree::Visual::~Visual(){
+        visual->RemoveAllVisuals();
+        Core::SafeRelease(&visual);
     };
 
-    void DCVisual::addChild(DCVisual *ptr){
-        BOOL placeAbove = layerChildrenAbove;
-        HRESULT hr = native->AddVisual(ptr->native.Get(),placeAbove,native.Get());
-        if(!SUCCEEDED(hr))
-            std::cout << "ERROR:" << GetLastError() << std::endl;
-        children.push_back(ptr);
+    Core::SharedPtr<BDCompositionVisualTree> DCVisualTree::Create(DXBDCompositionDevice *device){
+        return std::make_shared<DCVisualTree>(device);
     };
 
-    void DCVisual::removeChild(DCVisual *ptr){
-        HRESULT hr = native->RemoveVisual(ptr->native.Get());
-        if(!SUCCEEDED(hr))
-            std::cout << "ERROR:" << GetLastError() << std::endl;
-        auto it = children.begin();
-        while(it != children.end()){
-            auto test = *it;
-            if(test == ptr){
-                children.erase(it);
+    Core::SharedPtr<BDCompositionVisualTree::Visual> DCVisualTree::makeVisual(Core::SharedPtr<BDCompositionImageRenderTarget> &img){
+        DXBDCompositionImageRenderTarget *dxImgTarget = (DXBDCompositionImageRenderTarget *)img.get();
+        IDCompositionVisual2 *v;
+
+        HRESULT hr;
+
+        Visual rc;
+        hr = device->dcomp_device_3->CreateVisual(&v);
+        if(FAILED(hr)){
+
+        };
+
+        hr = v->SetContent(dxImgTarget->dxgi_swap_chain.get());
+
+        rc.visual = v;
+        rc.img = img;
+        return std::make_shared<Visual>(rc);
+    };
+
+    void DCVisualTree::setRootVisual(Core::SharedPtr<Parent::Visual> &visual){
+        root_v = visual;
+    };
+
+    void DCVisualTree::replaceRootVisual(Core::SharedPtr<Parent::Visual> &visual){
+        root_v.reset();
+        root_v = visual;
+    };
+
+    void DCVisualTree::replaceVisualWithTargetPtr(Core::SharedPtr<BDCompositionImageRenderTarget> &imgTarget,Core::SharedPtr<Parent::Visual> & visual){
+        for(auto & v : body){
+            Visual *_v = (Visual *)v.get();
+            if(_v->img.get() == imgTarget.get()){
+                v.reset();
+                v = visual;
                 break;
             };
         };
-
     };
 
-    DCVisual * DCVisual::getChildAtIdx(unsigned idx){
-        auto it = children.begin();
-        while(it != children.end()){
-            if(idx == 0){
-                return *it;
-                break;
-            };
-            ++it;
-            --idx;
+    void DCVisualTree::addVisual(Core::SharedPtr<Parent::Visual> &visual){
+        HRESULT hr;
+        UINT dpi = GetDpiForWindow(GetForegroundWindow());
+        FLOAT scaleFactor = FLOAT(dpi)/96.f;
+        Visual *root = (Visual *)root_v.get();
+        Visual *child = (Visual *)visual.get();
+        hr = root->visual->AddVisual(child->visual,TRUE,NULL);
+        if(FAILED(hr)){
+
         };
-        return nullptr;
-    };
+        hr = child->visual->SetOffsetX(child->pos.x * scaleFactor);
+        if(FAILED(hr)){
 
-    DCVisual::~DCVisual(){
-        native->RemoveAllVisuals();
-        auto n_ptr =native.Detach();
-        auto c_ptr = content.Detach();
-        Core::SafeRelease(&n_ptr);
-        Core::SafeRelease(&c_ptr);
-    };
-
-    DCVisualTree::DCVisualTree(DCVisual *ptr):root(ptr){
-
-    };
-
-    void DCVisualTree::_recurse_trav(DCVisualTreeTraversalCallback &callback,DCVisual *parent){
-        for(auto & child : parent->children){
-            callback(child);
-            if(!child->children.empty())
-                _recurse_trav(callback,child);
         };
-    };
+        hr = child->visual->SetOffsetY(child->pos.y * scaleFactor);
+        if(FAILED(hr)){
 
-    void DCVisualTree::traverse(DCVisualTreeTraversalCallback callback){
-        _recurse_trav(callback,root.get());
+        };
     };
 
 };
