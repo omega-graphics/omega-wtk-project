@@ -85,6 +85,7 @@ namespace OmegaWTK::Composition {
         Core::UniqueComPtr<ID2D1Bitmap1> direct2d_bitmap;
         Core::UniqueComPtr<IDXGISurface1> dxgi_surface;
         friend class DCVisualTree;
+        friend class DXBDCompositionDevice;
     public:
         #ifdef TARGET_WIN32
             void applyEffectToImage(LayerEffect &effect);

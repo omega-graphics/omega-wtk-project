@@ -68,7 +68,9 @@ void LayerTree::setRootLimb(SharedHandle<Limb> & limb){
     rootLimb = limb;
 };
 
-LayerTree::Limb::Limb(const Core::Rect &rect,Compositor *compPtr,ViewRenderTarget *renderTarget):limbRoot(new Layer(rect,compPtr)),enabled(true),renderTarget(renderTarget){};
+LayerTree::Limb::Limb(const Core::Rect &rect,Compositor *compPtr,ViewRenderTarget *renderTarget):limbRoot(new Layer(rect,compPtr)),enabled(true),renderTarget(renderTarget){
+    renderTarget->getNativePtr()->setLayerTreeLimb(this);
+};
 
 void LayerTree::Limb::addLayer(SharedHandle<Layer> layer){
     limbRoot->addSubLayer(layer);

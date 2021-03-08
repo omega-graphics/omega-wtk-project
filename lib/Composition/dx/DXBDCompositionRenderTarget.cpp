@@ -392,13 +392,13 @@ namespace OmegaWTK::Composition {
             MessageBoxA(HWND_DESKTOP,"Failed to Create Bitmap from DXGI Surface",NULL, MB_OK);
         };
 
-        hr = direct2d_device_context->CreateBitmap(D2D1::SizeU(rect.dimen.minWidth,rect.dimen.minHeight),D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&first_target);
-        if(FAILED(hr)){
-            /// Handle Error!
-            MessageBoxA(HWND_DESKTOP,"Failed to Create Bitmap",NULL, MB_OK);
-        };
+        // hr = direct2d_device_context->CreateBitmap(D2D1::SizeU(rect.dimen.minWidth,rect.dimen.minHeight),D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&first_target);
+        // if(FAILED(hr)){
+        //     /// Handle Error!
+        //     MessageBoxA(HWND_DESKTOP,"Failed to Create Bitmap",NULL, MB_OK);
+        // };
 
-        direct2d_device_context->SetTarget(first_target.get());
+        direct2d_device_context->SetTarget(direct2d_bitmap.get());
 
         recreateSwapChain = false;
         recreateDeviceContext = false;
@@ -508,21 +508,27 @@ namespace OmegaWTK::Composition {
             recreateDeviceContext = true;
         }
         else {
-            direct2d_device_context->SetTarget(direct2d_bitmap.get());
-            direct2d_device_context->BeginDraw();
-            direct2d_device_context->DrawImage(first_target.get());
-            hr = direct2d_device_context->EndDraw();
-            if(FAILED(hr) || hr == D2DERR_RECREATE_TARGET){
+           hr = dcomp_surface->EndDraw();
+           if(FAILED(hr) || hr == DCOMPOSITION_ERROR_SURFACE_NOT_BEING_RENDERED){
                 Core::SafeRelease(&direct2d_device_context);
                 Core::SafeRelease(&direct2d_bitmap);
-                recreateDeviceContext = true;
-            }
-            else {
-                hr = dcomp_surface->EndDraw();
-                if(FAILED(hr) || hr == DCOMPOSITION_ERROR_SURFACE_NOT_BEING_RENDERED){
-                    Core::SafeRelease(&direct2d_device_context);
-                    Core::SafeRelease(&direct2d_bitmap);
-                };
+                Core::SafeRelease(&dcomp_surface);
+            };
+            // direct2d_device_context->SetTarget(direct2d_bitmap.get());
+            // direct2d_device_context->BeginDraw();
+            // direct2d_device_context->DrawImage(first_target.get());
+            // hr = direct2d_device_context->EndDraw();
+            // if(FAILED(hr) || hr == D2DERR_RECREATE_TARGET){
+            //     Core::SafeRelease(&direct2d_device_context);
+            //     Core::SafeRelease(&direct2d_bitmap);
+            //     recreateDeviceContext = true;
+            // }
+            // else {
+            //     hr = dcomp_surface->EndDraw();
+            //     if(FAILED(hr) || hr == DCOMPOSITION_ERROR_SURFACE_NOT_BEING_RENDERED){
+            //         Core::SafeRelease(&direct2d_device_context);
+            //         Core::SafeRelease(&direct2d_bitmap);
+            //     };
             }
             Core::SafeRelease(&first_target);
             // hr = dxgi_swap_chain_1->Present1(1,0,&params);
@@ -539,7 +545,6 @@ namespace OmegaWTK::Composition {
             //     recreateDeviceContext = false;
             //     newTarget = false;
             // }
-        }
     };
 
     // Core::SharedPtr<BDCompositionImage> DXBDCompositionImageRenderTarget::getImg(){

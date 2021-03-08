@@ -1,0 +1,81 @@
+import("//gn/OmegaWTK.gni")
+
+declare_args(){
+    directx_12 = true
+}
+
+omega_wtk_include_dir = "//include/omegaWTK"
+
+omega_wtk_static_lib("omegaWTKCore"){
+    sources = [
+        "include/omegaWTK/Core/Core.h",
+        "include/omegaWTK/Core/Math.h",
+        "lib/Core/Core.cpp"
+    ]
+    if(is_mac){
+        sources += [
+            "lib/Core/FSCocoa.mm"
+        ]
+    }
+}
+
+omega_wtk_static_lib("omegaWTKNative"){
+    sources = [
+        # Headers
+        "$omega_wtk_include_dir/Native/NativeApp.h",
+        "$omega_wtk_include_dir/Native/NativeDialog.h",
+        "$omega_wtk_include_dir/Native/NativeEvent.h",
+        "$omega_wtk_include_dir/Native/NativeItem.h",
+        "$omega_wtk_include_dir/Native/NativeMenu.h",
+        "$omega_wtk_include_dir/Native/NativeWindow.h",
+        # Sources
+        "lib/Native/NativeApp.cpp",
+        "lib/Native/NativeDialog.cpp",
+        "lib/Native/NativeItem.cpp",
+        "lib/Native/NativeMenu.cpp",
+        "lib/Native/NativeWindow.cpp"
+    ]
+    include_dirs = [
+        "//lib/Native/private_include"
+    ]
+    if(is_mac){
+        sources += [
+
+        ]
+    }
+    else if(is_windows){
+        defines = [
+            "WINDOWS_PRIVATE"
+        ]
+        win_source_prefix = "//lib/Native/win"
+        sources += [
+            "$win_source_prefix/HWNDFactory.h",
+            "$win_source_prefix/HWNDFactory.cpp",
+            "$win_source_prefix/HWNDItem.cpp",
+            "$win_source_prefix/MakeItem.cpp",
+            "$win_source_prefix/MakeItem.h",
+            "$win_source_prefix/WinApp.h",
+            "$win_source_prefix/WinApp.cpp",
+            "$win_source_prefix/WinAppWindow.h",
+            "$win_source_prefix/WinAppWindow.cpp",
+            "$win_source_prefix/WinEvent.cpp",
+            "$win_source_prefix/WinMenu.h",
+            "$win_source_prefix/WinMenu.cpp",
+            # Headers
+            "//lib/Native/private_include/NativePrivate/win/HWNDItem.h",
+            "//lib/Native/private_include/NativePrivate/win/WinEvent.h"
+        ]
+    }
+    else {
+
+    }
+    deps = [
+        ":omegaWTKCore"
+    ]
+}
+
+omega_wtk_static_lib("omegaWTKMedia"){
+    sources = [
+        
+    ]
+}

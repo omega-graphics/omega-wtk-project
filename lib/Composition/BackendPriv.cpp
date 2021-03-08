@@ -95,35 +95,35 @@ namespace OmegaWTK::Composition {
         auto visual = visualTree->makeVisual(rootImg);
     #endif
         visualTree->setRootVisual(visual);
-        layerTargets.insert(std::make_pair(rootLayer,rootImgTarget));
-        {
-            /// TODO: Eventually Change to Branch Iteration Model!
-            auto it = currentLimb->begin();
-            while(it != currentLimb->end()){
-                Layer *layer = it->get();
-                auto imgTarget = global_device->makeImageRenderTarget(layer->getLayerRect());
-                imgTarget->clear(layer->style->background);
-                auto __visual_it = layer->style->visuals.begin();
-                while(__visual_it != layer->style->visuals.end()){
-                    drawVisual(imgTarget.get(),__visual_it->get(),false);
-                    ++__visual_it;
-                };
-                imgTarget->commit();
-        #if defined(TARGET_WIN32)
-                auto visual = visualTree->makeVisual(imgTarget);
-        #else
-                Core::SharedPtr<BDCompositionImage> rootImg = rootImgTarget->getImg();
-                auto visual = visualTree->makeVisual(rootImg);
-        #endif
-                visualTree->addVisual(visual);
-                layerTargets.insert(std::make_pair(layer,imgTarget));
-                ++it;
-            };
-        }
+        // layerTargets.insert(std::make_pair(rootLayer,rootImgTarget));
+        // {
+        //     /// TODO: Eventually Change to Branch Iteration Model!
+        //     auto it = currentLimb->begin();
+        //     while(it != currentLimb->end()){
+        //         Layer *layer = it->get();
+        //         auto imgTarget = global_device->makeImageRenderTarget(layer->getLayerRect());
+        //         imgTarget->clear(layer->style->background);
+        //         auto __visual_it = layer->style->visuals.begin();
+        //         while(__visual_it != layer->style->visuals.end()){
+        //             drawVisual(imgTarget.get(),__visual_it->get(),false);
+        //             ++__visual_it;
+        //         };
+        //         imgTarget->commit();
+        // #if defined(TARGET_WIN32)
+        //         auto visual = visualTree->makeVisual(imgTarget);
+        // #else
+        //         Core::SharedPtr<BDCompositionImage> rootImg = rootImgTarget->getImg();
+        //         auto visual = visualTree->makeVisual(rootImg);
+        // #endif
+        //         visualTree->addVisual(visual);
+        //         layerTargets.insert(std::make_pair(layer,imgTarget));
+        //         ++it;
+        //     };
+        // }
 
         MessageBoxA(HWND_DESKTOP,"Will Render Visual Tree to HWND","NOTE",MB_OK);
         
-        global_device->renderVisualTreeToView(visualTree,currentLimb->renderTarget);
+        global_device->renderVisualTreeToView(visualTree,currentLimb->renderTarget,false);
         MessageBoxA(HWND_DESKTOP,"Rendered Visual Tree to HWND","NOTE",MB_OK);
         visualTrees.insert(std::make_pair(currentLimb->renderTarget,visualTree));
     };
@@ -147,7 +147,7 @@ namespace OmegaWTK::Composition {
         rootTarget->clear(rootLayer->style->background);
         auto __visual_it = rootLayer->style->visuals.begin();
         while(__visual_it != rootLayer->style->visuals.end()){
-            drawVisual(rootTarget.get(),__visual_it->get(),false);
+            drawVisual(rootTarget.get(),__visual_it->get(),true);
             ++__visual_it;
         };
         rootTarget->commit();
@@ -172,14 +172,14 @@ namespace OmegaWTK::Composition {
             imgTarget->clear(child->style->background);
             auto __visual_it = child->style->visuals.begin();
             while(__visual_it != child->style->visuals.end()){
-                drawVisual(imgTarget.get(),__visual_it->get(),false);
+                drawVisual(imgTarget.get(),__visual_it->get(),true);
                 ++__visual_it;
             };
             rootTarget->commit();
             ++v_it;
         };
 
-        global_device->renderVisualTreeToView(tree,currentLimb->renderTarget);
+        global_device->renderVisualTreeToView(tree,currentLimb->renderTarget,true);
     };
 
 };

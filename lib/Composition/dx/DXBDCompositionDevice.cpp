@@ -175,13 +175,13 @@ namespace OmegaWTK::Composition {
     Core::SharedPtr<BDCompositionVisualTree> DXBDCompositionDevice::createVisualTree(){
         return DCVisualTree::Create(this);
     };
-    void DXBDCompositionDevice::renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> &visualTree, ViewRenderTarget *view){
+    void DXBDCompositionDevice::renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> &visualTree, ViewRenderTarget *view,bool updatePass){
         HRESULT hr;
         DCVisualTree *tree = (DCVisualTree *)visualTree.get();
         Native::Win::HWNDItem * hwndItem = (Native::Win::HWNDItem *)view->getNativePtr();
         IDCompositionTarget *target;
         if(!tree->hwndTarget.get()){
-           hr = dcomp_device_1->CreateTargetForHwnd(hwndItem->getHandle(),FALSE,&target);
+           hr = dcomp_device_1->CreateTargetForHwnd(hwndItem->hwnd,TRUE,&target);
            if(FAILED(hr)){
                MessageBoxA(HWND_DESKTOP,"Failed to Create Target For HWND","NOTE",MB_OK);
                // Handle Error
@@ -193,8 +193,39 @@ namespace OmegaWTK::Composition {
             target = tree->hwndTarget.get();
 
         DCVisualTree::Visual *rootV = (DCVisualTree::Visual *)tree->root_v.get();
+        IDCompositionVisual *v;
+        hr = dcomp_device_1->CreateVisual(&v);
+        if(FAILED(hr)){
+            MessageBoxA(HWND_DESKTOP,"Failed to Create Visual",NULL,MB_OK);
+        }
+        UINT dpi = GetDpiForWindow(hwndItem->getHandle());
+        FLOAT scaleFactor = FLOAT(dpi)/96.f;
+        hr = target->SetRoot(v);
 
-        target->SetRoot(rootV->visual);
+        if(FAILED(hr)){
+            std::stringstream ss;
+            ss << std::hex << hr;
+            MessageBoxA(HWND_DESKTOP,(std::string("Failed to Set Root Visual:") + ss.str()).c_str(),NULL,MB_OK);
+        }
+        else {
+            v->SetContent(((DXBDCompositionImageRenderTarget *)rootV->img.get())->dcomp_surface.get());
+            if(FAILED(hr)){
+                MessageBoxA(HWND_DESKTOP,"Failed to Set Visual Content","ERROR",MB_OK);
+            };
+            auto body_it = tree->body.begin();
+            while(body_it != tree->body.end()){
+                
+                auto childV = (DCVisualTree::Visual *)body_it->get();
+                hr = childV->visual->SetOffsetX(childV->pos.x * scaleFactor);
+
+                hr = childV->visual->SetOffsetY(childV->pos.y * scaleFactor);
+
+                hr = rootV->visual->AddVisual(childV->visual,FALSE,NULL);
+                
+                ++body_it;
+            };
+        };
+
         dcomp_device_1->Commit();
         // dcomp_device_1->WaitForCommitCompletion();
     };

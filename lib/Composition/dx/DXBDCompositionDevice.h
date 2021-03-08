@@ -65,7 +65,7 @@ namespace OmegaWTK::Composition {
         Core::SharedPtr<BDCompositionFontFactory> createFontFactory();
         Core::SharedPtr<BDCompositionVisualTree> createVisualTree();
         void destroyTarget(Layer *layer, Core::SharedPtr<BDCompositionRenderTarget> &target);
-        void renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> &visualTree, ViewRenderTarget *view);
+        void renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> &visualTree, ViewRenderTarget *view,bool updatePass);
     };
 };
 

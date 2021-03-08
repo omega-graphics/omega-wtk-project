@@ -42,7 +42,7 @@ public:
      Creates a Visual Tree
      */
     virtual Core::SharedPtr<BDCompositionVisualTree> createVisualTree() = 0;
-    virtual void renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> & visualTree,ViewRenderTarget *view) = 0;
+    virtual void renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> & visualTree,ViewRenderTarget *view,bool updatePass) = 0;
     virtual void destroyTarget(Layer *layer,Core::SharedPtr<BDCompositionRenderTarget> &target) = 0;
     // virtual ~BDCompositionDevice();
 };

@@ -1,0 +1,63 @@
+template("omega_wtk_static_lib"){
+    assert(defined(invoker.sources))
+    # if(is_windows){
+    #  name = target_name + ""
+    # }
+    # else {
+    #     name = target_name
+    # }
+    _defines = []
+    if(is_windows) {
+        _defines += [
+            "TARGET_WIN32"
+        ]
+    }
+    else if(is_mac){
+        _defines += [
+            "TARGET_MACOS"
+        ]
+    }
+
+    if(defined(invoker.defines)){
+        invoker.defines += _defines
+    }
+    else {
+        invoker.defines = _defines
+    }
+
+    if(defined(invoker.include_dirs)) {
+        invoker.include_dirs += [
+            "//include"
+        ]
+    }
+    else {
+        invoker.include_dirs = [
+            "//include"
+        ]
+    }
+
+    static_library(target_name){
+        forward_variables_from(invoker,"*")
+    }
+}
+
+template("omega_wtk_shared_lib"){
+    assert(defined(invoker.sources))
+    shared_library(name){
+        forward_variables_from(invoker,"*")
+    }
+}
+
+template("omega_wtk_test"){
+    assert(defined(invoker.sources))
+    if(is_windows){
+     name = target_name + ".exe"
+    }
+    else {
+        name = target_name
+    }
+    executable(name){
+        forward_variables_from(invoker,"*")
+    }
+}
+
