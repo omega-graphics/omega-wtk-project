@@ -10,6 +10,7 @@ namespace OmegaWTK::Native {
         class HWNDItem : public NativeItem {
             public:
             HWND hwnd;
+            bool enabled = false;
             protected:
             Core::Vector<HWND> raw_children;
             Core::Vector<NativeItemPtr> children;
@@ -22,10 +23,12 @@ namespace OmegaWTK::Native {
             void emitIfPossible(NativeEventPtr event);
             friend class HWNDFactory;
             void enable(){
-                ShowWindow(hwnd,SW_SHOWDEFAULT);
+                enabled = true;
+                // ShowWindow(hwnd,SW_SHOWDEFAULT);
             };
             void disable(){
-                ShowWindow(hwnd,SW_HIDE);
+                enabled = false;
+                // ShowWindow(hwnd,SW_HIDE);
             };
             void addChildNativeItem(NativeItemPtr nativeItem);
             void removeChildNativeItem(NativeItemPtr nativeItem);

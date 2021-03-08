@@ -1,10 +1,10 @@
-#include "Core.h"
+#include "omegaWTK/Core/Core.h"
 
-#ifndef OMEGAWTK_CORE_IMGCODEC_H
-#define OMEGAWTK_CORE_IMGCODEC_H
+#ifndef OMEGAWTK_MEDIA_IMGCODEC_H
+#define OMEGAWTK_MEDIA_IMGCODEC_H
 
 namespace OmegaWTK {
-    namespace Core {
+    namespace Media {
         struct ImgProfile {
             Core::String name;
             int compression_type;
@@ -12,8 +12,8 @@ namespace OmegaWTK {
         struct ImgHeader;
     
         struct BitmapImage {
-            UniquePtr<ImgProfile> profile;
-            UniquePtr<ImgHeader> header;
+            Core::UniquePtr<ImgProfile> profile;
+            Core::UniquePtr<ImgHeader> header;
             void *data;
             
             enum class ColorFormat : OPT_PARAM {
@@ -47,10 +47,10 @@ namespace OmegaWTK {
             BitmapImage::AlphaFormat alpha_format;
             size_t stride;
         };
-        SharedPtr<BitmapImage> loadImageFromFile(FSPath path);
-    #define IMPORT_IMG(img) OmegaWTK::Core::loadImageFromFile(OmegaWTK::Core::String("./assets/") + img)
+        Core::SharedPtr<BitmapImage> loadImageFromFile(FSPath path);
+    #define IMPORT_IMG(img) OmegaWTK::Media::loadImageFromFile(OmegaWTK::Core::String("./assets/") + img)
     };
-typedef Core::SharedPtr<Core::BitmapImage> SharedImageHandle;
+typedef Core::SharedPtr<Media::BitmapImage> SharedImageHandle;
 };
 
 #endif

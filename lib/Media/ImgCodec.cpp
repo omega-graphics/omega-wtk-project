@@ -1,4 +1,4 @@
-#include "omegaWTK/Core/ImgCodec.h"
+#include "omegaWTK/Media/ImgCodec.h"
 
 #include <zlib.h>
 
@@ -16,7 +16,7 @@
 
 
 
-namespace OmegaWTK::Core {
+namespace OmegaWTK::Media {
 
 #ifdef TARGET_WIN32
 #define DEFAULT_SCREEN_GAMMA 2.2
@@ -61,7 +61,7 @@ class PNGCodec : public ImgCodec {
        return png_check_sig(sig,SIG_SIZE);
     };
     
-    UniquePtr<ImgHeader> read_header(png_structp png_ptr,png_infop info_ptr){
+    Core::UniquePtr<ImgHeader> read_header(png_structp png_ptr,png_infop info_ptr){
         BitmapImage::ColorFormat colorFormat;
         BitmapImage::AlphaFormat alphaFormat;
         
@@ -122,7 +122,7 @@ class PNGCodec : public ImgCodec {
         return std::make_unique<ImgHeader>(ImgHeader({width,height,channels,bitDepth,compression_method,interlace_type,colorFormat,alphaFormat,rowBytes}));
     };
         
-    UniquePtr<ImgProfile> read_profile(png_structp png_ptr,png_infop info_ptr){
+    Core::UniquePtr<ImgProfile> read_profile(png_structp png_ptr,png_infop info_ptr){
         png_charp name;
         int compression_ty;
         png_bytep profile;
@@ -182,8 +182,8 @@ class PNGCodec : public ImgCodec {
                    std::cout << "{" << "r:" << color->red << ", g:" << color->green << ", b:" << color->blue << ", index:" << color->index << "}" << std::endl;
                };
                /// Set Info!
-               UniquePtr<ImgHeader> header = read_header(png_ptr,info_ptr);
-               UniquePtr<ImgProfile> profile = read_profile(png_ptr,info_ptr);
+               auto header = read_header(png_ptr,info_ptr);
+               auto profile = read_profile(png_ptr,info_ptr);
     //           png_read_update_info(png_ptr,info_ptr);
                /// Background Chunk!
                png_color_16p background_color;
@@ -390,7 +390,7 @@ public:
 
 
 
-UniquePtr<ImgCodec> obtainCodecForImageFormat(BitmapImage::Format &format,Core::IStream &in,BitmapImage *img){
+Core::UniquePtr<ImgCodec> obtainCodecForImageFormat(BitmapImage::Format &format,Core::IStream &in,BitmapImage *img){
     switch (format) {
         case BitmapImage::PNG:
         {
@@ -416,7 +416,7 @@ UniquePtr<ImgCodec> obtainCodecForImageFormat(BitmapImage::Format &format,Core::
    
 };
     
-    SharedPtr<BitmapImage> loadImageFromFile(FSPath path) {
+    Core::SharedPtr<BitmapImage> loadImageFromFile(FSPath path) {
         BitmapImage img;
         auto ext = path.ext();
         BitmapImage::Format f;
@@ -426,7 +426,7 @@ UniquePtr<ImgCodec> obtainCodecForImageFormat(BitmapImage::Format &format,Core::
         };
         std::ifstream in(os_corrected_path,std::ios::binary);
         if(in.is_open()){
-            UniquePtr<ImgCodec> codec = obtainCodecForImageFormat(f,in,&img);
+            Core::UniquePtr<ImgCodec> codec = obtainCodecForImageFormat(f,in,&img);
             codec->readToStorage();
             // in.close();
             // MessageBox(GetForegroundWindow(),"Img has Been Read","NOTE",MB_OK);
@@ -436,10 +436,10 @@ UniquePtr<ImgCodec> obtainCodecForImageFormat(BitmapImage::Format &format,Core::
             return std::make_shared<BitmapImage>(BitmapImage({nullptr,nullptr,nullptr}));
     };
 
-    SharedPtr<BitmapImage> loadImageFromBuffer(void *bufferData,size_t bufferSize,BitmapImage::Format f){
+    Core::SharedPtr<BitmapImage> loadImageFromBuffer(void *bufferData,size_t bufferSize,BitmapImage::Format f){
         BitmapImage img;
         std::istringstream in(std::string((char *)bufferData,bufferSize),std::ios::binary);
-        UniquePtr<ImgCodec> codec = obtainCodecForImageFormat(f,in,&img);
+        Core::UniquePtr<ImgCodec> codec = obtainCodecForImageFormat(f,in,&img);
         codec->readToStorage();
         return std::make_shared<BitmapImage>(std::move(img));
     };

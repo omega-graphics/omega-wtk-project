@@ -2,7 +2,7 @@
 #include "Color.h"
 #include "Text.h"
 #include "Brush.h"
-#include "omegaWTK/Core/ImgCodec.h"
+#include "omegaWTK/Media/ImgCodec.h"
 
 #include <algorithm>
 
@@ -88,7 +88,7 @@ namespace OmegaWTK {
             Core::Rect rect;
         } TextParams;
         typedef struct {
-            Core::SharedPtr<Core::BitmapImage> img;
+            Core::SharedPtr<Media::BitmapImage> img;
             Core::Rect rect;
         } BitmapParams;
         void * params;

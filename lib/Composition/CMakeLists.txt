@@ -36,6 +36,7 @@ add_omega_wtk_lib(
     LINK_LIBS 
     "omegaWTKCore"
     "omegaWTKNative"
+    "omegaWTKMedia"
 )
 # Exposing private_include from omegaWTKNative lib
 

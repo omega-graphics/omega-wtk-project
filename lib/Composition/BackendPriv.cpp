@@ -74,7 +74,7 @@ namespace OmegaWTK::Composition {
     };
     void BackendImpl::doWork(){
         auto visualTree = global_device->createVisualTree();
-        
+        MessageBoxA(HWND_DESKTOP,"Do Work","NOTE",MB_OK);
         Layer * rootLayer = currentLimb->limbRoot;
         auto rootImgTarget = global_device->makeImageRenderTarget(rootLayer->getLayerRect());
         rootImgTarget->clear(rootLayer->style->background);
@@ -121,6 +121,7 @@ namespace OmegaWTK::Composition {
         visualTrees.insert(std::make_pair(currentLimb->renderTarget,visualTree));
     };
     void BackendImpl::doUpdate(){
+        MessageBoxA(HWND_DESKTOP,"Do Update","NOTE",MB_OK);
         auto & tree = visualTrees[currentLimb->renderTarget];
         auto & rootTarget = layerTargets[currentLimb->limbRoot];
         auto & rootLayer = currentLimb->limbRoot;

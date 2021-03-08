@@ -210,7 +210,7 @@ namespace OmegaWTK::Composition {
         Core::SafeRelease(&_brush);
     };
 
-    Core::SharedPtr<BDCompositionImage> DXBDCompositionViewRenderTarget::createImageFromBitmapImage(Core::SharedPtr<Core::BitmapImage> &img,Core::Rect &newSize,unsigned v_id){
+    Core::SharedPtr<BDCompositionImage> DXBDCompositionViewRenderTarget::createImageFromBitmapImage(Core::SharedPtr<Media::BitmapImage> &img,Core::Rect &newSize,unsigned v_id){
         auto & header = img->header;
         FLOAT scaleFactor = FLOAT(dpi)/96.f;
         ID2D1Bitmap *bitmap;
@@ -340,11 +340,13 @@ namespace OmegaWTK::Composition {
         hr = device->dxgi_factory->CreateSwapChainForComposition(device->direct3d_command_queue.get(),&desc,NULL,&swapC);
 
         if(FAILED(hr)){
+            MessageBoxA(HWND_DESKTOP,"Failed to Create SwapChain!",NULL, MB_OK);
             /// Handle Error!
         };
 
         hr = swapC->QueryInterface(&dxgi_swap_chain);
         if(FAILED(hr)){
+            MessageBoxA(HWND_DESKTOP,"Failed to get DXGISwapChain2!",NULL, MB_OK);
             /// Handle Error!
         };
         hr = dxgi_swap_chain->SetMaximumFrameLatency(3);
@@ -416,7 +418,7 @@ namespace OmegaWTK::Composition {
         direct2d_device_context->FillRoundedRectangle(D2D1::RoundedRect(D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom),FLOAT(rect.radius_x) * scaleFactor,FLOAT(rect.radius_y) * scaleFactor),_brush);
         Core::SafeRelease(&_brush);
     };
-    Core::SharedPtr<BDCompositionImage> DXBDCompositionImageRenderTarget::createImageFromBitmapImage(Core::SharedPtr<Core::BitmapImage> &img, Core::Rect &newSize, unsigned int v_id){
+    Core::SharedPtr<BDCompositionImage> DXBDCompositionImageRenderTarget::createImageFromBitmapImage(Core::SharedPtr<Media::BitmapImage> &img, Core::Rect &newSize, unsigned int v_id){
          auto & header = img->header;
         FLOAT scaleFactor = FLOAT(dpi)/96.f;
         ID2D1Bitmap *bitmap;
