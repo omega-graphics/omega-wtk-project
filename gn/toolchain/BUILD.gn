@@ -51,6 +51,19 @@ toolchain("llvm") {
         default_output_extension = ".lib"
         output_prefix = ""
     }
+    tool("solink") {
+        outfile = "{{target_output_name}}{{output_extension}}"
+        if(is_mac || is_linux){
+            command = "$lld_command  {{inputs}} {{solibs}} {{libs}}"  
+        }
+        # Link MSVC Runtime
+        else {
+            command = "$lld_command /subsystem:CONSOLE /machine:x64 /dll /out:$outfile  {{inputs}} {{solibs}} msvcrt.lib {{libs}}"
+        }
+        outputs = [outfile]
+        description = "Linking executable $outfile"
+        default_output_dir = "{{root_out_dir}}"
+    }
     tool("link") {
         outfile = "{{target_output_name}}{{output_extension}}"
         if(is_mac || is_linux){

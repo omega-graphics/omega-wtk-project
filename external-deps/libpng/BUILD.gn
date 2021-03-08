@@ -1,0 +1,7 @@
+shared_library("libpng"){
+    include_dirs = [
+        "//../include"
+    ]
+    # output_name = "//../lib/libpng"
+    # output_extension = "lib"
+}

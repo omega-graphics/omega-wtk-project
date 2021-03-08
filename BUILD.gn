@@ -78,4 +78,8 @@ omega_wtk_static_lib("omegaWTKMedia"){
     sources = [
         
     ]
+    deps = [
+        "//external-deps/libpng",
+        # "//external-deps/ffmpeg"
+    ]
 }
