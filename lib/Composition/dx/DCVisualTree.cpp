@@ -17,17 +17,17 @@ namespace OmegaWTK::Composition {
 
     Core::SharedPtr<BDCompositionVisualTree::Visual> DCVisualTree::makeVisual(Core::SharedPtr<BDCompositionImageRenderTarget> &img){
         DXBDCompositionImageRenderTarget *dxImgTarget = (DXBDCompositionImageRenderTarget *)img.get();
-        IDCompositionVisual2 *v;
+        IDCompositionVisual *v;
 
         HRESULT hr;
 
         Visual rc;
-        hr = device->dcomp_device_3->CreateVisual(&v);
+        hr = device->dcomp_device_1->CreateVisual(&v);
         if(FAILED(hr)){
 
         };
 
-        hr = v->SetContent(dxImgTarget->dxgi_swap_chain.get());
+        hr = v->SetContent(dxImgTarget->dxgi_surface.get());
 
         rc.visual = v;
         rc.img = img;

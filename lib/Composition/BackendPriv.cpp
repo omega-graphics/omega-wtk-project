@@ -25,6 +25,7 @@ namespace OmegaWTK::Composition {
         // MessageBoxA(GetForegroundWindow(),"Will Draw Rect","NOTE",MB_OK);
         switch (visual->type) {
         case Visual::Rect : {
+            MessageBoxA(HWND_DESKTOP,"Drawing Rect","NOTE",MB_OK);
             Visual::RectParams *params = (Visual::RectParams *)visual->params;
             target->fillRect(params->rect,params->brush);
             if(params->border.has_value()){
@@ -77,13 +78,16 @@ namespace OmegaWTK::Composition {
         MessageBoxA(HWND_DESKTOP,"Do Work","NOTE",MB_OK);
         Layer * rootLayer = currentLimb->limbRoot;
         auto rootImgTarget = global_device->makeImageRenderTarget(rootLayer->getLayerRect());
+        MessageBoxA(HWND_DESKTOP,"Created Image Target","NOTE",MB_OK);
         rootImgTarget->clear(rootLayer->style->background);
+        MessageBoxA(HWND_DESKTOP,"Cleared the Screen","NOTE",MB_OK);
         auto __visual_it = rootLayer->style->visuals.begin();
         while(__visual_it != rootLayer->style->visuals.end()){
             drawVisual(rootImgTarget.get(),__visual_it->get(),false);
             ++__visual_it;
         };
         rootImgTarget->commit();
+        MessageBoxA(HWND_DESKTOP,"Root Img Target Commit","NOTE",MB_OK);
     #if defined(TARGET_WIN32)
         auto visual = visualTree->makeVisual(rootImgTarget);
     #else
@@ -106,7 +110,7 @@ namespace OmegaWTK::Composition {
                 };
                 imgTarget->commit();
         #if defined(TARGET_WIN32)
-                auto visual = visualTree->makeVisual(rootImgTarget);
+                auto visual = visualTree->makeVisual(imgTarget);
         #else
                 Core::SharedPtr<BDCompositionImage> rootImg = rootImgTarget->getImg();
                 auto visual = visualTree->makeVisual(rootImg);
@@ -116,8 +120,11 @@ namespace OmegaWTK::Composition {
                 ++it;
             };
         }
+
+        MessageBoxA(HWND_DESKTOP,"Will Render Visual Tree to HWND","NOTE",MB_OK);
         
         global_device->renderVisualTreeToView(visualTree,currentLimb->renderTarget);
+        MessageBoxA(HWND_DESKTOP,"Rendered Visual Tree to HWND","NOTE",MB_OK);
         visualTrees.insert(std::make_pair(currentLimb->renderTarget,visualTree));
     };
     void BackendImpl::doUpdate(){

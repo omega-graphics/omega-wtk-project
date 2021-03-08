@@ -40,19 +40,19 @@ namespace OmegaWTK::Composition {
 
         // };
         D3D12_COMMAND_QUEUE_DESC queue_desc;
-        queue_desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+        queue_desc.Flags = D3D12_COMMAND_QUEUE_FLAG_DISABLE_GPU_TIMEOUT;
         queue_desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
         queue_desc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_HIGH;
         queue_desc.NodeMask = direct3d_device->GetNodeCount();
 
         hr = direct3d_device->CreateCommandQueue(&queue_desc,IID_PPV_ARGS(&direct3d_command_queue));
         if(FAILED(hr)){
-
+            MessageBoxA(HWND_DESKTOP,"Failed to Create Command Queue!",NULL,MB_OK);
         };
 
         hr = D3D11On12CreateDevice(direct3d_device.get(),D3D11_CREATE_DEVICE_BGRA_SUPPORT,feature_level,ARRAYSIZE(feature_level),(IUnknown *const*)&direct3d_command_queue,1,direct3d_device->GetNodeCount(),&direct3d_device_11_priv,NULL,NULL);
         if(FAILED(hr)){
-
+            MessageBoxA(HWND_DESKTOP,"Failed to create D3D11on12Device",NULL,MB_OK);
         };
         #else
         hr = D3D11CreateDevice(NULL,D3D_DRIVER_TYPE_HARDWARE,NULL,D3D11_CREATE_DEVICE_BGRA_SUPPORT,feature_level,ARRAYSIZE(feature_level),D3D11_SDK_VERSION,&direct3d_device, NULL, NULL);
@@ -69,22 +69,27 @@ namespace OmegaWTK::Composition {
 
         hr = direct3d_device_11_priv->QueryInterface(IID_PPV_ARGS(&dxgi_device));
         if(FAILED(hr)){
-            //Handle Error!
+            MessageBoxA(HWND_DESKTOP,"Failed to get DXGIDevice",NULL,MB_OK);
         };
 
         hr = direct2d_factory->CreateDevice(dxgi_device.get(),&direct2d_device);
         if(FAILED(hr)){
+            MessageBoxA(HWND_DESKTOP,"Failed to create Direct2d Device",NULL,MB_OK);
             //Handle Error!
         };
 
         hr = DCompositionCreateDevice(dxgi_device.get(),IID_PPV_ARGS(&dcomp_device_1));
         if(FAILED(hr)){
             //Handle Error!
+            MessageBoxA(HWND_DESKTOP,"Failed to create  DComp Device 1",NULL,MB_OK);
         };
-        hr = DCompositionCreateDevice3(dxgi_device.get(),IID_PPV_ARGS(&dcomp_device_3));
-        if(FAILED(hr)){
-            //Handle Error!
-        };
+        // hr = DCompositionCreateDevice2(dxgi_device.get(),__uuidof(IDCompositionDevice2),(void **)&dcomp_device_2);
+        // if(FAILED(hr)){
+        //     //Handle Error!
+        //     std::stringstream ss;
+        //     ss << std::hex << hr;
+        //     MessageBoxA(HWND_DESKTOP,(std::string("Failed to create  DComp Device 3 ERROR:") + ss.str()).c_str(),NULL,MB_OK);
+        // };
         
         #else
         
@@ -124,7 +129,7 @@ namespace OmegaWTK::Composition {
     };
     DXBDCompositionDevice::~DXBDCompositionDevice(){
         Core::SafeRelease(&dcomp_device_1);
-        Core::SafeRelease(&dcomp_device_3);
+        // Core::SafeRelease(&dcomp_device_2);
         Core::SafeRelease(&direct2d_device);
         Core::SafeRelease(&dxgi_factory);
         Core::SafeRelease(&dxgi_adapter);
@@ -174,11 +179,11 @@ namespace OmegaWTK::Composition {
         HRESULT hr;
         DCVisualTree *tree = (DCVisualTree *)visualTree.get();
         Native::Win::HWNDItem * hwndItem = (Native::Win::HWNDItem *)view->getNativePtr();
-        dcomp_device_3->Commit();
         IDCompositionTarget *target;
         if(!tree->hwndTarget.get()){
            hr = dcomp_device_1->CreateTargetForHwnd(hwndItem->getHandle(),FALSE,&target);
            if(FAILED(hr)){
+               MessageBoxA(HWND_DESKTOP,"Failed to Create Target For HWND","NOTE",MB_OK);
                // Handle Error
                // Dont't attach to hwndtarget!
            };
@@ -190,8 +195,7 @@ namespace OmegaWTK::Composition {
         DCVisualTree::Visual *rootV = (DCVisualTree::Visual *)tree->root_v.get();
 
         target->SetRoot(rootV->visual);
-
-         dcomp_device_1->Commit();
-
+        dcomp_device_1->Commit();
+        // dcomp_device_1->WaitForCommitCompletion();
     };
 };

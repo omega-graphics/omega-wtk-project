@@ -126,7 +126,14 @@ namespace OmegaWTK::Native::Win {
     };
 
     void WinAppWindow::initialDisplay(){
-        ShowWindow(hwnd,SW_SHOW);
+        auto it = windowWidgetRootViews.begin();
+        while(it != windowWidgetRootViews.end()){
+            auto item = (HWNDItem *)*it;
+            if(!IsWindowVisible(item->hwnd))
+                ShowWindow(item->hwnd,SW_SHOW);
+            ++it;
+        };
+        ShowWindow(hwnd,SW_SHOWDEFAULT);
         UpdateWindow(hwnd);
     };
 };

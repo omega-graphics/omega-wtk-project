@@ -17,7 +17,7 @@ class DCVisualTree : public BDCompositionVisualTree {
     friend class DXBDCompositionDevice;
     public:
     struct Visual : Parent::Visual {
-        IDCompositionVisual2 * visual;
+        IDCompositionVisual * visual;
         Core::SharedPtr<BDCompositionImageRenderTarget> img;
         Core::Position pos;
         ~Visual();

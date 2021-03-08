@@ -323,61 +323,79 @@ namespace OmegaWTK::Composition {
          UINT dpi = GetDpiForWindow(GetForegroundWindow());
        FLOAT scaleFactor = FLOAT(dpi)/96.f;
 
-        DXGI_SWAP_CHAIN_DESC1 desc {0};
-        desc.BufferCount = 2;
-        desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-        desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-        desc.Height = rect.dimen.minHeight * scaleFactor;
-        desc.Width = rect.dimen.minWidth * scaleFactor;
-        desc.SampleDesc.Count = 1;
-        desc.SampleDesc.Quality = 0;
-        desc.Scaling = DXGI_SCALING_STRETCH;
-        desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
-        desc.Stereo = FALSE;
-        desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
-        IDXGISwapChain1 *swapC;
-        #ifdef DIRECT3D_12
-        hr = device->dxgi_factory->CreateSwapChainForComposition(device->direct3d_command_queue.get(),&desc,NULL,&swapC);
+        // DXGI_SWAP_CHAIN_DESC1 desc {0};
+        // desc.BufferCount = 2;
+        // desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+        // desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        // desc.Height = rect.dimen.minHeight * scaleFactor;
+        // desc.Width = rect.dimen.minWidth * scaleFactor;
+        // desc.SampleDesc.Count = 1;
+        // desc.SampleDesc.Quality = 0;
+        // desc.Scaling = DXGI_SCALING_STRETCH;
+        // desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+        // desc.Stereo = FALSE;
+        // desc.Flags = 0;
+        // MessageBoxA(HWND_DESKTOP,"Creating Swap Chain",NULL, MB_OK);
+        // #ifdef DIRECT3D_12
+        // hr = device->dxgi_factory->CreateSwapChainForComposition(device->direct3d_command_queue.get(),&desc,NULL,&dxgi_swap_chain_1);
+        
+        // if(FAILED(hr)){
+        //     MessageBoxA(HWND_DESKTOP,"Failed to Create SwapChain!",NULL, MB_OK);
+        //     /// Handle Error!
+        // }
+        // else {
+        //     MessageBoxA(HWND_DESKTOP,"Created Swap Chain",NULL, MB_OK);
+        // };
 
-        if(FAILED(hr)){
-            MessageBoxA(HWND_DESKTOP,"Failed to Create SwapChain!",NULL, MB_OK);
-            /// Handle Error!
-        };
+        // hr = dxgi_swap_chain_1->QueryInterface(&dxgi_swap_chain_2);
+        // if(FAILED(hr)){
+        //     MessageBoxA(HWND_DESKTOP,"Failed to get DXGISwapChain2!",NULL, MB_OK);
+        //     /// Handle Error!
+        // }
+        // else {
+        //      MessageBoxA(HWND_DESKTOP,"Got DXGISwapChain2",NULL, MB_OK);
+        // };
+        // hr = dxgi_swap_chain_2->SetMaximumFrameLatency(3);
+        // if(FAILED(hr)){
+        //     MessageBoxA(HWND_DESKTOP,"Could not Set Frame Latency",NULL, MB_OK);
+        // };
+        //#else 
+        // hr = device->dxgi_factory->CreateSwapChainForComposition(device->direct3d_device.get(),&desc,NULL,&dxgi_swap_chain);
 
-        hr = swapC->QueryInterface(&dxgi_swap_chain);
-        if(FAILED(hr)){
-            MessageBoxA(HWND_DESKTOP,"Failed to get DXGISwapChain2!",NULL, MB_OK);
-            /// Handle Error!
-        };
-        hr = dxgi_swap_chain->SetMaximumFrameLatency(3);
-        if(FAILED(hr)){
-            /// Handle Error!
-        };
-        #else 
-        hr = device->dxgi_factory->CreateSwapChainForComposition(device->direct3d_device.get(),&desc,NULL,&dxgi_swap_chain);
-
-        if(FAILED(hr)){
-            /// Handle Error!
-        };
-        #endif
+        // if(FAILED(hr)){
+        //     /// Handle Error!
+        // };
+        //#endif
         hr = device->direct2d_device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,&direct2d_device_context);
         if(FAILED(hr)){
             /// Handle Error!
+            MessageBoxA(HWND_DESKTOP,"Failed to Create Device Context",NULL, MB_OK);
         };
 
-        hr = dxgi_swap_chain->GetBuffer(0,IID_PPV_ARGS(&dxgi_surface));
-        if(FAILED(hr)){
+        hr = device->dcomp_device_1->CreateSurface(rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ALPHA_MODE_PREMULTIPLIED,&dcomp_surface);
+         if(FAILED(hr)){
             /// Handle Error!
+            MessageBoxA(HWND_DESKTOP,"Failed to create Compostion Surface",NULL, MB_OK);
         };
-        
-        hr = direct2d_device_context->CreateBitmapFromDxgiSurface(dxgi_surface.get(),D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET,D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&direct2d_bitmap);
+        POINT pointOffset = { };
+        hr = dcomp_surface->BeginDraw(NULL,IID_PPV_ARGS(&dxgi_surface),&pointOffset);
+
         if(FAILED(hr)){
             /// Handle Error!
+            MessageBoxA(HWND_DESKTOP,"Failed to Begin Draw Surface",NULL, MB_OK);
+        };
+
+
+        hr = direct2d_device_context->CreateBitmapFromDxgiSurface(dxgi_surface.get(),D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&direct2d_bitmap);
+        if(FAILED(hr)){
+            /// Handle Error!
+            MessageBoxA(HWND_DESKTOP,"Failed to Create Bitmap from DXGI Surface",NULL, MB_OK);
         };
 
         hr = direct2d_device_context->CreateBitmap(D2D1::SizeU(rect.dimen.minWidth,rect.dimen.minHeight),D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&first_target);
         if(FAILED(hr)){
             /// Handle Error!
+            MessageBoxA(HWND_DESKTOP,"Failed to Create Bitmap",NULL, MB_OK);
         };
 
         direct2d_device_context->SetTarget(first_target.get());
@@ -482,31 +500,45 @@ namespace OmegaWTK::Composition {
     };
 
     void DXBDCompositionImageRenderTarget::commit(){
-        DXGI_PRESENT_PARAMETERS params;
-        params.DirtyRectsCount = NULL;
-        params.pDirtyRects = NULL;
-        params.pScrollOffset = NULL;
-        params.pScrollRect = NULL;
         hr = direct2d_device_context->EndDraw();
         if(FAILED(hr) || hr == D2DERR_RECREATE_TARGET){
+            Core::SafeRelease(&first_target);
             Core::SafeRelease(&direct2d_device_context);
             Core::SafeRelease(&direct2d_bitmap);
             recreateDeviceContext = true;
         }
         else {
-            hr = dxgi_swap_chain->Present1(1,0,&params);
-            if(FAILED(hr) || hr == DXGI_STATUS_OCCLUDED ){
-                Core::SafeRelease(&dxgi_swap_chain);
-                Core::SafeRelease(&dxgi_surface);
+            direct2d_device_context->SetTarget(direct2d_bitmap.get());
+            direct2d_device_context->BeginDraw();
+            direct2d_device_context->DrawImage(first_target.get());
+            hr = direct2d_device_context->EndDraw();
+            if(FAILED(hr) || hr == D2DERR_RECREATE_TARGET){
                 Core::SafeRelease(&direct2d_device_context);
                 Core::SafeRelease(&direct2d_bitmap);
-                recreateSwapChain = recreateDeviceContext = true;
+                recreateDeviceContext = true;
             }
             else {
-                recreateSwapChain = false;
-                recreateDeviceContext = false;
-                newTarget = false;
+                hr = dcomp_surface->EndDraw();
+                if(FAILED(hr) || hr == DCOMPOSITION_ERROR_SURFACE_NOT_BEING_RENDERED){
+                    Core::SafeRelease(&direct2d_device_context);
+                    Core::SafeRelease(&direct2d_bitmap);
+                };
             }
+            Core::SafeRelease(&first_target);
+            // hr = dxgi_swap_chain_1->Present1(1,0,&params);
+            // if(FAILED(hr) || hr == DXGI_STATUS_OCCLUDED ){
+            //     // Core::SafeRelease(&dxgi_swap_chain_1);
+            //     //  Core::SafeRelease(&dxgi_swap_chain_2);
+            //     Core::SafeRelease(&dxgi_surface);
+            //     Core::SafeRelease(&direct2d_device_context);
+            //     Core::SafeRelease(&direct2d_bitmap);
+            //     recreateSwapChain = recreateDeviceContext = true;
+            // }
+            // else {
+            //     recreateSwapChain = false;
+            //     recreateDeviceContext = false;
+            //     newTarget = false;
+            // }
         }
     };
 

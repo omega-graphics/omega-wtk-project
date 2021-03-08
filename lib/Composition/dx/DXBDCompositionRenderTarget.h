@@ -15,7 +15,6 @@ namespace OmegaWTK::Composition {
         DXBDCompositionDevice *device;
         Core::UniqueComPtr<ID2D1DeviceContext> direct2d_device_context;
         bool recreateDeviceContext;
-        Core::UniqueComPtr<IDCompositionTarget> dcomp_target;
         bool newTarget;
         friend class DXBDCompositionImage;
         public:
@@ -76,13 +75,15 @@ namespace OmegaWTK::Composition {
             return recreateSwapChain;
         };
         #ifdef DIRECT3D_12
-        Core::UniqueComPtr<IDXGISwapChain2> dxgi_swap_chain;
+        // Core::UniqueComPtr<IDXGISwapChain2> dxgi_swap_chain_2;
+        // Core::UniqueComPtr<IDXGISwapChain1> dxgi_swap_chain_1;
         #else
         Core::UniqueComPtr<IDXGISwapChain1> dxgi_swap_chain;
         #endif
+        Core::UniqueComPtr<IDCompositionSurface> dcomp_surface;
         Core::UniqueComPtr<ID2D1Bitmap> first_target;
         Core::UniqueComPtr<ID2D1Bitmap1> direct2d_bitmap;
-        Core::UniqueComPtr<IDXGISurface> dxgi_surface;
+        Core::UniqueComPtr<IDXGISurface1> dxgi_surface;
         friend class DCVisualTree;
     public:
         #ifdef TARGET_WIN32
@@ -106,7 +107,7 @@ namespace OmegaWTK::Composition {
 
     template<class _Ty>
     IDXBDCompositionRenderTarget<_Ty>::~IDXBDCompositionRenderTarget(){
-        Core::SafeRelease(&dcomp_target);
+        // Core::SafeRelease(&dcomp_target);
         Core::SafeRelease(&direct2d_device_context);
     };
     template<class _Ty>

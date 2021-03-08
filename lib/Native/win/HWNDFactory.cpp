@@ -141,7 +141,7 @@ namespace OmegaWTK::Native::Win {
         ex.lpszMenuName = NULL;
         ex.cbClsExtra = 0;
         ex.cbWndExtra = 0;
-        ex.hbrBackground = (HBRUSH)COLOR_WINDOW;
+        ex.hbrBackground = (HBRUSH)COLOR_WINDOW+2;
         ex.hInstance = hInst;
         ex.hCursor = LoadCursor(NULL,IDC_ARROW);
         ex.hIcon = NULL;
