@@ -3,7 +3,7 @@
 #define OMEGAWTK_EXPORT export
 #else
 
-#ifdef TARGET_MACOS
+#if defined(TARGET_MACOS) || defined(TARGET_GTK)
 #define OMEGAWTK_EXPORT
 #endif
 

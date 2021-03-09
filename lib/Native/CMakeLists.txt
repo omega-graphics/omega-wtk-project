@@ -44,5 +44,11 @@ if(TARGET_MACOS)
     target_link_libraries("omegaWTKNative" PRIVATE ${Cocoa_LIB} ${QuartzCore_LIB})
 endif()
 
+if(TARGET_GTK)
+    target_include_directories("omegaWTKNative" PUBLIC ${GTK_INCLUDE_DIRS})
+    target_compile_definitions("omegaWTKNative" PUBLIC ${GTK_CFLAGS_OTHER})
+    target_link_libraries("omegaWTKNative" PRIVATE ${GTK_LIBARIES})
+endif()
+
 
 target_include_directories("omegaWTKNative" PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/private_include")

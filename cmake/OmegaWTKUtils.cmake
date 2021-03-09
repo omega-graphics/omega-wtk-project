@@ -27,7 +27,9 @@ if(CMAKE_HOST_APPLE)
             message(STATUS "Locating ${F_NAME} Framework - found (Path:${${F_NAME}_LIB})")
         endif()
     endfunction()
-
+elseif(CMAKE_HOST_UNIX)
+    add_compile_definitions("TARGET_GTK")
+    set(TARGET_GTK TRUE)
 endif()
 
 function(add_omega_wtk_app)
@@ -83,6 +85,10 @@ function(add_omega_wtk_app)
             TARGET "metal-copy" POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy ${METAL_LIB} $<TARGET_BUNDLE_DIR:$<TARGET_NAME_IF_EXISTS:${_ARG_NAME}>>/Contents/Resources/default.metallib)
         
+    endif()
+
+    if(TARGET_GTK)
+        add_executable(${_ARG_NAME} ${_ARG_SOURCES})
     endif()
 
     target_include_directories(${_ARG_NAME} PUBLIC ${_ARG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})

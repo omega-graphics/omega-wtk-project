@@ -1,4 +1,0 @@
-module OmegaWTK {
-    requires cplusplus
-    umbrella header "OmegaWTK.h"
-}

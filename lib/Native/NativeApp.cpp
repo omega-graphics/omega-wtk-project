@@ -9,6 +9,10 @@
 #include "macos/CocoaApp.h"
 #endif
 
+#ifdef TARGET_GTK
+#include "gtk/GTKApp.h"
+#endif
+
 
 namespace OmegaWTK::Native {
 
@@ -27,6 +31,10 @@ NAP make_native_app(){
     
 #ifdef TARGET_MACOS
     return Cocoa::make_cocoa_app();
+#endif
+
+#ifdef TARGET_GTK
+    return GTK::make_gtk_app();
 #endif
 };
 

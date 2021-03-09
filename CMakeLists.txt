@@ -94,7 +94,7 @@ endif()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 include(OmegaWTKUtils)
-include(FindFFMPEG)
+# include(FindFFMPEG)
 
 # find_package(FFMPEG)
 # if(FFMPEG_FOUND)
@@ -194,13 +194,26 @@ if(CMAKE_HOST_APPLE)
     # endif()
 endif()
 
+if(TARGET_GTK)
+    message("Targeting GTK+3/Linux")
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(GTK REQUIRED gtk+-3.0)
+    if(GTK_FOUND)
+        
+    endif()
+    find_package(Vulkan REQUIRED)
+    if(Vulkan_FOUND)
+
+    endif()
+endif()
+
 add_subdirectory("lib")
 
 set(OMEGAWTK_TARGET_UTILS_DIR ${CMAKE_SOURCE_DIR}/target)
 
 add_subdirectory("tests")
 
-if(TARGET_WIN32)
+if(TARGET_WIN32 OR TARGET_GTK)
     install(TARGETS ${OmegaWTKLibs} EXPORT OmegaWTKTargets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -229,4 +242,4 @@ install(EXPORT OmegaWTKTargets
     DESTINATION "${CMAKE_BINARY_DIR}/cmake")
 
 configure_file(cmake/OmegaWTKConfig.cmake.in "${CMAKE_BINARY_DIR}/cmake/OmegaWTKConfig.cmake" @ONLY)
-configure_file(cmake/OmegaWTKUTils.cmake "${CMAKE_BINARY_DIR}/cmake/OmegaWTKUtils.cmake" COPYONLY)
+configure_file(cmake/OmegaWTKUtils.cmake "${CMAKE_BINARY_DIR}/cmake/OmegaWTKUtils.cmake" COPYONLY)
