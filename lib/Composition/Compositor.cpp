@@ -39,7 +39,7 @@ void Compositor::prepareCleanup(){
 
 void Compositor::updateRequestedLayerTreeLimb(LayerTree::Limb *limb){
     backend->setCurrentJob(limb);
-    backend->doUpdate();
+    // backend->doUpdate();
 };
 
 Compositor::~Compositor(){

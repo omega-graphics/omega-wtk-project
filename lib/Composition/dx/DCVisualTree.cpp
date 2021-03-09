@@ -6,6 +6,10 @@ namespace OmegaWTK::Composition {
     
     DCVisualTree::DCVisualTree(DXBDCompositionDevice *device):device(device),hwndTarget(nullptr){};
 
+    DCVisualTree::Visual::Visual(IDCompositionVisual *v,Core::SharedPtr<BDCompositionImageRenderTarget> &img,Core::Position &pos):visual(v),img(img),pos(pos){
+        
+    };
+
     DCVisualTree::Visual::~Visual(){
         visual->RemoveAllVisuals();
         Core::SafeRelease(&visual);
@@ -16,16 +20,24 @@ namespace OmegaWTK::Composition {
     };
 
     Core::SharedPtr<BDCompositionVisualTree::Visual> DCVisualTree::makeVisual(Core::SharedPtr<BDCompositionImageRenderTarget> &img){
-        // DXBDCompositionImageRenderTarget *dxImgTarget = (DXBDCompositionImageRenderTarget *)img.get();
+        DXBDCompositionImageRenderTarget *dxImgTarget = (DXBDCompositionImageRenderTarget *)img.get();
 
-        // HRESULT hr;
+        
+        HRESULT hr;
+        IDCompositionVisual *v;
+        hr = device->dcomp_device_1->CreateVisual(&v);
+        if(FAILED(hr)){
 
-        Visual rc;
+        };
 
-        rc.pos = {0,0};
-        rc.img = img;
+        hr = v->SetContent(dxImgTarget->dxgi_swap_chain_3.get());
+        if(FAILED(hr)){
+            std::stringstream ss;
+            ss << std::hex << hr;
+            MessageBoxA(HWND_DESKTOP,(std::string("Failed to set Content of Visual. ERROR:") + ss.str()).c_str(),NULL,MB_OK);
+        };
         // rc.visual = nullptr;
-        return std::make_shared<Visual>(rc);
+        return std::make_shared<Visual>(v,img,dxImgTarget->rect.pos);
     };
 
     void DCVisualTree::setRootVisual(Core::SharedPtr<Parent::Visual> visual){

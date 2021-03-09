@@ -20,6 +20,7 @@ class DCVisualTree : public BDCompositionVisualTree {
         IDCompositionVisual * visual;
         Core::SharedPtr<BDCompositionImageRenderTarget> img;
         Core::Position pos;
+        Visual(IDCompositionVisual *v,Core::SharedPtr<BDCompositionImageRenderTarget> &img,Core::Position &pos);
         ~Visual();
     };
     DCVisualTree(DXBDCompositionDevice *device);

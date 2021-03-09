@@ -41,7 +41,7 @@ public:
         auto rootLayer = rootView->getLayerTreeLimb()->getRootLayer();
         auto layerStyle = make<LayerStyle>();
         layerStyle->add(VISUAL_RECT(Rect(0,0,300,300),ColorBrush(Composition::Color::Green)));
-        layerStyle->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(0,0,200,200),25,Composition::Text::Font("Arial",OmegaWTK::Composition::Text::Font::Regular)));
+        // layerStyle->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(0,0,200,200),25,Composition::Text::Font("Arial",OmegaWTK::Composition::Text::Font::Regular)));
         // layerStyle->add(VISUAL_IMG(img,Rect(100,0,100,100)));
 //        rootLayer->setBackgroundColor(Composition::Color::Blue);
         //        rootLayer->drawRect(Rect(0,0,100,100),Composition::ColorBrush(Composition::Color::Red),Composition::Border(black,5));

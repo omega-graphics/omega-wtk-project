@@ -305,10 +305,10 @@ namespace OmegaWTK::Composition {
         if(FAILED(hr)){
             /// Handle Error!
         };
-        hr = direct2d_device_context->CreateBitmapFromDxgiSurface(dxgi_surface.get(),D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&direct2d_bitmap);
-        if(FAILED(hr)){
-            /// Handle Error!
-        };
+        // hr = direct2d_device_context->CreateBitmapFromDxgiSurface(dxgi_surface.get(),D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&direct2d_bitmap);
+        // if(FAILED(hr)){
+        //     /// Handle Error!
+        // };
 
         direct2d_device_context->SetTarget(direct2d_bitmap.get());
 
@@ -323,68 +323,78 @@ namespace OmegaWTK::Composition {
          UINT dpi = GetDpiForWindow(GetForegroundWindow());
        FLOAT scaleFactor = FLOAT(dpi)/96.f;
 
-        // DXGI_SWAP_CHAIN_DESC1 desc {0};
-        // desc.BufferCount = 2;
-        // desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-        // desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-        // desc.Height = rect.dimen.minHeight * scaleFactor;
-        // desc.Width = rect.dimen.minWidth * scaleFactor;
-        // desc.SampleDesc.Count = 1;
-        // desc.SampleDesc.Quality = 0;
-        // desc.Scaling = DXGI_SCALING_STRETCH;
-        // desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
-        // desc.Stereo = FALSE;
-        // desc.Flags = 0;
-        // MessageBoxA(HWND_DESKTOP,"Creating Swap Chain",NULL, MB_OK);
-        // #ifdef DIRECT3D_12
-        // hr = device->dxgi_factory->CreateSwapChainForComposition(device->direct3d_command_queue.get(),&desc,NULL,&dxgi_swap_chain_1);
+        DXGI_SWAP_CHAIN_DESC1 desc {0};
+        desc.BufferCount = 2;
+        desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+        desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        desc.Height = rect.dimen.minHeight * scaleFactor;
+        desc.Width = rect.dimen.minWidth * scaleFactor;
+        desc.SampleDesc.Count = 1;
+        desc.SampleDesc.Quality = 0;
+        desc.Scaling = DXGI_SCALING_STRETCH;
+        desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+        desc.Stereo = FALSE;
+        desc.Flags = 0;
+        MessageBoxA(HWND_DESKTOP,"Creating Swap Chain",NULL, MB_OK);
+        #ifdef DIRECT3D_12
+        hr = device->dxgi_factory->CreateSwapChainForComposition(device->direct3d_device_11_priv.get(),&desc,NULL,&dxgi_swap_chain_1);
         
-        // if(FAILED(hr)){
-        //     MessageBoxA(HWND_DESKTOP,"Failed to Create SwapChain!",NULL, MB_OK);
-        //     /// Handle Error!
-        // }
-        // else {
-        //     MessageBoxA(HWND_DESKTOP,"Created Swap Chain",NULL, MB_OK);
-        // };
+        if(FAILED(hr)){
+            MessageBoxA(HWND_DESKTOP,"Failed to Create SwapChain!",NULL, MB_OK);
+            /// Handle Error!
+        }
+        else {
+            MessageBoxA(HWND_DESKTOP,"Created Swap Chain",NULL, MB_OK);
+        };
 
-        // hr = dxgi_swap_chain_1->QueryInterface(&dxgi_swap_chain_2);
-        // if(FAILED(hr)){
-        //     MessageBoxA(HWND_DESKTOP,"Failed to get DXGISwapChain2!",NULL, MB_OK);
-        //     /// Handle Error!
-        // }
-        // else {
-        //      MessageBoxA(HWND_DESKTOP,"Got DXGISwapChain2",NULL, MB_OK);
-        // };
+        hr = dxgi_swap_chain_1->QueryInterface(&dxgi_swap_chain_3);
+        if(FAILED(hr)){
+            MessageBoxA(HWND_DESKTOP,"Failed to get DXGISwapChain2!",NULL, MB_OK);
+            /// Handle Error!
+        }
+        else {
+             MessageBoxA(HWND_DESKTOP,"Got DXGISwapChain3",NULL, MB_OK);
+        };
         // hr = dxgi_swap_chain_2->SetMaximumFrameLatency(3);
         // if(FAILED(hr)){
         //     MessageBoxA(HWND_DESKTOP,"Could not Set Frame Latency",NULL, MB_OK);
         // };
-        //#else 
-        // hr = device->dxgi_factory->CreateSwapChainForComposition(device->direct3d_device.get(),&desc,NULL,&dxgi_swap_chain);
+        #else 
+        hr = device->dxgi_factory->CreateSwapChainForComposition(device->direct3d_device.get(),&desc,NULL,&dxgi_swap_chain);
 
-        // if(FAILED(hr)){
-        //     /// Handle Error!
-        // };
-        //#endif
+        if(FAILED(hr)){
+            /// Handle Error!
+        };
+        #endif
         hr = device->direct2d_device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,&direct2d_device_context);
         if(FAILED(hr)){
             /// Handle Error!
             MessageBoxA(HWND_DESKTOP,"Failed to Create Device Context",NULL, MB_OK);
         };
 
-        hr = device->dcomp_device_1->CreateSurface(rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ALPHA_MODE_PREMULTIPLIED,&dcomp_surface);
-         if(FAILED(hr)){
-            /// Handle Error!
-            MessageBoxA(HWND_DESKTOP,"Failed to create Compostion Surface",NULL, MB_OK);
-        };
-        POINT pointOffset = { };
-        hr = dcomp_surface->BeginDraw(NULL,IID_PPV_ARGS(&dxgi_surface),&pointOffset);
-
+        // hr = device->dcomp_device_1->CreateSurface(rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ALPHA_MODE_PREMULTIPLIED,&dcomp_surface);
+        //  if(FAILED(hr)){
+        //     /// Handle Error!
+        //     MessageBoxA(HWND_DESKTOP,"Failed to create Compostion Surface",NULL, MB_OK);
+        // };
+        // POINT pointOffset = { };
+        // hr = dcomp_surface->BeginDraw(NULL,IID_PPV_ARGS(&dxgi_surface),&pointOffset);
+        UINT bufferIdx = dxgi_swap_chain_3->GetCurrentBackBufferIndex();
+        
+        hr = dxgi_swap_chain_3->GetBuffer(bufferIdx,IID_PPV_ARGS(&dxgi_surface));
         if(FAILED(hr)){
+            std::stringstream ss;
+            ss << std::hex << hr;
             /// Handle Error!
-            MessageBoxA(HWND_DESKTOP,"Failed to Begin Draw Surface",NULL, MB_OK);
+            MessageBoxA(HWND_DESKTOP,(std::string("Failed to Begin Draw Surface.. ERROR:") + ss.str()).c_str(),NULL, MB_OK);
         };
 
+        // hr = direct3d_res->QueryInterface(&dxgi_surface);
+        // if(FAILED(hr)){
+        //     std::stringstream ss;
+        //     ss << std::hex << hr;
+        //     MessageBoxA(HWND_DESKTOP,(std::string("Failed to get DXGI Surface from ID3D11Texture2D ERROR:") + ss.str()).c_str(),NULL, MB_OK);
+        // };
 
         hr = direct2d_device_context->CreateBitmapFromDxgiSurface(dxgi_surface.get(),D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&direct2d_bitmap);
         if(FAILED(hr)){
@@ -500,20 +510,46 @@ namespace OmegaWTK::Composition {
     };
 
     void DXBDCompositionImageRenderTarget::commit(){
+        DXGI_PRESENT_PARAMETERS params;
+        params.DirtyRectsCount = NULL;
+        params.pDirtyRects = NULL;
+        params.pScrollOffset = NULL;
+        params.pScrollRect = NULL;
         hr = direct2d_device_context->EndDraw();
         if(FAILED(hr) || hr == D2DERR_RECREATE_TARGET){
             Core::SafeRelease(&first_target);
             Core::SafeRelease(&direct2d_device_context);
             Core::SafeRelease(&direct2d_bitmap);
             recreateDeviceContext = true;
+            dcomp_surface->EndDraw();
         }
         else {
-           hr = dcomp_surface->EndDraw();
-           if(FAILED(hr) || hr == DCOMPOSITION_ERROR_SURFACE_NOT_BEING_RENDERED){
+
+            hr = dxgi_swap_chain_1->Present1(1,0,&params);
+            if(FAILED(hr) || hr == DXGI_STATUS_OCCLUDED ){
+                // Core::SafeRelease(&dxgi_swap_chain_1);
+                //  Core::SafeRelease(&dxgi_swap_chain_2);
+                Core::SafeRelease(&dxgi_surface);
                 Core::SafeRelease(&direct2d_device_context);
                 Core::SafeRelease(&direct2d_bitmap);
-                Core::SafeRelease(&dcomp_surface);
-            };
+                recreateSwapChain = recreateDeviceContext = true;
+            }
+            else {
+                recreateSwapChain = false;
+                recreateDeviceContext = false;
+                newTarget = false;
+            }
+           
+        //    hr = dcomp_surface->EndDraw();
+        //    if(FAILED(hr)){
+        //         Core::SafeRelease(&direct2d_device_context);
+        //         Core::SafeRelease(&direct2d_bitmap);
+        //         Core::SafeRelease(&dcomp_surface);
+        //         MessageBoxA(HWND_DESKTOP,"DComp Surface failed to End Draw","NOTE",MB_OK);
+        //    }
+        //    else {
+        //        Core::SafeRelease(&dxgi_surface);
+        //    };
             // direct2d_device_context->SetTarget(direct2d_bitmap.get());
             // direct2d_device_context->BeginDraw();
             // direct2d_device_context->DrawImage(first_target.get());
@@ -531,20 +567,6 @@ namespace OmegaWTK::Composition {
             //     };
             }
             Core::SafeRelease(&first_target);
-            // hr = dxgi_swap_chain_1->Present1(1,0,&params);
-            // if(FAILED(hr) || hr == DXGI_STATUS_OCCLUDED ){
-            //     // Core::SafeRelease(&dxgi_swap_chain_1);
-            //     //  Core::SafeRelease(&dxgi_swap_chain_2);
-            //     Core::SafeRelease(&dxgi_surface);
-            //     Core::SafeRelease(&direct2d_device_context);
-            //     Core::SafeRelease(&direct2d_bitmap);
-            //     recreateSwapChain = recreateDeviceContext = true;
-            // }
-            // else {
-            //     recreateSwapChain = false;
-            //     recreateDeviceContext = false;
-            //     newTarget = false;
-            // }
     };
 
     // Core::SharedPtr<BDCompositionImage> DXBDCompositionImageRenderTarget::getImg(){

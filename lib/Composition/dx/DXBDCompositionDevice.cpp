@@ -181,7 +181,7 @@ namespace OmegaWTK::Composition {
         Native::Win::HWNDItem * hwndItem = (Native::Win::HWNDItem *)view->getNativePtr();
         IDCompositionTarget *target;
         if(!tree->hwndTarget.get()){
-           hr = dcomp_device_1->CreateTargetForHwnd(hwndItem->hwnd,TRUE,&target);
+           hr = dcomp_device_1->CreateTargetForHwnd(hwndItem->hwnd,FALSE,&target);
            if(FAILED(hr)){
                MessageBoxA(HWND_DESKTOP,"Failed to Create Target For HWND","NOTE",MB_OK);
                // Handle Error
@@ -193,14 +193,10 @@ namespace OmegaWTK::Composition {
             target = tree->hwndTarget.get();
 
         DCVisualTree::Visual *rootV = (DCVisualTree::Visual *)tree->root_v.get();
-        IDCompositionVisual *v;
-        hr = dcomp_device_1->CreateVisual(&v);
-        if(FAILED(hr)){
-            MessageBoxA(HWND_DESKTOP,"Failed to Create Visual",NULL,MB_OK);
-        }
-        UINT dpi = GetDpiForWindow(hwndItem->getHandle());
+        hr = target->SetRoot(rootV->visual);
+
+        UINT dpi = GetDpiForWindow(((Native::Win::HWNDItem *)view->getNativePtr())->hwnd);
         FLOAT scaleFactor = FLOAT(dpi)/96.f;
-        hr = target->SetRoot(v);
 
         if(FAILED(hr)){
             std::stringstream ss;
@@ -208,10 +204,6 @@ namespace OmegaWTK::Composition {
             MessageBoxA(HWND_DESKTOP,(std::string("Failed to Set Root Visual:") + ss.str()).c_str(),NULL,MB_OK);
         }
         else {
-            v->SetContent(((DXBDCompositionImageRenderTarget *)rootV->img.get())->dcomp_surface.get());
-            if(FAILED(hr)){
-                MessageBoxA(HWND_DESKTOP,"Failed to Set Visual Content","ERROR",MB_OK);
-            };
             auto body_it = tree->body.begin();
             while(body_it != tree->body.end()){
                 

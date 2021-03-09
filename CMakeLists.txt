@@ -19,7 +19,7 @@ set(OMEGAWTK_VERSION "0.1")
 set(CMAKE_XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET "10.15")
 
 
-# set(CMAKE_CXX_FLAGS "-gdwarf")
+set(CMAKE_CXX_FLAGS "-gdwarf")
 
 macro(find_vcpkg USE_TOOLCHAIN)
 	message(STATUS "Locating vcpkg executable")
