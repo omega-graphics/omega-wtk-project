@@ -97,7 +97,7 @@ int omegaWTKMain(AppInst *app)
 
     FSPath path = Core::String("./assets/test.png");
     
-    auto r_rectFrame = Composition::RoundedRectFrame(FRoundedRect(200.f,200.f,100.f,75.f,20.f,20.f),5.f);
+    // auto r_rectFrame = Composition::RoundedRectFrame(FRoundedRect(200.f,200.f,100.f,75.f,20.f,20.f),5.f);
     
 //    Core::Math::VectorPath2D vectorPath ({0,0});
 //    vectorPath.append({50,50});

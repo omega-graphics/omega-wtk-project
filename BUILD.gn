@@ -76,7 +76,16 @@ omega_wtk_static_lib("omegaWTKNative"){
 
 omega_wtk_static_lib("omegaWTKMedia"){
     sources = [
-        
+        "$omega_wtk_include_dir/Media/ImgCodec.h",
+        "$omega_wtk_include_dir/Media/VideoCodec.h",
+        "$omega_wtk_include_dir/Media/VideoCaptureSession.h",
+        "$omega_wtk_include_dir/Media/AudioCaptureSession.h",
+
+        # Sources 
+        "lib/Media/ImgCodec.cpp",
+        "lib/Media/VideoCodec.cpp",
+        "lib/Media/VideoCaptureSession.cpp",
+        "lib/Media/AudioCaptureSession.cpp"
     ]
     deps = [
         "//external-deps/libpng",
