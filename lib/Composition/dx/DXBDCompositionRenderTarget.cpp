@@ -320,7 +320,7 @@ namespace OmegaWTK::Composition {
     };
 
     void DXBDCompositionImageRenderTarget::redoSwapChain(){
-         UINT dpi = GetDpiForWindow(GetForegroundWindow());
+        dpi = GetDpiForWindow(GetForegroundWindow());
        FLOAT scaleFactor = FLOAT(dpi)/96.f;
 
         DXGI_SWAP_CHAIN_DESC1 desc {0};
@@ -335,7 +335,7 @@ namespace OmegaWTK::Composition {
         desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
         desc.Stereo = FALSE;
         desc.Flags = 0;
-        MessageBoxA(HWND_DESKTOP,"Creating Swap Chain",NULL, MB_OK);
+        // MessageBoxA(HWND_DESKTOP,"Creating Swap Chain",NULL, MB_OK);
         #ifdef DIRECT3D_12
         hr = device->dxgi_factory->CreateSwapChainForComposition(device->direct3d_device_11_priv.get(),&desc,NULL,&dxgi_swap_chain_1);
         
@@ -344,7 +344,7 @@ namespace OmegaWTK::Composition {
             /// Handle Error!
         }
         else {
-            MessageBoxA(HWND_DESKTOP,"Created Swap Chain",NULL, MB_OK);
+            // MessageBoxA(HWND_DESKTOP,"Created Swap Chain",NULL, MB_OK);
         };
 
         hr = dxgi_swap_chain_1->QueryInterface(&dxgi_swap_chain_3);
@@ -353,7 +353,7 @@ namespace OmegaWTK::Composition {
             /// Handle Error!
         }
         else {
-             MessageBoxA(HWND_DESKTOP,"Got DXGISwapChain3",NULL, MB_OK);
+            //  MessageBoxA(HWND_DESKTOP,"Got DXGISwapChain3",NULL, MB_OK);
         };
         // hr = dxgi_swap_chain_2->SetMaximumFrameLatency(3);
         // if(FAILED(hr)){
@@ -491,7 +491,7 @@ namespace OmegaWTK::Composition {
         cpp_str_to_cpp_wstr(string,w_str);
         ID2D1Brush *_brush = omegawtk_brush_to_d2d1_brush(*brush,direct2d_device_context.get());
         RECT rc = core_rect_to_win_rect_from_parent_core_rect(textRect,dpi,this->rect);
-        direct2d_device_context->DrawText(w_str.c_str(),w_str.size(),compFont->textFormat.get(),D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom),_brush);
+        direct2d_device_context->DrawTextA(w_str.c_str(),w_str.size(),compFont->textFormat.get(),D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom),_brush);
         Core::SafeRelease(&_brush);
     };
 

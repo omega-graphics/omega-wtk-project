@@ -40,8 +40,9 @@ public:
         using namespace Composition;
         auto rootLayer = rootView->getLayerTreeLimb()->getRootLayer();
         auto layerStyle = make<LayerStyle>();
+        // layerStyle->setBackgroundColor(Composition::Color::Blue);
         layerStyle->add(VISUAL_RECT(Rect(0,0,300,300),ColorBrush(Composition::Color::Green)));
-        // layerStyle->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(0,0,200,200),25,Composition::Text::Font("Arial",OmegaWTK::Composition::Text::Font::Regular)));
+        layerStyle->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(0,0,200,200),25,Composition::Text::Font("Arial",OmegaWTK::Composition::Text::Font::Regular)));
         // layerStyle->add(VISUAL_IMG(img,Rect(100,0,100,100)));
 //        rootLayer->setBackgroundColor(Composition::Color::Blue);
         //        rootLayer->drawRect(Rect(0,0,100,100),Composition::ColorBrush(Composition::Color::Red),Composition::Border(black,5));
@@ -109,18 +110,18 @@ int omegaWTKMain(AppInst *app)
     
     // auto img = IMPORT_IMG("test.png");
     // auto img2 = IMPORT_IMG("test-1.png");
-    MessageBoxA(HWND_DESKTOP,"Creating Widget!","NOTE",MB_OK);
+   
     auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}}));
-    MessageBoxA(HWND_DESKTOP,"Created Widget!","NOTE",MB_OK);
-    // auto widget2 = make<MyWidget>(MyWidget({{700,0},{400,400}},img2));
+
+    auto widget2 = make<MyWidget>(MyWidget({{700,0},{400,400}}));
     widget->show();
-    // widget2->show();
-    MessageBoxA(HWND_DESKTOP,"Creating Window!","NOTE",MB_OK);
+    widget2->show();
+ 
     auto mainWindow = make<AppWindow>(Rect(0,0,1000,1000),new MyWindowDelegate(app));
-    MessageBoxA(HWND_DESKTOP,"Created Window!","NOTE",MB_OK);
+    // 
     mainWindow->addWidget(widget);
-    MessageBoxA(HWND_DESKTOP,"Attached Widget to Window!","NOTE",MB_OK);
-    // mainWindow->addWidget(widget2);
+   
+    mainWindow->addWidget(widget2);
     mainWindow->setMenu(menu);
     app->windowManager->setRootWindow(mainWindow);
     app->windowManager->displayRootWindow();

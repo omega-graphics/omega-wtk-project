@@ -121,8 +121,11 @@ namespace OmegaWTK::Composition {
             };
         }
 
+        UINT dpi = GetDpiForWindow(GetForegroundWindow());
+        FLOAT scaleFactor = FLOAT(dpi)/96.f;
+
         /// TODO: Use Custom Fonts with custom font Collection!
-        hr = dwrite_factory->CreateTextFormat(w_str.c_str(),NULL,weight,style,DWRITE_FONT_STRETCH_NORMAL,FLOAT(fontSize),L"en-us",&textFormat);
+        hr = dwrite_factory->CreateTextFormat(w_str.c_str(),NULL,weight,style,DWRITE_FONT_STRETCH_NORMAL,FLOAT(fontSize) * scaleFactor,L"en-us",&textFormat);
         if(FAILED(hr)){
 
         };
