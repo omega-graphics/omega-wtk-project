@@ -45,8 +45,8 @@ void CocoaAppWindow::attachWidgets(){
     auto it = windowWidgetRootViews.begin();
     while(it != windowWidgetRootViews.end()){
         CocoaItem *item = (CocoaItem *)*it;
-        NSView *view = (NSView *)item->getBinding();
-        [rootView addSubview:view];
+        NSViewController *view = (NSViewController *)item->getBinding();
+        [rootView addSubview:view.view];
         ++it;
     };
     [window setContentView:rootView];

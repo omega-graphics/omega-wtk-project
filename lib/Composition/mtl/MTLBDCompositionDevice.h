@@ -46,7 +46,7 @@ public:
     Core::SharedPtr<BDCompositionImageRenderTarget> makeImageRenderTarget(Core::SharedPtr<BDCompositionImage> &img);
     Core::SharedPtr<BDCompositionFontFactory> createFontFactory();
     Core::SharedPtr<BDCompositionVisualTree> createVisualTree();
-    void renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> &visualTree, ViewRenderTarget *view);
+    void renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> &visualTree, ViewRenderTarget *view,bool updatePass);
     void destroyTarget(Layer *layer,Core::SharedPtr<BDCompositionRenderTarget> &target);
 };
 

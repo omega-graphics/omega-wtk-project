@@ -47,6 +47,10 @@ ViewDelegate::~ViewDelegate(){};
 void ViewDelegate::onRecieveEvent(Native::NativeEventPtr event){
     using Native::NativeEvent;
     switch (event->type) {
+//        case NativeEvent::HasLoaded : {
+//            viewHasLoaded(event);
+//            break;
+//        }
         case NativeEvent::CursorEnter : {
             onMouseEnter(event);
             break;

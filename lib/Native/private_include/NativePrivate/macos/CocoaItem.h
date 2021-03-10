@@ -17,6 +17,10 @@ class CocoaItem;
 -(CALayer *) getCALayer;
 @end
 
+@interface OmegaWTKCocoaViewController : NSViewController
+-(instancetype) initWithFrame:(NSRect) rect delegate:(OmegaWTK::Native::Cocoa::CocoaItem *) delegate;
+@end
+
 @interface OmegaWTKCocoaScrollView : NSScrollView
 @end
 
@@ -29,6 +33,7 @@ namespace Cocoa {
 
 class CocoaItem : public NativeItem {
     OmegaWTKCocoaView * _ptr;
+    OmegaWTKCocoaViewController *cont;
     friend class CocoaEventHandler;
     void enable();
     void disable();
@@ -43,6 +48,7 @@ public:
 private:
     Type type;
 public:
+    bool isReady;
     CALayer *getLayer(){ return [_ptr getCALayer];};
     void setNeedsDisplay();
     void * getBinding();

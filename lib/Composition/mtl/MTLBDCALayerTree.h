@@ -32,8 +32,10 @@ namespace OmegaWTK::Composition {
         MTLBDCALayerTree(MTLBDCompositionDevice *device);
         static Core::SharedPtr<MTLBDCALayerTree> Create(MTLBDCompositionDevice *device);
         Core::SharedPtr<Parent::Visual> makeVisual(Core::SharedPtr<BDCompositionImage> &img);
-        void setRootVisual(Core::SharedPtr<Parent::Visual> &visual);
-        void addVisual(Core::SharedPtr<Parent::Visual> &visual);
+        void setRootVisual(Core::SharedPtr<Parent::Visual> visual);
+        void replaceRootVisual(Core::SharedPtr<Parent::Visual> visual);
+        void replaceVisualWithTargetPtr(Core::SharedPtr<BDCompositionImageRenderTarget> &imgTarget, Core::SharedPtr<Parent::Visual> visual);
+        void addVisual(Core::SharedPtr<Parent::Visual> visual);
     };
 
 };

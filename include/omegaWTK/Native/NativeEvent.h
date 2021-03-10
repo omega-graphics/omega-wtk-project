@@ -13,6 +13,7 @@ class NativeEvent {
 public:
     typedef enum : OPT_PARAM {
         /**View Events*/
+        HasLoaded,
         CursorEnter,
         CursorExit,
         LMouseDown,
@@ -34,6 +35,10 @@ public:
 };
 
 typedef NativeEvent * NativeEventPtr;
+
+typedef struct {
+    
+} ViewHasLoaded;
 
 typedef struct {
     

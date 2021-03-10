@@ -30,6 +30,7 @@ class AppWindowManager;
         friend class AppWindowDelegate;
         friend class AppWindowManager;
         void _add_widget(SharedHandle<Widget> * widget);
+        void drawWidgets();
     public:
         void setMenu(SharedHandle<Menu> & menu);
         void setLayerStyle(SharedHandle<Composition::WindowStyle> & style);

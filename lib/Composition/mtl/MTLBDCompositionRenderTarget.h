@@ -44,7 +44,7 @@ namespace OmegaWTK::Composition {
         void fillRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush);
         void fillRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush);
         void drawText(Core::SharedPtr<BDCompositionFont> &font, Core::String &string, Core::Rect &textRect, Core::SharedPtr<Brush> &brush);
-        Core::SharedPtr<BDCompositionImage> createImageFromBitmapImage(Core::SharedPtr<Core::BitmapImage> &img, Core::Rect &newSize, unsigned v_id);
+        Core::SharedPtr<BDCompositionImage> createImageFromBitmapImage(Core::SharedPtr<Media::BitmapImage> &img, Core::Rect &newSize, unsigned v_id);
         void drawImage(Core::SharedPtr<BDCompositionImage> &img, Core::Position pos);
         void drawImage(Core::SharedPtr<BDCompositionImage> &img, Core::FPosition pos);
     };
@@ -315,7 +315,7 @@ void MTLBDCompositionRenderTarget<_Ty>::drawText(Core::SharedPtr<BDCompositionFo
     
 };
 template<class _Ty>
-Core::SharedPtr<BDCompositionImage> MTLBDCompositionRenderTarget<_Ty>::createImageFromBitmapImage(Core::SharedPtr<Core::BitmapImage> & img, Core::Rect & newSize,unsigned v_id){
+Core::SharedPtr<BDCompositionImage> MTLBDCompositionRenderTarget<_Ty>::createImageFromBitmapImage(Core::SharedPtr<Media::BitmapImage> & img, Core::Rect & newSize,unsigned v_id){
     auto imgHeader = img->header.get();
     MTLTextureDescriptor *textureDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:computePixelFormat(imgHeader->bitDepth, imgHeader->channels,img->sRGB) width:imgHeader->width height:imgHeader->height mipmapped:NO];
     textureDesc.textureType = MTLTextureType2D;

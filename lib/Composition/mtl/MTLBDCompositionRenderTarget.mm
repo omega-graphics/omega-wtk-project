@@ -58,10 +58,10 @@ MTLBDCompositionViewRenderTarget::MTLBDCompositionViewRenderTarget(MTLBDComposit
 //    rect.origin.y /= scaleFactor;
     
     metalLayer.frame = rect;
-//    metalLayer.bounds = rect;
+    metalLayer.bounds = rect;
 //    metalLayer.bounds = CGRectMake(0,0,rect.size.width,rect.size.height);
     metalLayer.device = device->metal_device;
-    metalLayer.opaque = YES;
+    metalLayer.opaque = NO;
 //    metalLayer.presentsWithTransaction = YES;
     NSLog(@"Position: x%f, y%f",metalLayer.frame.origin.x,metalLayer.frame.origin.y);
     metalLayer.contentsScale = 2.f;

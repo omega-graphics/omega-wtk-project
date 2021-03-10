@@ -43,6 +43,8 @@ namespace OmegaWTK {
             float x_offset, y_offset;
             float radius;
             float blurAmount;
+            float opacity;
+            Color color;  
         } DropShadowParams;
         typedef struct {
             
@@ -51,6 +53,8 @@ namespace OmegaWTK {
             
         } MotionBlurParams;
     };
+    
+#define LAYER_EFFECT_DROPSHADOW(x,y,radius,blurAmount,opacity,color) ::OmegaWTK::Composition::LayerEffect({::OmegaWTK::Composition::LayerEffect::DropShadow,new ::OmegaWTK::Composition::LayerEffect::DropShadowParams({x,y,radius,blurAmount,opacity,color})})
     
     /// An object drawn by a Compositor.
     struct Visual {

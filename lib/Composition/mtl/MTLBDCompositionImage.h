@@ -14,6 +14,7 @@ class MTLBDCompositionImage : public BDCompositionImage {
     MTLTextureDescriptor *desc;
     Core::Rect n_rect;
     Core::FRect rect;
+    LayerEffect *dropShadow = nullptr;
     friend class MTLBDCompositionRenderTarget<BDCompositionViewRenderTarget>;
     friend class MTLBDCompositionRenderTarget<BDCompositionImageRenderTarget>;
     friend class MTLBDCompositionDevice;
@@ -23,14 +24,14 @@ public:
     /**
      Create a Composition from an existing Core::BitmapImage and a id<MTLTexture>
      */
-    MTLBDCompositionImage(Core::SharedPtr<Core::BitmapImage> & _img,Core::FRect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img);
+    MTLBDCompositionImage(Core::SharedPtr<Media::BitmapImage> & _img,Core::FRect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img);
     /**
      Create a Compositon Image from a id<MTLTexture>
     */
     MTLBDCompositionImage(Core::Rect & rect,id<MTLTexture> img);
-    static Core::SharedPtr<BDCompositionImage> Create(Core::SharedPtr<Core::BitmapImage> & _img,Core::FRect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img);
+    static Core::SharedPtr<BDCompositionImage> Create(Core::SharedPtr<Media::BitmapImage> & _img,Core::FRect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img);
     static Core::SharedPtr<BDCompositionImage> Create(Core::Rect & rect,id<MTLTexture> img);
-    void applyEffect(LayerEffect &effect);
+    void applyEffect(LayerEffect *effect);
 };
 
 MTLPixelFormat computePixelFormat(unsigned bitDepth,unsigned channelCount,bool isrgb);

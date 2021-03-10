@@ -148,7 +148,7 @@ Core::SharedPtr<BDCompositionVisualTree> MTLBDCompositionDevice::createVisualTre
     return MTLBDCALayerTree::Create(this);
 };
 
-void MTLBDCompositionDevice::renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> & visualTree,ViewRenderTarget *renderTarget){
+void MTLBDCompositionDevice::renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> & visualTree,ViewRenderTarget *renderTarget,bool updatePass){
     auto cocoaItem = (Native::Cocoa::CocoaItem *)renderTarget->getNativePtr();
     CALayer *viewLayer = cocoaItem->getLayer();
 //    viewLayer.bounds = Native::Cocoa::core_rect_to_cg_rect(cocoaItem->rect);
@@ -161,12 +161,27 @@ void MTLBDCompositionDevice::renderVisualTreeToView(Core::SharedPtr<BDCompositio
     else {
         [viewLayer addSublayer:root->metalLayer];
         root->metalLayer.position = CGPointMake(root->metalLayer.bounds.size.width/2,root->metalLayer.bounds.size.height/2);
+        [root->metalLayer setNeedsDisplay];
+        [root->metalLayer layoutIfNeeded];
     }
     
     NSLog(@"View Layer's Pos: {x:%f ,y:%f}",viewLayer.position.x,viewLayer.position.y);
     NSLog(@"Metal Layer's Pos: {x:%f ,y:%f}",root->metalLayer.position.x,root->metalLayer.position.y);
+    auto visual_it = caLayerTree->body.begin();
+    while(visual_it != caLayerTree->body.end()){
+        auto _v = (MTLBDCALayerTree::Visual *)visual_it->get();
+        [root->metalLayer addSublayer:_v->metalLayer];
+        _v->metalLayer.position = CGPointMake((_v->metalLayer.bounds.size.width/2) + _v->pos.x,(_v->metalLayer.bounds.size.width/2) +_v->pos.y);
+        NSLog(@"View Layer's Pos: {x:%f ,y:%f}",root->metalLayer.position.x,root->metalLayer.position.y);
+        NSLog(@"Metal Layer's Pos: {x:%f ,y:%f}",_v->metalLayer.position.x,_v->metalLayer.position.y);
+        NSLog(@"Layer Rect: {x:%f,y:%f,w:%f,h:%f",_v->metalLayer.bounds.origin.x,_v->metalLayer.bounds.origin.y,_v->metalLayer.bounds.size.width,_v->metalLayer.bounds.size.height);
+        ++visual_it;
+        [_v->metalLayer setNeedsDisplay];
+        [_v->metalLayer layoutIfNeeded];
+    };
+    
+//    [viewLayer setNeedsDisplay];
 //    [viewLayer setContentsScale:[NSScreen mainScreen].backingScaleFactor];
-    [viewLayer setNeedsDisplay];
 };
 
 void MTLBDCompositionDevice::destroyTarget(Layer *layer,Core::SharedPtr<BDCompositionRenderTarget> &target){

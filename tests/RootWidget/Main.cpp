@@ -42,7 +42,7 @@ public:
         auto layerStyle = make<LayerStyle>();
         // layerStyle->setBackgroundColor(Composition::Color::Blue);
         layerStyle->add(VISUAL_RECT(Rect(0,0,300,300),ColorBrush(Composition::Color::Green)));
-        layerStyle->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(0,0,200,200),25,Composition::Text::Font("Arial",OmegaWTK::Composition::Text::Font::Regular)));
+//        layerStyle->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(0,0,200,200),25,Composition::Text::Font("Arial",OmegaWTK::Composition::Text::Font::Regular)));
         // layerStyle->add(VISUAL_IMG(img,Rect(100,0,100,100)));
 //        rootLayer->setBackgroundColor(Composition::Color::Blue);
         //        rootLayer->drawRect(Rect(0,0,100,100),Composition::ColorBrush(Composition::Color::Red),Composition::Border(black,5));
@@ -52,6 +52,14 @@ public:
         //        rootLayer->drawText("Hello World!",25,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,200,200));
         //        rootLayer->drawText("Hello World!",50,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,200));
         rootLayer->setStyle(layerStyle);
+        auto subLayer = makeLayer(Rect(0,0,200,200));
+        auto shadow = make<LayerEffect>(LAYER_EFFECT_DROPSHADOW(0,-5.0,5,1.0,1.0,Composition::Color::Black));
+        auto _style2 = make<LayerStyle>();
+        _style2->setBackgroundColor(Composition::Color(Composition::Color::Black,0x00));
+        _style2->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(0,0,200,200),25,Composition::Text::Font("Arial",OmegaWTK::Composition::Text::Font::Regular)));
+        _style2->addEffect(shadow);
+        subLayer->setStyle(_style2);
+        rootView->getLayerTreeLimb()->addLayer(subLayer);
     };
     
 };
@@ -113,15 +121,15 @@ int omegaWTKMain(AppInst *app)
    
     auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}}));
 
-    auto widget2 = make<MyWidget>(MyWidget({{700,0},{400,400}}));
+//    auto widget2 = make<MyWidget>(MyWidget({{700,0},{400,400}}));
     widget->show();
-    widget2->show();
+//    widget2->show();
  
     auto mainWindow = make<AppWindow>(Rect(0,0,1000,1000),new MyWindowDelegate(app));
     // 
     mainWindow->addWidget(widget);
    
-    mainWindow->addWidget(widget2);
+//    mainWindow->addWidget(widget2);
     mainWindow->setMenu(menu);
     app->windowManager->setRootWindow(mainWindow);
     app->windowManager->displayRootWindow();

@@ -61,14 +61,40 @@
 
 @end
 
+@implementation OmegaWTKCocoaViewController{
+    OmegaWTK::Native::Cocoa::CocoaItem *_delegate;
+    NSRect _rect;
+}
+- (instancetype)initWithFrame:(NSRect)rect delegate:(OmegaWTK::Native::Cocoa::CocoaItem *)delegate{
+    if(self = [super init]){
+        _rect = rect;
+        _delegate = delegate;
+    };
+    return self;
+};
+
+- (void)loadView{
+    NSLog(@"Load the View!");
+    self.view = [[OmegaWTKCocoaView alloc] initWithFrame:_rect delegate:_delegate];
+    self.view.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+};
+
+- (void)viewDidLoad{
+    NSLog(@"View Has Loaded.. Emitting Event!");
+    _delegate->isReady = true;
+};
+
+@end
+
 namespace OmegaWTK::Native::Cocoa {
 
-CocoaItem::CocoaItem(const Core::Rect & rect,CocoaItem::Type _type):rect(rect),type(_type){
-    _ptr = [[OmegaWTKCocoaView alloc] initWithFrame:OmegaWTK::Native::Cocoa::core_rect_to_cg_rect(rect) delegate:this];
+CocoaItem::CocoaItem(const Core::Rect & rect,CocoaItem::Type _type):rect(rect),type(_type),isReady(false){
+    cont = [[OmegaWTKCocoaViewController alloc] initWithFrame:core_rect_to_cg_rect(rect) delegate:this];
+    _ptr = (OmegaWTKCocoaView *)cont.view;
 };
 
 void * CocoaItem::getBinding(){
-    return reinterpret_cast<void *>(_ptr);
+    return reinterpret_cast<void *>(this->cont);
 };
 
 void CocoaItem::enable(){

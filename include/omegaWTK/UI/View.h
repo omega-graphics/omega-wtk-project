@@ -55,6 +55,10 @@ namespace OmegaWTK {
          
          */
         /// @{
+//        /**
+//            Called when the view has loaded. NOTE: All View Delegates must implement this method!
+//        */
+//        virtual void viewHasLoaded(Native::NativeEventPtr event) = 0;
         /**
             Called when the Mouse Enters the View
          */

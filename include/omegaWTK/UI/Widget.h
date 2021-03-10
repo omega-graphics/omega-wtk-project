@@ -15,8 +15,13 @@ protected:
     SharedHandle<View> rootView;
     SharedHandle<Widget> parent;
     SharedHandle<Composition::LayerTree> layerTree;
-private:
+    /**
+     Constructs a Layer with Widget's Compositor Pointer and Core::Rect
+     */
+    SharedHandle<Composition::Layer> makeLayer(const Core::Rect & rect);
     Composition::Compositor * compositor;
+private:
+    
     friend class AppWindow;
     friend class AppWindowManager;
 public:

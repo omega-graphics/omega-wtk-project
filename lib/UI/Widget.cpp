@@ -9,6 +9,10 @@ Widget::Widget(const Core::Rect & rect,SharedHandle<Widget> parent):parent(paren
         parent->rootView->addSubView(this->rootView.get());
 };
 
+SharedHandle<Composition::Layer> Widget::makeLayer(const Core::Rect & rect){
+    return std::make_shared<Composition::Layer>(rect,compositor);
+};
+
 //Widget::Widget(Widget & widget):parent(std::move(widget.parent)),compositor(std::move(widget.compositor)),rootView(std::move(widget.rootView)){
 //    
 //};
