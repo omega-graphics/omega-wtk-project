@@ -42,6 +42,11 @@ void Compositor::updateRequestedLayerTreeLimb(LayerTree::Limb *limb){
     // backend->doUpdate();
 };
 
+void Compositor::layoutLayerTreeLimb(LayerTree::Limb *limb){
+    backend->setCurrentJob(limb);
+    backend->redoLayout();
+};
+
 Compositor::~Compositor(){
     prepareCleanup();
 };

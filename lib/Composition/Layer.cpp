@@ -80,6 +80,10 @@ void LayerTree::Limb::redraw(){
     limbRoot->ownerCompositor->updateRequestedLayerTreeLimb(this);
 };
 
+void LayerTree::Limb::layout(){
+    limbRoot->ownerCompositor->layoutLayerTreeLimb(this);
+};
+
 LayerTree::Limb::iterator LayerTree::Limb::begin(){
     return limbRoot->children.begin();
 };

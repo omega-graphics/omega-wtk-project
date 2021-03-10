@@ -121,15 +121,15 @@ int omegaWTKMain(AppInst *app)
    
     auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}}));
 
-//    auto widget2 = make<MyWidget>(MyWidget({{700,0},{400,400}}));
+    auto widget2 = make<MyWidget>(MyWidget({{500,0},{400,400}}));
     widget->show();
-//    widget2->show();
+    widget2->show();
  
     auto mainWindow = make<AppWindow>(Rect(0,0,1000,1000),new MyWindowDelegate(app));
     // 
     mainWindow->addWidget(widget);
    
-//    mainWindow->addWidget(widget2);
+    mainWindow->addWidget(widget2);
     mainWindow->setMenu(menu);
     app->windowManager->setRootWindow(mainWindow);
     app->windowManager->displayRootWindow();

@@ -21,6 +21,7 @@ namespace OmegaWTK::Composition {
         OMEGAWTK_DEPRECATED void updateRequestedLayer(Layer *layer);
         void updateRequestedLayerTreeLimb(LayerTree::Limb *limb);
         void updateWindowLayer(WindowLayer *layer);
+        void layoutLayerTreeLimb(LayerTree::Limb *limb);
         public:
         /// Initial Draw for Widget
         void prepareDraw(LayerTree *treeToDraw);

@@ -106,6 +106,7 @@ class AppWindowManager;
             void disable();
             void enable();
             void redraw();
+            void layout();
         };
     private:
         SharedHandle<Limb> rootLimb;

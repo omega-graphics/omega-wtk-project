@@ -63,4 +63,27 @@ void MTLBDCALayerTree::addVisual(Core::SharedPtr<BDCompositionVisualTree::Visual
     body.push_back(visual);
 };
 
+void MTLBDCALayerTree::layout(){
+    Visual *rootV = (Visual *)root_v.get();
+    MTLBDCompositionImage *mtlImg = (MTLBDCompositionImage *)rootV->img.get();
+    rootV->metalLayer.frame = Native::Cocoa::core_rect_to_cg_rect(mtlImg->n_rect);
+    rootV->metalLayer.bounds = CGRectMake(0.0,0.0,mtlImg->n_rect.dimen.minWidth,mtlImg->n_rect.dimen.minHeight);
+    auto visual_it = body.begin();
+    while(visual_it != body.end()){
+        auto _v = (MTLBDCALayerTree::Visual *)visual_it->get();
+        MTLBDCompositionImage *mtlImg = (MTLBDCompositionImage *)_v->img.get();
+        _v->metalLayer.frame = Native::Cocoa::core_rect_to_cg_rect(mtlImg->n_rect);
+        _v->metalLayer.bounds = CGRectMake(0.0,0.0,mtlImg->n_rect.dimen.minWidth,mtlImg->n_rect.dimen.minHeight);
+        _v->metalLayer.position = CGPointMake(_v->pos.x,_v->pos.y);
+//        NSLog(@"View Layer's Pos: {x:%f ,y:%f}",root->metalLayer.position.x,root->metalLayer.position.y);
+        NSLog(@"Metal Layer's Pos: {x:%f ,y:%f}",_v->metalLayer.position.x,_v->metalLayer.position.y);
+        NSLog(@"Layer Rect: {x:%f,y:%f,w:%f,h:%f",_v->metalLayer.bounds.origin.x,_v->metalLayer.bounds.origin.y,_v->metalLayer.bounds.size.width,_v->metalLayer.bounds.size.height);
+        [_v->metalLayer setNeedsDisplay];
+//        [_v->metalLayer layoutIfNeeded];
+        NSLog(@"SuperLayer: %@",_v->metalLayer.superlayer);
+        ++visual_it;
+    };
+    [rootV->metalLayer setNeedsDisplay];
+};
+
 };

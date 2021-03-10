@@ -16,6 +16,7 @@ public:
     void setCurrentJob(LayerTree::Limb *limb);
     virtual void doWork() = 0;
     virtual void doUpdate() = 0;
+    virtual void redoLayout() = 0;
     Backend();
     ~Backend();
 };

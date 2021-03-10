@@ -11,6 +11,7 @@ namespace OmegaWTK {
         class NativeLayerTreeLimb {
             public:
             virtual void redraw() = 0;
+            virtual void layout() = 0;
         };
         /// Null Object Placeholder for native object!
         class NativeItem {

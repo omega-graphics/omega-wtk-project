@@ -36,6 +36,7 @@ namespace OmegaWTK::Composition {
         void replaceRootVisual(Core::SharedPtr<Parent::Visual> visual);
         void replaceVisualWithTargetPtr(Core::SharedPtr<BDCompositionImageRenderTarget> &imgTarget, Core::SharedPtr<Parent::Visual> visual);
         void addVisual(Core::SharedPtr<Parent::Visual> visual);
+        void layout();
     };
 
 };

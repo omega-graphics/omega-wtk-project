@@ -40,7 +40,7 @@ void CocoaAppWindow::enable(){
 };
 
 void CocoaAppWindow::attachWidgets(){
-    NSView *rootView = [[NSView alloc] initWithFrame:NSZeroRect];
+    NSView *rootView = [[NSView alloc] initWithFrame:window.frame];
     rootView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
     auto it = windowWidgetRootViews.begin();
     while(it != windowWidgetRootViews.end()){

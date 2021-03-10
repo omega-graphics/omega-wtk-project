@@ -190,4 +190,9 @@ namespace OmegaWTK::Composition {
         global_device->renderVisualTreeToView(tree,currentLimb->renderTarget,true);
     };
 
+    void BackendImpl::redoLayout(){
+        auto & tree = visualTrees[currentLimb->renderTarget];
+        tree->layout();
+    };
+
 };

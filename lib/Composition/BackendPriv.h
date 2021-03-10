@@ -13,6 +13,7 @@ class BackendImpl : public Backend {
     public:
     void doWork();
     void doUpdate();
+    void redoLayout();
     BackendImpl();
 };
 
