@@ -78,18 +78,18 @@ namespace OmegaWTK::Composition {
             //Handle Error!
         };
 
-        hr = DCompositionCreateDevice(dxgi_device.get(),IID_PPV_ARGS(&dcomp_device_1));
+        hr = DCompositionCreateDevice3(dxgi_device.get(),IID_PPV_ARGS(&dcomp_device_1));
         if(FAILED(hr)){
             //Handle Error!
-            MessageBoxA(HWND_DESKTOP,"Failed to create  DComp Device 1",NULL,MB_OK);
+            MessageBoxA(HWND_DESKTOP,"Failed to create  DComp Desktop Device",NULL,MB_OK);
         };
-        // hr = DCompositionCreateDevice2(dxgi_device.get(),__uuidof(IDCompositionDevice2),(void **)&dcomp_device_2);
-        // if(FAILED(hr)){
-        //     //Handle Error!
-        //     std::stringstream ss;
-        //     ss << std::hex << hr;
-        //     MessageBoxA(HWND_DESKTOP,(std::string("Failed to create  DComp Device 3 ERROR:") + ss.str()).c_str(),NULL,MB_OK);
-        // };
+        hr = dcomp_device_1->QueryInterface(&dcomp_device_2);
+        if(FAILED(hr)){
+            //Handle Error!
+            std::stringstream ss;
+            ss << std::hex << hr;
+            MessageBoxA(HWND_DESKTOP,(std::string("Failed to get  DComp Device 3 from DComp Desktop Device ERROR:") + ss.str()).c_str(),NULL,MB_OK);
+        };
         
         #else
         
@@ -193,6 +193,8 @@ namespace OmegaWTK::Composition {
             target = tree->hwndTarget.get();
 
         DCVisualTree::Visual *rootV = (DCVisualTree::Visual *)tree->root_v.get();
+        UINT rootVHeight = ((DXBDCompositionImageRenderTarget *)rootV->img.get())->rect.dimen.minHeight;
+        hr = rootV->visual->SetOpacityMode(DCOMPOSITION_OPACITY_MODE_LAYER);
         hr = target->SetRoot(rootV->visual);
 
         UINT dpi = GetDpiForWindow(((Native::Win::HWNDItem *)view->getNativePtr())->hwnd);
@@ -208,9 +210,27 @@ namespace OmegaWTK::Composition {
             while(body_it != tree->body.end()){
                 
                 auto childV = (DCVisualTree::Visual *)body_it->get();
+                DXBDCompositionImageRenderTarget *__img = (DXBDCompositionImageRenderTarget *)childV->img.get();
+                if(__img->dropShadow){
+                    LayerEffect::DropShadowParams *params = (LayerEffect::DropShadowParams *)__img->dropShadow->params;
+                    IDCompositionShadowEffect *dropShadow;
+                    hr = dcomp_device_2->CreateShadowEffect(&dropShadow);
+                    if(FAILED(hr)){
+
+                    };
+                    dropShadow->SetColor(D2D1::Vector4F(params->color.r,params->color.g,params->color.b,params->color.a));
+                    dropShadow->SetStandardDeviation(params->radius/3.f);
+                    hr = childV->visual->SetEffect(dropShadow);
+                };
                 hr = childV->visual->SetOffsetX(childV->pos.x * scaleFactor);
 
-                hr = childV->visual->SetOffsetY(childV->pos.y * scaleFactor);
+                hr = childV->visual->SetOpacityMode(DCOMPOSITION_OPACITY_MODE_INHERIT);
+
+                if(FAILED(hr)){
+
+                };
+
+                hr = childV->visual->SetOffsetY((rootVHeight - childV->pos.y - __img->rect.dimen.minHeight) * scaleFactor);
 
                 hr = rootV->visual->AddVisual(childV->visual,FALSE,NULL);
                 

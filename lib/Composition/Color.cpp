@@ -21,5 +21,7 @@ bool Color::compare(const Color &other){
    return (r == other.r) && (g == other.g) &&(b == other.b) && (a == other.a); 
 };
 
+const Color Color::Transparent = Color(Color::Black,0x00);
+
 
 };

@@ -305,10 +305,10 @@ namespace OmegaWTK::Composition {
         if(FAILED(hr)){
             /// Handle Error!
         };
-        // hr = direct2d_device_context->CreateBitmapFromDxgiSurface(dxgi_surface.get(),D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&direct2d_bitmap);
-        // if(FAILED(hr)){
-        //     /// Handle Error!
-        // };
+        hr = direct2d_device_context->CreateBitmapFromDxgiSurface(dxgi_surface.get(),D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&direct2d_bitmap);
+        if(FAILED(hr)){
+            /// Handle Error!
+        };
 
         direct2d_device_context->SetTarget(direct2d_bitmap.get());
 
@@ -325,6 +325,7 @@ namespace OmegaWTK::Composition {
 
         DXGI_SWAP_CHAIN_DESC1 desc {0};
         desc.BufferCount = 2;
+        desc.AlphaMode = DXGI_ALPHA_MODE_PREMULTIPLIED;
         desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         desc.Height = rect.dimen.minHeight * scaleFactor;
@@ -401,14 +402,14 @@ namespace OmegaWTK::Composition {
             /// Handle Error!
             MessageBoxA(HWND_DESKTOP,"Failed to Create Bitmap from DXGI Surface",NULL, MB_OK);
         };
+        imgData = new unsigned char[rect.dimen.minWidth * 4 * rect.dimen.minHeight * (scaleFactor * scaleFactor)];
+        hr = direct2d_device_context->CreateBitmap(D2D1::SizeU(rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor),imgData,rect.dimen.minWidth * 4 * scaleFactor,D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET,D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&first_target);
+        if(FAILED(hr)){
+            /// Handle Error!
+            MessageBoxA(HWND_DESKTOP,"Failed to Create Bitmap",NULL, MB_OK);
+        };
 
-        // hr = direct2d_device_context->CreateBitmap(D2D1::SizeU(rect.dimen.minWidth,rect.dimen.minHeight),D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&first_target);
-        // if(FAILED(hr)){
-        //     /// Handle Error!
-        //     MessageBoxA(HWND_DESKTOP,"Failed to Create Bitmap",NULL, MB_OK);
-        // };
-
-        direct2d_device_context->SetTarget(direct2d_bitmap.get());
+        direct2d_device_context->SetTarget(first_target.get());
 
         recreateSwapChain = false;
         recreateDeviceContext = false;
@@ -495,18 +496,130 @@ namespace OmegaWTK::Composition {
         Core::SafeRelease(&_brush);
     };
 
-    void DXBDCompositionImageRenderTarget::applyEffectToImage(LayerEffect &effect){
-        switch (effect.type) {
-        case LayerEffect::DropShadow : {
+    void DXBDCompositionImageRenderTarget::applyEffect(LayerEffect *effect){
+        switch (effect->type) {
+            case LayerEffect::DropShadow : 
+            {
+                dropShadow = effect;
+                break;
+            }
+            default: {
+                effectBuffer.push(effect);
+                break;
+            }
+        }
+    };
+
+    inline IID getIIDFromOmegaEffectType(LayerEffect::Type & type){
+        IID res;
+        switch (type) {
+        case LayerEffect::GaussianBlur : {
+            res = CLSID_D2D1GaussianBlur;
             break;
         }
-        case LayerEffect::Transformation : {
+        case LayerEffect::DirectionalBlur : {
+            res = CLSID_D2D1DirectionalBlur;
             break;
         }
-        default:{
+        default: {
+            res = CLSID_NULL;
             break;
         }
         }
+        return res;
+    };
+
+    void __applyEffect_interal(ID2D1Effect * _dx_effect,LayerEffect *effect,ID2D1Image *img,ID2D1Image  **out){
+        switch (effect->type) {
+        case LayerEffect::GaussianBlur : {
+            LayerEffect::GaussianBlurParams *params = (LayerEffect::GaussianBlurParams *)effect->params;
+            _dx_effect->SetInput(0,img);
+            _dx_effect->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION,(params->radius/3.f));
+            _dx_effect->GetOutput(out);
+            break;
+        }
+        case LayerEffect::DirectionalBlur : {
+            LayerEffect::DirectionalBlurParams *params = (LayerEffect::DirectionalBlurParams *)effect->params;
+            _dx_effect->SetInput(0,img);
+            _dx_effect->SetValue(D2D1_DIRECTIONALBLUR_PROP_STANDARD_DEVIATION,(params->radius/3.f));
+            _dx_effect->SetValue(D2D1_DIRECTIONALBLUR_PROP_ANGLE,params->angle);
+            _dx_effect->GetOutput(out);
+            break;
+        }
+        default:
+            break;
+        }
+        Core::SafeRelease(&_dx_effect);
+    };
+
+    void DXBDCompositionImageRenderTarget::commitEffects(){
+        HRESULT hr;
+        hr = direct2d_device_context->EndDraw();
+        if(FAILED(hr) || hr == D2DERR_RECREATE_TARGET){
+            /// Dont Apply Effects if Failed!
+            MessageBoxA(GetForegroundWindow(),"Recreate Target",NULL,MB_OK);
+            return;
+        };
+
+        ID2D1Image *temp1,*temp2;
+        if(!effectBuffer.empty()) {
+            auto first_effect = effectBuffer.front();
+            effectBuffer.pop();
+            ID2D1Effect *_dx_effect;
+            IID iid = getIIDFromOmegaEffectType(first_effect->type);
+            hr = direct2d_device_context->CreateEffect(iid,&_dx_effect);
+            if(FAILED(hr)){
+
+            };
+            temp1 = first_target.get();
+            __applyEffect_interal(_dx_effect,first_effect,temp1,&temp2);
+            temp1 = temp2;
+            //  Core::SafeRelease(&temp1);
+            //  Core::SafeRelease(&_dx_effect);
+            // temp1 = temp2;
+            // while(!effectBuffer.empty()){
+            //     auto effect = effectBuffer.front();
+            //     effectBuffer.pop();
+            //     ID2D1Effect *_dx_effect;
+            //     IID iid = getIIDFromOmegaEffectType(effect->type);
+            //     hr = direct2d_device_context->CreateEffect(iid,&_dx_effect);
+            //     if(FAILED(hr)){
+
+            //     };
+            //     __applyEffect_interal(_dx_effect,effect,temp1,temp2);
+            //     // Core::SafeRelease(&temp1);
+            //     // Core::SafeRelease(&_dx_effect);
+            //     temp1 = temp2;
+            // };
+        }
+        else {
+            temp1 = first_target.get();
+        }
+        ID2D1Effect *premultiAlpha;
+        hr = direct2d_device_context->CreateEffect(CLSID_D2D1Premultiply,&premultiAlpha);
+        if(FAILED(hr)){
+
+        };
+        premultiAlpha->SetInput(0,temp1);
+        premultiAlpha->GetOutput(&temp2);
+
+        direct2d_device_context->SetTarget(direct2d_bitmap.get());
+
+        direct2d_device_context->BeginDraw();
+        direct2d_device_context->Clear();
+        direct2d_device_context->DrawImage(temp2);
+        hr = direct2d_device_context->EndDraw();
+        if(FAILED(hr) || hr == D2DERR_RECREATE_TARGET){
+            MessageBoxA(GetForegroundWindow(),"Failed to Draw Effects to DXGI_SURFACE",NULL,MB_OK);
+            Core::SafeRelease(&direct2d_device_context);
+            recreateDeviceContext = true;
+        }
+        // Core::SafeRelease(&direct2d_bitmap);
+        // Core::SafeRelease(&temp1);
+        // Core::SafeRelease(&premultiAlpha);
+        // delete imgData;
+            
+
     };
 
     void DXBDCompositionImageRenderTarget::commit(){
@@ -515,31 +628,23 @@ namespace OmegaWTK::Composition {
         params.pDirtyRects = NULL;
         params.pScrollOffset = NULL;
         params.pScrollRect = NULL;
-        hr = direct2d_device_context->EndDraw();
-        if(FAILED(hr) || hr == D2DERR_RECREATE_TARGET){
-            Core::SafeRelease(&first_target);
+
+        hr = dxgi_swap_chain_1->Present1(1,0,&params);
+        if(FAILED(hr) || hr == DXGI_STATUS_OCCLUDED ){
+            // Core::SafeRelease(&dxgi_swap_chain_1);
+            //  Core::SafeRelease(&dxgi_swap_chain_2);
+            Core::SafeRelease(&dxgi_surface);
             Core::SafeRelease(&direct2d_device_context);
             Core::SafeRelease(&direct2d_bitmap);
-            recreateDeviceContext = true;
-            dcomp_surface->EndDraw();
+            recreateSwapChain = recreateDeviceContext = true;
         }
         else {
-
-            hr = dxgi_swap_chain_1->Present1(1,0,&params);
-            if(FAILED(hr) || hr == DXGI_STATUS_OCCLUDED ){
-                // Core::SafeRelease(&dxgi_swap_chain_1);
-                //  Core::SafeRelease(&dxgi_swap_chain_2);
-                Core::SafeRelease(&dxgi_surface);
-                Core::SafeRelease(&direct2d_device_context);
-                Core::SafeRelease(&direct2d_bitmap);
-                recreateSwapChain = recreateDeviceContext = true;
-            }
-            else {
-                recreateSwapChain = false;
-                recreateDeviceContext = false;
-                newTarget = false;
-            }
-           
+            recreateSwapChain = false;
+            recreateDeviceContext = false;
+            newTarget = false;
+            // Core::SafeRelease(&direct2d_bitmap);
+        }
+        
         //    hr = dcomp_surface->EndDraw();
         //    if(FAILED(hr)){
         //         Core::SafeRelease(&direct2d_device_context);
@@ -565,8 +670,6 @@ namespace OmegaWTK::Composition {
             //         Core::SafeRelease(&direct2d_device_context);
             //         Core::SafeRelease(&direct2d_bitmap);
             //     };
-            }
-            Core::SafeRelease(&first_target);
     };
 
     // Core::SharedPtr<BDCompositionImage> DXBDCompositionImageRenderTarget::getImg(){

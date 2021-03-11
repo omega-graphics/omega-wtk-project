@@ -50,8 +50,8 @@ namespace OmegaWTK::Composition {
         #endif
         Core::UniqueComPtr<IDXGIDevice1> dxgi_device;
         Core::UniqueComPtr<IDXGIAdapter> dxgi_adapter;
-        Core::UniqueComPtr<IDCompositionDevice> dcomp_device_1;
-        Core::UniqueComPtr<IDCompositionDevice2> dcomp_device_2;
+        Core::UniqueComPtr<IDCompositionDesktopDevice> dcomp_device_1;
+        Core::UniqueComPtr<IDCompositionDevice3> dcomp_device_2;
         friend class DXBDCompositionViewRenderTarget;
         friend class DXBDCompositionImageRenderTarget;
         friend class DCVisualTree;

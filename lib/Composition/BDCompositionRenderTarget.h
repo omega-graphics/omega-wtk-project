@@ -63,7 +63,8 @@ public:
     virtual bool needsSwapChain() = 0;
     virtual void redoDeviceContext() = 0;
     virtual void redoSwapChain() = 0;
-    virtual void applyEffectToImage(LayerEffect &effect) = 0;
+    virtual void applyEffect(LayerEffect *effect) = 0;
+    virtual void commitEffects() = 0;
 #endif
     /**
      Gets the underlying image!

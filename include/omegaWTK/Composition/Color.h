@@ -50,6 +50,7 @@ namespace OmegaWTK {
             --> 0xRRGGBB
             */ 
             Color(std::uint32_t hex_color,std::uint8_t alpha = 0xFF);
+            static const Color Transparent;
         };
 
         struct OMEGAWTK_EXPORT Gradient {
@@ -65,6 +66,7 @@ namespace OmegaWTK {
             } GradientType;
             GradientType type;
             Core::Vector<GradientStop> stops;
+
         };
     };
 };

@@ -24,9 +24,9 @@ namespace OmegaWTK::Composition {
         #endif
         #ifndef TARGET_WIN32
         virtual void applyEffect(LayerEffect *effect) = 0;
-        #endif
-        
         virtual void commitEffects() = 0;
+        #endif
+    
     };
 };
 

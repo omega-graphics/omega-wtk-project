@@ -85,9 +85,18 @@ namespace OmegaWTK::Composition {
             drawVisual(rootImgTarget.get(),__visual_it->get(),false);
             ++__visual_it;
         };
+    #if !defined(TARGET_WIN32)
         rootImgTarget->commit();
+    #endif
         // MessageBoxA(HWND_DESKTOP,"Root Img Target Commit","NOTE",MB_OK);
     #if defined(TARGET_WIN32)
+        auto effect_it = rootLayer->style->effects.begin();
+        while(effect_it !=rootLayer->style->effects.end()){
+            rootImgTarget->applyEffect(effect_it->get());
+            ++effect_it;
+        };
+        rootImgTarget->commitEffects();  
+        rootImgTarget->commit();
         auto visual = visualTree->makeVisual(rootImgTarget);
     #else
         Core::SharedPtr<BDCompositionImage> rootImg = rootImgTarget->getImg();
@@ -113,8 +122,17 @@ namespace OmegaWTK::Composition {
                      drawVisual(imgTarget.get(),__visual_it->get(),false);
                      ++__visual_it;
                  };
-                 imgTarget->commit();
+        #if !defined(TARGET_WIN32)
+                imgTarget->commit();
+        #endif
          #if defined(TARGET_WIN32)
+                auto effect_it = layer->style->effects.begin();
+                while(effect_it !=layer->style->effects.end()){
+                    imgTarget->applyEffect(effect_it->get());
+                    ++effect_it;
+                };
+                imgTarget->commitEffects();  
+                imgTarget->commit();
                  auto _visual = visualTree->makeVisual(imgTarget);
          #else
                  Core::SharedPtr<BDCompositionImage> img = imgTarget->getImg();
@@ -138,73 +156,82 @@ namespace OmegaWTK::Composition {
         visualTrees.insert(std::make_pair(currentLimb->renderTarget,visualTree));
     };
     void BackendImpl::doUpdate(){
-        // MessageBoxA(HWND_DESKTOP,"Do Update","NOTE",MB_OK);
-        auto & tree = visualTrees[currentLimb->renderTarget];
-        auto & rootTarget = layerTargets[currentLimb->limbRoot];
-        auto & rootLayer = currentLimb->limbRoot;
-    #if defined(TARGET_WIN32)
-        if(rootTarget->needsSwapChain()){
-            rootTarget->redoSwapChain();
-            auto r_visual = tree->makeVisual(rootTarget);
-            tree->replaceRootVisual(r_visual);
-        }
-        else if(rootTarget->needsDeviceContext()){
-            rootTarget->redoDeviceContext();
+    //     // MessageBoxA(HWND_DESKTOP,"Do Update","NOTE",MB_OK);
+    //     auto & tree = visualTrees[currentLimb->renderTarget];
+    //     auto & rootTarget = layerTargets[currentLimb->limbRoot];
+    //     auto & rootLayer = currentLimb->limbRoot;
+    // #if defined(TARGET_WIN32)
+    //     if(rootTarget->needsSwapChain()){
+    //         rootTarget->redoSwapChain();
+    //         auto r_visual = tree->makeVisual(rootTarget);
+    //         tree->replaceRootVisual(r_visual);
+    //     }
+    //     else if(rootTarget->needsDeviceContext()){
+    //         rootTarget->redoDeviceContext();
 
-        };
-    #endif
-        /// Redraw Visuals!
-        rootTarget->clear(rootLayer->style->background);
-        auto __visual_it = rootLayer->style->visuals.begin();
-        while(__visual_it != rootLayer->style->visuals.end()){
-            drawVisual(rootTarget.get(),__visual_it->get(),true);
-            ++__visual_it;
-        };
-        rootTarget->commit();
+    //     };
+    // #endif
+    //     /// Redraw Visuals!
+    //     rootTarget->clear(rootLayer->style->background);
+    //     auto __visual_it = rootLayer->style->visuals.begin();
+    //     while(__visual_it != rootLayer->style->visuals.end()){
+    //         drawVisual(rootTarget.get(),__visual_it->get(),true);
+    //         ++__visual_it;
+    //     };
+    //     rootTarget->commit();
         
-        Core::SharedPtr<BDCompositionImage> img = rootTarget->getImg();
-        auto effect_it = rootLayer->style->effects.begin();
-        while(effect_it !=rootLayer->style->effects.end()){
-            img->applyEffect(effect_it->get());
-            ++effect_it;
-        };
-        img->commitEffects();
+    // #if !defined(TARGET_WIN32)
+    //     Core::SharedPtr<BDCompositionImage> img = rootTarget->getImg();
+    //     auto effect_it = rootLayer->style->effects.begin();
+    //     while(effect_it !=rootLayer->style->effects.end()){
+    //         img->applyEffect(effect_it->get());
+    //         ++effect_it;
+    //     };
+    //     img->commitEffects();
+    // #else 
+    //   auto effect_it = rootLayer->style->effects.begin();
+    //     while(effect_it !=rootLayer->style->effects.end()){
+    //         rootTarget->applyEffect(effect_it->get());
+    //         ++effect_it;
+    //     };
+    //     rootTarget->commitEffects();  
+    // #endif
 
-        auto v_it = currentLimb->begin();
-        while(v_it != currentLimb->end()){
-            auto child = v_it->get();
-            auto & imgTarget = layerTargets[child];
-    #if defined(TARGET_WIN32)
-        if(imgTarget->needsSwapChain()){
-            imgTarget->redoSwapChain();
-            auto _visual = tree->makeVisual(imgTarget);
-            tree->addVisual(_visual);
-            tree->replaceVisualWithTargetPtr(imgTarget,_visual);
-        }
-        else if(imgTarget->needsDeviceContext()){
-            imgTarget->redoDeviceContext();
+    //     auto v_it = currentLimb->begin();
+    //     while(v_it != currentLimb->end()){
+    //         auto child = v_it->get();
+    //         auto & imgTarget = layerTargets[child];
+    // #if defined(TARGET_WIN32)
+    //     if(imgTarget->needsSwapChain()){
+    //         imgTarget->redoSwapChain();
+    //         auto _visual = tree->makeVisual(imgTarget);
+    //         tree->addVisual(_visual);
+    //         tree->replaceVisualWithTargetPtr(imgTarget,_visual);
+    //     }
+    //     else if(imgTarget->needsDeviceContext()){
+    //         imgTarget->redoDeviceContext();
 
-        };
-    #endif
-        /// Redraw Visuals!
-            imgTarget->clear(child->style->background);
-            auto __visual_it = child->style->visuals.begin();
-            while(__visual_it != child->style->visuals.end()){
-                drawVisual(imgTarget.get(),__visual_it->get(),true);
-                ++__visual_it;
-            };
-            rootTarget->commit();
-            Core::SharedPtr<BDCompositionImage> img = imgTarget->getImg();
-            auto effect_it = child->style->effects.begin();
-            while(effect_it != child->style->effects.end()){
-                img->applyEffect(effect_it->get());
-                ++effect_it;
-            };
-            img->commitEffects();
-            ++v_it;
-        };
+    //     };
+    // #endif
+    //     /// Redraw Visuals!
+    //         imgTarget->clear(child->style->background);
+    //         auto __visual_it = child->style->visuals.begin();
+    //         while(__visual_it != child->style->visuals.end()){
+    //             drawVisual(imgTarget.get(),__visual_it->get(),true);
+    //             ++__visual_it;
+    //         };
+    //         rootTarget->commit();
+    //         Core::SharedPtr<BDCompositionImage> img = imgTarget->getImg();
+    //         auto effect_it = child->style->effects.begin();
+    //         while(effect_it != child->style->effects.end()){
+    //             img->applyEffect(effect_it->get());
+    //             ++effect_it;
+    //         };
+    //         img->commitEffects();
+    //         ++v_it;
+    //     };
 
-        global_device->renderVisualTreeToView(tree,currentLimb->renderTarget,true);
+    //     global_device->renderVisualTreeToView(tree,currentLimb->renderTarget,true);
     };
 
     void BackendImpl::redoLayout(){

@@ -69,8 +69,12 @@ namespace OmegaWTK::Composition {
         void commit();
     };
     class DXBDCompositionImageRenderTarget : public IDXBDCompositionRenderTarget<BDCompositionImageRenderTarget> {
+        typedef unsigned char Byte;
+        Byte *imgData;
         bool recreateSwapChain;
         Core::Rect rect;
+        LayerEffect *dropShadow = nullptr;
+        Core::Queue<LayerEffect *> effectBuffer;
          bool needsSwapChain(){
             return recreateSwapChain;
         };
@@ -81,16 +85,13 @@ namespace OmegaWTK::Composition {
         Core::UniqueComPtr<IDXGISwapChain1> dxgi_swap_chain;
         #endif
         Core::UniqueComPtr<IDCompositionSurface> dcomp_surface;
-        Core::UniqueComPtr<ID2D1Bitmap> first_target;
+        Core::UniqueComPtr<ID2D1Bitmap1> first_target;
         Core::UniqueComPtr<ID2D1Bitmap1> direct2d_bitmap;
         Core::UniqueComPtr<IDXGISurface> dxgi_surface;
         Core::UniqueComPtr<ID3D12Resource> direct3d_res;
         friend class DCVisualTree;
         friend class DXBDCompositionDevice;
     public:
-        #ifdef TARGET_WIN32
-            void applyEffectToImage(LayerEffect &effect);
-        #endif
          void redoDeviceContext();
           void redoSwapChain();
          void frameRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush, unsigned int width);
@@ -104,6 +105,8 @@ namespace OmegaWTK::Composition {
         static Core::SharedPtr<BDCompositionImageRenderTarget> Create(DXBDCompositionDevice *device,Core::Rect & rect);
         ~DXBDCompositionImageRenderTarget();
         void commit();
+        void applyEffect(LayerEffect *effect);
+        void commitEffects();
         // Core::SharedPtr<BDCompositionImage> getImg();
     };
 

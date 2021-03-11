@@ -6,7 +6,7 @@ namespace OmegaWTK::Composition {
     
     DCVisualTree::DCVisualTree(DXBDCompositionDevice *device):device(device),hwndTarget(nullptr){};
 
-    DCVisualTree::Visual::Visual(IDCompositionVisual *v,Core::SharedPtr<BDCompositionImageRenderTarget> &img,Core::Position &pos):visual(v),img(img),pos(pos){
+    DCVisualTree::Visual::Visual(IDCompositionVisual2 *v,Core::SharedPtr<BDCompositionImageRenderTarget> &img,Core::Position &pos):visual(v),img(img),pos(pos){
         
     };
 
@@ -24,7 +24,7 @@ namespace OmegaWTK::Composition {
 
         
         HRESULT hr;
-        IDCompositionVisual *v;
+        IDCompositionVisual2 *v;
         hr = device->dcomp_device_1->CreateVisual(&v);
         if(FAILED(hr)){
 
@@ -62,6 +62,10 @@ namespace OmegaWTK::Composition {
 
     void DCVisualTree::addVisual(Core::SharedPtr<Parent::Visual> visual){
         body.push_back(visual);
+    };
+
+    void DCVisualTree::layout(){
+
     };
 
 };
