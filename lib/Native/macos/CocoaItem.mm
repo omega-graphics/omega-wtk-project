@@ -22,6 +22,10 @@
         self.layer.anchorPoint = CGPointMake(0.0,0.0);
         self.layer.position = rect.origin;
         self.layer.contentsScale = 1.0f;
+        self.layer.contentsGravity = kCAGravityCenter;
+        self.layer.magnificationFilter = kCAFilterLinear;
+//        self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawDuringViewResize;
+//        self.layerContentsPlacement = NSViewLayerContentsPlacementCenter;
         NSLog(@"New Origin: { x:%f, y:%f}",self.layer.anchorPoint.x,self.layer.anchorPoint.y);
         _delegate = delegate;
     };
@@ -89,6 +93,7 @@
 - (void)viewDidLayout{
     [self.view setFrame:OmegaWTK::Native::Cocoa::core_rect_to_cg_rect(_delegate->rect)];
     [self.view setBounds:CGRectMake(0.0,0.0,_delegate->rect.dimen.minWidth,_delegate->rect.dimen.minHeight)];
+    self.view.layer.position = self.view.frame.origin;
     self.view.layer.frame = self.view.frame;
     self.view.layer.bounds = self.view.bounds;
     _delegate->layoutLayerTreeLimb();

@@ -121,7 +121,7 @@ int omegaWTKMain(AppInst *app)
    
     auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}}));
 
-    auto widget2 = make<MyWidget>(MyWidget({{500,0},{400,400}}));
+    auto widget2 = make<MyWidget>(MyWidget({{0,500},{400,400}}));
     widget->show();
     widget2->show();
  

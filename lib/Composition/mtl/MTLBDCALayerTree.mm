@@ -64,15 +64,18 @@ void MTLBDCALayerTree::addVisual(Core::SharedPtr<BDCompositionVisualTree::Visual
 };
 
 void MTLBDCALayerTree::layout(){
+    CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
     Visual *rootV = (Visual *)root_v.get();
     MTLBDCompositionImage *mtlImg = (MTLBDCompositionImage *)rootV->img.get();
-    rootV->metalLayer.frame = Native::Cocoa::core_rect_to_cg_rect(mtlImg->n_rect);
+    CALayer *superLayer = rootV->metalLayer.superlayer;
+    rootV->metalLayer.frame = CGRectMake(rootV->pos.x,rootV->pos.y,mtlImg->n_rect.dimen.minWidth,mtlImg->n_rect.dimen.minHeight);
     rootV->metalLayer.bounds = CGRectMake(0.0,0.0,mtlImg->n_rect.dimen.minWidth,mtlImg->n_rect.dimen.minHeight);
+    rootV->metalLayer.position = CGPointMake(rootV->pos.x - (superLayer.position.x * scaleFactor),rootV->pos.y - (superLayer.position.y * scaleFactor));
     auto visual_it = body.begin();
     while(visual_it != body.end()){
         auto _v = (MTLBDCALayerTree::Visual *)visual_it->get();
         MTLBDCompositionImage *mtlImg = (MTLBDCompositionImage *)_v->img.get();
-        _v->metalLayer.frame = Native::Cocoa::core_rect_to_cg_rect(mtlImg->n_rect);
+        _v->metalLayer.frame = CGRectMake(_v->pos.x,_v->pos.y,mtlImg->n_rect.dimen.minWidth,mtlImg->n_rect.dimen.minHeight);
         _v->metalLayer.bounds = CGRectMake(0.0,0.0,mtlImg->n_rect.dimen.minWidth,mtlImg->n_rect.dimen.minHeight);
         _v->metalLayer.position = CGPointMake(_v->pos.x,_v->pos.y);
 //        NSLog(@"View Layer's Pos: {x:%f ,y:%f}",root->metalLayer.position.x,root->metalLayer.position.y);

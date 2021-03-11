@@ -5,6 +5,17 @@
 using namespace metal;
 
 /**
+ Gradient Texture Generators
+ */
+kernel void makeLinearGradient(texture2d<half> in,texture2d<half> out){
+    
+};
+
+kernel void makeRadialGradient(){
+    
+};
+
+/**
  Solid Color Shaders.
  */
 

@@ -155,15 +155,18 @@ void MTLBDCompositionDevice::renderVisualTreeToView(Core::SharedPtr<BDCompositio
     MTLBDCALayerTree *caLayerTree = (MTLBDCALayerTree *)visualTree.get();
     MTLBDCALayerTree::Visual *root = (MTLBDCALayerTree::Visual *)caLayerTree->root_v.get();
     MTLBDCompositionImage *img = (MTLBDCompositionImage *)root->img.get();
-    if(root->attachTransformLayer) {
-        [viewLayer addSublayer:root->transformLayer];
-    }
-    else {
+//    if(root->attachTransformLayer) {
+//        [viewLayer addSublayer:root->transformLayer];
+//    }
+//    else {
         [viewLayer addSublayer:root->metalLayer];
-        root->metalLayer.position = CGPointMake(root->metalLayer.bounds.size.width/2,root->metalLayer.bounds.size.height/2);
+        root->metalLayer.anchorPoint = CGPointMake(0.0,0.0);
+        root->metalLayer.position = CGPointMake(root->pos.x,root->pos.y);
+//        NSLog(@"Opacity Shit:%f",root->metalLayer.opacity);
         [root->metalLayer setNeedsDisplayOnBoundsChange:YES];
         [root->metalLayer setNeedsDisplay];
-    }
+        [root->metalLayer setNeedsLayout];
+//    }
     
     NSLog(@"View Layer's Pos: {x:%f ,y:%f}",viewLayer.position.x,viewLayer.position.y);
     NSLog(@"Metal Layer's Pos: {x:%f ,y:%f}",root->metalLayer.position.x,root->metalLayer.position.y);
@@ -178,10 +181,11 @@ void MTLBDCompositionDevice::renderVisualTreeToView(Core::SharedPtr<BDCompositio
         NSLog(@"Layer Rect: {x:%f,y:%f,w:%f,h:%f",_v->metalLayer.bounds.origin.x,_v->metalLayer.bounds.origin.y,_v->metalLayer.bounds.size.width,_v->metalLayer.bounds.size.height);
         ++visual_it;
         [_v->metalLayer setNeedsDisplay];
+        [_v->metalLayer setNeedsLayout];
 //        [_v->metalLayer layoutIfNeeded];
         NSLog(@"SuperLayer: %@",_v->metalLayer.superlayer);
     };
-    
+//    [viewLayer setNeedsLayout];
 //    [viewLayer setNeedsDisplay];
 //    [viewLayer setContentsScale:[NSScreen mainScreen].backingScaleFactor];
 };
