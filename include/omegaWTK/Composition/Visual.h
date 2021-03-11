@@ -34,8 +34,10 @@ namespace OmegaWTK {
     struct LayerEffect {
         typedef enum : OPT_PARAM {
             DropShadow,
-            Transformation,
-            MotionBlur
+            Translation,
+            Rotation,
+            DirectionalBlur,
+            GaussianBlur
         } Type;
         Type type;
         void * params;
@@ -48,13 +50,25 @@ namespace OmegaWTK {
         } DropShadowParams;
         typedef struct {
             
-        } TransformationParams;
+        } TranslationParams;
         typedef struct {
             
-        } MotionBlurParams;
+        } RotationParams;
+        typedef struct {
+            float radius;
+        } GaussianBlurParams;
+        typedef struct {
+            float radius;
+            float angle;
+        } DirectionalBlurParams;
     };
     
-#define LAYER_EFFECT_DROPSHADOW(x,y,radius,blurAmount,opacity,color) ::OmegaWTK::Composition::LayerEffect({::OmegaWTK::Composition::LayerEffect::DropShadow,new ::OmegaWTK::Composition::LayerEffect::DropShadowParams({x,y,radius,blurAmount,opacity,color})})
+#define __LAYER_EFFECT ::OmegaWTK::Composition::LayerEffect
+    
+#define LAYER_EFFECT_DROPSHADOW(x,y,radius,blurAmount,opacity,color) __LAYER_EFFECT ({__LAYER_EFFECT::DropShadow,new __LAYER_EFFECT::DropShadowParams({x,y,radius,blurAmount,opacity,color})})
+    
+#define LAYER_EFFECT_GAUSSIANBLUR(radius) __LAYER_EFFECT ({__LAYER_EFFECT::GaussianBlur,new __LAYER_EFFECT::GaussianBlurParams({radius})})
+#define LAYER_EFFECT_DIRECTIONALBLUR(radius,angle) __LAYER_EFFECT ({__LAYER_EFFECT::DirectionalBlur,new __LAYER_EFFECT::DirectionalBlurParams({radius,angle})})
     
     /// An object drawn by a Compositor.
     struct Visual {

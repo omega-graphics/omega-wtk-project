@@ -41,7 +41,7 @@ public:
         auto rootLayer = rootView->getLayerTreeLimb()->getRootLayer();
         auto layerStyle = make<LayerStyle>();
         // layerStyle->setBackgroundColor(Composition::Color::Blue);
-        layerStyle->add(VISUAL_RECT(Rect(0,0,300,300),ColorBrush(Composition::Color::Green)));
+        layerStyle->add(VISUAL_RECT(Rect(0,0,300,300),ColorBrush(Composition::Color::Orange)));
 //        layerStyle->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(0,0,200,200),25,Composition::Text::Font("Arial",OmegaWTK::Composition::Text::Font::Regular)));
         // layerStyle->add(VISUAL_IMG(img,Rect(100,0,100,100)));
 //        rootLayer->setBackgroundColor(Composition::Color::Blue);
@@ -53,11 +53,14 @@ public:
         //        rootLayer->drawText("Hello World!",50,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,200));
         rootLayer->setStyle(layerStyle);
         auto subLayer = makeLayer(Rect(0,0,200,200));
-        auto shadow = make<LayerEffect>(LAYER_EFFECT_DROPSHADOW(0,-5.0,5,1.0,1.0,Composition::Color::Black));
+        auto shadow = make<LayerEffect>(LAYER_EFFECT_DROPSHADOW(5.0,-5.0,2,1.0,1.0,Composition::Color::Black));
+//        auto blur = make<LayerEffect>(LAYER_EFFECT_DIRECTIONALBLUR(4.0,0.0));
         auto _style2 = make<LayerStyle>();
         _style2->setBackgroundColor(Composition::Color(Composition::Color::Black,0x00));
+//        _style2->add(VISUAL_RECT(Rect(50,50,100,100),ColorBrush(Composition::Color::Red)));
         _style2->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(0,0,200,200),25,Composition::Text::Font("Arial",OmegaWTK::Composition::Text::Font::Regular)));
         _style2->addEffect(shadow);
+//        _style2->addEffect(blur);
         subLayer->setStyle(_style2);
         rootView->getLayerTreeLimb()->addLayer(subLayer);
     };

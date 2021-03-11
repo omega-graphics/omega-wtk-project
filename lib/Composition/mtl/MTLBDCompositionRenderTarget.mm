@@ -171,6 +171,7 @@ void MTLBDCompositionViewRenderTarget::commit(){
                 NSLog(@"Completed!");
             }];
             [finalCommandBuffer commit];
+            [finalCommandBuffer waitUntilCompleted];
 //            [metalLayer setNeedsDisplay];
         };
     };
@@ -179,13 +180,13 @@ void MTLBDCompositionViewRenderTarget::commit(){
 
 /// Metal Image Render Target!
 
-MTLBDCompositionImageRenderTarget::MTLBDCompositionImageRenderTarget(MTLBDCompositionDevice * device,Core::Rect & rect,id<MTLTexture> target):MTLBDCompositionRenderTarget(device,Color(0,0,0,0),rect),target(target),rect(rect){
+MTLBDCompositionImageRenderTarget::MTLBDCompositionImageRenderTarget(MTLBDCompositionDevice * device,Core::Rect & rect,id<MTLTexture> target,MTLTextureDescriptor *desc):MTLBDCompositionRenderTarget(device,Color(0,0,0,0),rect),target(target),rect(rect),desc(desc){
     triangulator->setScaleFactor([NSScreen mainScreen].backingScaleFactor);
     triangulator->isImageTarget = true;
 };
 
-Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionImageRenderTarget::Create(MTLBDCompositionDevice *device,Core::Rect & rect,id<MTLTexture> texture){
-    return std::make_shared<MTLBDCompositionImageRenderTarget>(device,rect,texture);
+Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionImageRenderTarget::Create(MTLBDCompositionDevice *device,Core::Rect & rect,id<MTLTexture> texture,MTLTextureDescriptor *desc){
+    return std::make_shared<MTLBDCompositionImageRenderTarget>(device,rect,texture,desc);
 };
 
 void MTLBDCompositionImageRenderTarget::commit(){
@@ -240,11 +241,12 @@ void MTLBDCompositionImageRenderTarget::commit(){
                 vertexBuffers.clear();
         }];
         [finalCommandBuffer commit];
+        [finalCommandBuffer waitUntilCompleted];
     }
 };
 
 Core::SharedPtr<BDCompositionImage> MTLBDCompositionImageRenderTarget::getImg(){
-    return MTLBDCompositionImage::Create(rect,target);
+    return MTLBDCompositionImage::Create(device,rect,target,desc);
 };
 
 };

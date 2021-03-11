@@ -7,11 +7,11 @@ using namespace metal;
 /**
  Gradient Texture Generators
  */
-kernel void makeLinearGradient(texture2d<half> in,texture2d<half> out){
+kernel void makeLinearGradient(texture2d<half,access::write> out [[texture(OMEGAWTK_METAL_GRADIENT_TEXTURE_OUT)]],uint2 gid [[thread_position_in_grid]]){
     
 };
 
-kernel void makeRadialGradient(){
+kernel void makeRadialGradient(texture2d<half,access::write> out [[texture(OMEGAWTK_METAL_GRADIENT_TEXTURE_OUT)]],uint2 gid [[thread_position_in_grid]]){
     
 };
 

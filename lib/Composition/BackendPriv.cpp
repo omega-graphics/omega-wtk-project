@@ -96,6 +96,7 @@ namespace OmegaWTK::Composition {
             rootImg->applyEffect(effect_it->get());
             ++effect_it;
         };
+        rootImg->commitEffects();
         auto visual = visualTree->makeVisual(rootImg);
     #endif
         visualTree->setRootVisual(visual);
@@ -122,6 +123,7 @@ namespace OmegaWTK::Composition {
                      img->applyEffect(effect_it->get());
                      ++effect_it;
                  };
+                 img->commitEffects();
                  auto _visual = visualTree->makeVisual(img);
          #endif
                  visualTree->addVisual(_visual);
@@ -159,6 +161,14 @@ namespace OmegaWTK::Composition {
             ++__visual_it;
         };
         rootTarget->commit();
+        
+        Core::SharedPtr<BDCompositionImage> img = rootTarget->getImg();
+        auto effect_it = rootLayer->style->effects.begin();
+        while(effect_it !=rootLayer->style->effects.end()){
+            img->applyEffect(effect_it->get());
+            ++effect_it;
+        };
+        img->commitEffects();
 
         auto v_it = currentLimb->begin();
         while(v_it != currentLimb->end()){
@@ -184,6 +194,13 @@ namespace OmegaWTK::Composition {
                 ++__visual_it;
             };
             rootTarget->commit();
+            Core::SharedPtr<BDCompositionImage> img = imgTarget->getImg();
+            auto effect_it = child->style->effects.begin();
+            while(effect_it != child->style->effects.end()){
+                img->applyEffect(effect_it->get());
+                ++effect_it;
+            };
+            img->commitEffects();
             ++v_it;
         };
 

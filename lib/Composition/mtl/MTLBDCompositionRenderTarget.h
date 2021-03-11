@@ -356,7 +356,7 @@ Core::SharedPtr<BDCompositionImage> MTLBDCompositionRenderTarget<_Ty>::createIma
 //    [commandBuffer waitUntilCompleted];
     commandBuffers.push_back(commandBuffer);
 
-    auto rc = MTLBDCompositionImage::Create(img,fnewSize,destTextureDesc,fin);
+    auto rc = MTLBDCompositionImage::Create(device,img,fnewSize,destTextureDesc,fin);
     this->images.insert(std::make_pair(v_id,rc));
     return rc;
 };
@@ -459,10 +459,11 @@ public:
 
 class MTLBDCompositionImageRenderTarget : public MTLBDCompositionRenderTarget<BDCompositionImageRenderTarget> {
     id<MTLTexture> target;
+    MTLTextureDescriptor *desc;
     Core::Rect rect;
 public:
-    MTLBDCompositionImageRenderTarget(MTLBDCompositionDevice *device,Core::Rect & rect,id<MTLTexture> target);
-    static Core::SharedPtr<BDCompositionImageRenderTarget> Create(MTLBDCompositionDevice *device,Core::Rect & rect,id<MTLTexture> target);
+    MTLBDCompositionImageRenderTarget(MTLBDCompositionDevice *device,Core::Rect & rect,id<MTLTexture> target,MTLTextureDescriptor *desc);
+    static Core::SharedPtr<BDCompositionImageRenderTarget> Create(MTLBDCompositionDevice *device,Core::Rect & rect,id<MTLTexture> target,MTLTextureDescriptor *desc);
     void commit();
     Core::SharedPtr<BDCompositionImage> getImg();
 };
