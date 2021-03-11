@@ -208,37 +208,107 @@ namespace OmegaWTK::Composition {
         else {
             auto body_it = tree->body.begin();
             while(body_it != tree->body.end()){
-                
                 auto childV = (DCVisualTree::Visual *)body_it->get();
                 DXBDCompositionImageRenderTarget *__img = (DXBDCompositionImageRenderTarget *)childV->img.get();
+
                 if(__img->dropShadow){
+                    IDCompositionVisual2 *shadowVisual;
                     LayerEffect::DropShadowParams *params = (LayerEffect::DropShadowParams *)__img->dropShadow->params;
-                    IDCompositionShadowEffect *dropShadow;
-                    hr = dcomp_device_2->CreateShadowEffect(&dropShadow);
+                    dcomp_device_1->CreateVisual(&shadowVisual);
+                    hr = shadowVisual->SetContent(__img->dxgi_swap_chain_1.get());
+                    if(FAILED(hr)){
+                        MessageBoxA(GetForegroundWindow(),"Failed to set DComp Visual Content for Shadow",NULL,MB_OK);
+                    };
+                    IDCompositionShadowEffect *shadowEffect;
+                     hr = dcomp_device_2->CreateShadowEffect(&shadowEffect);
+                     if(FAILED(hr)){
+                        MessageBoxA(GetForegroundWindow(),"Failed to create Shadow Effect",NULL,MB_OK);
+                    };
+                    shadowEffect->SetStandardDeviation((params->radius/3.f));
+                    auto d2d1_color = color_to_d2d1_color(params->color);
+
+                    shadowEffect->SetColor(D2D1::Vector4F(d2d1_color.r,d2d1_color.g,d2d1_color.b,d2d1_color.a));
+
+                    shadowEffect->SetAlpha(params->opacity * 0.7f);
+
+                    hr = shadowVisual->SetEffect(shadowEffect);
                     if(FAILED(hr)){
 
                     };
-                    dropShadow->SetColor(D2D1::Vector4F(params->color.r,params->color.g,params->color.b,params->color.a));
-                    dropShadow->SetStandardDeviation(params->radius/3.f);
-                    hr = childV->visual->SetEffect(dropShadow);
+
+                    hr = shadowVisual->SetTransform(D2D1::Matrix3x2F::Translation(params->x_offset * scaleFactor,(-params->y_offset) * scaleFactor));
+
+                    hr = shadowVisual->SetOffsetX((childV->pos.x) * scaleFactor);
+                    hr = shadowVisual->SetOffsetY((rootVHeight - childV->pos.y - __img->rect.dimen.minHeight) * scaleFactor);
+
+                    hr = shadowVisual->SetOpacityMode(DCOMPOSITION_OPACITY_MODE_INHERIT);
+
+                    hr = childV->visual->SetOpacityMode(DCOMPOSITION_OPACITY_MODE_INHERIT);
+                    hr = childV->visual->SetOffsetX((childV->pos.x) * scaleFactor);
+                    hr = childV->visual->SetOffsetY((rootVHeight - childV->pos.y - __img->rect.dimen.minHeight) * scaleFactor);
+
+                    // hr = shadowVisual->AddVisual(childV->visual,FALSE,NULL);
+                   
+
+                    hr = rootV->visual->AddVisual(shadowVisual,FALSE,NULL);
+                    if(FAILED(hr)){
+
+                    };
+
+                    hr = rootV->visual->AddVisual(childV->visual,TRUE,shadowVisual);
+                    if(FAILED(hr)){
+
+                    };
+
+                    // Core::SharedPtr<BDCompositionImageRenderTarget> img = makeImageRenderTarget(__img->rect);
+                    // Composition::Color b(Composition::Color::Black,0x00);
+                    // img->clear(b);
+                    // DXBDCompositionImageRenderTarget *__shadow_img = (DXBDCompositionImageRenderTarget *)img.get();
+                    // ID2D1Bitmap1 *bitmap =  __shadow_img->first_target.get();
+                    // ID2D1Effect *shadow;
+                    // hr = __shadow_img->direct2d_device_context->CreateEffect(CLSID_D2D1Shadow,&shadow);
+                    // if(FAILED(hr)){
+
+                    // };
+                    // shadow->SetInput(0,__img->direct2d_bitmap.get());
+                    // shadow->SetValue(D2D1_SHADOW_PROP_BLUR_STANDARD_DEVIATION,(params->radius/3.f));
+                    // auto d2d1_color = color_to_d2d1_color(params->color);
+                    // shadow->SetValue(D2D1_SHADOW_PROP_COLOR,D2D1::Vector4F(d2d1_color.r,d2d1_color.g,d2d1_color.r,d2d1_color.a));
+                    // __shadow_img->direct2d_device_context->DrawImage(shadow);
+                    // img->commitEffects();
+                    // img->commit();
+                    // hr = shadowVisual->SetContent(__shadow_img->dxgi_swap_chain_1.get());
+                    // if(FAILED(hr)){
+
+                    // };
+
+                    // hr = shadowVisual->AddVisual(childV->visual,FALSE,NULL);
+                    // if(FAILED(hr)){
+
+                    // };
+                }
+                else {
+                
+                    hr = childV->visual->SetOffsetX(childV->pos.x * scaleFactor);
+                    hr = childV->visual->SetOffsetY((rootVHeight - childV->pos.y - __img->rect.dimen.minHeight) * scaleFactor);
+
+
+                
+
+                    hr = childV->visual->SetOpacityMode(DCOMPOSITION_OPACITY_MODE_INHERIT);
+
+                    if(FAILED(hr)){
+
+                    };
+
+                    hr = rootV->visual->AddVisual(childV->visual,FALSE,NULL);
+
                 };
-                hr = childV->visual->SetOffsetX(childV->pos.x * scaleFactor);
-
-                hr = childV->visual->SetOpacityMode(DCOMPOSITION_OPACITY_MODE_INHERIT);
-
-                if(FAILED(hr)){
-
-                };
-
-                hr = childV->visual->SetOffsetY((rootVHeight - childV->pos.y - __img->rect.dimen.minHeight) * scaleFactor);
-
-                hr = rootV->visual->AddVisual(childV->visual,FALSE,NULL);
                 
                 ++body_it;
             };
         };
 
         dcomp_device_1->Commit();
-        // dcomp_device_1->WaitForCommitCompletion();
     };
 };

@@ -513,6 +513,10 @@ namespace OmegaWTK::Composition {
     inline IID getIIDFromOmegaEffectType(LayerEffect::Type & type){
         IID res;
         switch (type) {
+        case LayerEffect::DropShadow : {
+            res = CLSID_D2D1Shadow;
+            break;
+        }
         case LayerEffect::GaussianBlur : {
             res = CLSID_D2D1GaussianBlur;
             break;
@@ -529,7 +533,7 @@ namespace OmegaWTK::Composition {
         return res;
     };
 
-    void __applyEffect_interal(ID2D1Effect * _dx_effect,LayerEffect *effect,ID2D1Image *img,ID2D1Image  **out){
+    void __applyEffect_interal(ID2D1Effect * _dx_effect,LayerEffect *effect,ID2D1Image *img,ID2D1Image  **out,IDCompositionDevice3 *dev){
         switch (effect->type) {
         case LayerEffect::GaussianBlur : {
             LayerEffect::GaussianBlurParams *params = (LayerEffect::GaussianBlurParams *)effect->params;
@@ -572,7 +576,7 @@ namespace OmegaWTK::Composition {
 
             };
             temp1 = first_target.get();
-            __applyEffect_interal(_dx_effect,first_effect,temp1,&temp2);
+            __applyEffect_interal(_dx_effect,first_effect,temp1,&temp2,device->dcomp_device_2.get());
             temp1 = temp2;
             //  Core::SafeRelease(&temp1);
             //  Core::SafeRelease(&_dx_effect);

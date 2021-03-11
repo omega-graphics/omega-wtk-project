@@ -123,6 +123,7 @@ namespace OmegaWTK::Composition {
     };
 
     typedef IDXBDCompositionRenderTarget<None> DXBDCompositionRenderTarget;
+    D2D1::ColorF color_to_d2d1_color(Color & color);
 }
 
 #endif

@@ -53,14 +53,14 @@ public:
         //        rootLayer->drawText("Hello World!",50,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,200));
         rootLayer->setStyle(layerStyle);
         auto subLayer = makeLayer(Rect(0,0,200,200));
-        // auto shadow = make<LayerEffect>(LAYER_EFFECT_DROPSHADOW(5.0,-5.0,2,1.0,1.0,Composition::Color::Black));
-       auto blur = make<LayerEffect>(LAYER_EFFECT_DIRECTIONALBLUR(4.0,0.0));
+        auto shadow = make<LayerEffect>(LAYER_EFFECT_DROPSHADOW(5.0,-5.0,5,1.0,1.0,Composition::Color::Black));
+    //    auto blur = make<LayerEffect>(LAYER_EFFECT_DIRECTIONALBLUR(4.0,0.0));
         auto _style2 = make<LayerStyle>();
         _style2->setBackgroundColor({Color::White,0x00});
-//        _style2->add(VISUAL_RECT(Rect(50,50,100,100),ColorBrush(Composition::Color::Red)));
-        _style2->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(0,0,200,200),25,Composition::Text::Font("Arial",OmegaWTK::Composition::Text::Font::Regular)));
-        // _style2->addEffect(shadow);
-       _style2->addEffect(blur);
+       _style2->add(VISUAL_RECT(Rect(50,50,100,100),ColorBrush(Composition::Color::Red)));
+        // _style2->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(0,0,200,200),25,Composition::Text::Font("Arial",OmegaWTK::Composition::Text::Font::Regular)));
+        _style2->addEffect(shadow);
+    //    _style2->addEffect(blur);
         subLayer->setStyle(_style2);
         rootView->getLayerTreeLimb()->addLayer(subLayer);
     };
@@ -124,15 +124,15 @@ int omegaWTKMain(AppInst *app)
    
     auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}}));
 
-    // auto widget2 = make<MyWidget>(MyWidget({{0,500},{400,400}}));
+    auto widget2 = make<MyWidget>(MyWidget({{0,500},{400,400}}));
     widget->show();
-    // widget2->show();
+    widget2->show();
  
     auto mainWindow = make<AppWindow>(Rect(0,0,1000,1000),new MyWindowDelegate(app));
     // 
     mainWindow->addWidget(widget);
    
-    // mainWindow->addWidget(widget2);
+    mainWindow->addWidget(widget2);
     mainWindow->setMenu(menu);
     app->windowManager->setRootWindow(mainWindow);
     app->windowManager->displayRootWindow();
