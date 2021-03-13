@@ -12,7 +12,7 @@
 
 namespace OmegaWTK::Composition {
 
-MTLBDCompositionDevice::MTLBDCompositionDevice():semaphore(dispatch_semaphore_create(0)){
+MTLBDCompositionDevice::MTLBDCompositionDevice(){
 //    [semaphore retain];
     metal_device = MTLCreateSystemDefaultDevice();
     metal_default_library = [metal_device newDefaultLibrary];
@@ -84,18 +84,11 @@ inline id<MTLComputePipelineState> MTLBDCompositionDevice::setupComputePipelineS
 };
 
 id<MTLCommandBuffer> MTLBDCompositionDeviceContext::makeNewMTLCommandBuffer(){
-//    id<MTLCommandQueue> latest;
-//    if(bufferCount == 64){
-//        latest = [metal_device newCommandQueue];
-//        metal_command_queues.push_back(latest);
-//        bufferCount = 0;
-//    }
-//    else {
-//        latest = metal_command_queues.back();
-//    };
     ++bufferCount;
 //    return [latest commandBuffer];
-    return [metal_command_queue commandBuffer];
+    auto rc = [metal_command_queue commandBuffer];
+    [buffers addObject:rc];
+    return rc;
 };
 
 id<MTLRenderPipelineState> MTLBDCompositionDevice::makeMultiSampledPipelineState(bool textured,unsigned sampleCount,NSString *label){
@@ -140,12 +133,12 @@ Core::SharedPtr<BDCompositionDeviceContext> MTLBDCompositionDevice::createContex
 
 MTLBDCompositionDeviceContext::MTLBDCompositionDeviceContext(MTLBDCompositionDevice *device):device(device){
     metal_command_queue = [device->metal_device newCommandQueue];
-    events.push([device->metal_device newEvent]);
-    id<MTLCommandBuffer> initialSignalBuffer = makeNewMTLCommandBuffer();
-    [initialSignalBuffer encodeSignalEvent:currentEvent() value:bufferCount];
-    [initialSignalBuffer encodeWaitForEvent:currentEvent() value:bufferCount];
-    [initialSignalBuffer encodeSignalEvent:currentEvent() value:bufferCount + 1];
-    [initialSignalBuffer commit];
+    bufferCount = 0;
+    buffers = [[NSMutableArray alloc] init];
+//    events.push([device->metal_device newEvent]);
+//    id<MTLCommandBuffer> initialSignalBuffer = makeNewMTLCommandBuffer();
+////    [initialSignalBuffer encodeSignalEvent:currentEvent() value:bufferCount + 1];
+//    [initialSignalBuffer enqueue];
 };
 
 Core::SharedPtr<BDCompositionDeviceContext> MTLBDCompositionDeviceContext::Create(MTLBDCompositionDevice * device){
@@ -232,17 +225,16 @@ Core::SharedPtr<BDCompositionVisualTree> MTLBDCompositionDeviceContext::createVi
 };
 
 void MTLBDCompositionDeviceContext::renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> & visualTree,ViewRenderTarget *renderTarget,bool updatePass){
-        id<MTLCommandBuffer> finalBuffer = makeNewMTLCommandBuffer();
-        [finalBuffer encodeWaitForEvent:currentEvent() value:bufferCount];
-        __block dispatch_semaphore_t blockSemaphore = device->semaphore;
         
-        [finalBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer){
-            NSLog(@"Releasing Semaphore");
-            dispatch_semaphore_signal(blockSemaphore);
-        }];
-        [finalBuffer commit];
-        
-        dispatch_semaphore_wait(blockSemaphore,DISPATCH_TIME_FOREVER);
+        NSLog(@"Buffer Count:%i",buffers.count);
+        for(id<MTLCommandBuffer> buffer in buffers){
+            [buffer addCompletedHandler:^(id<MTLCommandBuffer> _buffer){
+                auto idx = [buffers indexOfObject:_buffer];
+                NSLog(@"Buffer %lu has Finished.",(unsigned long)idx);
+            }];
+            [buffer commit];
+            [buffer waitUntilScheduled];
+        };
     
         
         NSLog(@"Ready to Show");

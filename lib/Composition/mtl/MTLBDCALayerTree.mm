@@ -34,13 +34,14 @@ Core::SharedPtr<BDCompositionVisualTree::Visual> MTLBDCALayerTree::makeVisual(Co
         metalLayer.shadowRadius = params->radius;
         metalLayer.shadowOffset = CGSizeMake(params->x_offset,params->y_offset);
     };
+    NSLog(@"Creating Visual");
     Visual visual;
     visual.attachTransformLayer = false;
     visual.img = img;
     visual.metalLayer = metalLayer;
     visual.pos = mtlImg->n_rect.pos;
     visual.transformLayer = nullptr;
-    return std::make_shared<Visual>(visual);
+    return std::make_shared<Visual>(std::move(visual));
 };
 
 void MTLBDCALayerTree::setRootVisual(Core::SharedPtr<BDCompositionVisualTree::Visual>  visual){
@@ -55,11 +56,7 @@ void MTLBDCALayerTree::replaceVisualWithTargetPtr(Core::SharedPtr<BDCompositionI
     
 };
 
-void MTLBDCALayerTree::addVisual(Core::SharedPtr<BDCompositionVisualTree::Visual> visual){
-//    Visual *root = (Visual *)root_v.get();
-//    CALayer *rootCALayer = root->attachTransformLayer? root->metalLayer : root->transformLayer;
-//    Visual *child = (Visual *)visual.get();
-//    CALayer *childCALayer = child->attachTransformLayer? child->transformLayer : child->metalLayer;
+void MTLBDCALayerTree::addVisual(Core::SharedPtr<BDCompositionVisualTree::Visual> & visual){
     body.push_back(visual);
 };
 

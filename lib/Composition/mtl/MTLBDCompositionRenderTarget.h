@@ -357,7 +357,7 @@ Core::SharedPtr<BDCompositionImage> MTLBDCompositionRenderTarget<_Ty>::createIma
     fin = destTexture;
 //    };
     [_commandBuffer encodeSignalEvent:deviceContext->currentEvent() value:deviceContext->bufferCount + 1];
-    [_commandBuffer commit];
+    [_commandBuffer enqueue];
 //    [commandBuffer waitUntilCompleted];
 
     auto rc = MTLBDCompositionImage::Create(deviceContext,img,fnewSize,destTextureDesc,fin);

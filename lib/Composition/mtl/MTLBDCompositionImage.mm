@@ -25,6 +25,7 @@ void MTLBDCompositionImage::applyEffect(LayerEffect *effect){
     switch (effect->type) {
         case LayerEffect::DropShadow :{
             dropShadow = effect;
+            return;
             break;
         }
 //        case LayerEffect::Transformation : {
@@ -39,38 +40,44 @@ void MTLBDCompositionImage::applyEffect(LayerEffect *effect){
 };
 
 void MTLBDCompositionImage::commitEffects(){
-    auto device = deviceContext->getParentDevice();
-    id<MTLTexture> replacementTexture = [device->metal_device newTextureWithDescriptor:desc];
-    CIImage *ciImg = [CIImage imageWithMTLTexture:img options:@{}];
-    auto effect_it = imageEffects.begin();
-    while (effect_it != imageEffects.end()) {
-        auto _effect = *effect_it;
-        switch (_effect->type) {
-            case LayerEffect::GaussianBlur:
-            {
-                LayerEffect::GaussianBlurParams *params = (LayerEffect::GaussianBlurParams *)_effect->params;
-                ciImg = [ciImg imageByApplyingFilter:@"CIGaussianBlur" withInputParameters:@{@"inputImage":ciImg,@"inputRadius":[NSNumber numberWithFloat:params->radius]}];
-                break;
+    if(!imageEffects.empty()) {
+        auto device = deviceContext->getParentDevice();
+        id<MTLTexture> replacementTexture = [device->metal_device newTextureWithDescriptor:desc];
+        CIImage *ciImg = [CIImage imageWithMTLTexture:img options:@{}];
+        auto effect_it = imageEffects.begin();
+        while (effect_it != imageEffects.end()) {
+            auto _effect = *effect_it;
+            switch (_effect->type) {
+                case LayerEffect::GaussianBlur:
+                {
+                    LayerEffect::GaussianBlurParams *params = (LayerEffect::GaussianBlurParams *)_effect->params;
+                    ciImg = [ciImg imageByApplyingFilter:@"CIGaussianBlur" withInputParameters:@{@"inputImage":ciImg,@"inputRadius":[NSNumber numberWithFloat:params->radius]}];
+                    break;
+                }
+                case LayerEffect::DirectionalBlur : {
+                    LayerEffect::DirectionalBlurParams *params = (LayerEffect::DirectionalBlurParams *)_effect->params;
+                    ciImg = [ciImg imageByApplyingFilter:@"CIMotionBlur" withInputParameters:@{@"inputImage":ciImg,@"inputRadius":[NSNumber numberWithFloat:params->radius],@"inputAngle":[NSNumber numberWithFloat:params->angle]}];
+                    break;
+                }
+                default:
+                    break;
             }
-            case LayerEffect::DirectionalBlur : {
-                LayerEffect::DirectionalBlurParams *params = (LayerEffect::DirectionalBlurParams *)_effect->params;
-                ciImg = [ciImg imageByApplyingFilter:@"CIMotionBlur" withInputParameters:@{@"inputImage":ciImg,@"inputRadius":[NSNumber numberWithFloat:params->radius],@"inputAngle":[NSNumber numberWithFloat:params->angle]}];
-                break;
-            }
-            default:
-                break;
+            ++effect_it;
         }
-        ++effect_it;
-    }
-    CIContext *ciContext = [CIContext contextWithMTLDevice:device->metal_device];
-    id<MTLCommandBuffer> buffer = deviceContext->makeNewMTLCommandBuffer();
-    [buffer encodeWaitForEvent:deviceContext->currentEvent() value:deviceContext->bufferCount];
-    [ciContext render:ciImg toMTLTexture:replacementTexture commandBuffer:buffer bounds:[ciImg extent] colorSpace:CGColorSpaceCreateDeviceRGB()];
-    [buffer encodeSignalEvent:deviceContext->currentEvent() value:deviceContext->bufferCount + 1];
-    [buffer commit];
-//    [buffer waitUntilCompleted];
-    [img release];
-    img = replacementTexture;
+        id<MTLCommandBuffer> buffer = deviceContext->makeNewMTLCommandBuffer();
+        CIContext *ciContext = [CIContext contextWithMTLCommandQueue:buffer.commandQueue];
+    //    [buffer encodeWaitForEvent:deviceContext->currentEvent() value:deviceContext->bufferCount];
+        [ciContext render:ciImg toMTLTexture:replacementTexture commandBuffer:buffer bounds:[ciImg extent] colorSpace:CGColorSpaceCreateDeviceRGB()];
+    //    [buffer encodeSignalEvent:deviceContext->currentEvent() value:deviceContext->bufferCount + 1];
+        [buffer enqueue];
+        NSLog(@"Queueing CIImage");
+        [buffer addCompletedHandler:^(id<MTLCommandBuffer> buffer){
+            NSLog(@"CIImage has finished");
+        }];
+    //    [buffer waitUntilCompleted];
+    //    [img release];
+        img = replacementTexture;
+    };
 };
 
 MTLPixelFormat computePixelFormat(unsigned bitDepth,unsigned channelCount,bool isrgb){

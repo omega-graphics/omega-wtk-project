@@ -109,6 +109,7 @@ namespace OmegaWTK::Composition {
         rootImg->commitEffects();
         auto visual = visualTree->makeVisual(rootImg);
     #endif
+        std::cout << "Visual has been Created... Mounting root" << std::endl;
         visualTree->setRootVisual(visual);
         context->assignRenderTargetToLayer(rootLayer,rootImgTarget);
          {
@@ -145,6 +146,7 @@ namespace OmegaWTK::Composition {
                  img->commitEffects();
                  auto _visual = visualTree->makeVisual(img);
          #endif
+                 std::cout << "Visual has been Created... Mounting child" << std::endl;
                  visualTree->addVisual(_visual);
                  context->assignRenderTargetToLayer(layer,imgTarget);
                  ++it;
@@ -152,7 +154,7 @@ namespace OmegaWTK::Composition {
          }
 
         // MessageBoxA(HWND_DESKTOP,"Will Render Visual Tree to HWND","NOTE",MB_OK);
-        
+        std::cout << "Will Render Visual Tree" << std::endl;
         context->renderVisualTreeToView(visualTree,currentLimb->renderTarget,false);
         visualTrees.insert(std::make_pair(currentLimb->renderTarget,visualTree));
         deviceContexts.insert(std::make_pair(currentLimb->renderTarget,context));

@@ -24,7 +24,7 @@ namespace OmegaWTK::Composition {
         virtual void replaceRootVisual(Core::SharedPtr<Visual>  visual) = 0;
         virtual void replaceVisualWithTargetPtr(Core::SharedPtr<BDCompositionImageRenderTarget> & imgTarget,Core::SharedPtr<Visual> visual) = 0;
         virtual void setRootVisual(Core::SharedPtr<Visual> visual) = 0;
-        virtual void addVisual(Core::SharedPtr<Visual> visual) = 0;
+        virtual void addVisual(Core::SharedPtr<Visual> & visual) = 0;
         virtual void layout() = 0;
     };
 

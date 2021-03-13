@@ -55,7 +55,6 @@ private:
 //    Core::Vector<id<MTLCommandQueue>> metal_command_queues;
     inline id<MTLRenderPipelineState> setupRenderPipelineState(id<MTLFunction> vertexFunc,id<MTLFunction> fragmentFunc,MTLPixelFormat pixelFormat);
     inline id<MTLComputePipelineState> setupComputePipelineState(id<MTLFunction> computeFunc);
-    dispatch_semaphore_t semaphore;
     friend class MTLBDCompositionDeviceContext;
 public: 
     id<MTLRenderPipelineState> makeMultiSampledPipelineState(bool textured,unsigned sampleCount,NSString *label);
@@ -72,6 +71,7 @@ class MTLBDCompositionDeviceContext : public BDCompositionDeviceContext {
 private:
     MTLBDCompositionDevice *device;
     id<MTLCommandQueue> metal_command_queue;
+    NSMutableArray<id<MTLCommandBuffer>> *buffers;
     Core::Queue<id<MTLFence>> fences;
     Core::Queue<id<MTLEvent>> events;
 public:

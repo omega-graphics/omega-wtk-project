@@ -105,7 +105,7 @@ id<MTLTexture> make_gradient_texture_and_mask(id<MTLTexture> main,
         [computeEncoder1 setTexture:main atIndex:OMEGAWTK_METAL_MASK_TEXTURE_MASK];
         [computeEncoder1 setTexture:secondRes atIndex:OMEGAWTK_METAL_MASK_TEXTURE_OUT];
         [computeEncoder1 endEncoding];
-        [computeBuffer commit];
+        [computeBuffer enqueue];
         
         return secondRes;
     };
@@ -153,19 +153,14 @@ void MTLBDCompositionViewRenderTarget::commit(){
     
     @autoreleasepool {
         
-//        for(auto & buffer : commandBuffers){
-//            [buffer waitUntilCompleted];
-//        };
-//        commandBuffers.clear();
     
-    
+        
         NSLog(@"Waiting for next Drawable");
         currentDrawable = [metalLayer nextDrawable];
         if(currentDrawable != nil) {
             id<MTLCommandBuffer> finalCommandBuffer = deviceContext->makeNewMTLCommandBuffer();
-            [finalCommandBuffer encodeWaitForEvent:deviceContext->currentEvent() value:deviceContext->bufferCount];
+//            [finalCommandBuffer encodeWaitForEvent:deviceContext->currentEvent() value:deviceContext->bufferCount];
             /// Clear the Screen!
-            {
     //            NSColor *nscolor = color_to_ns_color(clearColor);
                 NSColor *nscolor = color_to_ns_color(clearColor);
                 NSLog(@"Clear Color %@",nscolor);
@@ -227,9 +222,10 @@ void MTLBDCompositionViewRenderTarget::commit(){
                     [rp endEncoding];
                     ++idx;
                 };
-            }
+            NSLog(@"Going to Present Drawable");
             [finalCommandBuffer presentDrawable:currentDrawable];
-            [finalCommandBuffer encodeSignalEvent:deviceContext->currentEvent() value:deviceContext->bufferCount + 1];
+            NSLog(@"Presented Drawable!");
+//            [finalCommandBuffer encodeSignalEvent:deviceContext->currentEvent() value:deviceContext->bufferCount + 1];
             [finalCommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer){
 //                    auto buffer_it = vertexBuffers.begin();
 //                    while(buffer_it != vertexBuffers.end()){
@@ -238,14 +234,15 @@ void MTLBDCompositionViewRenderTarget::commit(){
 //                        ++buffer_it;
 //                    };
                     vertexBuffers.clear();
-//                NSLog(@"Completed!");
+                NSLog(@"Completed!");
             }];
-            [finalCommandBuffer commit];
-//            [finalCommandBuffer waitUntilCompleted];
-//            [metalLayer setNeedsDisplay];
+            [finalCommandBuffer enqueue];
+            NSLog(@"Enqueued Buffer");
+            [metalLayer setNeedsDisplay];
+            [metalLayer retain];
         };
     };
-
+    NSLog(@"Returning");
 };
 
 /// Metal Image Render Target!
@@ -288,7 +285,7 @@ void MTLBDCompositionImageRenderTarget::commit(){
         renderPassDesc2.renderTargetHeight = target.height;
         renderPassDesc2.renderTargetArrayLength = 1;
         id<MTLCommandBuffer> finalCommandBuffer = deviceContext->makeNewMTLCommandBuffer();
-        [finalCommandBuffer encodeWaitForEvent:deviceContext->currentEvent() value:deviceContext->bufferCount];
+//        [finalCommandBuffer encodeWaitForEvent:deviceContext->currentEvent() value:deviceContext->bufferCount];
         id<MTLRenderCommandEncoder> clearRp = [finalCommandBuffer renderCommandEncoderWithDescriptor:renderPassDesc];
         [clearRp endEncoding];
         unsigned idx = 0;
@@ -302,18 +299,18 @@ void MTLBDCompositionImageRenderTarget::commit(){
             ++idx;
         };
         
-        [finalCommandBuffer encodeSignalEvent:deviceContext->currentEvent() value:deviceContext->bufferCount + 1];
+//        [finalCommandBuffer encodeSignalEvent:deviceContext->currentEvent() value:deviceContext->bufferCount + 1];
         
         [finalCommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer){
-//                auto buffer_it = vertexBuffers.begin();
-//                while(buffer_it != vertexBuffers.end()){
-//                    id<MTLBuffer> buffer = *buffer_it;
-//                    [buffer setPurgeableState:MTLPurgeableStateEmpty];
-//                    ++buffer_it;
-//                };
+            if(buffer.error.code < 0){
+                NSLog(@"Buffer failed to excute Code:%i",buffer.error.code);
+            }
+            else {
+                NSLog(@"Image has Finished");
                 vertexBuffers.clear();
+            };
         }];
-        [finalCommandBuffer commit];
+        [finalCommandBuffer enqueue];
 //        [finalCommandBuffer waitUntilCompleted];
     }
 };
