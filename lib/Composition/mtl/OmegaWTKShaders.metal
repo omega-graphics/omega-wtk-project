@@ -17,12 +17,42 @@ kernel void linearGradientKernel(constant MTLBDGradientStop *gradientStops [[buf
     if((gid.x >= out.get_width()) || (gid.y >= out.get_height())){
         return;
     };
-    
+    /// Assume angle is zero
     auto relativeXPos = float(gid.x)/float(out.get_width());
     auto relativeYPos = float(gid.y)/float(out.get_height());
     
+    const constant MTLBDGradientStop *stop1, *stop2;
+    // Find Lesser Value Closest Stop.
+    const constant MTLBDGradientStop *previous = nullptr;
+    for(unsigned idx = 0;idx < stops.size();idx++){
+        if(stops[idx].linePos <= relativeXPos){
+            previous = &stops[idx];
+        }
+        else if(stops[idx].linePos >= relativeXPos){
+            stop1 = previous;
+            break;
+        };
+    };
+    //Find Greater Value Closest Stop.
+    for(unsigned idx = 0;idx < stops.size();idx++){
+        if(stops[idx].linePos >= relativeXPos){
+            stop2 = &stops[idx];
+            break;
+        };
+    };
     
-    simd_half4 outColor;
+    float stop_dist = stop2->linePos - stop1->linePos;
+    float current_pxl_dist = stop2->linePos - relativeXPos;
+    
+    float stop_a_color_mix_percentage = current_pxl_dist/stop_dist;
+    float stop_b_color_mix_percentage = stop_a_color_mix_percentage - 1.f;
+    
+    half _red = half((stop1->color.r * stop_a_color_mix_percentage) + (stop2->color.r * stop_b_color_mix_percentage));
+    half _green = half((stop1->color.g * stop_a_color_mix_percentage) + (stop2->color.g * stop_b_color_mix_percentage));
+    half _blue = half((stop1->color.b * stop_a_color_mix_percentage) + (stop2->color.b * stop_b_color_mix_percentage));
+    half _alpha = half((stop1->color.a * stop_a_color_mix_percentage) + (stop2->color.a * stop_b_color_mix_percentage));
+    
+    simd_half4 outColor = {_red,_green,_blue,_alpha};
     out.write(outColor,gid);
     
 };
