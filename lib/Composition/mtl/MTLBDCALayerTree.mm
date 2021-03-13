@@ -8,19 +8,19 @@
 #include "NativePrivate/macos/CocoaUtils.h"
 
 namespace OmegaWTK::Composition {
-MTLBDCALayerTree::MTLBDCALayerTree(MTLBDCompositionDevice *device):device(device){
+MTLBDCALayerTree::MTLBDCALayerTree(MTLBDCompositionDeviceContext *deviceContext):deviceContext(deviceContext){
     
 };
 
-Core::SharedPtr<MTLBDCALayerTree> MTLBDCALayerTree::Create(MTLBDCompositionDevice *device){
-    return std::make_shared<MTLBDCALayerTree>(device);
+Core::SharedPtr<MTLBDCALayerTree> MTLBDCALayerTree::Create(MTLBDCompositionDeviceContext *deviceContext){
+    return std::make_shared<MTLBDCALayerTree>(deviceContext);
 };
 
 Core::SharedPtr<BDCompositionVisualTree::Visual> MTLBDCALayerTree::makeVisual(Core::SharedPtr<BDCompositionImage> & img){
     MTLBDCompositionImage *mtlImg = (MTLBDCompositionImage *)img.get();
 //    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
 //    Core::Rect scaleTarget = Rect(mtlImg->n_rect.pos.x * scaleFactor,mtlImg->n_rect.pos.y * scaleFactor,mtlImg->n_rect.dimen.minWidth * scaleFactor,mtlImg->n_rect.dimen.minHeight * scaleFactor);
-    auto caLayerRenderTarget = device->makeCALayerRenderTarget(mtlImg->n_rect);
+    auto caLayerRenderTarget = deviceContext->makeCALayerRenderTarget(mtlImg->n_rect);
     Color bkgrd {Composition::Color::Black,0x00};
     caLayerRenderTarget->clear(bkgrd);
     caLayerRenderTarget->drawImage(img,Core::FPosition({0.f,0.f}));

@@ -13,19 +13,26 @@ class BDCompositionImageRenderTarget;
 class BDCompositionFontFactory;
 class BDCompositionVisualTree;
 
+class BDCompositionDeviceContext;
+
 /**
  A (Platform Specific) Composition Device!
  */
 class BDCompositionDevice {
-protected:
-    Core::Map<Layer *,Core::SharedPtr<BDCompositionRenderTarget>> targets;
 public:
     // BDCompositionDevice(){};
     static Core::SharedPtr<BDCompositionDevice> Create();
-    // /**
-    //  Creates a Render Target for a Composition::Layer
-    //  */
-    // virtual Core::SharedPtr<BDCompositionViewRenderTarget> makeViewRenderTarget(Layer *layer) = 0;
+    /**
+     Creates a Font Factory
+     */
+    virtual Core::SharedPtr<BDCompositionFontFactory> createFontFactory() = 0;
+    virtual Core::SharedPtr<BDCompositionDeviceContext> createContext() = 0;
+};
+
+class BDCompositionDeviceContext {
+protected:
+    Core::Map<Layer *,Core::SharedPtr<BDCompositionRenderTarget>> targets;
+public:
     /**
      Creates a Render Target for a `new` BDCompositionImage
      */
@@ -35,9 +42,14 @@ public:
      */
     virtual Core::SharedPtr<BDCompositionImageRenderTarget> makeImageRenderTarget(Core::SharedPtr<BDCompositionImage> & img) = 0;
     /**
-     Creates a Font Factory
+     Assigns an Image Render Target to a Layer.
+     NOTE: This method must be invoked before invoking @see layerForRenderTarget with the same layer.
      */
-    virtual Core::SharedPtr<BDCompositionFontFactory> createFontFactory() = 0;
+    void assignRenderTargetToLayer(Layer *layer,Core::SharedPtr<BDCompositionImageRenderTarget> & target);
+    /**
+     Gets an Image Render Target associated with a Layer
+     */
+    BDCompositionImageRenderTarget *layerForRenderTarget(Layer *layer);
     /**
      Creates a Visual Tree
      */

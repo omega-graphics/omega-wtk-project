@@ -18,23 +18,23 @@ class MTLBDCompositionImage : public BDCompositionImage {
     Core::FRect rect;
     LayerEffect *dropShadow = nullptr;
     Core::Vector<LayerEffect *> imageEffects;
-    MTLBDCompositionDevice *device;
+    MTLBDCompositionDeviceContext *deviceContext;
     friend class MTLBDCompositionRenderTarget<BDCompositionViewRenderTarget>;
     friend class MTLBDCompositionRenderTarget<BDCompositionImageRenderTarget>;
-    friend class MTLBDCompositionDevice;
+    friend class MTLBDCompositionDeviceContext;
     friend class MTLBDCALayerTree;
 public:
     id<MTLTexture> img;
     /**
      Create a Composition from an existing Core::BitmapImage and a id<MTLTexture>
      */
-    MTLBDCompositionImage(MTLBDCompositionDevice *device,Core::SharedPtr<Media::BitmapImage> & _img,Core::FRect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img);
+    MTLBDCompositionImage(MTLBDCompositionDeviceContext *deviceContext,Core::SharedPtr<Media::BitmapImage> & _img,Core::FRect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img);
     /**
      Create a Compositon Image from a id<MTLTexture>
     */
-    MTLBDCompositionImage(MTLBDCompositionDevice *device,Core::Rect & rect,id<MTLTexture> img,MTLTextureDescriptor *desc);
-    static Core::SharedPtr<BDCompositionImage> Create(MTLBDCompositionDevice *device,Core::SharedPtr<Media::BitmapImage> & _img,Core::FRect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img);
-    static Core::SharedPtr<BDCompositionImage> Create(MTLBDCompositionDevice *device,Core::Rect & rect,id<MTLTexture> img,MTLTextureDescriptor *desc);
+    MTLBDCompositionImage(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & rect,id<MTLTexture> img,MTLTextureDescriptor *desc);
+    static Core::SharedPtr<BDCompositionImage> Create(MTLBDCompositionDeviceContext *deviceContext,Core::SharedPtr<Media::BitmapImage> & _img,Core::FRect & rect,MTLTextureDescriptor *desc,id<MTLTexture> img);
+    static Core::SharedPtr<BDCompositionImage> Create(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & rect,id<MTLTexture> img,MTLTextureDescriptor *desc);
     void applyEffect(LayerEffect *effect);
     /**
      Will only commit Image Compatible Effects

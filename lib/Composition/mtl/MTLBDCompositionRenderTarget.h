@@ -23,7 +23,7 @@ namespace OmegaWTK::Composition {
     class MTLBDCompositionRenderTarget : public _Parent {
     protected:
         Core::UniquePtr<MTLBDTriangulator> triangulator;
-        MTLBDCompositionDevice *device;
+        MTLBDCompositionDeviceContext *deviceContext;
         Core::Vector<id<MTLCommandBuffer>> commandBuffers;
         Core::Vector<id<MTLBuffer>> vertexBuffers;
         Color clearColor;
@@ -37,7 +37,7 @@ namespace OmegaWTK::Composition {
         };
         Core::Queue<RenderPipeline> renderPasses;
     public:
-        MTLBDCompositionRenderTarget(MTLBDCompositionDevice *device,Color init_clear_color,Core::Rect &target_frame);
+        MTLBDCompositionRenderTarget(MTLBDCompositionDeviceContext *deviceContext,Color init_clear_color,Core::Rect &target_frame);
         virtual void clear(Color &clear_color);
         void frameRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush, unsigned width);
         void frameRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush, unsigned width);
@@ -55,7 +55,7 @@ id<MTLBuffer> solid_color_2d_mesh_to_mtl_vertex_buffer(MTLBDTriangulator::SolidC
 id<MTLBuffer> textured_mesh_to_mtl_vertex_buffer(MTLBDTriangulator::Textured2DMesh * mesh_ptr,id<MTLDevice> device);
 
 template<class _Ty>
-MTLBDCompositionRenderTarget<_Ty>::MTLBDCompositionRenderTarget(MTLBDCompositionDevice *device,Color init_clear_color,Core::Rect &target_frame):device(device),clearColor(init_clear_color),triangulator(std::make_unique<MTLBDTriangulator>(target_frame)){
+MTLBDCompositionRenderTarget<_Ty>::MTLBDCompositionRenderTarget(MTLBDCompositionDeviceContext *deviceContext,Color init_clear_color,Core::Rect &target_frame):deviceContext(deviceContext),clearColor(init_clear_color),triangulator(std::make_unique<MTLBDTriangulator>(target_frame)){
     
 };
 
@@ -66,6 +66,7 @@ void MTLBDCompositionRenderTarget<_Ty>::clear(Color & clear_color){
 };
 template<class _Ty>
 void MTLBDCompositionRenderTarget<_Ty>::fillRect(Core::Rect &rect,Core::SharedPtr<Brush> & brush){
+    auto device = deviceContext->getParentDevice();
     /// Ensure proper antialiased rendering on a high DPI monitor!
     float scaleFactor = [NSScreen mainScreen].backingScaleFactor;
     
@@ -97,6 +98,7 @@ void MTLBDCompositionRenderTarget<_Ty>::fillRect(Core::Rect &rect,Core::SharedPt
 };
 template<class _Ty>
 void MTLBDCompositionRenderTarget<_Ty>::frameRect(Core::Rect &rect,Core::SharedPtr<Brush> & brush,unsigned width){
+    auto device = deviceContext->getParentDevice();
     float scaleFactor = [NSScreen mainScreen].backingScaleFactor;
     auto frect = FRect(float(rect.pos.x) * scaleFactor,float(rect.pos.y) * scaleFactor,float(rect.dimen.minWidth) * scaleFactor,float(rect.dimen.minHeight) * scaleFactor);
 //
@@ -123,6 +125,7 @@ void MTLBDCompositionRenderTarget<_Ty>::frameRect(Core::Rect &rect,Core::SharedP
 };
 template<class _Ty>
 void MTLBDCompositionRenderTarget<_Ty>::fillRoundedRect(Core::RoundedRect & rect, Core::SharedPtr<Brush> & brush){
+    auto device = deviceContext->getParentDevice();
     float scaleFactor = [NSScreen mainScreen].backingScaleFactor;
     auto frect = FRoundedRect(float(rect.pos.x) * scaleFactor,float(rect.pos.y) * scaleFactor,float(rect.dimen.minWidth) * scaleFactor,float(rect.dimen.minHeight) * scaleFactor,float(rect.radius_x) * scaleFactor,float(rect.radius_y) * scaleFactor);
     
@@ -164,6 +167,7 @@ void MTLBDCompositionRenderTarget<_Ty>::frameRoundedRect(Core::RoundedRect & rec
 };
 template<class _Ty>
 void MTLBDCompositionRenderTarget<_Ty>::drawText(Core::SharedPtr<BDCompositionFont> & font, Core::String & string, Core::Rect &textRect, Core::SharedPtr<Brush> & brush){
+    auto device = deviceContext->getParentDevice();
     MTLBDCompositionFont *ct_font = (MTLBDCompositionFont *)font.get();
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     
@@ -316,6 +320,7 @@ void MTLBDCompositionRenderTarget<_Ty>::drawText(Core::SharedPtr<BDCompositionFo
 };
 template<class _Ty>
 Core::SharedPtr<BDCompositionImage> MTLBDCompositionRenderTarget<_Ty>::createImageFromBitmapImage(Core::SharedPtr<Media::BitmapImage> & img, Core::Rect & newSize,unsigned v_id){
+    auto device = deviceContext->getParentDevice();
     auto imgHeader = img->header.get();
     MTLTextureDescriptor *textureDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:computePixelFormat(imgHeader->bitDepth, imgHeader->channels,img->sRGB) width:imgHeader->width height:imgHeader->height mipmapped:NO];
     textureDesc.textureType = MTLTextureType2D;
@@ -333,14 +338,13 @@ Core::SharedPtr<BDCompositionImage> MTLBDCompositionRenderTarget<_Ty>::createIma
     MPSImageLanczosScale *scaleFix = [[MPSImageLanczosScale alloc] initWithDevice:device->metal_device];
     scaleFix.scaleTransform = &transform;
 
-    id<MTLCommandBuffer> commandBuffer = device->makeNewMTLCommandBuffer();
-
+    id<MTLCommandBuffer> _commandBuffer = deviceContext->makeNewMTLCommandBuffer();
+    [_commandBuffer encodeWaitForEvent:deviceContext->currentEvent() value:deviceContext->bufferCount];
     MTLTextureDescriptor *destTextureDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm width:fnewSize.dimen.minWidth height:fnewSize.dimen.minHeight mipmapped:NO];
     destTextureDesc.usage = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
     id<MTLTexture> destTexture = [device->metal_device newTextureWithDescriptor:destTextureDesc];
     id<MTLTexture> fin;
-
-    [scaleFix encodeToCommandBuffer:commandBuffer sourceTexture:texture destinationTexture:destTexture];
+    [scaleFix encodeToCommandBuffer:_commandBuffer sourceTexture:texture destinationTexture:destTexture];
 //    if(img->hasGamma){
 //        id<MTLTexture> finalTexture = [device->metal_device newTextureWithDescriptor:destTextureDesc];
 //        CIImage *ci_img = [CIImage imageWithMTLTexture:destTexture options:@{}];
@@ -352,16 +356,17 @@ Core::SharedPtr<BDCompositionImage> MTLBDCompositionRenderTarget<_Ty>::createIma
 //    else {
     fin = destTexture;
 //    };
-    [commandBuffer commit];
+    [_commandBuffer encodeSignalEvent:deviceContext->currentEvent() value:deviceContext->bufferCount + 1];
+    [_commandBuffer commit];
 //    [commandBuffer waitUntilCompleted];
-    commandBuffers.push_back(commandBuffer);
 
-    auto rc = MTLBDCompositionImage::Create(device,img,fnewSize,destTextureDesc,fin);
+    auto rc = MTLBDCompositionImage::Create(deviceContext,img,fnewSize,destTextureDesc,fin);
     this->images.insert(std::make_pair(v_id,rc));
     return rc;
 };
 template<class _Ty>
 void MTLBDCompositionRenderTarget<_Ty>::drawImage(Core::SharedPtr<BDCompositionImage> &img,Core::Position pos){
+    auto device = deviceContext->getParentDevice();
     MTLBDCompositionImage *mtlimg = reinterpret_cast<MTLBDCompositionImage *>(img.get());
     auto scaledRect = mtlimg->rect;
     scaledRect.pos = {float(pos.x),float(pos.y)};
@@ -400,6 +405,7 @@ void MTLBDCompositionRenderTarget<_Ty>::drawImage(Core::SharedPtr<BDCompositionI
 
 template<class _Ty>
 void MTLBDCompositionRenderTarget<_Ty>::drawImage(Core::SharedPtr<BDCompositionImage> &img,Core::FPosition pos){
+    auto device = deviceContext->getParentDevice();
     MTLBDCompositionImage *mtlimg = reinterpret_cast<MTLBDCompositionImage *>(img.get());
     auto scaledRect = mtlimg->rect;
     scaledRect.pos = pos;
@@ -452,8 +458,8 @@ class MTLBDCompositionViewRenderTarget : public MTLBDCompositionRenderTarget<BDC
 #endif
 public:
     void clear(Color &clear_color);
-    MTLBDCompositionViewRenderTarget(MTLBDCompositionDevice *device,Core::Rect & rect);
-    static Core::SharedPtr<MTLBDCompositionViewRenderTarget> Create(MTLBDCompositionDevice *device,Core::Rect & rect);
+    MTLBDCompositionViewRenderTarget(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & rect);
+    static Core::SharedPtr<MTLBDCompositionViewRenderTarget> Create(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & rect);
     void commit();
 };
 
@@ -462,8 +468,8 @@ class MTLBDCompositionImageRenderTarget : public MTLBDCompositionRenderTarget<BD
     MTLTextureDescriptor *desc;
     Core::Rect rect;
 public:
-    MTLBDCompositionImageRenderTarget(MTLBDCompositionDevice *device,Core::Rect & rect,id<MTLTexture> target,MTLTextureDescriptor *desc);
-    static Core::SharedPtr<BDCompositionImageRenderTarget> Create(MTLBDCompositionDevice *device,Core::Rect & rect,id<MTLTexture> target,MTLTextureDescriptor *desc);
+    MTLBDCompositionImageRenderTarget(MTLBDCompositionDeviceContext *deviceContext ,Core::Rect & rect,id<MTLTexture> target,MTLTextureDescriptor *desc);
+    static Core::SharedPtr<BDCompositionImageRenderTarget> Create(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & rect,id<MTLTexture> target,MTLTextureDescriptor *desc);
     void commit();
     Core::SharedPtr<BDCompositionImage> getImg();
 };

@@ -19,4 +19,13 @@ Core::SharedPtr<BDCompositionDevice> BDCompositionDevice::Create(){
     return CreateMTLBDCompositonDevice();
     #endif
 };
+
+BDCompositionImageRenderTarget *BDCompositionDeviceContext::layerForRenderTarget(Layer *layer){
+    return (BDCompositionImageRenderTarget *)targets[layer].get();
+};
+
+void BDCompositionDeviceContext::assignRenderTargetToLayer(Layer *layer,Core::SharedPtr<BDCompositionImageRenderTarget> & target){
+    targets.insert(std::make_pair(layer,target));
+};
+
 }

@@ -73,10 +73,11 @@ namespace OmegaWTK::Composition {
         }
     };
     void BackendImpl::doWork(){
-        auto visualTree = global_device->createVisualTree();
+        auto context = global_device->createContext();
+        auto visualTree = context->createVisualTree();
         // MessageBoxA(HWND_DESKTOP,"Do Work","NOTE",MB_OK);
         Layer * rootLayer = currentLimb->limbRoot;
-        auto rootImgTarget = global_device->makeImageRenderTarget(rootLayer->getLayerRect());
+        auto rootImgTarget = context->makeImageRenderTarget(rootLayer->getLayerRect());
         // MessageBoxA(HWND_DESKTOP,"Created Image Target","NOTE",MB_OK);
         rootImgTarget->clear(rootLayer->style->background);
         // MessageBoxA(HWND_DESKTOP,"Cleared the Screen","NOTE",MB_OK);
@@ -109,13 +110,13 @@ namespace OmegaWTK::Composition {
         auto visual = visualTree->makeVisual(rootImg);
     #endif
         visualTree->setRootVisual(visual);
-         layerTargets.insert(std::make_pair(rootLayer,rootImgTarget));
+        context->assignRenderTargetToLayer(rootLayer,rootImgTarget);
          {
              /// TODO: Eventually Change to Branch Iteration Model!
              auto it = currentLimb->begin();
              while(it != currentLimb->end()){
                  Layer *layer = it->get();
-                 auto imgTarget = global_device->makeImageRenderTarget(layer->getLayerRect());
+                 auto imgTarget = context->makeImageRenderTarget(layer->getLayerRect());
                  imgTarget->clear(layer->style->background);
                  auto __visual_it = layer->style->visuals.begin();
                  while(__visual_it != layer->style->visuals.end()){
@@ -145,15 +146,16 @@ namespace OmegaWTK::Composition {
                  auto _visual = visualTree->makeVisual(img);
          #endif
                  visualTree->addVisual(_visual);
-                 layerTargets.insert(std::make_pair(layer,imgTarget));
+                 context->assignRenderTargetToLayer(layer,imgTarget);
                  ++it;
              };
          }
 
         // MessageBoxA(HWND_DESKTOP,"Will Render Visual Tree to HWND","NOTE",MB_OK);
         
-        global_device->renderVisualTreeToView(visualTree,currentLimb->renderTarget,false);
+        context->renderVisualTreeToView(visualTree,currentLimb->renderTarget,false);
         visualTrees.insert(std::make_pair(currentLimb->renderTarget,visualTree));
+        deviceContexts.insert(std::make_pair(currentLimb->renderTarget,context));
     };
     void BackendImpl::doUpdate(){
     //     // MessageBoxA(HWND_DESKTOP,"Do Update","NOTE",MB_OK);

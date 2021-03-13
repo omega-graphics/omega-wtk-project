@@ -54,10 +54,8 @@ namespace OmegaWTK {
         };
 
         struct OMEGAWTK_EXPORT Gradient {
-            Core::Position start;
-            Core::Position end;
             struct GradientStop {
-                Core::Position pos;
+                float pos;
                 Color color;
             };
             typedef enum : OPT_PARAM {

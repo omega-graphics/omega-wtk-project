@@ -13,9 +13,9 @@ namespace OmegaWTK::Composition {
      Metal Backend Impl of the BDCompositionVisualTree using CALayers
      */
     class MTLBDCALayerTree : public BDCompositionVisualTree {
-        MTLBDCompositionDevice *device;
+        MTLBDCompositionDeviceContext *deviceContext;
         typedef BDCompositionVisualTree Parent;
-        friend class MTLBDCompositionDevice;
+        friend class MTLBDCompositionDeviceContext;
     public:
         /**
          A small structure that holds CAMetalLayer, CATransformLayer,
@@ -29,8 +29,8 @@ namespace OmegaWTK::Composition {
             bool attachTransformLayer;
         };
     public:
-        MTLBDCALayerTree(MTLBDCompositionDevice *device);
-        static Core::SharedPtr<MTLBDCALayerTree> Create(MTLBDCompositionDevice *device);
+        MTLBDCALayerTree(MTLBDCompositionDeviceContext *device);
+        static Core::SharedPtr<MTLBDCALayerTree> Create(MTLBDCompositionDeviceContext *device);
         Core::SharedPtr<Parent::Visual> makeVisual(Core::SharedPtr<BDCompositionImage> &img);
         void setRootVisual(Core::SharedPtr<Parent::Visual> visual);
         void replaceRootVisual(Core::SharedPtr<Parent::Visual> visual);

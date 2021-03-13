@@ -44,12 +44,81 @@ id<MTLBuffer> textured_mesh_to_mtl_vertex_buffer(MTLBDTriangulator::Textured2DMe
     return buffer;
 };
 
-Core::SharedPtr<MTLBDCompositionViewRenderTarget> MTLBDCompositionViewRenderTarget::Create(MTLBDCompositionDevice *device,Core::Rect & rect){
-    return std::make_shared<MTLBDCompositionViewRenderTarget>(device,rect);
+id<MTLTexture> make_gradient_texture_and_mask(id<MTLTexture> main,
+                                     Gradient &gradientParams,
+                                     MTLBDCompositionDeviceContext *deviceContext){
+    @autoreleasepool {
+        auto device = deviceContext->getParentDevice();
+        
+        /// Gradient Texture/Final Texture Descriptor
+        MTLTextureDescriptor *textureDesc = [[MTLTextureDescriptor alloc] init];
+        textureDesc.width = main.width;
+        textureDesc.height = main.height;
+        textureDesc.textureType = MTLTextureType2D;
+        textureDesc.usage = MTLTextureUsagePixelFormatView | MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
+        textureDesc.storageMode = MTLStorageModeShared;
+        textureDesc.pixelFormat = MTLPixelFormatBGRA8Unorm;
+        
+        id<MTLTexture> firstRes = [device->metal_device newTextureWithDescriptor:textureDesc];
+        id<MTLTexture> secondRes = [device->metal_device newTextureWithDescriptor:textureDesc];
+        
+        Core::Vector<MTLBDGradientStop> _stops;
+        
+        auto gradient_stop_it = gradientParams.stops.begin();
+        while(gradient_stop_it != gradientParams.stops.end()){
+            auto nsColor = color_to_ns_color(gradient_stop_it->color);
+            _stops.push_back({gradient_stop_it->pos,{float(nsColor.redComponent),float(nsColor.greenComponent),float(nsColor.blueComponent),float(nsColor.alphaComponent)}});
+            [nsColor release];
+            ++gradient_stop_it;
+        };
+        
+        id<MTLBuffer> gradientStopBuffer = [device->metal_device newBufferWithBytes:_stops.data() length:_stops.size() * sizeof(MTLBDGradientStop) options:MTLResourceStorageModeShared];
+        
+        
+        
+        id<MTLCommandBuffer> computeBuffer = deviceContext->makeNewMTLCommandBuffer();
+        id<MTLComputeCommandEncoder> computeEncoder0 = [computeBuffer computeCommandEncoder];
+        id<MTLComputePipelineState> computePipelineState;
+        /// Make Gradient Texture!
+        if(gradientParams.type == Gradient::Linear){
+            computePipelineState = device->linearGradientKernel;
+        }
+        else if(gradientParams.type == Gradient::Radial){
+            computePipelineState = device->radialGradientKernel;
+        }
+        else {
+            computePipelineState = nil;
+        };
+        
+        id<MTLFence> computeFence = deviceContext->makeFence();
+        
+        [computeEncoder0 setComputePipelineState:computePipelineState];
+        [computeEncoder0 setBuffer:gradientStopBuffer offset:0 atIndex:OMEGAWTK_METAL_GRADIENT_STOP_BUFFER];
+        [computeEncoder0 setTexture:firstRes atIndex:OMEGAWTK_METAL_GRADIENT_TEXTURE_OUT];
+        [computeEncoder0 updateFence:computeFence];
+        [computeEncoder0 endEncoding];
+        
+        id<MTLComputeCommandEncoder> computeEncoder1 = [computeBuffer computeCommandEncoder];
+        [computeEncoder1 waitForFence:computeFence];
+        [computeEncoder1 setComputePipelineState:device->alphaMaskKernel];
+        [computeEncoder1 setTexture:firstRes atIndex:OMEGAWTK_METAL_MASK_TEXTURE_MAIN];
+        [computeEncoder1 setTexture:main atIndex:OMEGAWTK_METAL_MASK_TEXTURE_MASK];
+        [computeEncoder1 setTexture:secondRes atIndex:OMEGAWTK_METAL_MASK_TEXTURE_OUT];
+        [computeEncoder1 endEncoding];
+        [computeBuffer commit];
+        
+        return secondRes;
+    };
+    
+};
+
+
+Core::SharedPtr<MTLBDCompositionViewRenderTarget> MTLBDCompositionViewRenderTarget::Create(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & rect){
+    return std::make_shared<MTLBDCompositionViewRenderTarget>(deviceContext,rect);
 };
 /// Metal Composition Render Target!
 
-MTLBDCompositionViewRenderTarget::MTLBDCompositionViewRenderTarget(MTLBDCompositionDevice *device,Core::Rect & _rect):MTLBDCompositionRenderTarget(device,Color(0,0,0,0),_rect),rect(_rect){
+MTLBDCompositionViewRenderTarget::MTLBDCompositionViewRenderTarget(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & _rect):MTLBDCompositionRenderTarget(deviceContext,Color(0,0,0,0),_rect),rect(_rect){
     triangulator->setScaleFactor(1);
     metalLayer = [CAMetalLayer layer];
 //    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
@@ -60,7 +129,7 @@ MTLBDCompositionViewRenderTarget::MTLBDCompositionViewRenderTarget(MTLBDComposit
     metalLayer.frame = rect;
     metalLayer.bounds = CGRectMake(0,0,rect.size.width,rect.size.height);
 //    metalLayer.bounds = CGRectMake(0,0,rect.size.width,rect.size.height);
-    metalLayer.device = device->metal_device;
+    metalLayer.device = deviceContext->getParentDevice()->metal_device;
     metalLayer.opaque = NO;
     metalLayer.autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
 //    metalLayer.presentsWithTransaction = YES;
@@ -79,21 +148,22 @@ void MTLBDCompositionViewRenderTarget::clear(Color & clear_color){
 void MTLBDCompositionViewRenderTarget::commit(){
 //    NSLog(@"Commit!!!");
 //        NSLog(@"Commit!!!");
-    
+    auto device = deviceContext->getParentDevice();
     float scaleFactor = [NSScreen mainScreen].backingScaleFactor;
     
     @autoreleasepool {
         
-        for(auto & buffer : commandBuffers){
-            [buffer waitUntilCompleted];
-        };
-        commandBuffers.clear();
+//        for(auto & buffer : commandBuffers){
+//            [buffer waitUntilCompleted];
+//        };
+//        commandBuffers.clear();
     
     
         NSLog(@"Waiting for next Drawable");
         currentDrawable = [metalLayer nextDrawable];
         if(currentDrawable != nil) {
-            id<MTLCommandBuffer> finalCommandBuffer = device->makeNewMTLCommandBuffer();
+            id<MTLCommandBuffer> finalCommandBuffer = deviceContext->makeNewMTLCommandBuffer();
+            [finalCommandBuffer encodeWaitForEvent:deviceContext->currentEvent() value:deviceContext->bufferCount];
             /// Clear the Screen!
             {
     //            NSColor *nscolor = color_to_ns_color(clearColor);
@@ -158,8 +228,8 @@ void MTLBDCompositionViewRenderTarget::commit(){
                     ++idx;
                 };
             }
-            
             [finalCommandBuffer presentDrawable:currentDrawable];
+            [finalCommandBuffer encodeSignalEvent:deviceContext->currentEvent() value:deviceContext->bufferCount + 1];
             [finalCommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer){
 //                    auto buffer_it = vertexBuffers.begin();
 //                    while(buffer_it != vertexBuffers.end()){
@@ -168,10 +238,10 @@ void MTLBDCompositionViewRenderTarget::commit(){
 //                        ++buffer_it;
 //                    };
                     vertexBuffers.clear();
-                NSLog(@"Completed!");
+//                NSLog(@"Completed!");
             }];
             [finalCommandBuffer commit];
-            [finalCommandBuffer waitUntilCompleted];
+//            [finalCommandBuffer waitUntilCompleted];
 //            [metalLayer setNeedsDisplay];
         };
     };
@@ -180,21 +250,21 @@ void MTLBDCompositionViewRenderTarget::commit(){
 
 /// Metal Image Render Target!
 
-MTLBDCompositionImageRenderTarget::MTLBDCompositionImageRenderTarget(MTLBDCompositionDevice * device,Core::Rect & rect,id<MTLTexture> target,MTLTextureDescriptor *desc):MTLBDCompositionRenderTarget(device,Color(0,0,0,0),rect),target(target),rect(rect),desc(desc){
+MTLBDCompositionImageRenderTarget::MTLBDCompositionImageRenderTarget(MTLBDCompositionDeviceContext * deviceContext,Core::Rect & rect,id<MTLTexture> target,MTLTextureDescriptor *desc):MTLBDCompositionRenderTarget(deviceContext,Color(0,0,0,0),rect),target(target),rect(rect),desc(desc){
     triangulator->setScaleFactor([NSScreen mainScreen].backingScaleFactor);
     triangulator->isImageTarget = true;
 };
 
-Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionImageRenderTarget::Create(MTLBDCompositionDevice *device,Core::Rect & rect,id<MTLTexture> texture,MTLTextureDescriptor *desc){
-    return std::make_shared<MTLBDCompositionImageRenderTarget>(device,rect,texture,desc);
+Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionImageRenderTarget::Create(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & rect,id<MTLTexture> texture,MTLTextureDescriptor *desc){
+    return std::make_shared<MTLBDCompositionImageRenderTarget>(deviceContext,rect,texture,desc);
 };
 
 void MTLBDCompositionImageRenderTarget::commit(){
     float scaleFactor = [NSScreen mainScreen].backingScaleFactor;
     @autoreleasepool {
-        for(auto & buffer : commandBuffers){
-            [buffer waitUntilCompleted];
-        };
+//        for(auto & buffer : commandBuffers){
+//            [buffer waitUntilCompleted];
+//        };
         commandBuffers.clear();
         NSColor *_clearColor = color_to_ns_color(clearColor);
         
@@ -217,7 +287,8 @@ void MTLBDCompositionImageRenderTarget::commit(){
         renderPassDesc2.renderTargetWidth = target.width;
         renderPassDesc2.renderTargetHeight = target.height;
         renderPassDesc2.renderTargetArrayLength = 1;
-        id<MTLCommandBuffer> finalCommandBuffer = device->makeNewMTLCommandBuffer();
+        id<MTLCommandBuffer> finalCommandBuffer = deviceContext->makeNewMTLCommandBuffer();
+        [finalCommandBuffer encodeWaitForEvent:deviceContext->currentEvent() value:deviceContext->bufferCount];
         id<MTLRenderCommandEncoder> clearRp = [finalCommandBuffer renderCommandEncoderWithDescriptor:renderPassDesc];
         [clearRp endEncoding];
         unsigned idx = 0;
@@ -231,22 +302,24 @@ void MTLBDCompositionImageRenderTarget::commit(){
             ++idx;
         };
         
+        [finalCommandBuffer encodeSignalEvent:deviceContext->currentEvent() value:deviceContext->bufferCount + 1];
+        
         [finalCommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer){
-                auto buffer_it = vertexBuffers.begin();
-                while(buffer_it != vertexBuffers.end()){
-                    id<MTLBuffer> buffer = *buffer_it;
-                    [buffer setPurgeableState:MTLPurgeableStateEmpty];
-                    ++buffer_it;
-                };
+//                auto buffer_it = vertexBuffers.begin();
+//                while(buffer_it != vertexBuffers.end()){
+//                    id<MTLBuffer> buffer = *buffer_it;
+//                    [buffer setPurgeableState:MTLPurgeableStateEmpty];
+//                    ++buffer_it;
+//                };
                 vertexBuffers.clear();
         }];
         [finalCommandBuffer commit];
-        [finalCommandBuffer waitUntilCompleted];
+//        [finalCommandBuffer waitUntilCompleted];
     }
 };
 
 Core::SharedPtr<BDCompositionImage> MTLBDCompositionImageRenderTarget::getImg(){
-    return MTLBDCompositionImage::Create(device,rect,target,desc);
+    return MTLBDCompositionImage::Create(deviceContext,rect,target,desc);
 };
 
 };
