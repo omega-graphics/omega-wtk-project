@@ -143,22 +143,31 @@ namespace OmegaWTK::Composition {
     Core::SharedPtr<BDCompositionDevice> DXBDCompositionDevice::Create(){
         return std::make_shared<DXBDCompositionDevice>();
     };
+    Core::SharedPtr<BDCompositionDeviceContext> DXBDCompositionDevice::createContext(){
+        return DXBDCompositionDeviceContext::Create(this);
+    };
+
+    DXBDCompositionDeviceContext::DXBDCompositionDeviceContext(DXBDCompositionDevice *device):device(device){};
+
+    Core::SharedPtr<BDCompositionDeviceContext> DXBDCompositionDeviceContext::Create(DXBDCompositionDevice *device){
+        return std::make_shared<DXBDCompositionDeviceContext>(device);
+    };
     // Core::SharedPtr<BDCompositionViewRenderTarget> DXBDCompositionDevice::makeViewRenderTarget(Layer *layer){
     //     // MessageBoxA(GetForegroundWindow(),"Making DX Render Target","",MB_OK);
     //     return DXBDCompositionViewRenderTarget::Create(this,(Native::Win::HWNDItem *));
     // };
-    Core::SharedPtr<BDCompositionImageRenderTarget> DXBDCompositionDevice::makeImageRenderTarget(Core::Rect &size){
-        return DXBDCompositionImageRenderTarget::Create(this,size);
+    Core::SharedPtr<BDCompositionImageRenderTarget> DXBDCompositionDeviceContext::makeImageRenderTarget(Core::Rect &size){
+        return DXBDCompositionImageRenderTarget::Create(device,size);
     };
-    Core::SharedPtr<BDCompositionImageRenderTarget> DXBDCompositionDevice::makeImageRenderTarget(Core::SharedPtr<BDCompositionImage> &img){
+    Core::SharedPtr<BDCompositionImageRenderTarget> DXBDCompositionDeviceContext::makeImageRenderTarget(Core::SharedPtr<BDCompositionImage> &img){
         DXBDCompositionImage *dxImg = (DXBDCompositionImage *)img.get();
         ID2D1DeviceContext *device_context;
         HRESULT hr;
-        hr = direct2d_device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,&device_context);
+        hr = device->direct2d_device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,&device_context);
         if(FAILED(hr)){
 
         };
-        return DXBDCompositionImageRenderTarget::Create(this,dxImg->rect);
+        return DXBDCompositionImageRenderTarget::Create(device,dxImg->rect);
     };
     Core::SharedPtr<BDCompositionFontFactory> DXBDCompositionDevice::createFontFactory(){
         HRESULT hr;
@@ -169,19 +178,19 @@ namespace OmegaWTK::Composition {
         };
         return DXBDCompositionFontFactory::Create(factory);
     };
-    void DXBDCompositionDevice::destroyTarget(Layer *layer, Core::SharedPtr<BDCompositionRenderTarget> &target){
+    void DXBDCompositionDeviceContext::destroyTarget(Layer *layer, Core::SharedPtr<BDCompositionRenderTarget> &target){
 
     };
-    Core::SharedPtr<BDCompositionVisualTree> DXBDCompositionDevice::createVisualTree(){
-        return DCVisualTree::Create(this);
+    Core::SharedPtr<BDCompositionVisualTree> DXBDCompositionDeviceContext::createVisualTree(){
+        return DCVisualTree::Create(device);
     };
-    void DXBDCompositionDevice::renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> &visualTree, ViewRenderTarget *view,bool updatePass){
+    void DXBDCompositionDeviceContext::renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> &visualTree, ViewRenderTarget *view,bool updatePass){
         HRESULT hr;
         DCVisualTree *tree = (DCVisualTree *)visualTree.get();
         Native::Win::HWNDItem * hwndItem = (Native::Win::HWNDItem *)view->getNativePtr();
         IDCompositionTarget *target;
         if(!tree->hwndTarget.get()){
-           hr = dcomp_device_1->CreateTargetForHwnd(hwndItem->hwnd,FALSE,&target);
+           hr = device->dcomp_device_1->CreateTargetForHwnd(hwndItem->hwnd,FALSE,&target);
            if(FAILED(hr)){
                MessageBoxA(HWND_DESKTOP,"Failed to Create Target For HWND","NOTE",MB_OK);
                // Handle Error
@@ -214,13 +223,13 @@ namespace OmegaWTK::Composition {
                 if(__img->dropShadow){
                     IDCompositionVisual2 *shadowVisual;
                     LayerEffect::DropShadowParams *params = (LayerEffect::DropShadowParams *)__img->dropShadow->params;
-                    dcomp_device_1->CreateVisual(&shadowVisual);
+                    device->dcomp_device_1->CreateVisual(&shadowVisual);
                     hr = shadowVisual->SetContent(__img->dxgi_swap_chain_1.get());
                     if(FAILED(hr)){
                         MessageBoxA(GetForegroundWindow(),"Failed to set DComp Visual Content for Shadow",NULL,MB_OK);
                     };
                     IDCompositionShadowEffect *shadowEffect;
-                     hr = dcomp_device_2->CreateShadowEffect(&shadowEffect);
+                     hr = device->dcomp_device_2->CreateShadowEffect(&shadowEffect);
                      if(FAILED(hr)){
                         MessageBoxA(GetForegroundWindow(),"Failed to create Shadow Effect",NULL,MB_OK);
                     };
@@ -309,6 +318,6 @@ namespace OmegaWTK::Composition {
             };
         };
 
-        dcomp_device_1->Commit();
+        device->dcomp_device_1->Commit();
     };
 };

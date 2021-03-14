@@ -71,11 +71,11 @@ toolchain("llvm") {
     tool("link") {
         outfile = "{{target_output_name}}{{output_extension}}"
         if(is_mac || is_linux){
-            command = "$lld_command  {{inputs}} {{solibs}} {{libs}}"  
+            command = "$lld_command {{ldflags}}  {{inputs}} {{solibs}} {{libs}}"  
         }
         # Link MSVC Runtime
         else {
-            command = "$lld_command /subsystem:CONSOLE /machine:x64   /out:$outfile  {{inputs}} {{solibs}} msvcrt.lib {{libs}}"
+            command = "$lld_command {{ldflags}} /machine:x64   /out:$outfile  {{inputs}} {{solibs}} msvcrt.lib {{libs}}"
         }
         outputs = [outfile]
         description = "Linking executable $outfile"
@@ -89,6 +89,22 @@ toolchain("llvm") {
             command = "copy /b {{source}} {{output}}"
         }
         description = "Copying {{source}} to {{output}}"
+    }
+    if(is_windows){
+        tool("rc"){
+            command = "llvm-rc {{defines}} {{source}} /FO {{output}}"
+            default_output_dir = "{{target_out_dir}}"
+        }
+    }
+    if(is_windows){
+        stamp = "cmd.exe /c echo >"
+    }
+    else {
+        stamp = "touch"
+    }
+    tool("stamp"){
+        command = "$stamp {{output}}"
+        description = "Stamping {{output}}"
     }
 
 }

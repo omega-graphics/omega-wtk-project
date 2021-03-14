@@ -1,3 +1,34 @@
+declare_args(){
+    python_path = ""
+    omega_wtk_include_dir = "//include"
+}
+
+template("compile_shader"){
+
+}
+
+template("configure_file"){
+    assert(defined(target_name))
+    assert(defined(invoker.output_name))
+    assert(defined(invoker.dep_name))
+    _args = ["-I",rebase_path(target_name),"-O",rebase_path(invoker.output_name),""]
+    if(defined(invoker.defines)){
+        action(invoker.dep_name){
+            script = rebase_path("//gn/ConfigFile.py")
+            args = invoker.defines + _args
+            outputs = [invoker.output_name]
+        }
+    }
+    else{
+        action(invoker.dep_name){
+            script =rebase_path( "//gn/ConfigFile.py")
+            args = _args
+            outputs = [invoker.output_name]
+        }
+    }
+    
+}
+
 template("omega_wtk_static_lib"){
     assert(defined(invoker.sources))
     # if(is_windows){
@@ -51,17 +82,120 @@ template("omega_wtk_shared_lib"){
     }
 }
 
+template("omega_wtk_app_config"){
+    #  assert(defined(sources))
+     assert(defined(target_name))
+     print(target_name)
+     assert(defined(invoker.app_entry))
+     assert(defined(invoker.out_dir))
+
+     out_dir = invoker.out_dir
+    
+    config_defines = [
+        "-DAPPNAME=" + target_name,
+        "-DAPPENTRY=" + invoker.app_entry
+    ]
+
+    if(is_windows){
+
+        copy()
+
+        configure_file("//target/windows/mmain.cpp.in"){
+            defines = config_defines
+            dep_name = "main-cpp-config__"
+            output_name = "$out_dir/mmain.cpp"
+        }
+        configure_file("//target/windows/resource.h.in"){
+            defines = config_defines
+            dep_name = "resource-h-config__"
+            output_name  = "$out_dir/resource.h"
+        }
+        configure_file("//target/windows/resource_script.rc.in"){
+            defines = config_defines
+             dep_name = "resource-rc-config__"
+            output_name = "$out_dir/resource_script.rc"
+        }
+        # invoker.deps += [
+        #     ":win_copy"
+        # ]
+    }
+    else if(is_mac){
+
+    }
+}
+
 template("omega_wtk_test"){
     assert(defined(invoker.sources))
-    if(is_windows){
-     name = target_name + ".exe"
+    if(!defined(invoker.include_dirs)){
+        invoker.include_dirs = []
+    }
+    if(!defined(invoker.ldflags)){
+        invoker.ldflags = ["/subsystem:WINDOWS"]
+    }
+    _deps = [
+            ":OmegaWTK",
+            ":main-cpp-config__",
+            ":resource-h-config__",
+            ":resource-rc-config__"
+        ]
+    if(defined(invoker.deps)){
+        invoker.deps += _deps
     }
     else {
-        name = target_name
+        invoker.deps = _deps
     }
-    invoker.output_name = "../tests" + target_name
-    executable(name){
+   
+    out_dir = "$root_out_dir/tests"
+
+    omega_wtk_app_config(target_name){
+        app_entry = invoker.app_entry
+        # deps = invoker.deps 
+        out_dir =  out_dir
+    }
+
+    invoker.include_dirs += [
+        rebase_path("$omega_wtk_include_dir"),
+        "$out_dir"
+    ] 
+    if(is_windows){
+        invoker.sources += [
+            "$out_dir/mmain.cpp",
+            "$out_dir/resource_script.rc"
+        ]
+        invoker.ldflags += [
+            "/MANIFEST:embed",
+            "/MANIFESTINPUT:" + rebase_path("//target/windows/app.exe.manifest")
+        ]
+    }
+    target_type = ""
+    _defines = []
+    if(is_windows) {
+        _defines += [
+            "TARGET_WIN32",
+            "WINDOWS_PRIVATE"
+        ]
+        target_type = "executable"
+    }
+    else if(is_mac){
+        _defines += [
+            "TARGET_MACOS"
+        ]
+        target_type = "create_bundle"
+    }
+
+    if(defined(invoker.defines)){
+        invoker.defines += _defines
+    }
+    else {
+        invoker.defines = _defines
+    }
+
+    invoker.output_name = "../tests/" + target_name
+    target(target_type,target_name){
         forward_variables_from(invoker,"*")
+        if(is_windows) {
+            output_extension = ".exe"
+        }
     }
 }
 

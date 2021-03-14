@@ -14,7 +14,7 @@ class DCVisualTree : public BDCompositionVisualTree {
     DXBDCompositionDevice *device;
     Core::UniqueComPtr<IDCompositionTarget> hwndTarget;
     typedef BDCompositionVisualTree Parent;
-    friend class DXBDCompositionDevice;
+    friend class DXBDCompositionDeviceContext;
     public:
     struct Visual : Parent::Visual {
         IDCompositionVisual2 * visual;
@@ -29,7 +29,7 @@ class DCVisualTree : public BDCompositionVisualTree {
     void replaceRootVisual(Core::SharedPtr<Parent::Visual> visual);
     void replaceVisualWithTargetPtr(Core::SharedPtr<BDCompositionImageRenderTarget> & imgTarget,Core::SharedPtr<Parent::Visual>  visual);
     void setRootVisual(Core::SharedPtr<Parent::Visual> visual);
-    void addVisual(Core::SharedPtr<Parent::Visual> visual);
+    void addVisual(Core::SharedPtr<Parent::Visual> & visual);
     void layout();
 };
 

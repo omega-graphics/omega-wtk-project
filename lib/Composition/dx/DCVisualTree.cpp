@@ -60,7 +60,7 @@ namespace OmegaWTK::Composition {
         };
     };
 
-    void DCVisualTree::addVisual(Core::SharedPtr<Parent::Visual> visual){
+    void DCVisualTree::addVisual(Core::SharedPtr<Parent::Visual> & visual){
         body.push_back(visual);
     };
 

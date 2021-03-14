@@ -85,6 +85,7 @@ omega_wtk_static_lib("omegaWTKNative"){
         # Sources
         "lib/Native/NativeApp.cpp",
         "lib/Native/NativeDialog.cpp",
+        "lib/Native/NativeEvent.cpp",
         "lib/Native/NativeItem.cpp",
         "lib/Native/NativeMenu.cpp",
         "lib/Native/NativeWindow.cpp"
@@ -123,7 +124,7 @@ omega_wtk_static_lib("omegaWTKNative"){
     else {
 
     }
-    deps = [
+    public_deps = [
         ":omegaWTKCore"
     ]
 }
@@ -145,6 +146,9 @@ omega_wtk_static_lib("omegaWTKMedia"){
         "lib/Media/VideoCaptureSession.cpp",
         "lib/Media/AudioCaptureSession.cpp"
     ]
+    public_deps = [
+        ":omegaWTKCore"
+    ]
 }
 
 omega_wtk_static_lib("omegaWTKComposition"){
@@ -157,7 +161,7 @@ omega_wtk_static_lib("omegaWTKComposition"){
         "$omega_wtk_include_dir/Composition/GeometricGraphicsPath.h",
         "$omega_wtk_include_dir/Composition/Layer.h",
         "$omega_wtk_include_dir/Composition/Text.h",
-        "$omega_wtk_include_dir/Composition/Visual.h"
+        "$omega_wtk_include_dir/Composition/Visual.h",
 
          # Sources
          # Backend SRC
@@ -167,7 +171,7 @@ omega_wtk_static_lib("omegaWTKComposition"){
         "lib/Composition/BDCompositionDevice.h",
         "lib/Composition/BDCompositionDevice.cpp",
         "lib/Composition/BDCompositionFontFactory.h",
-        "lib/Composition/BDCompositionFontFactory.cpp"
+        "lib/Composition/BDCompositionFontFactory.cpp",
         "lib/Composition/BDCompositionImage.h",
         "lib/Composition/BDCompositionImage.cpp",
         "lib/Composition/BDCompositionRenderTarget.h",
@@ -189,16 +193,86 @@ omega_wtk_static_lib("omegaWTKComposition"){
     ]
     if(is_windows){
         directx_backend_src_dir = "//lib/Composition/dx"
-        sources += []
+        if(directx_12){
+            defines = [
+                "DIRECT3D_12"
+            ]
+        }
+        sources += [
+            "$directx_backend_src_dir/DXBDCompositionDevice.h",
+            "$directx_backend_src_dir/DXBDCompositionDevice.cpp",
+            "$directx_backend_src_dir/DXBDCompositionRenderTarget.h",
+            "$directx_backend_src_dir/DXBDCompositionRenderTarget.cpp",
+            "$directx_backend_src_dir/DXBDCompositionFontFactory.h",
+            "$directx_backend_src_dir/DXBDCompositionFontFactory.cpp",
+            "$directx_backend_src_dir/DXBDCompositionImage.h",
+            "$directx_backend_src_dir/DXBDCompositionImage.cpp",
+            "$directx_backend_src_dir/DCVisualTree.h",
+            "$directx_backend_src_dir/DCVisualTree.cpp"
+        ]
     }
     else if(is_mac){
         metal_backend_src_dir = "//lib/Composition/mtl"
         sources += []
     }
 
-    deps = [
+    public_deps = [
         ":omegaWTKCore",
         ":omegaWTKNative",
         ":omegaWTKMedia"
+    ]
+}
+
+omega_wtk_static_lib("omegaWTKUI"){
+    sources = [
+        # Headers
+        "$omega_wtk_include_dir/UI/App.h",
+        "$omega_wtk_include_dir/UI/AppWindow.h",
+        "$omega_wtk_include_dir/UI/Menu.h",
+        "$omega_wtk_include_dir/UI/View.h",
+        "$omega_wtk_include_dir/UI/Widget.h",
+        # Sources 
+        "lib/UI/App.cpp",
+        "lib/UI/AppWindow.cpp",
+        "lib/UI/Menu.cpp",
+        "lib/UI/View.cpp",
+        "lib/UI/Widget.cpp"
+    ]
+    public_deps = [
+        ":omegaWTKCore",
+        ":omegaWTKNative",
+        ":omegaWTKMedia",
+        ":omegaWTKComposition"
+    ]
+}
+
+omega_wtk_static_lib("OmegaWTK"){
+    complete_static_lib = true
+    # if(is_windows) {
+    #     # arflags = [
+    #     #     "/WHOLEARCHIVE"
+    #     # ]
+    # }
+    sources = [
+        "//include/OmegaWTK.h",
+        "lib/OmegaWTK.cpp"
+    ]
+    public_deps = [
+        ":omegaWTKCore",
+        ":omegaWTKNative",
+        ":omegaWTKMedia",
+        ":omegaWTKComposition",
+        ":omegaWTKUI"
+    ]
+}
+
+omega_wtk_test("RootWidgetTest"){
+    sources = [
+        "tests/RootWidget/Main.h",
+        "tests/RootWidget/Main.cpp"
+    ]
+    app_entry = "Main.h"
+    include_dirs = [
+        "tests/RootWidget"
     ]
 }

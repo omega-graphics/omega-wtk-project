@@ -21,7 +21,7 @@ namespace OmegaWTK::Composition {
         Core::Rect & rect;
         friend class DXBDCompositionViewRenderTarget;
         friend class DXBDCompositionImageRenderTarget;
-        friend class DXBDCompositionDevice;
+        friend class DXBDCompositionDeviceContext;
     public:
         Core::UniqueComPtr<ID2D1Image> native_image;
         void redoImage();

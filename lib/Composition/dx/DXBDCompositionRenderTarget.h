@@ -90,7 +90,7 @@ namespace OmegaWTK::Composition {
         Core::UniqueComPtr<IDXGISurface> dxgi_surface;
         Core::UniqueComPtr<ID3D12Resource> direct3d_res;
         friend class DCVisualTree;
-        friend class DXBDCompositionDevice;
+        friend class DXBDCompositionDeviceContext;
     public:
          void redoDeviceContext();
           void redoSwapChain();

@@ -34,6 +34,7 @@ namespace OmegaWTK::Composition {
     class DXBDCompositonImageRenderTarget;
     
     class DXBDCompositionDevice : public BDCompositionDevice {
+        public:
         #ifdef DIRECT3D_12
         Core::UniqueComPtr<ID3D12Device> direct3d_device;
         Core::UniqueComPtr<ID3D11Device> direct3d_device_11_priv;
@@ -52,17 +53,23 @@ namespace OmegaWTK::Composition {
         Core::UniqueComPtr<IDXGIAdapter> dxgi_adapter;
         Core::UniqueComPtr<IDCompositionDesktopDevice> dcomp_device_1;
         Core::UniqueComPtr<IDCompositionDevice3> dcomp_device_2;
-        friend class DXBDCompositionViewRenderTarget;
-        friend class DXBDCompositionImageRenderTarget;
-        friend class DCVisualTree;
-        public:
         DXBDCompositionDevice();
         ~DXBDCompositionDevice();
         static Core::SharedPtr<BDCompositionDevice> Create();
-        // Core::SharedPtr<BDCompositionViewRenderTarget> makeViewRenderTarget(Layer *layer);
+        Core::SharedPtr<BDCompositionDeviceContext> createContext();
+        Core::SharedPtr<BDCompositionFontFactory> createFontFactory();
+    };
+
+    class DXBDCompositionDeviceContext : public BDCompositionDeviceContext {
+        DXBDCompositionDevice *device;
+        friend class DXBDCompositionViewRenderTarget;
+        friend class DXBDCompositionImageRenderTarget;
+        friend class DCVisualTree;
+    public:
+        DXBDCompositionDeviceContext(DXBDCompositionDevice *device);
+        static Core::SharedPtr<BDCompositionDeviceContext> Create(DXBDCompositionDevice *device);
         Core::SharedPtr<BDCompositionImageRenderTarget> makeImageRenderTarget(Core::Rect &size);
         Core::SharedPtr<BDCompositionImageRenderTarget> makeImageRenderTarget(Core::SharedPtr<BDCompositionImage> &img);
-        Core::SharedPtr<BDCompositionFontFactory> createFontFactory();
         Core::SharedPtr<BDCompositionVisualTree> createVisualTree();
         void destroyTarget(Layer *layer, Core::SharedPtr<BDCompositionRenderTarget> &target);
         void renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> &visualTree, ViewRenderTarget *view,bool updatePass);
