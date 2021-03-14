@@ -7,6 +7,7 @@
 
 namespace OmegaWTK::Media {
 
+void create_video_codec();
 
 
 class VideoStream  {

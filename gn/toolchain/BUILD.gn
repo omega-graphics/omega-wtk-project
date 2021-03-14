@@ -1,3 +1,7 @@
+declare_args(){
+    debug = false
+}
+
 toolchain("llvm") {
     if(is_mac || is_linux){
         lld_command = "ld.lld"
@@ -43,7 +47,7 @@ toolchain("llvm") {
     }
     tool("alink") {
         
-        command = "llvm-lib /out:{{output}} /machine:x64 ucrt.lib User32.lib  {{inputs}}"
+        command = "llvm-lib /out:{{output}} /machine:x64 ucrt.lib User32.lib  {{inputs}} {{arflags}}"
         outputs = [
             "{{target_out_dir}}/{{target_output_name}}{{output_extension}}"
         ]
@@ -58,7 +62,7 @@ toolchain("llvm") {
         }
         # Link MSVC Runtime
         else {
-            command = "$lld_command /subsystem:CONSOLE /machine:x64 /dll /out:$outfile  {{inputs}} {{solibs}} msvcrt.lib {{libs}}"
+            command = "$lld_command /subsystem:CONSOLE /machine:x64 /dll /out:$outfile  {{inputs}} {{solibs}} msvcrt.lib {{libs}} {{ldflags}}"
         }
         outputs = [outfile]
         description = "Linking executable $outfile"
@@ -76,6 +80,15 @@ toolchain("llvm") {
         outputs = [outfile]
         description = "Linking executable $outfile"
         default_output_dir = "{{root_out_dir}}"
+    }
+    tool("copy"){
+        if(is_mac || is_linux){
+
+        }
+        else {
+            command = "copy /b {{source}} {{output}}"
+        }
+        description = "Copying {{source}} to {{output}}"
     }
 
 }

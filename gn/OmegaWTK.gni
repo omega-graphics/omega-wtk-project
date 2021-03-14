@@ -36,6 +36,8 @@ template("omega_wtk_static_lib"){
         ]
     }
 
+    invoker.output_name = "../lib/" + target_name
+
     static_library(target_name){
         forward_variables_from(invoker,"*")
     }
@@ -43,6 +45,7 @@ template("omega_wtk_static_lib"){
 
 template("omega_wtk_shared_lib"){
     assert(defined(invoker.sources))
+     invoker.output_name = "../lib/" + target_name
     shared_library(name){
         forward_variables_from(invoker,"*")
     }
@@ -56,6 +59,7 @@ template("omega_wtk_test"){
     else {
         name = target_name
     }
+    invoker.output_name = "../tests" + target_name
     executable(name){
         forward_variables_from(invoker,"*")
     }

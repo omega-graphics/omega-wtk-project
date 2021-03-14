@@ -2,6 +2,60 @@ import("//gn/OmegaWTK.gni")
 
 declare_args(){
     directx_12 = true
+    vcpkg_installed_path = ""
+}
+
+if(vcpkg_installed_path == ""){
+    print("VCPKG will NOT use")
+    useVcpkg = false
+    declare_args(){
+        libpng_include_path = ""
+        libpng_lib_path = ""
+        libtiff_include_path = ""
+        libtiff_lib_path = ""
+        libjpeg_turbo_include_path = ""
+        libjpeg_turbo_lib_path = ""
+        ffmpeg_include_path = ""
+        ffmpeg_lib_path = ""
+    }  
+}
+else {
+    print("VCPKG WILL USE!")
+    useVcpkg = true
+}
+
+config("external_media_libs_config") {
+    if(useVcpkg) {
+        lib_dirs = [
+            "$vcpkg_installed_path/lib"
+        ]
+    }
+    else {
+
+    }
+    if(useVcpkg){
+        include_dirs = [
+            "$vcpkg_installed_path/include"
+        ]
+    }
+    if(is_windows){
+        if(useVcpkg){
+            libs = [
+                "$vcpkg_installed_path/lib/avcodec.lib",
+                "$vcpkg_installed_path/lib/avutil.lib",
+                "$vcpkg_installed_path/lib/libpng16.lib",
+                "$vcpkg_installed_path/lib/tiffxx.lib",
+            ]
+        }
+    }
+    else {
+        libs = [
+            "libavcodec",
+            "libavutil",
+            "libpng",
+            "libtiff",
+        ]
+    }
 }
 
 omega_wtk_include_dir = "//include/omegaWTK"
@@ -75,7 +129,11 @@ omega_wtk_static_lib("omegaWTKNative"){
 }
 
 omega_wtk_static_lib("omegaWTKMedia"){
+    configs = [
+        ":external_media_libs_config"
+    ]
     sources = [
+        # Headers 
         "$omega_wtk_include_dir/Media/ImgCodec.h",
         "$omega_wtk_include_dir/Media/VideoCodec.h",
         "$omega_wtk_include_dir/Media/VideoCaptureSession.h",
@@ -87,8 +145,60 @@ omega_wtk_static_lib("omegaWTKMedia"){
         "lib/Media/VideoCaptureSession.cpp",
         "lib/Media/AudioCaptureSession.cpp"
     ]
+}
+
+omega_wtk_static_lib("omegaWTKComposition"){
+    sources = [
+        # Headers 
+        "$omega_wtk_include_dir/Composition/Backend.h",
+        "$omega_wtk_include_dir/Composition/Brush.h",
+        "$omega_wtk_include_dir/Composition/Color.h",
+        "$omega_wtk_include_dir/Composition/Compositor.h",
+        "$omega_wtk_include_dir/Composition/GeometricGraphicsPath.h",
+        "$omega_wtk_include_dir/Composition/Layer.h",
+        "$omega_wtk_include_dir/Composition/Text.h",
+        "$omega_wtk_include_dir/Composition/Visual.h"
+
+         # Sources
+         # Backend SRC
+        "lib/Composition/Backend.cpp",
+        "lib/Composition/BackendPriv.h",
+        "lib/Composition/BackendPriv.cpp",
+        "lib/Composition/BDCompositionDevice.h",
+        "lib/Composition/BDCompositionDevice.cpp",
+        "lib/Composition/BDCompositionFontFactory.h",
+        "lib/Composition/BDCompositionFontFactory.cpp"
+        "lib/Composition/BDCompositionImage.h",
+        "lib/Composition/BDCompositionImage.cpp",
+        "lib/Composition/BDCompositionRenderTarget.h",
+        "lib/Composition/BDCompositionRenderTarget.cpp",
+        "lib/Composition/BDCompositionVisualTree.h",
+        "lib/Composition/BDCompositionVisualTree.cpp",
+        # Frontend SRC
+        "lib/Composition/Brush.cpp",
+        "lib/Composition/Color.cpp",
+        "lib/Composition/Compositor.cpp",
+        "lib/Composition/GeometricGraphicsPath.cpp",
+        "lib/Composition/Layer.cpp",
+        "lib/Composition/Text.cpp",
+        "lib/Composition/Visual.cpp"
+
+    ]
+    include_dirs = [
+        "//lib/Native/private_include"
+    ]
+    if(is_windows){
+        directx_backend_src_dir = "//lib/Composition/dx"
+        sources += []
+    }
+    else if(is_mac){
+        metal_backend_src_dir = "//lib/Composition/mtl"
+        sources += []
+    }
+
     deps = [
-        "//external-deps/libpng",
-        # "//external-deps/ffmpeg"
+        ":omegaWTKCore",
+        ":omegaWTKNative",
+        ":omegaWTKMedia"
     ]
 }
