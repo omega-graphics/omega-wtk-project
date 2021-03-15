@@ -1,17 +1,25 @@
 declare_args(){
     debug = false
+    python3 = ""
 }
 
 toolchain("llvm") {
     if(is_windows){
         win_cmd_prefix = "cmd.exe /c"
+        obj_ext = "obj"
     }
     if(is_mac || is_linux){
-        lld_command = "ld.lld"
+        python_path = python3
+        obj_ext = "o"
     }
     else {
         lld_command = "lld-link"
     }
+
+    if(is_mac){
+        lld_command = "ld"
+    }
+
     tool("cc") {
         depfile = "{{output}}.d"
         command = "clang -MD -MF $depfile  {{defines}} {{include_dirs}} {{cflags_c}}  -c {{source}}  -o {{output}}"
@@ -23,7 +31,7 @@ toolchain("llvm") {
         }
         description = "Compiling C source {{output}}"
         outputs = [
-            "{{source_out_dir}}/{{source_name_part}}.obj"
+            "{{source_out_dir}}/{{source_name_part}}.${obj_ext}"
         ]
     }
     tool("cxx"){
@@ -37,31 +45,58 @@ toolchain("llvm") {
         }
         description = "Compiling CXX source {{output}}"
         outputs = [
-            "{{source_out_dir}}/{{source_name_part}}.obj"
+            "{{source_out_dir}}/{{source_name_part}}.${obj_ext}"
         ]
     }
     if(is_mac){
         tool("objc"){
-
+            depfile = "{{output}}.d"
+            depsformat = "gcc"
+            description = "Compiling OBJC source {{output}}"
+            command = "clang -MD -MF $depfile  {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_objc}}  -c {{source}}  -o {{output}}"
+            outputs = [
+                "{{source_out_dir}}/{{source_name_part}}.${obj_ext}"
+            ]
         }
         tool("objcxx"){
-            
+            depfile = "{{output}}.d"
+            depsformat = "gcc"
+            description = "Compiling OBJCXX source {{output}}"
+            command = "clang++ -MD -MF $depfile -std=c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} {{cflags_objc}} {{cflags_objcc}} -c {{source}} -o {{output}}"
+            outputs = [
+                "{{source_out_dir}}/{{source_name_part}}.${obj_ext}"
+            ]
+        }
+        tool("copy_bundle_data"){
+            python_copy = rebase_path("../__copy.py")
+            command = "$python_path \"$python_copy\" --src {{source}} --dest {{output}}"
+            description = "Copying {{source}} to {{output}}"
         }
     }
     tool("alink") {
-        
-        command = "llvm-lib /out:{{output}} /machine:x64 ucrt.lib User32.lib  {{inputs}} {{arflags}}"
+        if(is_windows){
+            command = "llvm-lib /out:{{output}} /machine:x64 ucrt.lib User32.lib  {{inputs}} {{arflags}}"
+        }
+        else if(is_mac) {
+            command = "llvm-ar --format=darwin -rs {{output}} {{inputs}} {{arflags}}"
+        }
         outputs = [
             "{{target_out_dir}}/{{target_output_name}}{{output_extension}}"
         ]
         description = "Linking static archive {{target_output_name}}{{output_extension}}"
-        default_output_extension = ".lib"
-        output_prefix = ""
+        if(is_mac || is_linux){
+            default_output_extension = ".a"
+            output_prefix = ""
+        }
+        else {
+            default_output_extension = ".lib"
+            output_prefix = ""
+        }
     }
     tool("solink") {
         outfile = "{{target_output_name}}{{output_extension}}"
-        if(is_mac || is_linux){
-            command = "$lld_command  {{inputs}} {{solibs}} {{libs}}"  
+        if(is_mac){
+            command = "$lld_command -o $outfile {{ldflags}}  {{inputs}} {{solibs}} {{frameworks}} {{libs}}"  
         }
         # Link MSVC Runtime
         else {
@@ -74,7 +109,7 @@ toolchain("llvm") {
     tool("link") {
         outfile = "{{target_output_name}}{{output_extension}}"
         if(is_mac || is_linux){
-            command = "$lld_command {{ldflags}}  {{inputs}} {{solibs}} {{libs}}"  
+            command = "$lld_command -execute -o $outfile {{ldflags}} {{inputs}} {{solibs}} {{frameworks}}  {{libs}} " 
         }
         # Link MSVC Runtime
         else {
@@ -85,13 +120,9 @@ toolchain("llvm") {
         default_output_dir = "{{root_out_dir}}"
     }
     tool("copy"){
-        if(is_mac || is_linux){
-
-        }
-        else {
-            python_copy = rebase_path("../copy.py")
-            command = "$python_path \"$python_copy\" --src {{source}} --dest {{output}}"
-        }
+        
+        python_copy = rebase_path("../__copy.py")
+        command = "$python_path \"$python_copy\" --src {{source}} --dest {{output}}"
         description = "Copying {{source}} to {{output}}"
     }
     tool("rc"){

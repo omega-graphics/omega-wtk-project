@@ -1,12 +1,16 @@
 import sys
-import shutil
+import PyUtils
 
+if(PyUtils.is_python_3()):
+    import shutil
+else:
+    import os
 
 args = sys.argv
 args.pop(0)
 
-src:str 
-dest:str
+src = None 
+dest = None
 
 for arg in args:
     if arg == "--src":
@@ -16,4 +20,7 @@ for arg in args:
         idx = args.index(arg)
         dest = args[idx + 1]
 
-shutil.copyfile(src,dest)
+if(sys.api_version > 2.9):
+    shutil.copyfile(src,dest)
+else:
+    os.system("cp " + src + " " + dest)

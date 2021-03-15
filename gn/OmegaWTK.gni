@@ -1,10 +1,25 @@
 declare_args(){
     python_path = ""
-    omega_wtk_include_dir = "//include"
+    omega_wtk_include_dir = rebase_path("//include","../",".")
 }
 
-template("compile_shader"){
+if(is_mac){
+    template("metal_library"){
+        assert(defined(target_name))
+        assert(defined(invoker.output_dir))
 
+        n_sources = []
+        foreach(s ,invoker.sources){
+            n_sources += ["$s"]
+        }
+        _o_dir = invoker.output_dir
+        _args = ["--metallib","-O",rebase_path(_o_dir + "/" + target_name) + ".metallib"] + n_sources
+        action(target_name){
+            script = rebase_path("//gn/shaderc.py")
+            args = _args
+            outputs = ["$_o_dir/$target_name.metallib"]
+        }
+    }
 }
 
 template("configure_file"){
@@ -128,7 +143,30 @@ template("omega_wtk_app_config"){
         # ]
     }
     else if(is_mac){
+        t_name = "appdelegate-mm-config__" + target_name
+        t_name_2 = "info-plist-config__" + target_name
 
+        copy("other-res" + target_name){
+            sources = [
+                "//target/macos/main.mm",
+                "//target/macos/English.lproj/MainMenu.xib",
+                "//target/macos/AppDelegate.h"
+            ]
+            outputs = [
+                "$out_dir/{{source_file_part}}"
+            ]
+        }
+
+        configure_file("//target/macos/AppDelegate.mm"){
+            defines = config_defines
+            dep_name = t_name
+            output_name = "$out_dir/AppDelegate.mm"
+        }
+        configure_file("//target/macos/Info.plist.in"){
+            defines = config_defines
+            dep_name = t_name_2
+            output_name = "$out_dir/Info.plist"
+        }
     }
 }
 
@@ -138,15 +176,30 @@ template("omega_wtk_test"){
         invoker.include_dirs = []
     }
     if(!defined(invoker.ldflags)){
-        invoker.ldflags = ["/subsystem:WINDOWS"]
+        if(is_windows){
+            invoker.ldflags = ["/subsystem:WINDOWS"]
+        }
+        else if(is_mac){
+            # invoker.ldflags = ["-"]
+        }
     }
     _deps = [
             ":OmegaWTK",
-            ":main-cpp-config__",
-            ":resource-h-config__",
-            ":resource-rc-config__",
             ":other-res$target_name"
         ]
+    if(is_windows){
+        _deps += [
+             ":main-cpp-config__",
+            ":resource-h-config__",
+            ":resource-rc-config__"
+        ]
+    }
+    else if(is_mac){
+        t_name = "appdelegate-mm-config__" + target_name
+        _deps += [
+            ":$t_name",
+        ]
+    }
     if(defined(invoker.deps)){
         invoker.deps += _deps
     }
@@ -176,20 +229,32 @@ template("omega_wtk_test"){
             "/MANIFESTINPUT:" + rebase_path("//target/windows/app.exe.manifest")
         ]
     }
-    target_type = ""
     _defines = []
     if(is_windows) {
         _defines += [
             "TARGET_WIN32",
             "WINDOWS_PRIVATE"
         ]
-        target_type = "executable"
     }
     else if(is_mac){
         _defines += [
             "TARGET_MACOS"
         ]
-        target_type = "create_bundle"
+        invoker.sources += [
+            "$out_dir/AppDelegate.h",
+            "$out_dir/AppDelegate.mm",
+            "$out_dir/main.mm"
+        ]
+        _libs = [
+            "c",
+            "c++"
+        ]
+        if(defined(invoker.libs)) {
+            invoker.libs += _libs
+        }
+        else {
+            invoker.libs = _libs
+        }
     }
 
     if(defined(invoker.defines)){
@@ -200,10 +265,78 @@ template("omega_wtk_test"){
     }
 
     invoker.output_name = "tests/" + target_name
-    target(target_type,target_name){
+    executable(target_name){
         forward_variables_from(invoker,"*")
         if(is_windows) {
             output_extension = "exe"
+        }
+    }
+    app_name = "$target_name"
+    if(is_mac){
+
+        # action("compile-nib__${target_name}") {
+        #     script = rebase_path("gn/ibtool.py")
+        #     args = ["-I","../target/macos/English.lproj/MainMenu.xib","-D","$root_out_dir/obj","-O","$root_out_dir/obj/English.lproj/MainMenu.nib"]
+        #     outputs = [
+        #         "$root_out_dir/obj/English.lproj/MainMenu.nib"
+        #     ]
+        # }
+        bundle_data("${target_name}__metal_copy"){
+            public_deps = [
+                ":omegawtk",
+                # ":compile-nib__${app_name}"
+            ]
+            sources = [
+                "$root_out_dir/lib/omegawtk.metallib",
+            ]
+            outputs = [
+                "{{bundle_resources_dir}}/default.metallib",
+                # "{{bundle_resources_dir}}/MainMenu.nib"
+            ]
+        }
+        bundle_data("${target_name}__res_copy"){
+            sources = [
+                "//target/macos/MainMenu.nib",
+            ]
+            outputs = [
+                "{{bundle_resources_dir}}/{{source_file_part}}",
+                # "{{bundle_resources_dir}}/MainMenu.nib"
+            ]
+        }
+        bundle_data("${target_name}__info_plist"){
+            public_deps = [
+                ":info-plist-config__${app_name}"
+            ]
+            sources = [
+                "$out_dir/Info.plist"
+            ]
+            outputs = [
+                "{{bundle_contents_dir}}/Info.plist"
+            ]
+        }
+        bundle_data("${target_name}_exec"){
+            public_deps = [
+                ":$app_name"
+            ]
+            sources = ["$out_dir/$app_name"]
+            outputs = ["{{bundle_executable_dir}}/$app_name"]
+        }
+        create_bundle("${target_name}.app"){
+
+            bundle_root_dir = "$root_build_dir/$target_name"
+            bundle_contents_dir  = "$bundle_root_dir/Contents"
+            bundle_resources_dir = "$bundle_contents_dir/Resources"
+            bundle_executable_dir = "$bundle_contents_dir/MacOS"
+
+            xcode_extra_attributes = {
+                DEBUG_INFORMATION_FORMAT = "dwarf"
+            }
+            deps = [
+                ":${app_name}__metal_copy",
+                ":${app_name}__res_copy",
+                ":${app_name}__info_plist",
+                ":${app_name}_exec"
+            ]
         }
     }
 }

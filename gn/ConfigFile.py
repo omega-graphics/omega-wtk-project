@@ -1,8 +1,16 @@
 import os
 import sys
-from shutil import which
+import PyUtils
+import distutils.spawn
 
-cmake_path = which("cmake")
+
+if(PyUtils.is_python_3()):
+    from shutil import which
+
+if(PyUtils.is_python_3()):
+    cmake_path = which("cmake")
+else:
+    cmake_path = distutils.spawn.find_executable("cmake")
 if cmake_path == None:
     print("CMake executable not found in path... Exiting...")
     exit(1)
@@ -11,7 +19,7 @@ args = sys.argv
 args.pop(0)
 # print(args)
 
-defines:"list[str]" = []
+defines = []
 input = None 
 output = None
 
