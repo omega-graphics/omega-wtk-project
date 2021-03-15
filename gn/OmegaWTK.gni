@@ -97,8 +97,16 @@ template("omega_wtk_app_config"){
     ]
 
     if(is_windows){
-
-        copy()
+        copy("other-res" + target_name){
+            sources = [
+                "target/windows/small.ico",
+                "target/windows/app.ico",
+                "target/windows/targetver.h"
+            ]
+            outputs = [
+                "$out_dir/{{source_file_part}}"
+            ]
+        }
 
         configure_file("//target/windows/mmain.cpp.in"){
             defines = config_defines
@@ -136,7 +144,8 @@ template("omega_wtk_test"){
             ":OmegaWTK",
             ":main-cpp-config__",
             ":resource-h-config__",
-            ":resource-rc-config__"
+            ":resource-rc-config__",
+            ":other-res$target_name"
         ]
     if(defined(invoker.deps)){
         invoker.deps += _deps
@@ -190,11 +199,11 @@ template("omega_wtk_test"){
         invoker.defines = _defines
     }
 
-    invoker.output_name = "../tests/" + target_name
+    invoker.output_name = "tests/" + target_name
     target(target_type,target_name){
         forward_variables_from(invoker,"*")
         if(is_windows) {
-            output_extension = ".exe"
+            output_extension = "exe"
         }
     }
 }

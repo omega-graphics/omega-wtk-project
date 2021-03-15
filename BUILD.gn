@@ -224,6 +224,11 @@ omega_wtk_static_lib("omegaWTKComposition"){
 }
 
 omega_wtk_static_lib("omegaWTKUI"){
+    if(is_windows) {
+        defines = [
+            "WINDOWS_PRIVATE"
+        ]
+    }
     sources = [
         # Headers
         "$omega_wtk_include_dir/UI/App.h",

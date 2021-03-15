@@ -3,6 +3,9 @@ declare_args(){
 }
 
 toolchain("llvm") {
+    if(is_windows){
+        win_cmd_prefix = "cmd.exe /c"
+    }
     if(is_mac || is_linux){
         lld_command = "ld.lld"
     }
@@ -86,18 +89,18 @@ toolchain("llvm") {
 
         }
         else {
-            command = "copy /b {{source}} {{output}}"
+            python_copy = rebase_path("../copy.py")
+            command = "$python_path \"$python_copy\" --src {{source}} --dest {{output}}"
         }
         description = "Copying {{source}} to {{output}}"
     }
-    if(is_windows){
-        tool("rc"){
-            command = "llvm-rc {{defines}} {{source}} /FO {{output}}"
-            default_output_dir = "{{target_out_dir}}"
-        }
+    tool("rc"){
+        command = "rc {{defines}} {{source}} /FO {{output}}"
+        #default_output_dir = "{{target_out_dir}}"
+        description = "Compiling rc script {{output}}"
     }
     if(is_windows){
-        stamp = "cmd.exe /c echo >"
+        stamp = "$win_cmd_prefix echo >"
     }
     else {
         stamp = "touch"
