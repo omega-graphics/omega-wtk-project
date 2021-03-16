@@ -46,7 +46,23 @@ namespace OmegaWTK {
         using UniquePtr = std::unique_ptr<_Ty>;
     
         template<class _Ty>
+        class UniquePtrRef {
+            UniquePtr<_Ty> & ptr;
+        public:
+            bool hasExpired(){
+                return ptr == nullptr;
+            };
+            void resetRef(UniquePtr<_Ty> & _new_ptr){
+                ptr = _new_ptr;
+            };
+            UniquePtrRef(UniquePtr<_Ty> & _ptr):ptr(_ptr){};
+        };
+    
+        template<class _Ty>
         using SharedPtr = std::shared_ptr<_Ty>;
+    
+        template<class _Ty>
+        using WeakPtr = std::weak_ptr_Ty>;
 
         template<class _Ty>
         using Optional = std::optional<_Ty>;
@@ -353,5 +369,8 @@ OMEGAWTK_EXPORT inline UniqueHandle<_Ty> && construct(_Args && ...args){
     static_assert(std::is_constructible<_Ty,_Args...>::value,"Cannot construct item");
     return std::make_unique<_Ty>(args...);
 };
+
+template<class _Ty>
+OMEGAWTK_EXPORT using WeakHandle = OmegaWTK::Core::WeakPtr<_Ty>;
 
 #endif

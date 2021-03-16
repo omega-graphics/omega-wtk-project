@@ -4,6 +4,7 @@
  */
 
 #include "omegaWTK/Composition/Layer.h"
+#include "omegaWTK/Composition/LayerAnimation.h"
 #include "omegaWTK/Native/NativeItem.h"
 #include "omegaWTK/Native/NativeEvent.h"
 #include "omegaWTK/Native/NativeApp.h"
@@ -14,6 +15,7 @@
 namespace OmegaWTK {
     class Widget;
     class AppInst;
+    class ViewAnimator;
     class ViewDelegate;
     /**
         A Global View class that controls all the basic functions of a Widget!
@@ -33,6 +35,8 @@ namespace OmegaWTK {
         friend class Widget;
         friend class AppWindow;
         SharedHandle<Composition::LayerTree::Limb> layerTreeLimb;
+        friend class ViewAnimator;
+        Composition::Compositor *getWidgetCompositor();
     public:
         Composition::LayerTree::Limb * getLayerTreeLimb(){ return layerTreeLimb.get();};
         bool isRootView(){return parent_ptr == nullptr;};
@@ -95,6 +99,31 @@ namespace OmegaWTK {
         public:
         ViewDelegate();
         ~ViewDelegate();
+    };
+
+
+    class ViewAnimator : public Composition::ViewRenderTargetFrameScheduler {
+        friend class Composition::LayerAnimationController;
+    public:
+        struct AnimationContext {
+            ViewAnimator *anim = nullptr;
+        public:
+            Composition::LayerAnimationController *getControllerWithID(int id);
+        };
+        typedef void (*Action)(AnimationContext context);
+    private:
+        Core::Map<unsigned,Action> triggers;
+        Core::Map<int,SharedHandle<Composition::LayerAnimationController>> animControllers;
+        ViewAnimator(Core::UniquePtr<ViewRenderTarget> & renderTarget,Composition::Compositor *compositor);
+    public:
+        struct TriggerDescriptor {
+            unsigned identifier;
+            Action action;
+        };
+        void assignController(int id,SharedHandle<Composition::LayerAnimationController> & controller);
+        void addTrigger(const TriggerDescriptor & desc);
+        void activateTrigger(unsigned identifier);
+        static SharedHandle<ViewAnimator> Create(View *view);
     };
 };
 

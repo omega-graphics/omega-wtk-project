@@ -8,6 +8,7 @@
 #include "omegaWTK/Native/NativeItem.h"
 #include "omegaWTK/Native/NativeWindow.h"
 #include "Visual.h"
+#include "ViewRenderTarget.h"
 #include <functional>
 
 #ifndef OMEGAWTK_COMPOSITION_LAYER_H
@@ -21,16 +22,6 @@ class AppWindowManager;
     namespace Composition {
 
     class Compositor;
-    /**
-     The Compositor's interface for composing to a widget's view.
-     */
-    class OMEGAWTK_EXPORT ViewRenderTarget {
-        Native::NativeItemPtr native;
-    public:
-        Native::NativeItemPtr getNativePtr();
-        ViewRenderTarget(Native::NativeItemPtr _native);
-        ~ViewRenderTarget();
-    };
         /**
             A mutlifeatured surface for composing visuals on.
          */
@@ -63,7 +54,6 @@ class AppWindowManager;
             /// @name Composing Functions!
             /// Draws on to its target!
             /// @{
-            void setBackgroundColor(const Color & color);
             void setStyle(SharedHandle<LayerStyle> & style);
             /// @}
                 
@@ -84,6 +74,7 @@ class AppWindowManager;
      */
     class OMEGAWTK_EXPORT LayerTree {
         Compositor *widgetCompositor;
+        friend class ::OmegaWTK::View;
     public:
         class Limb : public Native::NativeLayerTreeLimb {
             Layer *limbRoot;

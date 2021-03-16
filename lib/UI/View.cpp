@@ -39,6 +39,10 @@ namespace OmegaWTK {
             };
         };
     };
+    
+Composition::Compositor * View::getWidgetCompositor(){
+    return widgetLayerTree->widgetCompositor;
+};
 
 ViewDelegate::ViewDelegate(){};
 
@@ -91,8 +95,23 @@ void ViewDelegate::onRecieveEvent(Native::NativeEventPtr event){
     delete event;
 };
 
-void ViewDelegate(View *_view){
+
+ViewAnimator::ViewAnimator(Core::UniquePtr<Composition::ViewRenderTarget> & renderTarget,
+                           Composition::Compositor *compositor):
+Composition::ViewRenderTargetFrameScheduler(renderTarget,compositor){
     
+};
+
+void ViewAnimator::addTrigger(const TriggerDescriptor & desc){
+    triggers.insert(std::make_pair(desc.identifier,desc.action));
+};
+
+void ViewAnimator::assignController(int id,SharedHandle<Composition::LayerAnimationController> & controller){
+    animControllers.insert(std::make_pair(id,controller));
+};
+
+SharedHandle<ViewAnimator> ViewAnimator::Create(View *view){
+    return SharedHandle<ViewAnimator>(new ViewAnimator(view->renderTarget,view->getWidgetCompositor()));
 };
 
 };

@@ -5,10 +5,6 @@
 namespace OmegaWTK::Composition {
 
 
-ViewRenderTarget::ViewRenderTarget(Native::NativeItemPtr _native) : native(_native){};
-Native::NativeItemPtr ViewRenderTarget::getNativePtr(){ return native;};
-ViewRenderTarget::~ViewRenderTarget(){};
-
 Layer::Layer(const Core::Rect &rect,
              Compositor *compPtr)
     : surface_rect(rect),

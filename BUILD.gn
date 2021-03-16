@@ -190,6 +190,7 @@ omega_wtk_static_lib("omegaWTKComposition"){
         "$omega_wtk_include_dir/Composition/Compositor.h",
         "$omega_wtk_include_dir/Composition/GeometricGraphicsPath.h",
         "$omega_wtk_include_dir/Composition/Layer.h",
+        "$omega_wtk_include_dir/Composition/LayerAnimation.h",
         "$omega_wtk_include_dir/Composition/Text.h",
         "$omega_wtk_include_dir/Composition/Visual.h",
 
@@ -214,6 +215,7 @@ omega_wtk_static_lib("omegaWTKComposition"){
         "lib/Composition/Compositor.cpp",
         "lib/Composition/GeometricGraphicsPath.cpp",
         "lib/Composition/Layer.cpp",
+        "lib/Composition/LayerAnimation.cpp",
         "lib/Composition/Text.cpp",
         "lib/Composition/Visual.cpp"
 

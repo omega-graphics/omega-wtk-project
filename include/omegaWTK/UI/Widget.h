@@ -25,6 +25,7 @@ private:
     friend class AppWindow;
     friend class AppWindowManager;
 public:
+    void setParentView(View *view);
     void show();
     void hide();
     Widget(const Core::Rect & rect,SharedHandle<Widget> parent = nullptr);

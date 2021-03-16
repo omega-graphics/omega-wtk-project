@@ -8,12 +8,16 @@ add_omega_wtk_lib(
     "View.cpp"
     "Menu.cpp"
     "AppWindow.cpp"
+    "ButtonBase.cpp"
+    "PushButton.cpp"
     HEADERS 
     "Widget.h"
     "App.h"
     "View.h"
     "Menu.h"
     "AppWindow.h"
+    "ButtonBase.h"
+    "PushButton.h"
     LINK_LIBS 
     "omegaWTKCore"
     "omegaWTKNative"

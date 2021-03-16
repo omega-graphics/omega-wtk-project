@@ -10,8 +10,8 @@ namespace OmegaWTK::Composition {
      for any value (associated with a certain composition layer) of type `_Val_Ty` 
      over a period of time of type `_Time_Ty`
     */
-    template<class _Val_Ty,class _Time_Ty = float>
-    class OMEGAWTK_EXPORT LayerAnimation {
+    template<class _Val_Ty = double,class _Time_Ty = float>
+    class OMEGAWTK_EXPORT LayerAnimation_Base {
         /**
          The Layer associated with this LayerAnimation
         */
@@ -67,6 +67,42 @@ namespace OmegaWTK::Composition {
         void addLinearSegment(Core::SharedPtr<LinearSegmentDescriptor> & desc);
         void addQuadraticBezierSegment(Core::SharedPtr<QuadraticBezierSegmentDescriptor> & desc);
         void addCubicBezierSegment(Core::SharedPtr<CubicBezierSegmentDescriptor> & desc);
+    };
+
+    typedef LayerAnimation_Base<> LayerAnimation;
+    
+
+    class LayerAnimationController {
+        Core::SharedPtr<LayerAnimation> anim = nullptr;
+        friend class ViewRenderTargetFrameScheduler;
+        friend class ::OmegaWTK::UI::ViewAnimator;
+    protected:
+        float currentFPS;
+        ViewRenderTargetFrameScheduler *scheduler = nullptr;
+    public:
+        virtual void setAnim(SharedHandle<LayerAnimation> & anim);
+        void setFrameRate(float fps);
+        virtual void playForward();
+        virtual void pause();
+        virtual void playReverse();
+        LayerAnimationController();
+    };
+    
+    class LayerAnimationGroupController : public LayerAnimationController {
+        Core::Vector<Core::SharedPtr<LayerAnimation>> anims;
+    public:
+        /**
+         @unimplemented
+         */
+        void setAnim(SharedHandle<LayerAnimation> & anim){
+            std::cout << "NULL" << std::endl;
+        };
+        void playForward();
+        void pause();
+        void playReverse();
+        void addAnimation(SharedHandle<LayerAnimation> & anim);
+        void removeAnimation(SharedHandle<LayerAnimation> & anim);
+        LayerAnimationGroupController();
     };
 };
 
