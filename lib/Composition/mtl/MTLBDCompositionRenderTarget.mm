@@ -121,7 +121,7 @@ Core::SharedPtr<MTLBDCompositionViewRenderTarget> MTLBDCompositionViewRenderTarg
 MTLBDCompositionViewRenderTarget::MTLBDCompositionViewRenderTarget(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & _rect):MTLBDCompositionRenderTarget(deviceContext,Color(0,0,0,0),_rect),rect(_rect){
     triangulator->setScaleFactor(1);
     metalLayer = [CAMetalLayer layer];
-//    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
     auto rect = Native::Cocoa::core_rect_to_cg_rect(_rect);
 //    rect.origin.x /= scaleFactor;
 //    rect.origin.y /= scaleFactor;
@@ -134,7 +134,7 @@ MTLBDCompositionViewRenderTarget::MTLBDCompositionViewRenderTarget(MTLBDComposit
     metalLayer.autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
 //    metalLayer.presentsWithTransaction = YES;
     NSLog(@"Position: x%f, y%f",metalLayer.frame.origin.x,metalLayer.frame.origin.y);
-    metalLayer.contentsScale = 2.f;
+    metalLayer.contentsScale = scaleFactor;
     metalLayer.masksToBounds = YES;
 //    metalLayer.contentsCenter = CGRectMake(0,0,1,1);
     metalLayer.framebufferOnly = YES;
@@ -167,8 +167,8 @@ void MTLBDCompositionViewRenderTarget::commit(){
                 MTLRenderPassDescriptor *initialRenderPassDesc = [MTLRenderPassDescriptor renderPassDescriptor];
                 initialRenderPassDesc.colorAttachments[0].clearColor = MTLClearColorMake(nscolor.redComponent,nscolor.greenComponent,nscolor.blueComponent,nscolor.alphaComponent);
                 initialRenderPassDesc.colorAttachments[0].loadAction = MTLLoadActionClear;
-                initialRenderPassDesc.renderTargetWidth = float(rect.dimen.minWidth) * 2.f;
-                initialRenderPassDesc.renderTargetHeight = float(rect.dimen.minHeight) * 2.f;
+                initialRenderPassDesc.renderTargetWidth = float(rect.dimen.minWidth) * scaleFactor;
+                initialRenderPassDesc.renderTargetHeight = float(rect.dimen.minHeight) * scaleFactor;
                 initialRenderPassDesc.renderTargetArrayLength = 1;
     //            initialRenderPassDesc.colorAttachments[0].storeAction = MTLStoreActionStore;
     //            initialRenderPassDesc.defaultRasterSampleCount = 0;
@@ -177,8 +177,8 @@ void MTLBDCompositionViewRenderTarget::commit(){
                 MTLRenderPassDescriptor *mainRenderPassDesc = [MTLRenderPassDescriptor renderPassDescriptor];
                 mainRenderPassDesc.colorAttachments[0].clearColor = MTLClearColorMake(nscolor.redComponent,nscolor.greenComponent,nscolor.blueComponent,nscolor.alphaComponent);
                 mainRenderPassDesc.colorAttachments[0].loadAction = MTLLoadActionLoad;
-                mainRenderPassDesc.renderTargetWidth = float(rect.dimen.minWidth) * 2.f;
-                mainRenderPassDesc.renderTargetHeight = float(rect.dimen.minHeight) * 2.f;
+                mainRenderPassDesc.renderTargetWidth = float(rect.dimen.minWidth) * scaleFactor;
+                mainRenderPassDesc.renderTargetHeight = float(rect.dimen.minHeight) * scaleFactor;
                 mainRenderPassDesc.colorAttachments[0].storeAction = MTLStoreActionStore;
                 mainRenderPassDesc.renderTargetArrayLength = 1;
 //                mainRenderPassDesc.defaultRasterSampleCount = 0;
@@ -226,16 +226,17 @@ void MTLBDCompositionViewRenderTarget::commit(){
             [finalCommandBuffer presentDrawable:currentDrawable];
             NSLog(@"Presented Drawable!");
 //            [finalCommandBuffer encodeSignalEvent:deviceContext->currentEvent() value:deviceContext->bufferCount + 1];
-            [finalCommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer){
-//                    auto buffer_it = vertexBuffers.begin();
-//                    while(buffer_it != vertexBuffers.end()){
-//                        id<MTLBuffer> buffer = *buffer_it;
-//                        [buffer setPurgeableState:MTLPurgeableStateEmpty];
-//                        ++buffer_it;
-//                    };
-                    vertexBuffers.clear();
-                NSLog(@"Completed!");
-            }];
+//            [finalCommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer){
+////                    auto buffer_it = vertexBuffers.begin();
+////                    while(buffer_it != vertexBuffers.end()){
+////                        id<MTLBuffer> buffer = *buffer_it;
+////                        [buffer setPurgeableState:MTLPurgeableStateEmpty];
+////                        ++buffer_it;
+////                    };
+//                    vertexBuffers.clear();
+//                NSLog(@"Completed!");
+//                return;
+//            }];
             [finalCommandBuffer enqueue];
             NSLog(@"Enqueued Buffer");
             [metalLayer setNeedsDisplay];
@@ -301,15 +302,16 @@ void MTLBDCompositionImageRenderTarget::commit(){
         
 //        [finalCommandBuffer encodeSignalEvent:deviceContext->currentEvent() value:deviceContext->bufferCount + 1];
         
-        [finalCommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer){
-            if(buffer.error.code < 0){
-                NSLog(@"Buffer failed to excute Code:%i",buffer.error.code);
-            }
-            else {
-                NSLog(@"Image has Finished");
-                vertexBuffers.clear();
-            };
-        }];
+//        [finalCommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer){
+//            if(buffer.error.code < 0){
+//                NSLog(@"Buffer failed to excute Code:%i",buffer.error.code);
+//            }
+//            else {
+//                NSLog(@"Image has Finished");
+//                vertexBuffers.clear();
+//            };
+//            return;
+//        }];
         [finalCommandBuffer enqueue];
 //        [finalCommandBuffer waitUntilCompleted];
     }

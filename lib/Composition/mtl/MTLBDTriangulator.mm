@@ -49,8 +49,8 @@ void MTLBDTriangulator::triangulateRect(Core::FRect rect,Textured2DMesh & res){
 //        mtl_coord_y = ((rect.pos.y)/(float(targetFrame.dimen.minHeight)) - 1.f);
 //    }
 //    else {
-    mtl_coord_x = ((rect.pos.x)/(float(targetFrame.dimen.minWidth)) - 1.f);
-    mtl_coord_y = ((rect.pos.y)/(float(targetFrame.dimen.minHeight)) - 1.f);
+    mtl_coord_x = (rect.pos.x)/(float(targetFrame.dimen.minWidth)) - (1.f);
+    mtl_coord_y = (rect.pos.y)/(float(targetFrame.dimen.minHeight)) - (1.f);
 //    };
 //    auto center = getRenderTargetCenter();
 //    NSLog(@"Target Center: x:%i , y:%i",center.x,center.y);
@@ -156,21 +156,21 @@ MTLBDTriangulator::TriangulationResult<MTLBDTriangulator::SolidColor2DMesh>  MTL
     }
     else {
         // Middle Rect
-        auto middle = FRect(rect.pos.x + rect.radius_x,rect.pos.y + rect.radius_y,rect.dimen.minWidth - (2 * rect.radius_x),rect.dimen.minHeight - (2 * rect.radius_y));
+        auto middle = FRect(rect.pos.x + rect.radius_x,rect.pos.y + rect.radius_y,rect.dimen.minWidth - (2 * rect.radius_x ) * scaleFactor,rect.dimen.minHeight - (2 * rect.radius_y) * scaleFactor);
         triangulateRect(middle,*rc);
         /// Bottom Rect
         auto bottom = FRect(rect.pos.x + rect.radius_x,rect.pos.y,rect.dimen.minWidth - (2 * rect.radius_x),rect.radius_y);
         triangulateRect(bottom,*rc);
-//        /// Left Rect
+////        /// Left Rect
         auto left = FRect(rect.pos.x,rect.pos.y + rect.radius_y,rect.radius_x,rect.dimen.minHeight - (2 * rect.radius_y));
         triangulateRect(left,*rc);
-//        /// Top Rect
-        auto top = FRect(rect.pos.x + rect.radius_x,rect.pos.y + rect.dimen.minHeight - rect.radius_y,rect.dimen.minWidth - (2 * rect.radius_x),rect.radius_y);
+////        /// Top Rect
+        auto top = FRect(rect.pos.x + rect.radius_x,(rect.pos.y * scaleFactor) + rect.dimen.minHeight,rect.dimen.minWidth - (2 * rect.radius_x),rect.radius_y);
         triangulateRect(top,*rc);
-        /// Right Rect
-        auto right = FRect(rect.pos.x + rect.dimen.minWidth - rect.radius_x,rect.pos.y + rect.radius_y,rect.radius_x,rect.dimen.minHeight - (2 * rect.radius_y));
+//        /// Right Rect
+        auto right = FRect(rect.pos.x + rect.dimen.minWidth - rect.radius_x,rect.pos.y + rect.radius_y,rect.radius_x,rect.dimen.minHeight - (2 * rect.radius_y * scaleFactor));
         triangulateRect(right,*rc);
-        // Lower Left Arc
+         // Lower Left Arc
         Core::Math::Arc arc;
         arc.center.x = rect.pos.x + rect.radius_x;
         arc.center.y = rect.pos.y + rect.radius_y;
@@ -178,13 +178,13 @@ MTLBDTriangulator::TriangulationResult<MTLBDTriangulator::SolidColor2DMesh>  MTL
         arc.radius_y = rect.radius_y;
         arc.radians = Core::Math::PI / 2.f;
         triangulateArc(arc,*arcs,Core::Math::PI);
-        // Upper Left Arc
+//        // Upper Left Arc
         arc.center.y = rect.pos.y + rect.dimen.minHeight - rect.radius_y;
         triangulateArc(arc,*arcs,Core::Math::PI / 2.f);
-        /// Upper Right Arc
+//        /// Upper Right Arc
         arc.center.x = rect.pos.x + rect.dimen.minWidth - rect.radius_x;
         triangulateArc(arc,*arcs,0.f);
-        /// Lower Right Arc
+//        /// Lower Right Arc
         arc.center.y = rect.pos.y + rect.radius_y;
         triangulateArc(arc,*arcs,(3.f * Core::Math::PI) / 2.f);
     };

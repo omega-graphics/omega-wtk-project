@@ -57,8 +57,8 @@ public:
     //    auto blur = make<LayerEffect>(LAYER_EFFECT_DIRECTIONALBLUR(4.0,0.0));
         auto _style2 = make<LayerStyle>();
         _style2->setBackgroundColor({Color::White,0x00});
-       _style2->add(VISUAL_RECT(Rect(50,50,100,100),ColorBrush(Composition::Color::Red)));
-        // _style2->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(0,0,200,200),25,Composition::Text::Font("Arial",OmegaWTK::Composition::Text::Font::Regular)));
+       _style2->add(VISUAL_RECT(Rect(50,50,150,150),ColorBrush(Composition::Color::Red)));
+         _style2->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(25,25,150,150),20,Composition::Text::Font("Arial",OmegaWTK::Composition::Text::Font::Regular)));
         _style2->addEffect(shadow);
     //    _style2->addEffect(blur);
         subLayer->setStyle(_style2);
@@ -124,15 +124,15 @@ int omegaWTKMain(AppInst *app)
    
     auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}}));
 
-    auto widget2 = make<MyWidget>(MyWidget({{0,500},{400,400}}));
+//    auto widget2 = make<MyWidget>(MyWidget({{0,500},{400,400}}));
     widget->show();
-    widget2->show();
+//    widget2->show();
  
     auto mainWindow = make<AppWindow>(Rect(0,0,1000,1000),new MyWindowDelegate(app));
     // 
     mainWindow->addWidget(widget);
    
-    mainWindow->addWidget(widget2);
+//    mainWindow->addWidget(widget2);
     mainWindow->setMenu(menu);
     app->windowManager->setRootWindow(mainWindow);
     app->windowManager->displayRootWindow();

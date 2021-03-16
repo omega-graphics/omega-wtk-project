@@ -123,6 +123,9 @@ namespace OmegaWTK {
 #define VISUAL_RECT(rect,brush) Visual::RectParams({rect,brush,{}})
 #define VISUAL_RECT_W_FRAME(rect,brush,border) Visual::RectParams({rect,brush,border})
 
+#define VISUAL_ROUNDED_RECT(rect,brush) Visual::RoundedRectParams({rect,rect.radius_x,rect.radius_y,brush,{}})
+#define VISUAL_ROUNDED_RECT_W_FRAME(rect,brush,border) Visual::RoundedRectParams({rect,rect.radius_x,rect.radius_y,brush,border})
+    
 #define VISUAL_TEXT(string,brush,rect,size,font) Visual::TextParams({Text(string,size,font),brush,rect})
 #define VISUAL_IMG(img,rect) Visual::BitmapParams({img,rect})
     class BackendImpl;

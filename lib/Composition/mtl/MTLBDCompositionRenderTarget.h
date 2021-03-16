@@ -261,7 +261,7 @@ void MTLBDCompositionRenderTarget<_Ty>::drawText(Core::SharedPtr<BDCompositionFo
     /// Setup CGContext!
     CGContextRef context = CGBitmapContextCreate(data,ftextRect.dimen.minWidth,ftextRect.dimen.minHeight,8,ftextRect.dimen.minWidth * 4,CGColorSpaceCreateDeviceRGB(),kCGImageAlphaPremultipliedLast);
     CGContextSetTextMatrix(context,CGAffineTransformIdentity);
-    CGContextTranslateCTM(context,0,ftextRect.dimen.minHeight);
+    CGContextTranslateCTM(context,0,ftextRect.pos.y + ftextRect.dimen.minHeight);
     CGContextScaleCTM(context,1.0,-1.0);
 //    CGContextSetInterpolationQuality(context,kCGInterpolationHigh);
 //    CGContextSetAllowsAntialiasing(context,true);
