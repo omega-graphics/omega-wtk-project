@@ -10,6 +10,8 @@
 
 #include "NativePrivate/macos/CocoaItem.h"
 
+#include "omegaWTK/Composition/ViewRenderTarget.h"
+
 namespace OmegaWTK::Composition {
 
 MTLBDCompositionDevice::MTLBDCompositionDevice(){

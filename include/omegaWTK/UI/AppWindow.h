@@ -4,8 +4,8 @@
 #include "omegaWTK/Composition/Layer.h"
 #include "omegaWTK/Composition/Visual.h"
 
-#ifndef OMEGAWTK_UI_WINDOW_H
-#define OMEGAWTK_UI_WINDOW_H
+#ifndef OMEGAWTK_UI_APPWINDOW_H
+#define OMEGAWTK_UI_APPWINDOW_H
 
 namespace OmegaWTK {
     namespace Native {

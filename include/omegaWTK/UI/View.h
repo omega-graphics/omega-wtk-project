@@ -42,11 +42,21 @@ namespace OmegaWTK {
         bool isRootView(){return parent_ptr == nullptr;};
         void setDelegate(ViewDelegate *_delegate);
         /**
-            Constructs a View using a Rect param;
+            Constructs a View using a Rect param and constructs a LayerTree::Limb to be used on the layerTree;
             @param rect The Rect to use
+            @param layerTree
             @returns A View!
          */
         View(const Core::Rect & rect,Composition::LayerTree *layerTree,View *parent = nullptr);
+        /**
+            Constructs a View using a Rect param; (With NO Layers!!)
+            NOTE:
+            This Constructed is only called when making a ScrollView or a VideoView
+            In other words, the View that is returned has NO layers will be completlty blank.
+            @param rect The Rect to use
+            @returns A View!
+         */
+        View(const Core::Rect & rect,View *parent = nullptr);
     };
     /// The Root View delegate class!
     class OMEGAWTK_EXPORT ViewDelegate : public Native::NativeEventProcessor {
@@ -99,31 +109,6 @@ namespace OmegaWTK {
         public:
         ViewDelegate();
         ~ViewDelegate();
-    };
-
-
-    class ViewAnimator : public Composition::ViewRenderTargetFrameScheduler {
-        friend class Composition::LayerAnimationController;
-    public:
-        struct AnimationContext {
-            ViewAnimator *anim = nullptr;
-        public:
-            Composition::LayerAnimationController *getControllerWithID(int id);
-        };
-        typedef void (*Action)(AnimationContext context);
-    private:
-        Core::Map<unsigned,Action> triggers;
-        Core::Map<int,SharedHandle<Composition::LayerAnimationController>> animControllers;
-        ViewAnimator(Core::UniquePtr<ViewRenderTarget> & renderTarget,Composition::Compositor *compositor);
-    public:
-        struct TriggerDescriptor {
-            unsigned identifier;
-            Action action;
-        };
-        void assignController(int id,SharedHandle<Composition::LayerAnimationController> & controller);
-        void addTrigger(const TriggerDescriptor & desc);
-        void activateTrigger(unsigned identifier);
-        static SharedHandle<ViewAnimator> Create(View *view);
     };
 };
 

@@ -2,8 +2,8 @@
 #include "omegaWTK/Composition/Compositor.h"
 #include "View.h"
 
-#ifndef OMEGAWTK_WIDGETS_WIDGET_H
-#define OMEGAWTK_WIDGETS_WIDGET_H
+#ifndef OMEGAWTK_UI_WIDGET_H
+#define OMEGAWTK_UI_WIDGET_H
 
 namespace OmegaWTK {
 

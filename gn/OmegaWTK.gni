@@ -111,8 +111,10 @@ template("omega_wtk_app_config"){
         "-DAPPENTRY=" + invoker.app_entry
     ]
 
+    app_name =  target_name
+
     if(is_windows){
-        copy("other-res" + target_name){
+        copy("other-res" + app_name){
             sources = [
                 "target/windows/small.ico",
                 "target/windows/app.ico",
@@ -125,17 +127,17 @@ template("omega_wtk_app_config"){
 
         configure_file("//target/windows/mmain.cpp.in"){
             defines = config_defines
-            dep_name = "main-cpp-config__"
+            dep_name = "main-cpp-config__${app_name}"
             output_name = "$out_dir/mmain.cpp"
         }
         configure_file("//target/windows/resource.h.in"){
             defines = config_defines
-            dep_name = "resource-h-config__"
+            dep_name = "resource-h-config__${app_name}"
             output_name  = "$out_dir/resource.h"
         }
         configure_file("//target/windows/resource_script.rc.in"){
             defines = config_defines
-             dep_name = "resource-rc-config__"
+             dep_name = "resource-rc-config__${app_name}"
             output_name = "$out_dir/resource_script.rc"
         }
         # invoker.deps += [
@@ -143,10 +145,10 @@ template("omega_wtk_app_config"){
         # ]
     }
     else if(is_mac){
-        t_name = "appdelegate-mm-config__" + target_name
-        t_name_2 = "info-plist-config__" + target_name
+        t_name = "appdelegate-mm-config__${app_name}"
+        t_name_2 = "info-plist-config__${app_name}"
 
-        copy("other-res" + target_name){
+        copy("other-res" + app_name){
             sources = [
                 "//target/macos/main.mm",
                 "//target/macos/English.lproj/MainMenu.xib",
@@ -187,15 +189,16 @@ template("omega_wtk_test"){
             ":OmegaWTK",
             ":other-res$target_name"
         ]
+    app_name = target_name
     if(is_windows){
         _deps += [
-             ":main-cpp-config__",
-            ":resource-h-config__",
-            ":resource-rc-config__"
+             ":main-cpp-config__${app_name}",
+            ":resource-h-config__${app_name}",
+            ":resource-rc-config__${app_name}"
         ]
     }
     else if(is_mac){
-        t_name = "appdelegate-mm-config__" + target_name
+        t_name = "appdelegate-mm-config__${app_name}"
         _deps += [
             ":$t_name",
         ]
@@ -207,7 +210,7 @@ template("omega_wtk_test"){
         invoker.deps = _deps
     }
    
-    out_dir = "$root_out_dir/tests"
+    out_dir = "$root_out_dir/obj"
 
     omega_wtk_app_config(target_name){
         app_entry = invoker.app_entry
@@ -264,7 +267,13 @@ template("omega_wtk_test"){
         invoker.defines = _defines
     }
 
+    if(is_windows || is_linux){
     invoker.output_name = "tests/" + target_name
+    }
+    else if(is_mac){
+        invoker.output_name = "obj/${app_name}"
+    }
+
     executable(target_name){
         forward_variables_from(invoker,"*")
         if(is_windows) {
@@ -323,7 +332,7 @@ template("omega_wtk_test"){
         }
         create_bundle("${target_name}.app"){
 
-            bundle_root_dir = "$root_build_dir/$target_name"
+            bundle_root_dir = "$root_build_dir/tests/$target_name"
             bundle_contents_dir  = "$bundle_root_dir/Contents"
             bundle_resources_dir = "$bundle_contents_dir/Resources"
             bundle_executable_dir = "$bundle_contents_dir/MacOS"

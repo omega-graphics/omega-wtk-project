@@ -1,11 +1,11 @@
 #include "omegaWTK/Native/NativeItem.h"
-#include "Compositor.h"
 
 #ifndef OMEGAWTK_COMPOSITION_VIEWRENDERTARGET_H
 #define OMEGAWTK_COMPOSITION_VIEWRENDERTARGET_H
 
 namespace OmegaWTK::Composition {
     class ViewRenderTarget;
+    class Compositor;
 
     class ViewRenderTargetFrameScheduler {
         Core::UniquePtrRef<ViewRenderTarget> renderTarget;

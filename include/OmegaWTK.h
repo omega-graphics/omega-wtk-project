@@ -20,7 +20,7 @@
 #include "omegaWTK/UI/View.h"
 #include "omegaWTK/UI/Widget.h"
 #include "omegaWTK/UI/ButtonBase.h"
-#include "omegawTK/UI/PushButton.h"
+#include "omegaWTK/UI/PushButton.h"
 
 #ifndef OMEGAWTK_H
 #define OMEGAWTK_H

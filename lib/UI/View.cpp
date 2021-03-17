@@ -1,4 +1,5 @@
 #include "omegaWTK/UI/View.h"
+#include "omegaWTK/Composition/ViewRenderTarget.h"
 
 namespace OmegaWTK {
 
@@ -13,6 +14,12 @@ namespace OmegaWTK {
         }
         else
             layerTree->setRootLimb(layerTreeLimb);
+    };
+    View::View(const Core::Rect & rect,View *parent):renderTarget(std::make_unique<Composition::ViewRenderTarget>(Native::make_native_item(rect))),widgetLayerTree(nullptr),parent_ptr(parent),rect(rect){
+        Native::set_native_item_event_emitter(renderTarget->getNativePtr(),this);
+        if(parent_ptr) {
+            parent->addSubView(this);
+            
     };
     bool View::hasDelegate(){
         return delegate != nullptr;
@@ -95,23 +102,5 @@ void ViewDelegate::onRecieveEvent(Native::NativeEventPtr event){
     delete event;
 };
 
-
-ViewAnimator::ViewAnimator(Core::UniquePtr<Composition::ViewRenderTarget> & renderTarget,
-                           Composition::Compositor *compositor):
-Composition::ViewRenderTargetFrameScheduler(renderTarget,compositor){
-    
-};
-
-void ViewAnimator::addTrigger(const TriggerDescriptor & desc){
-    triggers.insert(std::make_pair(desc.identifier,desc.action));
-};
-
-void ViewAnimator::assignController(int id,SharedHandle<Composition::LayerAnimationController> & controller){
-    animControllers.insert(std::make_pair(id,controller));
-};
-
-SharedHandle<ViewAnimator> ViewAnimator::Create(View *view){
-    return SharedHandle<ViewAnimator>(new ViewAnimator(view->renderTarget,view->getWidgetCompositor()));
-};
 
 };

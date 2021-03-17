@@ -8,7 +8,6 @@
 #include "omegaWTK/Native/NativeItem.h"
 #include "omegaWTK/Native/NativeWindow.h"
 #include "Visual.h"
-#include "ViewRenderTarget.h"
 #include <functional>
 
 #ifndef OMEGAWTK_COMPOSITION_LAYER_H
@@ -18,9 +17,11 @@ namespace OmegaWTK {
 
 class AppWindow;
 class AppWindowManager;
+class View;
 
     namespace Composition {
-
+    
+    class ViewRenderTarget;
     class Compositor;
         /**
             A mutlifeatured surface for composing visuals on.
@@ -55,11 +56,6 @@ class AppWindowManager;
             /// Draws on to its target!
             /// @{
             void setStyle(SharedHandle<LayerStyle> & style);
-            /// @}
-                
-            /// @name Main Action Functions!
-            /// @{
-            void redraw();
             /// @}
             
             

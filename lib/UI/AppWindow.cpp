@@ -3,6 +3,7 @@
 #include "omegaWTK/Native/NativeWindow.h"
 #include "omegaWTK/Native/NativeDialog.h"
 #include "omegaWTK/Composition/Compositor.h"
+#include "omegaWTK/Composition/ViewRenderTarget.h"
 
 namespace OmegaWTK {
 

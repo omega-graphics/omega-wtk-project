@@ -1,4 +1,5 @@
 #include "omegaWTK/UI/Widget.h"
+#include "omegaWTK/Composition/ViewRenderTarget.h"
 
 namespace OmegaWTK {
 

@@ -1,5 +1,6 @@
 #include "omegaWTK/Composition/Layer.h"
 #include "omegaWTK/Composition/Compositor.h"
+#include "omegaWTK/Composition/ViewRenderTarget.h"
 #include <iostream>
 
 namespace OmegaWTK::Composition {

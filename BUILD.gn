@@ -62,8 +62,8 @@ omega_wtk_include_dir = "//include/omegaWTK"
 
 omega_wtk_static_lib("omegaWTKCore"){
     sources = [
-        "include/omegaWTK/Core/Core.h",
-        "include/omegaWTK/Core/Math.h",
+        "$omega_wtk_include_dir/Core/Core.h",
+        "$omega_wtk_include_dir/Core/Math.h",
         "lib/Core/Core.cpp"
     ]
     if(is_mac){
@@ -193,6 +193,7 @@ omega_wtk_static_lib("omegaWTKComposition"){
         "$omega_wtk_include_dir/Composition/LayerAnimation.h",
         "$omega_wtk_include_dir/Composition/Text.h",
         "$omega_wtk_include_dir/Composition/Visual.h",
+        "$omega_wtk_include_dir/Composition/ViewRenderTarget.h",
 
          # Sources
          # Backend SRC
@@ -217,7 +218,8 @@ omega_wtk_static_lib("omegaWTKComposition"){
         "lib/Composition/Layer.cpp",
         "lib/Composition/LayerAnimation.cpp",
         "lib/Composition/Text.cpp",
-        "lib/Composition/Visual.cpp"
+        "lib/Composition/Visual.cpp",
+        "lib/Composition/ViewRenderTarget.cpp"
 
     ]
     include_dirs = [
@@ -287,14 +289,22 @@ omega_wtk_static_lib("omegaWTKUI"){
         # Headers
         "$omega_wtk_include_dir/UI/App.h",
         "$omega_wtk_include_dir/UI/AppWindow.h",
+        "$omega_wtk_include_dir/UI/ButtonBase.h",
         "$omega_wtk_include_dir/UI/Menu.h",
+        "$omega_wtk_include_dir/UI/PushButton.h",
+        "$omega_wtk_include_dir/UI/VideoView.h",
         "$omega_wtk_include_dir/UI/View.h",
+        "$omega_wtk_include_dir/UI/ViewAnimator.h",
         "$omega_wtk_include_dir/UI/Widget.h",
         # Sources 
         "lib/UI/App.cpp",
         "lib/UI/AppWindow.cpp",
+        "lib/UI/ButtonBase.cpp",
         "lib/UI/Menu.cpp",
+        "lib/UI/PushButton.cpp",
+        "lib/UI/VideoView.cpp",
         "lib/UI/View.cpp",
+        "lib/UI/ViewAnimator.cpp",
         "lib/UI/Widget.cpp"
     ]
     public_deps = [

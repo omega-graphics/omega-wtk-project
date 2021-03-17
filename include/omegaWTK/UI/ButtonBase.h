@@ -1,4 +1,5 @@
 #include "Widget.h"
+#include "ViewAnimator.h"
 
 #ifndef OMEGAWTK_UI_BUTTONBASE_H
 #define OMEGAWTK_UI_BUTTONBASE_H
@@ -8,7 +9,7 @@ namespace OmegaWTK::UI {
      
      @abstract
      */
-    class ButtonBase : public Widget {
+    class OMEGAWTK_EXPORT ButtonBase : public Widget {
     protected:
         class ButtonViewDelegate : public ViewDelegate {
             ButtonBase *widget;
