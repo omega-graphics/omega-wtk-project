@@ -3,14 +3,10 @@
 
 namespace OmegaWTK {
 
-class VideoViewFrameScheduler : public Composition::ViewRenderTargetFrameScheduler {
-public:
-    VideoViewFrameScheduler();
-    void scheduleFrame(float timeDelta){
-        
-    };
-};
 
-VideoView::VideoView():View(<#const Core::Rect &rect#>, <#Composition::LayerTree *layerTree#>),frameScheduler(new VideoViewFrameScheduler()){};
+
+//VideoView::VideoView(const Core::Rect & rect,Composition::Compositor *compositor,View *parent ):View(rect,parent),frameScheduler(Composition::ViewRenderTargetFrameScheduler::Create(renderTarget,compositor)){
+//    
+//};
 
 };

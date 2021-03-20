@@ -7,7 +7,7 @@
 namespace OmegaWTK::UI {
     /**
      
-     @abstract
+    
      */
     class OMEGAWTK_EXPORT ButtonBase : public Widget {
     protected:
@@ -19,10 +19,11 @@ namespace OmegaWTK::UI {
             void onLeftMouseUp(Native::NativeEventPtr event);
             void onLeftMouseDown(Native::NativeEventPtr event);
         };
-        virtual void handleMouseEvent(Native::NativeEventPtr event);
+        virtual void handleMouseEvent(Native::NativeEventPtr event) = 0;
         ButtonViewDelegate *viewDelegate;
     public:
-        ButtonBase(const Core::Rect & rect,SharedHandle<Widget> = nullptr);
+        ButtonBase(const Core::Rect & rect,SharedHandle<Widget>);
+//        ~ButtonBase();
     };
 };
 

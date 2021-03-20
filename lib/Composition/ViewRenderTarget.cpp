@@ -1,5 +1,13 @@
 #include "omegaWTK/Composition/ViewRenderTarget.h"
 
+#ifdef TARGET_MACOS
+#include "CocoaRenderTargetFrameScheduler.h"
+#endif
+
+#ifdef TARGET_WIN32
+#include "WinRenderTargetFrameScheduler.h"
+#endif
+
 namespace OmegaWTK::Composition {
     
     
@@ -8,9 +16,12 @@ namespace OmegaWTK::Composition {
     Native::NativeItemPtr ViewRenderTarget::getNativePtr(){ return native;};
     ViewRenderTarget::~ViewRenderTarget(){};
 
-ViewRenderTargetFrameScheduler::ViewRenderTargetFrameScheduler(Core::UniquePtr<ViewRenderTarget> & ptr,
-                                                               Composition::Compositor * comp):
-renderTarget(ptr),compositor(comp){
-    
-};
+////ViewRenderTargetFrameScheduler::ViewRenderTargetFrameScheduler(Composition::Compositor * comp):
+////compositor(comp){
+////    
+////};
+//
+//Core::UniquePtr<ViewRenderTargetFrameScheduler> ViewRenderTargetFrameScheduler::Create(Core::UniquePtr<ViewRenderTarget> & ptr,Compositor * comp){
+//    
+//};
 }

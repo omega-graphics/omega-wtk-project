@@ -9,7 +9,7 @@ namespace OmegaWTK {
 
 namespace OmegaWTK::Composition {
     class Layer;
-    class ViewRenderTargetFrameScheduler;
+//    class ViewRenderTargetFrameScheduler;
 
     /**
      @interface
@@ -157,7 +157,7 @@ namespace OmegaWTK::Composition {
         friend class ::OmegaWTK::ViewAnimator;
     protected:
         float currentFPS;
-        ViewRenderTargetFrameScheduler *scheduler = nullptr;
+//        ViewRenderTargetFrameScheduler *scheduler = nullptr;
     public:
         virtual void setAnim(SharedHandle<LayerAnimationTy> & anim);
         void setFrameRate(float fps);

@@ -90,5 +90,6 @@ if(TARGET_MACOS)
     list(TRANSFORM COMPOSITION_MAC_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/mtl/")
     set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/mtl/OmegaWTKShaders.metal" PROPERTIES LANGUAGE METAL)
     target_link_libraries("omegaWTKComposition" PRIVATE ${Metal_LIB} ${MetalPerformanceShaders_LIB})
-    target_sources("omegaWTKComposition" PRIVATE ${COMPOSITION_MAC_SOURCES})
+
+    target_sources("omegaWTKComposition" PRIVATE ${COMPOSITION_MAC_SOURCES} "CocoaRenderTargetFrameScheduler.h" "CocoaRenderTargetFrameScheduler.mm")
 endif()

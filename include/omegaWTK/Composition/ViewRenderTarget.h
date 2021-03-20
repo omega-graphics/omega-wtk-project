@@ -7,20 +7,23 @@ namespace OmegaWTK::Composition {
     class ViewRenderTarget;
     class Compositor;
 
-    class ViewRenderTargetFrameScheduler {
-        Core::UniquePtrRef<ViewRenderTarget> renderTarget;
-        Compositor *compositor;
-    public:
-        /**
-         Can we schdule a redraw at the time delta from now.
-         */
-        bool canScheduleFrame(float timeDelta);
-        /**
-         Schedule a frame creation/redraw at the time delta from now.
-         */
-        virtual void scheduleFrame(float timeDelta) = 0;
-        ViewRenderTargetFrameScheduler(Core::UniquePtr<ViewRenderTarget> & renderTarget,Compositor *compositor);
-    };
+//    class ViewRenderTargetFrameScheduler {
+//        Compositor *compositor;
+//    protected:
+////        ViewRenderTargetFrameScheduler(Compositor *compositor);
+//        bool canScheduleFrameRegardingCompositorCommandBufferStatus(float timeDelta);
+//        virtual bool canScheduleFrameRegardingNativeItemStatus(float timeDelta);
+//    public:
+//        /**
+//         Can we schedule a redraw at the time delta from now.
+//         */
+//        bool canScheduleFrame(float timeDelta);
+//        /**
+//         Schedule a frame creation/redraw at the time delta from now.
+//         */
+//        void scheduleFrame(float timeDelta);
+//        static Core::UniquePtr<ViewRenderTargetFrameScheduler> Create(Core::UniquePtr<ViewRenderTarget> & renderTarget,Compositor *compositor);
+//    };
     /**
      The Compositor's interface for composing to a widget's view.
      */

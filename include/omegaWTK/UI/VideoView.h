@@ -5,13 +5,12 @@
 
 namespace OmegaWTK {
 
-class VideoViewFrameScheduler;
 
-class OMEGAWTK_EXPORT VideoView : public View {
-    VideoViewFrameScheduler *frameScheduler;
-public:
-    VideoView();
-};
+//class OMEGAWTK_EXPORT VideoView : public View {
+//    Core::UniquePtr<Composition::ViewRenderTargetFrameScheduler> frameScheduler;
+//public:
+//    VideoView(const Core::Rect & rect,Composition::Compositor * comp,View *parent = nullptr);
+//};
 
 };
 

@@ -4,7 +4,7 @@
 namespace OmegaWTK {
 
 
-    View::View(const Core::Rect & rect,Composition::LayerTree *layerTree,View *parent):renderTarget(std::make_unique<Composition::ViewRenderTarget>(Native::make_native_item(rect))),widgetLayerTree(layerTree),parent_ptr(parent),rect(rect){
+    View::View(const Core::Rect & rect,Composition::LayerTree *layerTree,View *parent):renderTarget(std::make_shared<Composition::ViewRenderTarget>(Native::make_native_item(rect))),widgetLayerTree(layerTree),parent_ptr(parent),rect(rect){
         layerTreeLimb = widgetLayerTree->createLimb(rect,renderTarget.get());
         Native::set_native_item_event_emitter(renderTarget->getNativePtr(),this);
         
@@ -19,7 +19,7 @@ namespace OmegaWTK {
         Native::set_native_item_event_emitter(renderTarget->getNativePtr(),this);
         if(parent_ptr) {
             parent->addSubView(this);
-            
+        };
     };
     bool View::hasDelegate(){
         return delegate != nullptr;
@@ -46,6 +46,10 @@ namespace OmegaWTK {
             };
         };
     };
+
+View::~View(){
+    std::cout << "View will destruct" << std::endl;
+};
     
 Composition::Compositor * View::getWidgetCompositor(){
     return widgetLayerTree->widgetCompositor;

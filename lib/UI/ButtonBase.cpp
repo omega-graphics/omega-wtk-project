@@ -24,4 +24,8 @@ ButtonBase::ButtonBase(const Core::Rect & rect,SharedHandle<Widget> parent):Widg
     
 };
 
+//ButtonBase::~ButtonBase(){
+//
+//};
+
 }

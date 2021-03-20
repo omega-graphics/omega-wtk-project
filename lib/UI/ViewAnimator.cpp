@@ -3,8 +3,7 @@
 namespace OmegaWTK {
 
 ViewAnimator::ViewAnimator(Core::UniquePtr<Composition::ViewRenderTarget> & renderTarget,
-                           Composition::Compositor *compositor):
-Composition::ViewRenderTargetFrameScheduler(renderTarget,compositor){
+                           Composition::Compositor *compositor){
     
 };
 
@@ -26,8 +25,8 @@ void ViewAnimator::assignController(int id,SharedHandle<Composition::LayerAnimat
     animControllers.insert(std::make_pair(id,controller));
 };
 
-SharedHandle<ViewAnimator> ViewAnimator::Create(View *view){
-    return SharedHandle<ViewAnimator>(new ViewAnimator(view->renderTarget,view->getWidgetCompositor()));
-};
+//SharedHandle<ViewAnimator> ViewAnimator::Create(View *view){
+//    return SharedHandle<ViewAnimator>(new ViewAnimator(view->renderTarget,view->getWidgetCompositor()));
+//};
 
 }

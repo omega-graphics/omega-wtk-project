@@ -4,9 +4,11 @@ add_omega_wtk_lib(
     "Core"
     SOURCES 
     "Core.cpp"
+    "MultiThreading.cpp"
     HEADERS
     "Core.h"
     "Math.h"
+    "MultiThreading.h"
 )
 
 if(TARGET_MACOS)

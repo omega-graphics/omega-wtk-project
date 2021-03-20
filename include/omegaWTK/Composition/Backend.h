@@ -11,6 +11,11 @@ class Layer;
 
 class OMEGAWTK_EXPORT Backend {
 protected:
+//    std::mutex mutex_lock;
+//    std::condition_variable occupied_condition;
+//    bool isAvailable = true;
+    friend class Compositor;
+protected:
     LayerTree::Limb *currentLimb;
 public:
     void setCurrentJob(LayerTree::Limb *limb);

@@ -62,9 +62,13 @@ omega_wtk_include_dir = "//include/omegaWTK"
 
 omega_wtk_static_lib("omegaWTKCore"){
     sources = [
+        # Headers
         "$omega_wtk_include_dir/Core/Core.h",
         "$omega_wtk_include_dir/Core/Math.h",
-        "lib/Core/Core.cpp"
+        "$omega_wtk_include_dir/Core/MultiThreading.h",
+        # Sources
+        "lib/Core/Core.cpp",
+        "lib/Core/MultiThreading.cpp"
     ]
     if(is_mac){
         sources += [

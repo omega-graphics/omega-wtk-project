@@ -9,10 +9,11 @@ namespace OmegaWTK {
 
 class AppWindow;
 class AppWindowManager;
+class VideoView;
 
 class OMEGAWTK_EXPORT Widget {
 protected:
-    SharedHandle<View> rootView;
+    SharedHandle<CanvasView> rootView;
     SharedHandle<Widget> parent;
     SharedHandle<Composition::LayerTree> layerTree;
     /**
@@ -21,6 +22,20 @@ protected:
     SharedHandle<Composition::Layer> makeLayer(const Core::Rect & rect);
     Composition::Compositor * compositor;
 private:
+    /**
+     Makes a Canvas View attached to this widget and returns it.
+     @param rect The Rectangle to use
+     @param parent The Parent View (NOTE: This view MUST be within this widget's view heirarchy)
+     @returns A standard View
+     */
+    SharedHandle<CanvasView> makeCanvasView(const Core::Rect & rect,View *parent);
+    /**
+     Makes a Video View attached to this widget and returns it.
+     @param rect The Rectangle to use
+     @param parent The Parent View (NOTE: This view MUST be within this widget's view heirarchy)
+     @returns A Video View
+     */
+//    SharedHandle<VideoView> makeVideoView(const Core::Rect & rect,View *parent);
     
     friend class AppWindow;
     friend class AppWindowManager;
@@ -28,7 +43,7 @@ public:
     void setParentView(View *view);
     void show();
     void hide();
-    Widget(const Core::Rect & rect,SharedHandle<Widget> parent = nullptr);
+    Widget(const Core::Rect & rect,SharedHandle<Widget> parent);
 //    Widget(Widget &widget);
     ~Widget();
 };

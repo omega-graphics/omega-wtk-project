@@ -30,7 +30,7 @@ void Compositor::prepareDraw(LayerTree *layerTree){
     // MessageBoxA(HWND_DESKTOP,"Preparing a Draw on Root Limb","NOTE",MB_OK);
     backend->doWork();
     __drawChildLimbs(rootLimb,layerTree);
-    
+
     allowUpdates = true;
 };
 void Compositor::prepareCleanup(){

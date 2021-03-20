@@ -18,13 +18,16 @@ namespace OmegaWTK {
     class ViewAnimator;
     class ViewDelegate;
     /**
-        A Global View class that controls all the basic functions of a Widget!
+        @brief Controls all the basic functionality of a Widget!
+        Sometimes referred to as the CanvasView.
         @relates Widget
-        
      */
     class OMEGAWTK_EXPORT View: public Native::NativeEventEmitter {
         Core::Vector<SharedHandle<View>> subviews;
-        UniqueHandle<Composition::ViewRenderTarget> renderTarget;
+    protected:
+        SharedHandle<Composition::ViewRenderTarget> renderTarget;
+        friend class Widget;
+    private:
         Composition::LayerTree *widgetLayerTree;
         View * parent_ptr;
         Core::Rect rect;
@@ -32,7 +35,6 @@ namespace OmegaWTK {
         bool hasDelegate();
         void addSubView(View *view);
         void removeSubView(View * view);
-        friend class Widget;
         friend class AppWindow;
         SharedHandle<Composition::LayerTree::Limb> layerTreeLimb;
         friend class ViewAnimator;
@@ -57,8 +59,15 @@ namespace OmegaWTK {
             @returns A View!
          */
         View(const Core::Rect & rect,View *parent = nullptr);
+        ~View();
     };
-    /// The Root View delegate class!
+
+    /// CanvasView Def.
+    typedef View CanvasView;
+
+    /**
+        @brief The Root View delegate class!
+     */
     class OMEGAWTK_EXPORT ViewDelegate : public Native::NativeEventProcessor {
         void onRecieveEvent(Native::NativeEventPtr event);
         friend class View;

@@ -4,8 +4,13 @@
 #ifndef OMEGAWTK_UI_VIEWANIMATOR_H
 #define OMEGAWTK_UI_VIEWANIMATOR_H
 namespace OmegaWTK {
-
-    class ViewAnimator : public Composition::ViewRenderTargetFrameScheduler {
+    /**
+     @brief A CanvasView's Animation Execution Engine and Scheduler
+     @discussion
+     p
+     */
+    class ViewAnimator {
+//        Core::UniquePtr<Composition::ViewRenderTargetFrameScheduler> frameScheduler;
         friend class Composition::LayerAnimationController;
     public:
         struct AnimationContext {
@@ -27,7 +32,7 @@ namespace OmegaWTK {
         void assignController(int id,SharedHandle<Composition::LayerAnimationController> & controller);
         void addTrigger(const TriggerDescriptor & desc);
         void activateTrigger(unsigned identifier);
-        static SharedHandle<ViewAnimator> Create(View *view);
+//        static SharedHandle<ViewAnimator> Create(View *view);
     };
 
 };

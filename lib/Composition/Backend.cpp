@@ -13,7 +13,7 @@
 namespace OmegaWTK::Composition {
 
 Backend::Backend():currentLimb(nullptr){
-    
+//    occupied_condition.notify_one();
 };
 
 Backend::~Backend(){

@@ -14,6 +14,7 @@ namespace OmegaWTK::UI {
         void setStyle(SharedHandle<Composition::LayerStyle> & style);
         void setAnimator(SharedHandle<ViewAnimator> & anim);
         PushButton(const Core::Rect &rect,SharedHandle<Widget> parent = nullptr);
+//        ~PushButton();
     };
 
 /// @name

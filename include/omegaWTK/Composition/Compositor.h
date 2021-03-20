@@ -1,5 +1,6 @@
 #include "omegaWTK/Core/Core.h"
 #include "Layer.h"
+#include <chrono>
 
 #ifndef OMEGAWTK_COMPOSTION_COMPOSITOR_H
 #define OMEGAWTK_COMPOSTION_COMPOSITOR_H
@@ -7,6 +8,39 @@
 namespace OmegaWTK::Composition {
 
     class Backend;
+
+//    struct CompositionRenderCommandThreasholdParams {
+//        bool hasThreadshold;
+//        std::chrono::time_point<std::chrono::high_resolution_clock> timeStamp;
+//        std::chrono::time_point<std::chrono::high_resolution_clock> threashold;
+//    };
+//
+//    struct CompositionRenderCommand {
+//        typedef enum {
+//            DrawCanvasView,
+//            UpdateCanvasView,
+//            DrawVideoView,
+//            UpdateVideoView,
+//            DrawWindow,
+//            UpdateWindow
+//        }Type;
+//        typedef enum {
+//            Low,
+//            High,
+//        } Priority;
+//        Type type;
+//        Priority priority;
+//        CompositionRenderCommandThreasholdParams threasholdParams;
+//        void *data;
+//        float videoFPS;
+//        Backend *executor;
+//    };
+//    
+//    class RenderCommandExecutionScheduler {
+//        Core::Vector<CompositionRenderCommand> renderCommands;
+//    };
+
+   
     /**
      OmegaWTK's Composition Engine Frontend Interface
      */
@@ -23,12 +57,11 @@ namespace OmegaWTK::Composition {
         void updateWindowLayer(WindowLayer *layer);
         void layoutLayerTreeLimb(LayerTree::Limb *limb);
         public:
-        /// Initial Draw for Widget
-        void prepareDraw(LayerTree *treeToDraw);
-        /// Initial Draw on WindowLayer
-        void prepareDrawWindow(WindowLayer *window);
-        /// Cleanup (Called when app closes)
+//        void scheduleCommand(CompositionRenderCommand command);
+        void prepareDraw(LayerTree *tree);
+        void prepareDrawWindow(WindowLayer *layer);
         void prepareCleanup();
+        
         Compositor();
         ~Compositor();
     };

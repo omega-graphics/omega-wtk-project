@@ -245,6 +245,8 @@ namespace OmegaWTK {
             };
 
         };
+    
+        
         
         /// A basic reimplementation of the std::string class!
         // CORE_CLASS(String) {

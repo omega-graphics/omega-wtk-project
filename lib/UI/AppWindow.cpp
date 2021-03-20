@@ -30,8 +30,12 @@ void AppWindow::setMenuStyle(SharedHandle<Composition::MenuStyle> & style){
 
 void AppWindow::_add_widget(SharedHandle<Widget> * handle){
 //    (*handle)->compositor->prepareDraw((*handle)->layerTree.get());
-    rootWidgets.push_back(*handle);
-    layer->native_window_ptr->addNativeItem((*handle)->rootView->renderTarget->getNativePtr());
+    std::cout << "WidgetRootViewPtr:" << (*handle)->rootView << std::endl;
+    std::cout << "WidgetRootTargetPtr:" << (*handle)->rootView->renderTarget << std::endl;
+    if((*handle)->rootView->renderTarget) {
+        layer->native_window_ptr->addNativeItem((*handle)->rootView->renderTarget->getNativePtr());
+        rootWidgets.push_back(*handle);
+    }
 };
 
 UniqueHandle<Native::NativeFSDialog> AppWindow::openFSDialog(){
