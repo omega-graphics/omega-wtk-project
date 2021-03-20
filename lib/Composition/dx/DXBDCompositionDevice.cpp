@@ -3,6 +3,7 @@
 #include "DXBDCompositionFontFactory.h"
 #include "DXBDCompositionImage.h"
 #include "DCVisualTree.h"
+#include "omegaWTK/Composition/ViewRenderTarget.h"
 
 namespace OmegaWTK::Composition {
     DXBDCompositionDevice::DXBDCompositionDevice(){

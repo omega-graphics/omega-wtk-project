@@ -126,8 +126,11 @@ toolchain("llvm") {
         description = "Copying {{source}} to {{output}}"
     }
     tool("rc"){
-        command = "rc {{defines}} {{source}} /FO {{output}}"
-        #default_output_dir = "{{target_out_dir}}"
+        command = "rc.exe /nologo {{defines}} {{include_dirs}} /FO {{output}} {{source}}"
+        outputs = [
+            "obj/{{source_name_part}}.res"
+        ]
+        depsformat = "msvc"
         description = "Compiling rc script {{output}}"
     }
     if(is_windows){

@@ -122,11 +122,11 @@ int omegaWTKMain(AppInst *app)
     // auto img = IMPORT_IMG("test.png");
     // auto img2 = IMPORT_IMG("test-1.png");
    
-//    auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}}));
-      auto widget = make<UI::PushButton>(UI::PushButton({{0,0},{400,400}},nullptr));
+   auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}}));
+    //   auto widget = make<UI::PushButton>(UI::PushButton({{0,0},{400,400}},nullptr));
 
 //    auto widget2 = make<MyWidget>(MyWidget({{0,500},{400,400}}));
-//    widget->show();
+   widget->show();
 //    widget2->show();
  
     auto mainWindow = make<AppWindow>(Rect(0,0,1000,1000),new MyWindowDelegate(app));

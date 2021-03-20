@@ -4,9 +4,9 @@
 #include "CocoaRenderTargetFrameScheduler.h"
 #endif
 
-#ifdef TARGET_WIN32
-#include "WinRenderTargetFrameScheduler.h"
-#endif
+// #ifdef TARGET_WIN32
+// #include "WinRenderTargetFrameScheduler.h"
+// #endif
 
 namespace OmegaWTK::Composition {
     

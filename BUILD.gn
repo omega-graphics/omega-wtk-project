@@ -278,9 +278,15 @@ omega_wtk_static_lib("omegaWTKComposition"){
         ":omegaWTKCore",
         ":omegaWTKNative",
         ":omegaWTKMedia",
-        # Metal Library
-        ":omegawtk"
+       
     ]
+
+    if(is_mac){
+        public_deps += [
+             # Metal Library
+            ":omegawtk"
+        ]
+    }
 }
 
 omega_wtk_static_lib("omegaWTKUI"){
