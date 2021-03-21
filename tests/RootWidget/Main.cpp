@@ -53,12 +53,12 @@ public:
         //        rootLayer->drawText("Hello World!",50,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,200));
         rootLayer->setStyle(layerStyle);
         auto subLayer = makeLayer(Rect(0,0,200,200));
-        auto shadow = make<LayerEffect>(LAYER_EFFECT_DROPSHADOW(-5.0,-5.0,5,1.0,1.0,Composition::Color(0xFAFAFA)));
+        auto shadow = make<LayerEffect>(LAYER_EFFECT_DROPSHADOW(-5.0,-5.0,5,1.0,1.0,Composition::Color::Black));
     //    auto blur = make<LayerEffect>(LAYER_EFFECT_DIRECTIONALBLUR(4.0,0.0));
         auto _style2 = make<LayerStyle>();
         _style2->setBackgroundColor({Color::White,0x00});
        _style2->add(VISUAL_RECT(Rect(50,50,150,150),ColorBrush(Composition::Color::Green)));
-         _style2->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(25,25,150,150),20,Composition::Text::Font("Times New Roman",OmegaWTK::Composition::Text::Font::Regular)));
+         _style2->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(50,50,150,150),20,Composition::Text::Font("Times New Roman",OmegaWTK::Composition::Text::Font::Regular)));
         _style2->addEffect(shadow);
     //    _style2->addEffect(blur);
         subLayer->setStyle(_style2);

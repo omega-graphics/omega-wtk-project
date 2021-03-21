@@ -46,7 +46,7 @@ namespace OmegaWTK::Composition {
 
         // FLOAT sacleFactor = 1.0;
 
-        rectres.left = rect.pos.x;
+        rectres.left = rect.pos.x * scaleFactor;
         rectres.right = (rectres.left + (rect.dimen.minWidth) * scaleFactor);
 
         rectres.bottom = ((parent_rect.dimen.minHeight * scaleFactor) - rect.pos.y * scaleFactor);
@@ -255,7 +255,7 @@ namespace OmegaWTK::Composition {
         cpp_str_to_cpp_wstr(string,w_str);
         ID2D1Brush *_brush = omegawtk_brush_to_d2d1_brush(*brush,direct2d_device_context.get());
         RECT rc = core_rect_to_win_rect(textRect,hwndItem->getHandle());
-        direct2d_device_context->DrawText(w_str.c_str(),w_str.size(),compFont->textFormat.get(),D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom),_brush);
+        direct2d_device_context->DrawTextA(w_str.c_str(),w_str.size(),compFont->textFormat.get(),D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom),_brush);
         Core::SafeRelease(&_brush);
     };
     

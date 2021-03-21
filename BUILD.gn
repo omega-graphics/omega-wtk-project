@@ -139,6 +139,8 @@ omega_wtk_static_lib("omegaWTKNative"){
             "$win_source_prefix/WinEvent.cpp",
             "$win_source_prefix/WinMenu.h",
             "$win_source_prefix/WinMenu.cpp",
+            "$win_source_prefix/WinDialog.h",
+            "$win_source_prefix/WinDialog.cpp",
             # Headers
             "//lib/Native/private_include/NativePrivate/win/HWNDItem.h",
             "//lib/Native/private_include/NativePrivate/win/WinEvent.h"

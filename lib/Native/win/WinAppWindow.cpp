@@ -2,6 +2,11 @@
 #include "HWNDFactory.h"
 #include "WinMenu.h"
 
+#include <dwmapi.h>
+#include <windowsx.h>
+
+#pragma comment(lib,"dwmapi.lib")
+
 namespace OmegaWTK::Native::Win {
     WinAppWindow::WinAppWindow(Core::Rect & rect,NativeEventEmitter *emitter):HWNDItem(rect),isReady(false){
         set_native_item_event_emitter(this,emitter);
@@ -32,73 +37,164 @@ namespace OmegaWTK::Native::Win {
         return result;
     };
 
+
+//     LRESULT HitTestNCA(HWND hWnd, WPARAM wParam, LPARAM lParam)
+// {
+//     // Get the point coordinates for the hit test.
+//     POINT ptMouse = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+
+//     // Get the window rectangle.
+//     RECT rcWindow;
+//     GetWindowRect(hWnd, &rcWindow);
+
+//     // Get the frame rectangle, adjusted for the style without a caption.
+//     RECT rcFrame = { 0 };
+//     AdjustWindowRectEx(&rcFrame, WS_OVERLAPPEDWINDOW & ~WS_CAPTION, FALSE, NULL);
+
+//     // Determine if the hit test is for resizing. Default middle (1,1).
+//     USHORT uRow = 1;
+//     USHORT uCol = 1;
+//     bool fOnResizeBorder = false;
+
+//     // Determine if the point is at the top or bottom of the window.
+//     if (ptMouse.y >= rcWindow.top && ptMouse.y < rcWindow.top)
+//     {
+//         fOnResizeBorder = (ptMouse.y < (rcWindow.top - rcFrame.top));
+//         uRow = 0;
+//     }
+//     else if (ptMouse.y < rcWindow.bottom && ptMouse.y >= rcWindow.bottom)
+//     {
+//         uRow = 2;
+//     }
+
+//     // Determine if the point is at the left or right of the window.
+//     if (ptMouse.x >= rcWindow.left && ptMouse.x < rcWindow.left)
+//     {
+//         uCol = 0; // left side
+//     }
+//     else if (ptMouse.x < rcWindow.right && ptMouse.x >= rcWindow.right)
+//     {
+//         uCol = 2; // right side
+//     }
+
+//     // Hit test (HTTOPLEFT, ... HTBOTTOMRIGHT)
+//     LRESULT hitTests[3][3] = 
+//     {
+//         { HTTOPLEFT,    fOnResizeBorder ? HTTOP : HTCAPTION,    HTTOPRIGHT },
+//         { HTLEFT,       HTNOWHERE,     HTRIGHT },
+//         { HTBOTTOMLEFT, HTBOTTOM, HTBOTTOMRIGHT },
+//     };
+
+//     return hitTests[uRow][uCol];
+// }
+
     BOOL WinAppWindow::ProcessWndMsgImpl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT *lr){
         *lr = 0;
-        // MessageBoxA(HWND_DESKTOP,"WinAppWindow Procedure","NOTE",MB_OK);
-        switch (uMsg) {
-            case WM_MENUCOMMAND : {
-                /// If the Top level Menu Exists!
-                if(menu){
-                    UINT idx = wParam;
-                    HMENU hmenu = (HMENU)lParam;
+        if(!DwmDefWindowProc(hwnd,uMsg,wParam,lParam,lr))
+            // MessageBoxA(HWND_DESKTOP,"WinAppWindow Procedure","NOTE",MB_OK);
+            switch (uMsg) {
+                // case WM_CREATE :
+                // {
+                //     RECT rcClient;
+                //     GetWindowRect(hWnd, &rcClient);
 
-                    MENUINFO info;
-                    info.cbSize = sizeof(info);
-                    info.fMask = MIM_MENUDATA;
-                    GetMenuInfo(hmenu,&info);
-                    void * WinMenu = (void *) info.dwMenuData;
-                    select_item(WinMenu,idx);
-                    return 0;
-                };
-            };
-            case WM_DESTROY : {
-                if(isReady) {
-                    emitIfPossible(new NativeEvent(NativeEvent::WindowWillClose,nullptr));
-                };
-                break;
-            };
-            case WM_SIZE : {
-                if(isReady) {
-                    RECT rc = getClientRect();
-                    UINT height = rc.bottom - rc.top;
-                    updateAllHWNDPos(height,&raw_children);
-                };
-                break;
-            };
-            case WM_SIZING : {
-                if(isReady) {
-                    RECT rc = getClientRect();
-                    UINT height = rc.bottom - rc.top;
-                    updateAllHWNDPos(height,&raw_children);
-                };
-                break;
-            };
-            case WM_PAINT : {
-                PAINTSTRUCT ps;
-                HDC hdc = BeginPaint(hwnd,&ps);
+                //     // Inform the application of the frame change.
+                //     SetWindowPos(hWnd, 
+                //                 NULL, 
+                //                 rcClient.left, rcClient.top,
+                //                 rcClient.right - rcClient.left,rcClient.bottom - rcClient.top,
+                //                 SWP_FRAMECHANGED);
+                //     break;
+                // }
+                
+                // case WM_NCCALCSIZE : {
+                //     MARGINS margins {-1};
+                //     // margins.cxLeftWidth = 0;
+                //     // margins.cxRightWidth = 0;
+                //     // margins.cyTopHeight = 40;
+                //     // margins.cyBottomHeight = 0;
+                //     HRESULT hr = S_OK;
+                //     hr = DwmExtendFrameIntoClientArea(hwnd,&margins);
+                //     if (FAILED(hr))
+                //     {
+                //         *lr = -1;
+                //     }
+                    
+                //     break;
+                // }
+                // case WM_NCHITTEST : {
+                    
+                //     // *lr = HitTestNCA(hwnd,wParam,lParam);
+                    
+                //     // if (*lr == HTNOWHERE)
+                //     // {
+                //     //     return FALSE;
+                //     // }
+                //     // break;
+                // }
+                case WM_MENUCOMMAND : {
+                    /// If the Top level Menu Exists!
+                    if(menu){
+                        UINT idx = wParam;
+                        HMENU hmenu = (HMENU)lParam;
 
-                // parentLayer->redraw();
+                        MENUINFO info;
+                        info.cbSize = sizeof(info);
+                        info.fMask = MIM_MENUDATA;
+                        GetMenuInfo(hmenu,&info);
+                        void * WinMenu = (void *) info.dwMenuData;
+                        select_item(WinMenu,idx);
+                        return 0;
+                    };
+                };
+                case WM_DESTROY : {
+                    if(isReady) {
+                        emitIfPossible(new NativeEvent(NativeEvent::WindowWillClose,nullptr));
+                    };
+                    break;
+                };
+                case WM_SIZE : {
+                    if(isReady) {
+                        RECT rc = getClientRect();
+                        UINT height = rc.bottom - rc.top;
+                        updateAllHWNDPos(height,&raw_children);
+                    };
+                    break;
+                };
+                case WM_SIZING : {
+                    if(isReady) {
+                        RECT rc = getClientRect();
+                        UINT height = rc.bottom - rc.top;
+                        updateAllHWNDPos(height,&raw_children);
+                    };
+                    break;
+                };
+                case WM_PAINT : {
+                    PAINTSTRUCT ps;
+                    HDC hdc = BeginPaint(hwnd,&ps);
 
-                EndPaint(hwnd,&ps);
-                break;
-            };
-            case WM_DPICHANGED : {
-                UINT newDpi = HIWORD(wParam);
+                    // parentLayer->redraw();
 
-                RECT* const prcNewWindow = (RECT*)lParam;
-                SetWindowPos(hwnd,
-                    NULL,
-                    prcNewWindow ->left,
-                    prcNewWindow ->top,
-                    prcNewWindow->right - prcNewWindow->left,
-                    prcNewWindow->bottom - prcNewWindow->top,
-                    SWP_NOZORDER | SWP_NOACTIVATE);
-                break;
-            }
-            default:
-                return FALSE;
-                break;
-            }
+                    EndPaint(hwnd,&ps);
+                    break;
+                };
+                case WM_DPICHANGED : {
+                    UINT newDpi = HIWORD(wParam);
+
+                    RECT* const prcNewWindow = (RECT*)lParam;
+                    SetWindowPos(hwnd,
+                        NULL,
+                        prcNewWindow ->left,
+                        prcNewWindow ->top,
+                        prcNewWindow->right - prcNewWindow->left,
+                        prcNewWindow->bottom - prcNewWindow->top,
+                        SWP_NOZORDER | SWP_NOACTIVATE);
+                    break;
+                }
+                default:
+                    return FALSE;
+                    break;
+                }
         return TRUE;
     };
 

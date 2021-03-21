@@ -14,7 +14,6 @@
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLine, int nShowCmd){
 
     // MessageBoxA(HWND_DESKTOP,"LoadingApp","NOTE",MB_OK);
-
     HRESULT hr;
     hr = CoInitializeEx(NULL,COINIT_MULTITHREADED);
     if(!SUCCEEDED(hr))
@@ -29,7 +28,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLi
     omegaWTKMain(appInst);
 
     HACCEL hAccelTable = LoadAccelerators(hInstance,MAKEINTRESOURCE(IDC_@APPNAME@));
-
     BOOL breturn;
 
     MSG msg = {};
