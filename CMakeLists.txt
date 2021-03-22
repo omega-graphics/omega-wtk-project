@@ -178,7 +178,7 @@ if(WIN32)
 endif()
 
 if(CMAKE_HOST_APPLE)
-    enable_language(OBJCXX)
+    enable_language(OBJCXX Swift)
     message("Targeting macOS")
 
     find_macos_framework("Cocoa")
@@ -243,3 +243,7 @@ install(EXPORT OmegaWTKTargets
 
 configure_file(cmake/OmegaWTKConfig.cmake.in "${CMAKE_BINARY_DIR}/cmake/OmegaWTKConfig.cmake" @ONLY)
 configure_file(cmake/OmegaWTKUtils.cmake "${CMAKE_BINARY_DIR}/cmake/OmegaWTKUtils.cmake" COPYONLY)
+
+if(SWIFT_BUILD)
+    add_subdirectory("swift")
+endif()

@@ -2,7 +2,7 @@ __pycache__
 *.pyc
 compile_commands.json
 compile_flags.txt
-
+swift
 
 # Prerequisites
 *.d
