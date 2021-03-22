@@ -22,7 +22,18 @@ add_omega_wtk_lib(
 
 if(TARGET_WIN32)
     set(NATIVE_WIN_HEADERS "HWNDItem.h" "WinEvent.h")
-    set(NATIVE_WIN_SOURCES  "MakeItem.h" "MakeItem.cpp" "HWNDItem.cpp" "HWNDFactory.h" "HWNDFactory.cpp"  "WinMenu.h" "WinMenu.cpp" "WinEvent.cpp" "WinAppWindow.h" "WinAppWindow.cpp" "WinApp.h" "WinApp.cpp")
+    set(NATIVE_WIN_SOURCES  "MakeItem.h" 
+    "MakeItem.cpp" 
+    "HWNDItem.cpp" 
+    "HWNDFactory.h" 
+    "HWNDFactory.cpp"  
+    "WinMenu.h" 
+    "WinMenu.cpp" 
+    "WinEvent.cpp" 
+    "WinAppWindow.h" 
+    "WinAppWindow.cpp" 
+    "WinApp.h" 
+    "WinApp.cpp")
 
     list(TRANSFORM NATIVE_WIN_HEADERS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/private_include/NativePrivate/win/")
     list(TRANSFORM NATIVE_WIN_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/win/")
@@ -33,7 +44,19 @@ endif()
 
 if(TARGET_MACOS)
     set(NATIVE_MAC_HEADERS "CocoaItem.h" "CocoaEvent.h" "CocoaUtils.h")
-    set(NATIVE_MAC_SOURCES "MakeItem.h" "MakeItem.mm" "CocoaItem.mm" "CocoaEvent.mm" "CocoaUtils.mm" "CocoaApp.h" "CocoaApp.mm" "CocoaMenu.h" "CocoaMenu.mm" "CocoaAppWindow.h" "CocoaAppWindow.mm")
+    set(NATIVE_MAC_SOURCES "MakeItem.h" 
+    "MakeItem.mm" 
+    "CocoaItem.mm" 
+    "CocoaEvent.mm" 
+    "CocoaUtils.mm" 
+    "CocoaApp.h" 
+    "CocoaApp.mm" 
+    "CocoaMenu.h" 
+    "CocoaMenu.mm" 
+    "CocoaAppWindow.h" 
+    "CocoaAppWindow.mm"
+    "CocoaDialog.h"
+    "CocoaDialog.mm")
 
     set_source_files_properties(${NATIVE_MAC_HEADERS} ${NATIVE_MAC_SOURCES} PROPERTIES LANGUAGE OBJCXX)
 

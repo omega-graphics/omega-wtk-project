@@ -48,6 +48,20 @@ toolchain("llvm") {
             "{{source_out_dir}}/{{source_name_part}}.${obj_ext}"
         ]
     }
+    tool("cxx_module"){
+        depfile = "{{output}}.d"
+        command = "clang++ -MD -MF $depfile -std=c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} -fmodules -fmodule-name={{label}} -Xclang -Xclang -emit-module-interface -c {{source}} -o {{output}}"
+        if(is_linux || is_mac){
+            depsformat = "gcc"
+        }
+        else {
+            depsformat = "msvc"
+        }
+        description = "Compiling CXX source for module {{label}} {{output}}"
+        outputs = [
+            "{{source_out_dir}}/{{source_name_part}}.pcm"
+        ]
+    }
     if(is_mac){
         tool("objc"){
             depfile = "{{output}}.d"
@@ -73,6 +87,24 @@ toolchain("llvm") {
             description = "Copying {{source}} to {{output}}"
         }
     }
+    tool("swift"){
+        depfile = "{{target_out_dir}}/{{module_name}}.d"
+        depsformat = "gcc"
+
+        _new_out = rebase_path("../../out/gen")
+
+        description = "Compiling SWIFT source {{output}}"
+        command = "xcrun -sdk macosx swiftc  {{defines}} {{swiftflags}} {{module_dirs}} -emit-dependencies -module-name {{module_name}} -o {{output}} {{include_dirs}} -emit-module -emit-object -enable-library-evolution -emit-module-interface-path $_new_out/{{module_name}}.swiftinterface  {{inputs}}"
+        outputs = [
+            "{{target_gen_dir}}/{{module_name}}.swiftmodule",
+            "{{target_gen_dir}}/{{module_name}}.h",
+            "{{target_gen_dir}}/{{module_name}}.swiftdoc",
+            "{{target_gen_dir}}/{{module_name}}.swiftsourceinfo",
+        ]
+        partial_outputs = [
+            "{{source_out_dir}}/{{source_name_part}}.o"
+        ]
+    }
     tool("alink") {
         if(is_windows){
             command = "llvm-lib /out:{{output}} /machine:x64 ucrt.lib User32.lib  {{inputs}} {{arflags}}"
@@ -96,7 +128,7 @@ toolchain("llvm") {
     tool("solink") {
         outfile = "{{target_output_name}}{{output_extension}}"
         if(is_mac){
-            command = "$lld_command -o $outfile {{ldflags}}  {{inputs}} {{solibs}} {{frameworks}} {{libs}}"  
+            command = "$lld_command -o $outfile {{ldflags}}  {{inputs}} {{solibs}} {{frameworks}} {{swiftmodules}} {{libs}}"  
         }
         # Link MSVC Runtime
         else {

@@ -9,7 +9,7 @@ namespace OmegaWTK {
      @discussion
      p
      */
-    class ViewAnimator {
+OMEGAWTK_EXPORT class ViewAnimator {
 //        Core::UniquePtr<Composition::ViewRenderTargetFrameScheduler> frameScheduler;
         friend class Composition::LayerAnimationController;
     public:

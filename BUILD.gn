@@ -3,6 +3,8 @@ import("//gn/OmegaWTK.gni")
 declare_args(){
     directx_12 = true
     vcpkg_installed_path = ""
+    build_swift = false
+    build_as_cxx_20_module = false
 }
 
 if(vcpkg_installed_path == ""){
@@ -334,6 +336,15 @@ omega_wtk_static_lib("OmegaWTK"){
     #     #     "/WHOLEARCHIVE"
     #     # ]
     # }
+    # cflags_cc = [
+    #     "-fmodules",
+    #     "-fmodules-ts",
+    #     "-fimplicit-module-maps",
+    #     # "-fmodule-map-file=" + rebase_path("//include/module.modulemap"),
+    #     "-fmodule-name=OmegaWTK",
+    #     "-Xclang",
+    #     "-emit-module-interface"
+    # ]
     sources = [
         "//include/OmegaWTK.h",
         "lib/OmegaWTK.cpp"
@@ -346,6 +357,41 @@ omega_wtk_static_lib("OmegaWTK"){
         ":omegaWTKUI"
     ]
 }
+
+# if(build_swift){
+#     source_set("OmegaWTKSwift"){
+#         module_name = "OmegaWTKSwift"
+#         swiftflags = [
+#             "-Xfrontend",
+#             "-enable-cxx-interop",
+#             "-Xcc",
+#             "-std=c++17",
+#             "-Xcc",
+#             "-stdlib=libc++",
+#             "-Xcc",
+#             "-DTARGET_MACOS",
+#             # "-Xcc",
+#             # "-DOMEGAWTK_SWIFT",
+#             "-libc",
+#             "c++",
+#             "-I" + rebase_path("//include"),
+#         ]
+       
+#         defines = [
+#             "TARGET_MACOS"
+#         ]
+#         sources = [
+#             "swift/OmegaWTK.swift"
+#         ]
+#         include_dirs = [
+#             "//include",
+#             "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"
+#         ]
+#         deps = [
+#             ":OmegaWTK"
+#         ]
+#     }
+# }
 
 omega_wtk_test("RootWidgetTest"){
     sources = [

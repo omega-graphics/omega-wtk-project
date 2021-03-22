@@ -3,6 +3,10 @@
 #define OMEGAWTK_EXPORT export
 #else
 
+#ifdef OMEGAWTK_SWIFT
+#define OMEGAWTK_EXPORT export
+#endif
+
 #if defined(TARGET_MACOS) || defined(TARGET_GTK)
 #define OMEGAWTK_EXPORT
 #endif

@@ -1,0 +1,6 @@
+/* module OmegaWTK {
+    requires cplusplus17
+    umbrella header "OmegaWTK.h"
+    export *
+}
+*/

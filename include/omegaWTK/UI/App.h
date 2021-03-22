@@ -22,7 +22,7 @@ namespace OmegaWTK {
         class NativeApp;
     };
 
-class OMEGAWTK_EXPORT AppInst {
+OMEGAWTK_EXPORT class AppInst {
     Native::NativeApp * ptr;
 public:
     UniqueHandle<AppWindowManager> windowManager;

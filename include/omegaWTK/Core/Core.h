@@ -20,7 +20,7 @@
 
 namespace OmegaWTK {
     namespace Core {
-        typedef unsigned char Option;
+        OMEGAWTK_EXPORT typedef unsigned char Option;
     };
 
 #define STATIC_OPT static constexpr Core::Option
@@ -28,25 +28,25 @@ namespace OmegaWTK {
 
     namespace Core {
     
-        typedef std::string String;
+        OMEGAWTK_EXPORT typedef std::string String;
     
         template<class _Ty>
-        using Vector = std::vector<_Ty>;
+        OMEGAWTK_EXPORT using Vector = std::vector<_Ty>;
 
         template<class _Ty>
-        using List = std::list<_Ty>;
+        OMEGAWTK_EXPORT using List = std::list<_Ty>;
 
         template<class _Ty>
-        using Queue = std::queue<_Ty>;
+        OMEGAWTK_EXPORT using Queue = std::queue<_Ty>;
 
         template<class _Key,class _Val>
-        using Map = std::map<_Key,_Val>;
+        OMEGAWTK_EXPORT using Map = std::map<_Key,_Val>;
 
         template<class _Ty>
-        using UniquePtr = std::unique_ptr<_Ty>;
+        OMEGAWTK_EXPORT using UniquePtr = std::unique_ptr<_Ty>;
     
         template<class _Ty>
-        class UniquePtrRef {
+        OMEGAWTK_EXPORT class UniquePtrRef {
             UniquePtr<_Ty> & ptr;
         public:
             bool hasExpired(){
@@ -59,19 +59,19 @@ namespace OmegaWTK {
         };
     
         template<class _Ty>
-        using SharedPtr = std::shared_ptr<_Ty>;
+        OMEGAWTK_EXPORT using SharedPtr = std::shared_ptr<_Ty>;
     
         template<class _Ty>
-        using WeakPtr = std::weak_ptr<_Ty>;
+        OMEGAWTK_EXPORT using WeakPtr = std::weak_ptr<_Ty>;
 
         template<class _Ty>
-        using Optional = std::optional<_Ty>;
+        OMEGAWTK_EXPORT using Optional = std::optional<_Ty>;
     
         typedef std::istream IStream;
         typedef std::ostream OStream;
         /// Array Reference Class!
         template<class _Ty>
-        class OMEGAWTK_EXPORT ArrayRef {
+        OMEGAWTK_EXPORT class ArrayRef {
             _Ty *_data;
             unsigned _size;
         public:
@@ -97,15 +97,15 @@ namespace OmegaWTK {
             ArrayRef(Core::Vector<_Ty> & ref):_data(ref.data()),_size(ref.size()){};
         };
 
-        struct OMEGAWTK_EXPORT Position {
+        OMEGAWTK_EXPORT struct Position {
             unsigned x;
             unsigned y;
         };
-        struct OMEGAWTK_EXPORT Dimensions {
+        OMEGAWTK_EXPORT struct Dimensions {
             unsigned minWidth;
             unsigned minHeight;
         };
-        struct OMEGAWTK_EXPORT Rect {
+        OMEGAWTK_EXPORT struct Rect {
             Position pos;
             Dimensions dimen;
             bool compare(Rect & other);
@@ -113,46 +113,46 @@ namespace OmegaWTK {
             Rect(Position _pos,Dimensions _dimen,float angle = 0):pos(_pos),dimen(_dimen),angle(angle){};
         };
     
-        struct OMEGAWTK_EXPORT RoundedRect : public Rect {
+        OMEGAWTK_EXPORT struct RoundedRect : public Rect {
             unsigned radius_x;
             unsigned radius_y;
             bool compare(RoundedRect & other);
             RoundedRect(const Rect &rect,unsigned rad_x,unsigned rad_y):Rect(rect),radius_x(rad_x),radius_y(rad_y){};
         };
     
-        struct OMEGAWTK_EXPORT Ellipse {
+        OMEGAWTK_EXPORT struct  Ellipse {
             Position pos;
             unsigned radius_x;
             unsigned radius_y;
             bool compare(Ellipse & other);
         };
-        struct OMEGAWTK_EXPORT FPosition {
+        OMEGAWTK_EXPORT struct FPosition {
             float x;
             float y;
         };
-        struct OMEGAWTK_EXPORT FDimensions {
+        OMEGAWTK_EXPORT struct FDimensions {
             float minWidth;
             float minHeight;
         };
-        struct OMEGAWTK_EXPORT FRect {
+        OMEGAWTK_EXPORT struct FRect {
             FPosition pos;
             FDimensions dimen;
             float angle;
             FRect(FPosition pos,FDimensions dimen,float angle = 0):pos(pos),dimen(dimen),angle(angle){};
         };
-        struct OMEGAWTK_EXPORT FRoundedRect : public FRect {
+        OMEGAWTK_EXPORT struct FRoundedRect : public FRect {
             float radius_x;
             float radius_y;
             FRoundedRect(const FRect & rect,float radius_x,float radius_y):FRect(rect),radius_x(radius_x),radius_y(radius_y){};
         };
-        struct OMEGAWTK_EXPORT FEllipse {
+        OMEGAWTK_EXPORT struct FEllipse {
             FPosition pos;
             float radius_x;
             float radius_y;
         };
         /// A vector that acts like a queue (first in , first out), but has control over every element and its order in the container.
         template<class _Ty>
-        class OMEGAWTK_EXPORT QueueVector
+        OMEGAWTK_EXPORT class  QueueVector
         {
             _Ty *_data;
             public:
@@ -314,16 +314,16 @@ namespace OmegaWTK {
         };
         #endif
     };
-    Core::Rect Rect(unsigned x,unsigned y,unsigned width,unsigned height,float angle = 0);
-    Core::Ellipse Ellipse(unsigned x,unsigned y,unsigned radius_x,unsigned radius_y);
-    Core::RoundedRect RoundedRect(unsigned x,unsigned y,unsigned width,unsigned height,unsigned radius_x,unsigned radius_y,float angle = 0);
+OMEGAWTK_EXPORT Core::Rect Rect(unsigned x,unsigned y,unsigned width,unsigned height,float angle = 0);
+OMEGAWTK_EXPORT Core::Ellipse Ellipse(unsigned x,unsigned y,unsigned radius_x,unsigned radius_y);
+OMEGAWTK_EXPORT Core::RoundedRect RoundedRect(unsigned x,unsigned y,unsigned width,unsigned height,unsigned radius_x,unsigned radius_y,float angle = 0);
      
-    Core::FRect FRect(float x,float y,float w,float h,float angle = 0);
-    Core::FEllipse FEllipse(float x,float y,float rad_x,float rad_y);
-    Core::FRoundedRect FRoundedRect(float x,float y,float w,float h,float rad_x,float rad_y,float angle = 0);
+OMEGAWTK_EXPORT Core::FRect FRect(float x,float y,float w,float h,float angle = 0);
+OMEGAWTK_EXPORT Core::FEllipse FEllipse(float x,float y,float rad_x,float rad_y);
+OMEGAWTK_EXPORT Core::FRoundedRect FRoundedRect(float x,float y,float w,float h,float rad_x,float rad_y,float angle = 0);
 
 
-    class FSPath {
+OMEGAWTK_EXPORT class FSPath {
         struct Token {
             typedef enum : OPT_PARAM {
                 ID,

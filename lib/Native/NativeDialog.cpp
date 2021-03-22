@@ -28,7 +28,12 @@ namespace OmegaWTK::Native {
     // };
 
     SharedHandle<NativeFSDialog> NativeFSDialog::Create(const Descriptor &desc,NWH nativeWindow){
+        #ifdef TARGET_WIN32
         return Win::WinFSDialog::Create(desc,nativeWindow);
+        #endif
+        
+        #ifdef TARGET_MACOS
+        #endif
     };
 
 };

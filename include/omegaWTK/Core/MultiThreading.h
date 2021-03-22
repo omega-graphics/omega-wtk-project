@@ -9,7 +9,7 @@ namespace OmegaWTK {
 
 namespace Core {
     template<class _PTy = void>
-    class CPUThreadP {
+    OMEGAWTK_EXPORT class CPUThreadP {
         std::thread t;
         
         CPUThread();

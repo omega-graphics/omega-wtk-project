@@ -9,7 +9,7 @@ namespace OmegaWTK {
 
 class Menu;
 
-class OMEGAWTK_EXPORT MenuItem {
+OMEGAWTK_EXPORT class MenuItem {
     Core::String name;
     Native::NMI native;
     Menu * subMenu;
@@ -34,7 +34,7 @@ public:
 
 class MenuDelegate;
 
-class OMEGAWTK_EXPORT Menu {
+OMEGAWTK_EXPORT class  Menu {
     Core::String name;
     Core::Vector<MenuItem *> menuItems;
     Native::NM native;
@@ -48,7 +48,7 @@ public:
 //    ~Menu();
 };
 
-class OMEGAWTK_EXPORT MenuDelegate : public Native::NativeMenuDelegate {
+OMEGAWTK_EXPORT class  MenuDelegate : public Native::NativeMenuDelegate {
 protected:
     Menu *menu;
     friend class Menu;
@@ -59,17 +59,17 @@ public:
 /**
  Creates a Category Menu
  */
-MenuItem *CategoricalMenu(const Core::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate = nullptr);
+OMEGAWTK_EXPORT MenuItem *CategoricalMenu(const Core::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate = nullptr);
 /**
  Creates a SubMenu under a Categorical Menu
  */
-MenuItem *SubMenu(const Core::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate = nullptr);
+OMEGAWTK_EXPORT MenuItem *SubMenu(const Core::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate = nullptr);
 
-MenuItem *ButtonMenuItem(const Core::String & name);
+OMEGAWTK_EXPORT MenuItem *ButtonMenuItem(const Core::String & name);
 /**
  Creates a Menu Seperator Item!
 */
-MenuItem *MenuItemSeperator();
+OMEGAWTK_EXPORT MenuItem *MenuItemSeperator();
 
 };
 

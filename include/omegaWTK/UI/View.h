@@ -22,7 +22,7 @@ namespace OmegaWTK {
         Sometimes referred to as the CanvasView.
         @relates Widget
      */
-    class OMEGAWTK_EXPORT View: public Native::NativeEventEmitter {
+OMEGAWTK_EXPORT class View: public Native::NativeEventEmitter {
         Core::Vector<SharedHandle<View>> subviews;
     protected:
         SharedHandle<Composition::ViewRenderTarget> renderTarget;
@@ -68,7 +68,7 @@ namespace OmegaWTK {
     /**
         @brief The Root View delegate class!
      */
-    class OMEGAWTK_EXPORT ViewDelegate : public Native::NativeEventProcessor {
+OMEGAWTK_EXPORT class ViewDelegate : public Native::NativeEventProcessor {
         void onRecieveEvent(Native::NativeEventPtr event);
         friend class View;
         protected:

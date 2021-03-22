@@ -9,7 +9,7 @@ namespace OmegaWTK::UI {
      
     
      */
-    class OMEGAWTK_EXPORT ButtonBase : public Widget {
+OMEGAWTK_EXPORT class ButtonBase : public Widget {
     protected:
         class ButtonViewDelegate : public ViewDelegate {
             ButtonBase *widget;

@@ -81,7 +81,7 @@ namespace OmegaWTK::Core {
 
 
         template<class _Pt_Ty>
-        class VectorPath_Base {
+        OMEGAWTK_EXPORT class VectorPath_Base {
             public:
             struct Node {
                 _Pt_Ty *pt;

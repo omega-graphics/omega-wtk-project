@@ -14,11 +14,11 @@
 #include "omegaWTK/Composition/Text.h"
 
 // UI Exports
+#include "omegaWTK/UI/Widget.h"
 #include "omegaWTK/UI/Menu.h"
 #include "omegaWTK/UI/App.h"
 #include "omegaWTK/UI/AppWindow.h"
 #include "omegaWTK/UI/View.h"
-#include "omegaWTK/UI/Widget.h"
 #include "omegaWTK/UI/ButtonBase.h"
 #include "omegaWTK/UI/PushButton.h"
 

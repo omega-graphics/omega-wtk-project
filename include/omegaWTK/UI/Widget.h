@@ -11,7 +11,7 @@ class AppWindow;
 class AppWindowManager;
 class VideoView;
 
-class OMEGAWTK_EXPORT Widget {
+OMEGAWTK_EXPORT class Widget {
 protected:
     SharedHandle<CanvasView> rootView;
     SharedHandle<Widget> parent;

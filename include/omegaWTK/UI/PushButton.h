@@ -4,7 +4,7 @@
 #define OMEGAWTK_UI_PUSHBUTTON_H
 
 namespace OmegaWTK::UI {
-    class OMEGAWTK_EXPORT PushButton : public ButtonBase {
+OMEGAWTK_EXPORT class PushButton : public ButtonBase {
         SharedHandle<Composition::LayerStyle> style;
         void handleMouseEvent(Native::NativeEventPtr event);
         std::function<void(Native::NativeEventPtr)> handler;
