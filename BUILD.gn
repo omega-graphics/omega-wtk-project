@@ -164,14 +164,14 @@ omega_wtk_static_lib("omegaWTKMedia"){
         # Headers 
         "$omega_wtk_include_dir/Media/ImgCodec.h",
         "$omega_wtk_include_dir/Media/VideoCodec.h",
-        "$omega_wtk_include_dir/Media/VideoCaptureSession.h",
-        "$omega_wtk_include_dir/Media/AudioCaptureSession.h",
+        "$omega_wtk_include_dir/Media/VideoCapture.h",
+        "$omega_wtk_include_dir/Media/AudioCapture.h",
 
         # Sources 
         "lib/Media/ImgCodec.cpp",
         "lib/Media/VideoCodec.cpp",
-        "lib/Media/VideoCaptureSession.cpp",
-        "lib/Media/AudioCaptureSession.cpp"
+        "lib/Media/VideoCapture.cpp",
+        "lib/Media/AudioCapture.cpp"
     ]
     public_deps = [
         ":omegaWTKCore"

@@ -14,11 +14,11 @@ namespace OmegaWTK::Native::Win {
         bool read_or_write;
         ATL::CComPtr<IFileOpenDialog> dialog_ty_1;
         ATL::CComPtr<IFileSaveDialog> dialog_ty_2;
-        WinFSDialog(bool read_or_write,NWH nativeWindow);
-        ~WinFSDialog();
         void close() override;
         void show() override;
     public:
+        WinFSDialog(bool read_or_write,NWH nativeWindow);
+        ~WinFSDialog();
         static SharedHandle<NativeFSDialog> Create(const Descriptor & desc,NWH nativeWindow);
     };
 }

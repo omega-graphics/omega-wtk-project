@@ -38,11 +38,11 @@ namespace OmegaWTK::Native::Win {
     SharedHandle<NativeFSDialog> WinFSDialog::Create(const Descriptor &desc,NWH nativeWindow){
         HRESULT hr;
         if(desc.type == Read){
-            return std::make_shared<WinFSDialog>(true);
+            return std::make_shared<WinFSDialog>(true,nativeWindow);
         }
         else {
 
-            return std::make_shared<WinFSDialog>(false);
+            return std::make_shared<WinFSDialog>(false,nativeWindow);
         }
     };
 }
