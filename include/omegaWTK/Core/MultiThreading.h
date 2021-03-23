@@ -1,6 +1,7 @@
 #include <thread>
 #include <mutex>
 #include <future>
+#include <atomic>
 #include "Core.h"
 
 #ifndef OMEGAWTK_CORE_MULTITHREADING_H
@@ -10,10 +11,21 @@ namespace OmegaWTK {
 
 namespace Core {
 
+    class SpinLock {
+        std::atomic_bool _l = false;
+    public:
+        void lock(){
+            while(_l.exchange(true,std::memory_order_acquire));
+        };
+        void unlock(){
+            _l.store(false,std::memory_order_release);
+        };
+        SpinLock(){};
+        ~SpinLock(){};
+    };
+
     #define COWPTR_STATUS_READONLY 0x00
     #define COWPTR_STATUS_READWRITE 0x01
-
-
     /**
      A smart pointer that implements the Copy on Write algorithim, 
      which allows for thread-safe read/write access for a shared resource.
