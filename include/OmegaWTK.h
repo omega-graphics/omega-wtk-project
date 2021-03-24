@@ -21,6 +21,7 @@
 #include "omegaWTK/UI/View.h"
 #include "omegaWTK/UI/ButtonBase.h"
 #include "omegaWTK/UI/PushButton.h"
+#include "omegaWTK/UI/TextInput.h"
 
 #ifndef OMEGAWTK_H
 #define OMEGAWTK_H

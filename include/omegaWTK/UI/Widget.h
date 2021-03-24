@@ -10,7 +10,13 @@ namespace OmegaWTK {
 class AppWindow;
 class AppWindowManager;
 class VideoView;
+class WidgetObserver;
 
+/**
+ A moduler UI component. 
+ Can be attached either directly to an AppWindow or as a child of another Widget.
+ @see AppWindow
+*/
 OMEGAWTK_EXPORT class Widget {
 protected:
     SharedHandle<CanvasView> rootView;
@@ -21,8 +27,7 @@ protected:
      */
     SharedHandle<Composition::Layer> makeLayer(const Core::Rect & rect);
     Composition::Compositor * compositor;
-private:
-    /**
+        /**
      Makes a Canvas View attached to this widget and returns it.
      @param rect The Rectangle to use
      @param parent The Parent View (NOTE: This view MUST be within this widget's view heirarchy)
@@ -37,15 +42,58 @@ private:
      */
 //    SharedHandle<VideoView> makeVideoView(const Core::Rect & rect,View *parent);
     
+private:
+    /// Observers
+    Core::Vector<SharedHandle<WidgetObserver>> observers;
+protected:
+    typedef enum : OPT_PARAM {
+        Resize,
+        Show,
+        Hide
+    } WidgetEventType;
+    void notifyObservers(WidgetEventType eventType);
+private:
     friend class AppWindow;
     friend class AppWindowManager;
 public:
     void setParentView(View *view);
+    /**
+     Add a WidgetObserver to be notified.
+    */
+    void addObserver(SharedHandle<WidgetObserver> & observer);
+    /**
+     Remove a WidgetObserver from the list of observers currently listening.
+    */
+    void removeObserver(WidgetObserver *observerPtr);
+    virtual void resize(Core::Rect & newRect) = 0;
+    /**
+     Show the Widget if hidden.
+    */
     void show();
+    /**
+     Hide the Widget if shown
+    */
     void hide();
     Widget(const Core::Rect & rect,SharedHandle<Widget> parent);
 //    Widget(Widget &widget);
     ~Widget();
+};
+
+/// Similar to a Widget Delegate but a Widget can have more than one.
+class WidgetObserver {
+    friend class Widget;
+    bool hasAssignment;
+protected:
+    Widget *widget;
+public:
+    WidgetObserver();
+    /// Implement in subclasses!
+    /// Called when the Widget has changed size.
+    virtual void onWidgetChangeSize(Core::Rect & newRect){};
+    /// Called when the Widget has just been Hidden.
+    virtual void onWidgetDidHide(){};
+    /// Called when the Widget has just been Shown.
+    virtual void onWidgetDidShow(){};
 };
 
 };

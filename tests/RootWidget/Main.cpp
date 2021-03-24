@@ -121,8 +121,8 @@ int omegaWTKMain(AppInst *app)
     
     // auto img = IMPORT_IMG("test.png");
     // auto img2 = IMPORT_IMG("test-1.png");
-   
-   auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}}));
+    auto widget = make<UI::TextInput>(UI::TextInput({{0,0},{200,100}}));
+//    auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}}));
     //   auto widget = make<UI::PushButton>(UI::PushButton({{0,0},{400,400}},nullptr));
 
 //    auto widget2 = make<MyWidget>(MyWidget({{0,500},{400,400}}));
