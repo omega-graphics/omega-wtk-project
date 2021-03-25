@@ -170,8 +170,8 @@ omega_wtk_static_lib("omegaWTKMedia"){
         # Sources 
         "lib/Media/ImgCodec.cpp",
         "lib/Media/VideoCodec.cpp",
-        "lib/Media/VideoCapture.cpp",
-        "lib/Media/AudioCapture.cpp"
+        # "lib/Media/VideoCapture.cpp",
+        # "lib/Media/AudioCapture.cpp"
     ]
     public_deps = [
         ":omegaWTKCore"
@@ -349,6 +349,7 @@ omega_wtk_static_lib("OmegaWTK"){
     # ]
     sources = [
         "//include/OmegaWTK.h",
+        "//include/omegaWTK/Main.h",
         "lib/OmegaWTK.cpp"
     ]
     public_deps = [
@@ -362,11 +363,6 @@ omega_wtk_static_lib("OmegaWTK"){
 
 omega_wtk_test("RootWidgetTest"){
     sources = [
-        "tests/RootWidget/Main.h",
         "tests/RootWidget/Main.cpp"
-    ]
-    app_entry = "Main.h"
-    include_dirs = [
-        "tests/RootWidget"
     ]
 }

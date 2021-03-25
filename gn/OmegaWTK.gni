@@ -100,15 +100,13 @@ template("omega_wtk_shared_lib"){
 template("omega_wtk_app_config"){
     #  assert(defined(sources))
      assert(defined(target_name))
-     print(target_name)
-     assert(defined(invoker.app_entry))
+    #  print(target_name)
      assert(defined(invoker.out_dir))
 
      out_dir = invoker.out_dir
     
     config_defines = [
         "-DAPPNAME=" + target_name,
-        "-DAPPENTRY=" + invoker.app_entry
     ]
 
     app_name =  target_name
@@ -229,7 +227,6 @@ template("omega_wtk_test"){
     out_dir = "$root_out_dir/obj"
 
     omega_wtk_app_config(target_name){
-        app_entry = invoker.app_entry
         # deps = invoker.deps 
         out_dir =  out_dir
     }
@@ -368,7 +365,184 @@ template("omega_wtk_test"){
     }
 }
 
-## Third Party Libararies!!
+template("omega_wtk_app"){
+     assert(defined(invoker.sources))
+    if(!defined(invoker.include_dirs)){
+        invoker.include_dirs = []
+    }
+    if(!defined(invoker.ldflags)){
+        if(is_windows){
+            invoker.ldflags = ["/subsystem:WINDOWS"]
+        }
+        else if(is_mac){
+            # invoker.ldflags = ["-"]
+        }
+    }
+    _deps = [
+            ":OmegaWTK",
+            ":other-res$target_name"
+        ]
+    app_name = target_name
+    if(is_windows){
+        _deps += [
+            ":app_ico${app_name}",
+            ":main-cpp-config__${app_name}",
+            ":resource-h-config__${app_name}",
+            ":resource-rc-config__${app_name}_1",
+            ":resource-rc-config__${app_name}_2"
+        ]
+    }
+    else if(is_mac){
+        t_name = "appdelegate-mm-config__${app_name}"
+        _deps += [
+            ":$t_name",
+        ]
+    }
+    if(defined(invoker.deps)){
+        invoker.deps += _deps
+    }
+    else {
+        invoker.deps = _deps
+    }
+   
+    out_dir = "$root_out_dir/obj"
 
-# Libpng
+    omega_wtk_app_config(target_name){
+        # deps = invoker.deps 
+        out_dir =  out_dir
+    }
+
+    invoker.include_dirs += [
+        rebase_path("$omega_wtk_include_dir"),
+        "$out_dir"
+    ] 
+    if(is_windows){
+        invoker.sources += [
+            "$out_dir/mmain.cpp",
+            "$out_dir/resource_script.rc",
+            "$out_dir/manifest.rc"
+        ]
+        invoker.ldflags += [
+            # "/MANIFEST:embed",
+            # "/MANIFESTINPUT:" + rebase_path("//target/windows/app.exe.manifest"),
+            # "/MANIFESTINPUT:" + rebase_path("//target/windows/intermediate.manifest")
+        ]
+    }
+    _defines = []
+    if(is_windows) {
+        _defines += [
+            "TARGET_WIN32",
+            "WINDOWS_PRIVATE"
+        ]
+    }
+    else if(is_mac){
+        _defines += [
+            "TARGET_MACOS"
+        ]
+        invoker.sources += [
+            "$out_dir/AppDelegate.h",
+            "$out_dir/AppDelegate.mm",
+            "$out_dir/main.mm"
+        ]
+        _libs = [
+            "c",
+            "c++"
+        ]
+        if(defined(invoker.libs)) {
+            invoker.libs += _libs
+        }
+        else {
+            invoker.libs = _libs
+        }
+    }
+
+    if(defined(invoker.defines)){
+        invoker.defines += _defines
+    }
+    else {
+        invoker.defines = _defines
+    }
+
+    if(is_windows || is_linux){
+        invoker.output_name = "apps/" + target_name
+    }
+    else if(is_mac){
+        invoker.output_name = "obj/${app_name}"
+    }
+
+    executable(target_name){
+        forward_variables_from(invoker,"*")
+        if(is_windows) {
+            output_extension = "exe"
+        }
+    }
+    app_name = "$target_name"
+    if(is_mac){
+
+        # action("compile-nib__${target_name}") {
+        #     script = rebase_path("gn/ibtool.py")
+        #     args = ["-I","../target/macos/English.lproj/MainMenu.xib","-D","$root_out_dir/obj","-O","$root_out_dir/obj/English.lproj/MainMenu.nib"]
+        #     outputs = [
+        #         "$root_out_dir/obj/English.lproj/MainMenu.nib"
+        #     ]
+        # }
+        bundle_data("${target_name}__metal_copy"){
+            public_deps = [
+                ":omegawtk",
+                # ":compile-nib__${app_name}"
+            ]
+            sources = [
+                "$root_out_dir/lib/omegawtk.metallib",
+            ]
+            outputs = [
+                "{{bundle_resources_dir}}/default.metallib",
+                # "{{bundle_resources_dir}}/MainMenu.nib"
+            ]
+        }
+        bundle_data("${target_name}__res_copy"){
+            sources = [
+                "//target/macos/MainMenu.nib",
+            ]
+            outputs = [
+                "{{bundle_resources_dir}}/{{source_file_part}}",
+                # "{{bundle_resources_dir}}/MainMenu.nib"
+            ]
+        }
+        bundle_data("${target_name}__info_plist"){
+            public_deps = [
+                ":info-plist-config__${app_name}"
+            ]
+            sources = [
+                "$out_dir/Info.plist"
+            ]
+            outputs = [
+                "{{bundle_contents_dir}}/Info.plist"
+            ]
+        }
+        bundle_data("${target_name}_exec"){
+            public_deps = [
+                ":$app_name"
+            ]
+            sources = ["$out_dir/$app_name"]
+            outputs = ["{{bundle_executable_dir}}/$app_name"]
+        }
+        create_bundle("${target_name}.app"){
+
+            bundle_root_dir = "$root_build_dir/apps/$target_name"
+            bundle_contents_dir  = "$bundle_root_dir/Contents"
+            bundle_resources_dir = "$bundle_contents_dir/Resources"
+            bundle_executable_dir = "$bundle_contents_dir/MacOS"
+
+            xcode_extra_attributes = {
+                DEBUG_INFORMATION_FORMAT = "dwarf"
+            }
+            deps = [
+                ":${app_name}__metal_copy",
+                ":${app_name}__res_copy",
+                ":${app_name}__info_plist",
+                ":${app_name}_exec"
+            ]
+        }
+    }
+}
 

@@ -3,13 +3,11 @@ add_omega_wtk_lib(
     NAME 
     "Media"
     SOURCES 
-    "AudioCaptureSession.cpp"
-    "VideoCaptureSession.cpp"
     "ImgCodec.cpp"
     "VideoCodec.cpp"
     HEADERS 
-    "AudioCaptureSession.h"
-    "VideoCaptureSession.h"
+    "AudioCapture.h"
+    "VideoCapture.h"
     "ImgCodec.h"
     "VideoCodec.h"
 )

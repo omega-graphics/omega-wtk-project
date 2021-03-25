@@ -12,10 +12,6 @@
  Typedefs!
  */
 
-struct OmegaWTKObject {
-    
-};
-
 /// Core
 
 #define OPT_PARAM unsigned char
@@ -53,6 +49,7 @@ typedef struct  __OmegaWTKCompLayerTree OmegaWTKCompLayerTree;
 typedef struct  __OmegaWTKCompLayerTreeLimb OmegaWTKCompLayerTreeLimb;
 typedef struct  __OmegaWTKCompBrush OmegaWTKCompBrush;
 typedef struct  __OmegaWTKCompColor OmegaWTKCompColor;
+typedef struct  __OmegaWTKCompFont OmegaWTKCompFont;
 
 ENUM : OPT_PARAM {
     RectVisual = 0x00,
@@ -83,6 +80,7 @@ struct OmegaWTKVisualImageParams {
 
 struct OmegaWTKVisualTextParams {
     struct OmegaWTKRect textRect;
+    OmegaWTKCompFont *font;
     OmegaWTKCompBrush *brush;
 };
 
@@ -90,9 +88,8 @@ struct OmegaWTKVisualTextParams {
 typedef struct  __OmegaWTKView OmegaWTKView;
 typedef OmegaWTKView OmegaWTKCanvasView;
 typedef struct  __OmegaWTKWidget OmegaWTKWidget;
+typedef struct __OmegaWTKWidgetObserver OmegaWTKWidgetObserver;
 
-
-void OmegaWTKFree(struct OmegaWTKObject *anyObj);
 
 /// OmegaWTK::Composition::Layer
 OmegaWTKCompLayer *omegawtk_construct_layer(OmegaWTKWidget *widget,struct OmegaWTKRect rect);
@@ -100,17 +97,34 @@ void omegawtk_layer_set_style(OmegaWTKCompLayer *layer,OmegaWTKCompLayerStyle *s
 /// OmegaWTK::Composition::LayerStyle
 OmegaWTKCompLayerStyle *omegawtk_construct_layer_style();
 void omegawtk_layer_style_add_visual(OmegaWTKCompVisualType type,...);
-
+void omegawtk_free_layer_style(OmegaWTKCompLayerStyle *style);
 /// OmegaWTK::Composition::LayerTree::Limb
 OmegaWTKCompLayer *omegawtk_layer_tree_limb_get_root_layer(OmegaWTKCompLayerTreeLimb *limb);
 void omegawtk_layer_tree_limb_add_child_layer(OmegaWTKCompLayerTreeLimb *limb,OmegaWTKCompLayer *layer);
 
 /// OmegaWTK::View Class
+void omegawtk_view_add_subview(OmegaWTKView *view,OmegaWTKView *parent);
 OmegaWTKCanvasView *omegawtk_construct_canvas_view(OmegaWTKWidget *widget,struct OmegaWTKRect rect,OmegaWTKView *parent);
 OmegaWTKCompLayerTreeLimb * omegawtk_canvas_view_get_layer_tree_limb(OmegaWTKCanvasView *view);
-
+void omegawtk_free_canvas_view(OmegaWTKCanvasView *view);
 /// OmegaWTK::Widget Class
 OmegaWTKWidget *omegawtk_construct_widget(struct OmegaWTKRect rect,OmegaWTKWidget *parent);
+void omegawtk_widget_set_parent_view(OmegaWTKWidget * widget,OmegaWTKView *parent);
+void omegawtk_widget_add_observer(OmegaWTKWidget *widget,OmegaWTKWidgetObserver *observer);
+void omegawtk_widget_remove_observer(OmegaWTKWidget *widget,OmegaWTKWidgetObserver *observer);
+void omegawtk_widget_show();
+void omegawtk_widget_hide();
+void omegawtk_free_widget(OmegaWTKWidget *widget);
+/// OmegaWTK::WidgetObserver Class
+ENUM : OPT_PARAM {
+    WidgetDidResize,
+    WidgetDidShow,
+    WidgetDidHide
+} OmegaWTKWidgetObserverCallbackType;
+OmegaWTKWidgetObserver *omegawtk_construct_widget_observer();
+void omegawtk_widget_observer_register_callback(OmegaWTKWidgetObserver *observer,OmegaWTKWidgetObserverCallbackType type,...);
+void omegawtk_free_widget_observer(OmegaWTKWidgetObserver * observer);
+
 
 #endif
 

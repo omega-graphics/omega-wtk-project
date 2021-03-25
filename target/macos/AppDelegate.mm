@@ -1,6 +1,6 @@
 #import "AppDelegate.h"
 #include <OmegaWTK.h>
-#import "@APPENTRY@"
+#import "omegaWTK/Main.h"
 #include <vector>
 
 

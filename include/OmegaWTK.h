@@ -23,6 +23,8 @@
 #include "omegaWTK/UI/PushButton.h"
 #include "omegaWTK/UI/TextInput.h"
 
+#include "omegaWTK/Main.h"
+
 #ifndef OMEGAWTK_H
 #define OMEGAWTK_H
 

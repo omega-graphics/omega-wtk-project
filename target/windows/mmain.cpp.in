@@ -1,5 +1,4 @@
 #include "resource.h"
-#include "@APPENTRY@"
 #include <OmegaWTK.h>
 #include <wrl.h>
 #include <debugapi.h>

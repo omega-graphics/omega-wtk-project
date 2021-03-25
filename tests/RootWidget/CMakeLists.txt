@@ -3,9 +3,6 @@ add_omega_wtk_app(
     "RootWidgetTest"
     SOURCES 
     "Main.cpp"
-    "Main.h"
-    MAIN 
-    "Main.h"
     MAC_BUNDLE_ID 
     ""
 	MAC_ICON
