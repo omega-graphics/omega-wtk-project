@@ -428,6 +428,11 @@ template("omega_wtk_test"){
         if(is_windows) {
             output_extension = "exe"
         }
+        else if(is_mac){
+            ldflags = [
+                "-execute"
+            ]
+        }
     }
     app_name = "$target_name"
     if(is_mac){
@@ -461,6 +466,17 @@ template("omega_wtk_test"){
                 # "{{bundle_resources_dir}}/MainMenu.nib"
             ]
         }
+         bundle_data("${target_name}__framework_copy"){
+            public_deps = [
+                ":OmegaWTK_Final"
+            ]
+            sources = [
+                "$root_out_dir/Frameworks/OmegaWTK.framework"
+            ]
+            outputs = [
+                "{{bundle_contents_dir}}/Frameworks/{{source_file_part}}"
+            ]
+        }
         bundle_data("${target_name}__info_plist"){
             public_deps = [
                 ":info-plist-config__${app_name}"
@@ -490,6 +506,7 @@ template("omega_wtk_test"){
                 DEBUG_INFORMATION_FORMAT = "dwarf"
             }
             deps = [
+                ":${app_name}__framework_copy",
                 ":${app_name}__metal_copy",
                 ":${app_name}__res_copy",
                 ":${app_name}__info_plist",
@@ -620,6 +637,11 @@ template("omega_wtk_app"){
         if(is_windows) {
             output_extension = "exe"
         }
+        else if(is_mac){
+            ldflags = [
+                "-execute"
+            ]
+        }
     }
     app_name = "$target_name"
     if(is_mac){
@@ -645,6 +667,9 @@ template("omega_wtk_app"){
             ]
         }
         bundle_data("${target_name}__framework_copy"){
+            public_deps = [
+                ":OmegaWTK_Final"
+            ]
             sources = [
                 "$root_out_dir/Frameworks/OmegaWTK.framework"
             ]
@@ -690,6 +715,7 @@ template("omega_wtk_app"){
                 DEBUG_INFORMATION_FORMAT = "dwarf"
             }
             deps = [
+                ":${app_name}__framework_copy",
                 ":${app_name}__metal_copy",
                 ":${app_name}__res_copy",
                 ":${app_name}__info_plist",

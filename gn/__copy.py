@@ -1,4 +1,5 @@
 import sys
+import os
 import PyUtils
 
 if(PyUtils.is_python_3()):
@@ -21,6 +22,9 @@ for arg in args:
         dest = args[idx + 1]
 
 if(sys.api_version > 2.9):
-    shutil.copyfile(src,dest)
+    if(os.path.isfile(src) and not os.path.exists(dest)):
+        shutil.copyfile(src,dest)
+    elif(os.path.isdir(src) and not os.path.exists(dest)):
+        shutil.copytree(src,dest,True)
 else:
     os.system("cp " + src + " " + dest)
