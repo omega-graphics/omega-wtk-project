@@ -11,7 +11,7 @@
 - [x]  Implement Metal Backend
 - [ ]  JPEG/TIFF Implement
 - [x]  Layer Styles.
-- [ ]  Video Layer.
+- [ ]  Video Views.
 - [ ]  Scroll Views (Ones with Native Scroll Bars)
 - [x]  Windows
 - [ ]  Window/Menu Styles

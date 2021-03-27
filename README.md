@@ -27,12 +27,9 @@ add_omega_wtk_app(
     NAME
     "TestApplication"
     FILES 
-    "test.h"
     "test.cpp"
-    ENTRY
-    "test.h"
     BUNDLE_ID
-    "org.omegawtk.examples.cmake.testapplication"
+    "org.omegagraphics.omegawtk.examples.testapplication"
 )
 ```
 - #### With GN (Preferred)
@@ -52,12 +49,10 @@ import("//mybuild/externals/omega-wtk-project/gn/OmegaWTK.gni")
 
 omega_wtk_app("TestApplication"){
     sources = [
-        "src/test.h",
         "src/test.cpp"
     ]
-    app_entry = "test.h"
     out_dir = "$root_out_dir/apps"
-    bundle_id = "org.omegawtk.examples.gn.testapplication""
+    bundle_id = "org.omegagraphics.omegawtk.examples.testapplication""
 }
 
 ```

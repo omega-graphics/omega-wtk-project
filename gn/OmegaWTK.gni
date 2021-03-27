@@ -91,9 +91,135 @@ template("omega_wtk_static_lib"){
 
 template("omega_wtk_shared_lib"){
     assert(defined(invoker.sources))
-     invoker.output_name = "../lib/" + target_name
-    shared_library(name){
-        forward_variables_from(invoker,"*")
+     
+     _defines = []
+    if(is_windows) {
+        _defines += [
+            "TARGET_WIN32"
+        ]
+    }
+    else if(is_mac){
+        _defines += [
+            "TARGET_MACOS"
+        ]
+    }
+
+    if(defined(invoker.defines)){
+        invoker.defines += _defines
+    }
+    else {
+        invoker.defines = _defines
+    }
+
+    if(defined(invoker.include_dirs)) {
+        invoker.include_dirs += [
+            "//include"
+        ]
+    }
+    else {
+        invoker.include_dirs = [
+            "//include"
+        ]
+    }
+
+    if(defined(invoker.framework) && invoker.framework == true){
+        assert(defined(invoker.framework_version))
+        assert(defined(invoker.framework_info_plist))
+        assert(defined(invoker.framework_version_plist))
+        assert(is_mac)
+        framework_name = target_name
+
+        bundle_data("${framework_name}_plists"){
+            sources = [
+                rebase_path(invoker.framework_info_plist),
+                rebase_path(invoker.framework_version_plist)
+            ]
+            outputs = [
+                "{{bundle_resources_dir}}/{{source_file_part}}"
+            ]
+        }
+
+       create_bundle("${framework_name}.framework"){
+          bundle_root_dir = "$root_out_dir/Frameworks/$target_name"  
+          bundle_executable_dir = "$bundle_root_dir/Versions/${invoker.framework_version}"
+          bundle_resources_dir = "$bundle_root_dir/Versions/${invoker.framework_version}/Resources"
+          deps = [
+              ":${framework_name}_plists"
+          ]
+       }
+       invoker.public_deps += [
+           ":${framework_name}.framework"
+       ]
+       _libs = [
+                "c",
+                "c++"
+        ]
+       invoker.libs = _libs
+       out_dir = "$root_out_dir/lib"
+
+       symlinks_exist = exec_script("//gn/AppleFramework.py",[
+                "--framework",
+               rebase_path("$root_out_dir/Frameworks/${framework_name}.framework"),
+               "--name",
+               "${framework_name}",
+               "--current_version",
+               "${invoker.framework_version}",
+               "--check_links"],"string")
+        
+        if(symlinks_exist == "True"){
+            lib_name = target_name + "_Final"
+        }
+        else {
+            lib_name = target_name
+        }
+
+       shared_library(lib_name){
+           ldflags = [
+               "-dylib",
+               "-force_load",
+               rebase_path("$out_dir/omegaWTKCore.a"),
+               "-force_load",
+                rebase_path("$out_dir/omegaWTKNative.a"),
+               "-force_load",
+                rebase_path("$out_dir/omegaWTKMedia.a"),
+               "-force_load",
+                rebase_path("$out_dir/omegaWTKComposition.a"),
+               "-force_load",
+                rebase_path("$out_dir/omegaWTKUI.a"),
+           ]
+            output_extension = ""
+            output_name = "Frameworks/${framework_name}.framework/Versions/${invoker.framework_version}/$framework_name"
+            forward_variables_from(invoker,["deps","public_deps","sources","include_dirs","defines","libs","frameworks","public_configs"])
+        }
+            
+        if(symlinks_exist == "False") {
+            action("${framework_name}_Final"){
+                script = rebase_path("//gn//AppleFramework.py")
+                args = [
+                    "--framework",
+                    rebase_path("$root_out_dir/Frameworks/${framework_name}.framework"),
+                    "--name",
+                    "${framework_name}",
+                    "--current_version",
+                    "${invoker.framework_version}"
+                ]
+                public_deps = [
+                    ":${framework_name}"
+                ]
+                outputs = [
+                    "$root_out_dir/Frameworks/${framework_name}.framework/{framework_name}"
+                ]
+            }
+        }
+    }
+    else {
+        shared_library(target_name){
+            if(defined(invoker.framework)){
+                output_extension = ""
+            }
+            output_name =  "//$out_dir/$target_name"
+            forward_variables_from(invoker,["deps","public_deps","sources","include_dirs","defines"])
+        }
     }
 }
 
@@ -198,12 +324,12 @@ template("omega_wtk_test"){
         }
     }
     _deps = [
-            ":OmegaWTK",
             ":other-res$target_name"
         ]
     app_name = target_name
     if(is_windows){
         _deps += [
+            ":OmegaWTK",
             ":app_ico${app_name}",
             ":main-cpp-config__${app_name}",
             ":resource-h-config__${app_name}",
@@ -214,6 +340,7 @@ template("omega_wtk_test"){
     else if(is_mac){
         t_name = "appdelegate-mm-config__${app_name}"
         _deps += [
+            ":OmegaWTK_Final",
             ":$t_name",
         ]
     }
@@ -255,6 +382,13 @@ template("omega_wtk_test"){
         ]
     }
     else if(is_mac){
+        invoker.framework_dirs = [
+            "$root_out_dir/Frameworks"
+        ]
+        invoker.frameworks = [
+            "Cocoa.framework",
+            "OmegaWTK.framework"
+        ]
         _defines += [
             "TARGET_MACOS"
         ]
@@ -379,12 +513,12 @@ template("omega_wtk_app"){
         }
     }
     _deps = [
-            ":OmegaWTK",
             ":other-res$target_name"
         ]
     app_name = target_name
     if(is_windows){
         _deps += [
+            ":OmegaWTK",
             ":app_ico${app_name}",
             ":main-cpp-config__${app_name}",
             ":resource-h-config__${app_name}",
@@ -395,6 +529,7 @@ template("omega_wtk_app"){
     else if(is_mac){
         t_name = "appdelegate-mm-config__${app_name}"
         _deps += [
+            ":OmegaWTK_Final",
             ":$t_name",
         ]
     }
@@ -407,6 +542,9 @@ template("omega_wtk_app"){
    
     out_dir = "$root_out_dir/obj"
 
+    # invoker.frameworks = [
+    #     "$root_out_dir/Frameworks/OmegaWTK.framework"
+    # ]
     omega_wtk_app_config(target_name){
         # deps = invoker.deps 
         out_dir =  out_dir
@@ -436,6 +574,13 @@ template("omega_wtk_app"){
         ]
     }
     else if(is_mac){
+        invoker.framework_dirs = [
+            "$root_out_dir/Frameworks"
+        ]
+        invoker.frameworks = [
+            "Cocoa.framework",
+            "OmegaWTK.framework"
+        ]
         _defines += [
             "TARGET_MACOS"
         ]
@@ -497,6 +642,14 @@ template("omega_wtk_app"){
             outputs = [
                 "{{bundle_resources_dir}}/default.metallib",
                 # "{{bundle_resources_dir}}/MainMenu.nib"
+            ]
+        }
+        bundle_data("${target_name}__framework_copy"){
+            sources = [
+                "$root_out_dir/Frameworks/OmegaWTK.framework"
+            ]
+            outputs = [
+                "{{bundle_root_dir}}/Frameworks/{{source_file_part}}"
             ]
         }
         bundle_data("${target_name}__res_copy"){

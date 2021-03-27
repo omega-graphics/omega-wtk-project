@@ -56,6 +56,7 @@ config("external_media_libs_config") {
             "avutil",
             "png",
             "tiff",
+            "z"
         ]
     }
 }
@@ -331,22 +332,21 @@ omega_wtk_static_lib("omegaWTKUI"){
     ]
 }
 
-omega_wtk_static_lib("OmegaWTK"){
-    complete_static_lib = true
+omega_wtk_shared_lib("OmegaWTK"){
+    if(is_mac){
+        framework = true
+        framework_version = "0.5"
+        framework_info_plist = "//lib/Info.plist"
+        framework_version_plist = "//lib/version.plist"
+    }
     if(is_windows) {
         # arflags = [
         #     "/WHOLEARCHIVE"
         # ]
     }
-    # cflags_cc = [
-    #     "-fmodules",
-    #     "-fmodules-ts",
-    #     "-fimplicit-module-maps",
-    #     # "-fmodule-map-file=" + rebase_path("//include/module.modulemap"),
-    #     "-fmodule-name=OmegaWTK",
-    #     "-Xclang",
-    #     "-emit-module-interface"
-    # ]
+    public_configs = [
+        ":external_media_libs_config"
+    ]
     sources = [
         "//include/OmegaWTK.h",
         "//include/omegaWTK/Main.h",
@@ -358,6 +358,12 @@ omega_wtk_static_lib("OmegaWTK"){
         ":omegaWTKMedia",
         ":omegaWTKComposition",
         ":omegaWTKUI"
+    ]
+    frameworks = [
+        "Cocoa.framework",
+        "QuartzCore.framework",
+        "Metal.framework",
+        "MetalPerformanceShaders.framework"
     ]
 }
 
