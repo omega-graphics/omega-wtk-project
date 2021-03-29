@@ -1,8 +1,8 @@
 #include "omegaWTK/Composition/ViewRenderTarget.h"
 
-#ifdef TARGET_MACOS
-#include "CocoaRenderTargetFrameScheduler.h"
-#endif
+//#ifdef TARGET_MACOS
+//#include "CocoaRenderTargetFrameScheduler.h"
+//#endif
 
 // #ifdef TARGET_WIN32
 // #include "WinRenderTargetFrameScheduler.h"

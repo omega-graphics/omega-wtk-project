@@ -9,7 +9,6 @@ add_omega_wtk_lib(
     "Compositor.cpp"
     "Color.cpp"
     "Layer.cpp"
-	"Text.cpp"
     "Visual.cpp"
     "Brush.cpp"
     "GeometricGraphicsPath.cpp"
@@ -31,12 +30,12 @@ add_omega_wtk_lib(
     "Compositor.h"
     "Color.h"
     "Layer.h"
-	"Text.h"
     "Visual.h"
     "Brush.h"
     "GeometricGraphicsPath.h"
     "LayerAnimation.h"
     "ViewRenderTarget.h"
+    "FontEngine.h"
     LINK_LIBS 
     "omegaWTKCore"
     "omegaWTKNative"
@@ -91,5 +90,5 @@ if(TARGET_MACOS)
     set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/mtl/OmegaWTKShaders.metal" PROPERTIES LANGUAGE METAL)
     target_link_libraries("omegaWTKComposition" PRIVATE ${Metal_LIB} ${MetalPerformanceShaders_LIB})
 
-    target_sources("omegaWTKComposition" PRIVATE ${COMPOSITION_MAC_SOURCES} "CocoaRenderTargetFrameScheduler.h" "CocoaRenderTargetFrameScheduler.mm")
+    target_sources("omegaWTKComposition" PRIVATE ${COMPOSITION_MAC_SOURCES} "CTFontEngine.mm")
 endif()

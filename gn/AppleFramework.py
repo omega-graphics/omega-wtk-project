@@ -15,15 +15,17 @@ framework_current_version_dir = args.framework + "/" + "Versions" + "/" + args.c
 if(args.check_links):
     sys.stdout.write("{}".format(os.path.exists(framework_main_dir + "/" + args.name) and os.path.exists(framework_main_dir + "/" + "Resources") and os.path.exists(framework_main_dir + "/" + "Versions" + "/" + "Current")))
 else:
-
-    # Generate Symbolic Link For Framework Lib..
-    if(os.path.exists(framework_main_dir + "/" + args.name) == False):
-        os.symlink(framework_current_version_dir + "/" + args.name,framework_main_dir + "/" + args.name)
-    # Generate Symbolic Link for Resources
-    if(os.path.exists(framework_main_dir + "/" + "Resources") == False):
-        os.symlink(framework_current_version_dir + "/" + "Resources",framework_main_dir + "/" + "Resources")
     # Generate Symbolic Link For Current Version
     if(os.path.exists(framework_main_dir + "/" + "Versions" + "/" + "Current") == False):
         os.symlink(framework_current_version_dir,framework_main_dir + "/" + "Versions" + "/" + "Current")
+    # Generate Symbolic Link For Framework Lib..
+    current_version = framework_main_dir + "/" + "Versions" + "/" + "Current"
+    if(os.path.exists(framework_main_dir + "/" + args.name) == False):
+        os.symlink(current_version + "/" + args.name,framework_main_dir + "/" + args.name)
+    # Generate Symbolic Link for Resources
+    if(os.path.exists(framework_main_dir + "/" + "Resources") == False):
+        os.symlink(current_version + "/" + "Resources",framework_main_dir + "/" + "Resources")
+    
+    
 
 

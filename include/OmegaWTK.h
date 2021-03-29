@@ -11,7 +11,7 @@
 #include "omegaWTK/Composition/LayerAnimation.h"
 #include "omegaWTK/Composition/Brush.h"
 #include "omegaWTK/Composition/GeometricGraphicsPath.h"
-#include "omegaWTK/Composition/Text.h"
+#include "omegaWTK/Composition/FontEngine.h"
 
 // UI Exports
 #include "omegaWTK/UI/Widget.h"

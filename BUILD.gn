@@ -5,6 +5,7 @@ declare_args(){
     vcpkg_installed_path = ""
     build_swift = false
     build_as_cxx_20_module = false
+    
 }
 
 if(vcpkg_installed_path == ""){
@@ -335,9 +336,9 @@ omega_wtk_static_lib("omegaWTKUI"){
 omega_wtk_shared_lib("OmegaWTK"){
     if(is_mac){
         framework = true
-        framework_version = "0.5"
+        framework_version = "A"
         framework_info_plist = "//lib/Info.plist"
-        framework_version_plist = "//lib/version.plist"
+        # framework_version_plist = "//lib/version.plist"
     }
     if(is_windows) {
         # arflags = [

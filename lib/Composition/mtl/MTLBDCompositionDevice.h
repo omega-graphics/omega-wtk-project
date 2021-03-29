@@ -61,7 +61,7 @@ public:
     MTLBDCompositionDevice();
     static Core::SharedPtr<BDCompositionDevice> Create();
     Core::SharedPtr<BDCompositionDeviceContext> createContext();
-    Core::SharedPtr<BDCompositionFontFactory> createFontFactory();
+//    Core::SharedPtr<BDCompositionFontFactory> createFontFactory();
 };
 
 /**

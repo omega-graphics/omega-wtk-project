@@ -3,6 +3,7 @@
 #include "MTLBDTriangulator.h"
 #include "MTLBDCompositionFontFactory.h"
 #include "MTLBDCompositionImage.h"
+#include "omegaWTK/Composition/FontEngine.h"
 
 #include "NativePrivate/macos/CocoaItem.h"
 #include "NativePrivate/macos/CocoaUtils.h"
@@ -43,7 +44,7 @@ namespace OmegaWTK::Composition {
         void frameRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush, unsigned width);
         void fillRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush);
         void fillRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush);
-        void drawText(Core::SharedPtr<BDCompositionFont> &font, Core::String &string, Core::Rect &textRect, Core::SharedPtr<Brush> &brush);
+        void drawText(Core::SharedPtr<TextRect> & textRect, Core::SharedPtr<Brush> &brush);
         Core::SharedPtr<BDCompositionImage> createImageFromBitmapImage(Core::SharedPtr<Media::BitmapImage> &img, Core::Rect &newSize, unsigned v_id);
         void drawImage(Core::SharedPtr<BDCompositionImage> &img, Core::Position pos);
         void drawImage(Core::SharedPtr<BDCompositionImage> &img, Core::FPosition pos);
@@ -166,95 +167,10 @@ void MTLBDCompositionRenderTarget<_Ty>::frameRoundedRect(Core::RoundedRect & rec
     /// TODO: Implement!
 };
 template<class _Ty>
-void MTLBDCompositionRenderTarget<_Ty>::drawText(Core::SharedPtr<BDCompositionFont> & font, Core::String & string, Core::Rect &textRect, Core::SharedPtr<Brush> & brush){
+void MTLBDCompositionRenderTarget<_Ty>::drawText(Core::SharedPtr<TextRect> & textRect,Core::SharedPtr<Brush> & brush){
     auto device = deviceContext->getParentDevice();
-    MTLBDCompositionFont *ct_font = (MTLBDCompositionFont *)font.get();
-    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     
-    /// Initalize Text with Settings!
-    [paragraphStyle setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
-    NSTextAlignment hAlignment;
-    NSTextBlockVerticalAlignment vAlignment;
-    switch (ct_font->omegawtkFont.textAlignment) {
-        case Text::Font::LeftUpper: {
-            hAlignment = NSTextAlignmentLeft;
-            vAlignment = NSTextBlockTopAlignment;
-            break;
-        }
-        case Text::Font::LeftCenter : {
-            hAlignment = NSTextAlignmentLeft;
-            vAlignment = NSTextBlockMiddleAlignment;
-            break;
-        };
-        case Text::Font::LeftLower : {
-            hAlignment = NSTextAlignmentLeft;
-            vAlignment = NSTextBlockBottomAlignment;
-            break;
-        };
-        case Text::Font::MiddleUpper: {
-            hAlignment = NSTextAlignmentCenter;
-            vAlignment = NSTextBlockTopAlignment;
-            break;
-        }
-        case Text::Font::MiddleCenter : {
-            hAlignment = NSTextAlignmentCenter;
-            vAlignment = NSTextBlockMiddleAlignment;
-            break;
-        };
-        case Text::Font::MiddleLower : {
-            hAlignment = NSTextAlignmentCenter;
-            vAlignment = NSTextBlockBottomAlignment;
-            break;
-        };
-        case Text::Font::RightUpper: {
-            hAlignment = NSTextAlignmentRight;
-            vAlignment = NSTextBlockTopAlignment;
-            break;
-        }
-        case Text::Font::RightCenter : {
-            hAlignment = NSTextAlignmentRight;
-            vAlignment = NSTextBlockMiddleAlignment;
-            break;
-        };
-        case Text::Font::RightLower : {
-            hAlignment = NSTextAlignmentRight;
-            vAlignment = NSTextBlockBottomAlignment;
-            break;
-        };
-        default:
-            break;
-    }
-    NSLineBreakMode lineBreakOpts;
-    switch (ct_font->omegawtkFont.wrapping) {
-        case Text::Font::WrapByWord : {
-            lineBreakOpts = NSLineBreakByWordWrapping;
-            break;
-        }
-        case Text::Font::WrapByCharacter : {
-            lineBreakOpts = NSLineBreakByCharWrapping;
-            break;
-        };
-        case Text::Font::None : {
-            lineBreakOpts = NSLineBreakByClipping;
-            break;
-        };
-        default:
-            break;
-    }
-    
-    [paragraphStyle setAlignment:hAlignment];
-    [paragraphStyle setLineBreakMode:lineBreakOpts];
-    for(NSTextBlock *textBlock in paragraphStyle.textBlocks){
-        [textBlock setVerticalAlignment:vAlignment];
-    };
-    
-    float scaleFactor = [NSScreen mainScreen].backingScaleFactor;
-    auto ftextRect = FRect(float(textRect.pos.x) * scaleFactor,float(textRect.pos.y) * scaleFactor,float(textRect.dimen.minWidth) * scaleFactor,float(textRect.dimen.minHeight) * scaleFactor);
-    
-    // Draw Text to CGBitmap!
-    
-    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)[[NSAttributedString alloc] initWithString:Native::Cocoa::core_string_to_ns_string(string) attributes:@{NSParagraphStyleAttributeName:paragraphStyle,NSFontAttributeName:(__bridge id)ct_font->font}]);
-    CTFrameRef ctFrame = CTFramesetterCreateFrame(framesetter,CFRangeMake(0,string.size()),CGPathCreateWithRect(CGRectMake(ftextRect.pos.x,ftextRect.pos.y, ftextRect.dimen.minWidth, ftextRect.dimen.minHeight),NULL),NULL);
+    auto ftextRect = FRect(textRect->rect.pos.x,textRect->rect.pos.y,textRect->rect.dimen.minWidth,textRect->rect.dimen.minHeight);
     
     typedef unsigned char Byte;
     void *data = new Byte[ftextRect.dimen.minWidth * ftextRect.dimen.minHeight * 4];
@@ -272,6 +188,7 @@ void MTLBDCompositionRenderTarget<_Ty>::drawText(Core::SharedPtr<BDCompositionFo
 //    CGContextSetShouldSmoothFonts(context,true);
 //    CGContextSetShouldSubpixelPositionFonts(context,true);
 //    CGContextSetShouldSubpixelQuantizeFonts(context,true);
+    CTFrameRef ctFrame = (CTFrameRef)textRect->getNative();
     CTFrameDraw(ctFrame,context);
     CGContextRelease(context);
     /// Triangulate Rect for Text!

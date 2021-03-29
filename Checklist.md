@@ -11,9 +11,11 @@
 - [x]  Implement Metal Backend
 - [ ]  JPEG/TIFF Implement
 - [x]  Layer Styles.
+- [ ]  Resizable Widgets
 - [ ]  Video Views.
 - [ ]  Scroll Views (Ones with Native Scroll Bars)
 - [x]  Windows
+- [ ]  Info Dialog/File Dialog
 - [ ]  Window/Menu Styles
 - [ ]  Camera Capture (For Songalong)
 - [ ]  Animation/Transtions.

@@ -1,6 +1,7 @@
 declare_args(){
     python_path = ""
     omega_wtk_include_dir = rebase_path("//include","../",".")
+    code_signature = ""
 }
 
 if(is_mac){
@@ -125,14 +126,14 @@ template("omega_wtk_shared_lib"){
     if(defined(invoker.framework) && invoker.framework == true){
         assert(defined(invoker.framework_version))
         assert(defined(invoker.framework_info_plist))
-        assert(defined(invoker.framework_version_plist))
+        # assert(defined(invoker.framework_version_plist))
         assert(is_mac)
         framework_name = target_name
 
         bundle_data("${framework_name}_plists"){
             sources = [
                 rebase_path(invoker.framework_info_plist),
-                rebase_path(invoker.framework_version_plist)
+                # rebase_path(invoker.framework_version_plist)
             ]
             outputs = [
                 "{{bundle_resources_dir}}/{{source_file_part}}"
@@ -166,12 +167,10 @@ template("omega_wtk_shared_lib"){
                "${invoker.framework_version}",
                "--check_links"],"string")
         
-        if(symlinks_exist == "True"){
-            lib_name = target_name + "_Final"
-        }
-        else {
-            lib_name = target_name
-        }
+       
+     
+        lib_name = target_name
+        
 
        shared_library(lib_name){
            ldflags = [
@@ -193,7 +192,7 @@ template("omega_wtk_shared_lib"){
         }
             
         if(symlinks_exist == "False") {
-            action("${framework_name}_Final"){
+            action("${framework_name}_Sym"){
                 script = rebase_path("//gn//AppleFramework.py")
                 args = [
                     "--framework",
@@ -211,11 +210,33 @@ template("omega_wtk_shared_lib"){
                 ]
             }
         }
+        action("${framework_name}_Final"){
+            script = rebase_path("//gn/codesign.py")
+            args = [
+                "--sig",
+                code_signature,
+                "--code",
+                rebase_path("$root_out_dir/Frameworks/${framework_name}.framework")
+            ]
+            if(symlinks_exist == "False") {
+                public_deps = [
+                    ":${framework_name}_Sym"
+                ]
+            }
+            else {
+                public_deps = [
+                    ":${framework_name}"
+                ]
+            }
+            outputs = [
+                "$root_out_dir/Frameworks/${framework_name}.framework/Versions/Current/_CodeSignature/CodeResources"
+            ]
+        }
     }
     else {
         shared_library(target_name){
             if(defined(invoker.framework)){
-                output_extension = ""
+                output_extension = "dylib"
             }
             output_name =  "//$out_dir/$target_name"
             forward_variables_from(invoker,["deps","public_deps","sources","include_dirs","defines"])
@@ -424,13 +445,15 @@ template("omega_wtk_test"){
     }
 
     executable(target_name){
-        forward_variables_from(invoker,"*")
+        forward_variables_from(invoker,["libs","include_dirs","output_name","sources","defines","deps","public_deps","frameworks","framework_dirs"])
         if(is_windows) {
             output_extension = "exe"
         }
         else if(is_mac){
             ldflags = [
-                "-execute"
+                "-execute",
+                "-rpath",
+                "@executable_path../Frameworks/OmegaWTK.framework"
             ]
         }
     }
@@ -495,12 +518,28 @@ template("omega_wtk_test"){
             sources = ["$out_dir/$app_name"]
             outputs = ["{{bundle_executable_dir}}/$app_name"]
         }
+        
         create_bundle("${target_name}.app"){
 
             bundle_root_dir = "$root_build_dir/tests/$target_name"
             bundle_contents_dir  = "$bundle_root_dir/Contents"
             bundle_resources_dir = "$bundle_contents_dir/Resources"
             bundle_executable_dir = "$bundle_contents_dir/MacOS"
+
+            code_signing_script = "//gn/codesign.py"
+            code_signing_sources = [
+                "$out_dir/$app_name"
+            ]
+            code_signing_outputs = [
+                # "$bundle_executable_dir/$app_name",
+                "$bundle_contents_dir/_CodeSignature"
+            ]
+            code_signing_args = [
+                "--sig",
+                code_signature,
+                "--code",
+                rebase_path("$root_out_dir/tests/$app_name.app")
+            ]
 
             xcode_extra_attributes = {
                 DEBUG_INFORMATION_FORMAT = "dwarf"
@@ -510,6 +549,7 @@ template("omega_wtk_test"){
                 ":${app_name}__metal_copy",
                 ":${app_name}__res_copy",
                 ":${app_name}__info_plist",
+                ":$app_name",
                 ":${app_name}_exec"
             ]
         }

@@ -7,7 +7,7 @@
 
 namespace OmegaWTK::Composition {
     Core::SharedPtr<BDCompositionDevice> global_device;
-    Core::SharedPtr<BDCompositionFontFactory> global_font_factory;
+//    Core::SharedPtr<BDCompositionFontFactory> global_font_factory;
     bool hasGlobalDevice = false;
 
     BackendImpl::BackendImpl(){
@@ -15,7 +15,7 @@ namespace OmegaWTK::Composition {
         if(!hasGlobalDevice){
             global_device = BDCompositionDevice::Create();
             hasGlobalDevice = true;
-            global_font_factory = global_device->createFontFactory();
+//            global_font_factory = global_device->createFontFactory();
         }
     };
     /**
@@ -60,11 +60,11 @@ namespace OmegaWTK::Composition {
         case Visual::Text : {
             Visual::TextParams *params = (Visual::TextParams *)visual->params;
             // if(updatePass){
-
+            target->drawText(params->textRect,params->brush);
             // }
             // else{
-            auto font = global_font_factory->createFont(params->text.getFont(),params->text.getFontSize());
-            target->drawText(font,params->text.getString(),params->rect,params->brush);
+//            auto font = global_font_factory->createFont(params->text.getFont(),params->text.getFontSize());
+//            target->drawText(font,params->text.getString(),params->rect,params->brush);
             // };
             break;
         };

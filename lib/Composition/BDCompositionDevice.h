@@ -10,7 +10,7 @@ class BDCompositionRenderTarget;
 class BDCompositionViewRenderTarget;
 class BDCompositionImage;
 class BDCompositionImageRenderTarget;
-class BDCompositionFontFactory;
+//class BDCompositionFontFactory;
 class BDCompositionVisualTree;
 
 class BDCompositionDeviceContext;
@@ -25,7 +25,7 @@ public:
     /**
      Creates a Font Factory
      */
-    virtual Core::SharedPtr<BDCompositionFontFactory> createFontFactory() = 0;
+//    virtual Core::SharedPtr<BDCompositionFontFactory> createFontFactory() = 0;
     virtual Core::SharedPtr<BDCompositionDeviceContext> createContext() = 0;
 };
 

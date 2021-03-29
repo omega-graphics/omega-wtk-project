@@ -218,9 +218,9 @@ Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionDeviceContext::m
     return MTLBDCompositionImageRenderTarget::Create(this,mtl_img->n_rect,target,desc);
 };
 
-Core::SharedPtr<BDCompositionFontFactory> MTLBDCompositionDevice::createFontFactory(){
-    return MTLBDCompositionFontFactory::Create();
-};
+//Core::SharedPtr<BDCompositionFontFactory> MTLBDCompositionDevice::createFontFactory(){
+//    return MTLBDCompositionFontFactory::Create();
+//};
 
 Core::SharedPtr<BDCompositionVisualTree> MTLBDCompositionDeviceContext::createVisualTree(){
     return MTLBDCALayerTree::Create(this);

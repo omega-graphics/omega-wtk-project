@@ -1,6 +1,7 @@
 #include "omegaWTK/UI/App.h"
 #include "omegaWTK/Native/NativeApp.h"
 #include "omegaWTK/UI/Menu.h"
+#include "omegaWTK/Composition/FontEngine.h"
 
 
 namespace OmegaWTK {
@@ -11,6 +12,7 @@ AppInst * AppInst::instance;
 
 AppInst::AppInst():ptr(Native::make_native_app()),windowManager(std::make_unique<AppWindowManager>()){
     instance = this;
+    Composition::FontEngine::Create();
 };
 
 void AppInst::terminate() {
@@ -24,6 +26,7 @@ void AppInst::terminate() {
 
 AppInst::~AppInst(){
     instance = nullptr;
+    Composition::FontEngine::Destroy();
 };
 
 };

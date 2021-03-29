@@ -3,8 +3,12 @@
 
 using namespace OmegaWTK;
 
+Core::SharedPtr<Composition::Font> global_font;
+
 class MyWidget : public Widget {
     bool selected = false;
+    SharedHandle<Composition::TextRect> textRect;
+    Core::String str;
     class MyRootDelegate : public ViewDelegate {
         bool * state;
         void onLeftMouseDown(Native::NativeEventPtr event) {
@@ -37,11 +41,10 @@ public:
     MyWidget(const Core::Rect & rect):Widget(rect,nullptr),delegate(new MyRootDelegate(&selected)){
         rootView->setDelegate(delegate);
         auto black = Composition::ColorBrush(Composition::Color::Black);
-        using namespace Composition;
         auto rootLayer = rootView->getLayerTreeLimb()->getRootLayer();
-        auto layerStyle = make<LayerStyle>();
+        auto layerStyle = make<Composition::LayerStyle>();
         // layerStyle->setBackgroundColor(Composition::Color::Blue);
-        layerStyle->add(VISUAL_RECT(Rect(0,0,300,300),ColorBrush(Composition::Color::Orange)));
+        layerStyle->add(VISUAL_RECT(OmegaWTK::Rect(0,0,300,300),ColorBrush(Composition::Color::Orange)));
 //        layerStyle->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(0,0,200,200),25,Composition::Text::Font("Arial",OmegaWTK::Composition::Text::Font::Regular)));
         // layerStyle->add(VISUAL_IMG(img,Rect(100,0,100,100)));
 //        rootLayer->setBackgroundColor(Composition::Color::Blue);
@@ -52,13 +55,15 @@ public:
         //        rootLayer->drawText("Hello World!",25,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,200,200));
         //        rootLayer->drawText("Hello World!",50,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,200));
         rootLayer->setStyle(layerStyle);
-        auto subLayer = makeLayer(Rect(0,0,200,200));
-        auto shadow = make<LayerEffect>(LAYER_EFFECT_DROPSHADOW(-5.0,-5.0,5,1.0,1.0,Composition::Color::Black));
+        auto subLayer = makeLayer(OmegaWTK::Rect(0,0,200,200));
+        auto shadow = make<Composition::LayerEffect>(LAYER_EFFECT_DROPSHADOW(-5.0,-5.0,5,1.0,1.0,Composition::Color::Black));
     //    auto blur = make<LayerEffect>(LAYER_EFFECT_DIRECTIONALBLUR(4.0,0.0));
-        auto _style2 = make<LayerStyle>();
-        _style2->setBackgroundColor({Color::White,0x00});
-       _style2->add(VISUAL_RECT(Rect(50,50,150,150),ColorBrush(Composition::Color::Green)));
-         _style2->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(50,50,150,150),20,Composition::Text::Font("Times New Roman",OmegaWTK::Composition::Text::Font::Regular)));
+        auto _style2 = make<Composition::LayerStyle>();
+        _style2->setBackgroundColor({Composition::Color::White,0x00});
+       _style2->add(VISUAL_RECT(OmegaWTK::Rect(50,50,150,150),ColorBrush(Composition::Color::Green)));
+//        str = "Hello World";
+//        textRect = Composition::TextRect::Create(str,global_font,OmegaWTK::Rect(50,50,100,100));
+//        _style2->add(VISUAL_TEXT(textRect,ColorBrush(Composition::Color::Black)));
         _style2->addEffect(shadow);
     //    _style2->addEffect(blur);
         subLayer->setStyle(_style2);
@@ -92,6 +97,8 @@ public:
 
 int omegaWTKMain(AppInst *app)
 {
+//    auto f_desc = Composition::FontDescriptor("Arial",20);
+//    global_font = Composition::FontEngine::instance->CreateFont(f_desc);
 #ifdef TARGET_MACOS
     auto appMenu = CategoricalMenu("RootWidgetTest",{new MenuItem("Here",false,nullptr)});
 #endif
@@ -109,7 +116,6 @@ int omegaWTKMain(AppInst *app)
     }));
 
     FSPath path = Core::String("./assets/test.png");
-    
     // auto r_rectFrame = Composition::RoundedRectFrame(FRoundedRect(200.f,200.f,100.f,75.f,20.f,20.f),5.f);
     
 //    Core::Math::VectorPath2D vectorPath ({0,0});
@@ -131,7 +137,7 @@ int omegaWTKMain(AppInst *app)
     widget->show();
 //    widget2->show();
  
-    auto mainWindow = make<AppWindow>(Rect(0,0,1000,1000),new MyWindowDelegate(app));
+    auto mainWindow = make<AppWindow>(OmegaWTK::Rect(0,0,1000,1000),new MyWindowDelegate(app));
     // 
     mainWindow->addWidget(widget);
    

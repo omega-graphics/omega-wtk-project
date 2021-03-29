@@ -6,16 +6,12 @@
 	<string></string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
-	<key>CFBundlePackageType</key>
-	<string>Application</string>
 	<key>CFBundleExecutable</key>
 	<string>MacOS/@APPNAME@</string>
 	<key>CFBundleName</key>
 	<string>@APPNAME@</string>
 	<!-- <key>CFBundleIconFile</key>
 	<string>$(ASSETCATALOG_COMPILER_APPICON_NAME)</string> -->
-	<key>CFBundleDevelopmentRegion</key>
-	<string>English</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleLongVersionString</key>

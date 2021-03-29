@@ -1,6 +1,6 @@
 #include "omegaWTK/Core/Core.h"
 #include "Color.h"
-#include "Text.h"
+#include "FontEngine.h"
 #include "Brush.h"
 #include "omegaWTK/Media/ImgCodec.h"
 
@@ -101,9 +101,8 @@ namespace OmegaWTK {
             Core::Optional<Border> border;
         } EllipseParams;
         typedef struct {
-            class Text text;
+            Core::SharedPtr<TextRect> textRect;
             Core::SharedPtr<Brush> brush;
-            Core::Rect rect;
         } TextParams;
         typedef struct {
             Core::SharedPtr<Media::BitmapImage> img;
@@ -114,7 +113,7 @@ namespace OmegaWTK {
         Visual(unsigned id,Type type,void * params):id(id),type(type),params(params){};
         void setColor(const Color & new_color);
         void setRect(const Core::Rect & bew_rect);
-        void setFont(const Text::Font & new_font);
+//        void setFont(const Text::Font & new_font);
         VPVR getColor();
         VPVR getRect();
         VPVR getFont();
@@ -128,7 +127,7 @@ namespace OmegaWTK {
 #define VISUAL_ROUNDED_RECT(rect,brush) __COMPOSITION__ Visual::RoundedRectParams({rect,rect.radius_x,rect.radius_y,brush,{}})
 #define VISUAL_ROUNDED_RECT_W_FRAME(rect,brush,border) __COMPOSITION__ Visual::RoundedRectParams({rect,rect.radius_x,rect.radius_y,brush,border})
     
-#define VISUAL_TEXT(string,brush,rect,size,font) __COMPOSITION__ Visual::TextParams({Text(string,size,font),brush,rect})
+#define VISUAL_TEXT(textRectRef,brush) __COMPOSITION__ Visual::TextParams({textRectRef,brush})
 #define VISUAL_IMG(img,rect) __COMPOSITION__ Visual::BitmapParams({img,rect})
     
 //#undef __COMPOSITION__
