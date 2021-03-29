@@ -5,6 +5,9 @@ How to Setup A Basic App
 
 .. code-block:: cpp
 
+
+    #include <OmegaWTK.h>
+
     int omegaWTKMain(OmegaWTK::AppInst *app){
         
         SharedHandle<AppWindow> window = make<AppWindow>(OmegaWTK::Rect(0,0,1000,1000));

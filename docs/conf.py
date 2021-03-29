@@ -1,6 +1,6 @@
 import sphinx
 import sphinx.theming
-
+import pygments.styles
 
 project = "OmegaWTK"
 
@@ -11,7 +11,8 @@ version = "0.6"
 
 extensions = ["sphinx.ext.viewcode"]
 
-html_theme = "nature"
+html_theme_path = ["_themes"]
+html_theme = "omegawtk"
 
 
 

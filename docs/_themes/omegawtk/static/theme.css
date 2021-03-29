@@ -1,0 +1,11 @@
+@font-face {
+    font-family: "Avenir";
+    src:url("./Avenir-Medium.otf")
+}
+
+body {
+    font-family: 'Avenir';
+    background-color: azure;
+    
+}
+
