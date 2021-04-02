@@ -35,7 +35,7 @@ void Widget::hide(){
     rootView->renderTarget->getNativePtr()->disable();
 };
 
-void Widget::addObserver(SharedHandle<WidgetObserver> &observer){
+void Widget::addObserver(WidgetObserver * observer){
     if(!observer->hasAssignment) {
         observers.push_back(observer);
         observer->hasAssignment = true;
@@ -45,7 +45,7 @@ void Widget::addObserver(SharedHandle<WidgetObserver> &observer){
 void Widget::removeObserver(WidgetObserver *observerPtr){
     auto it = observers.begin();
     while(it != observers.end()){
-        if(it->get() == observerPtr){
+        if(*it == observerPtr){
             observers.erase(it);
             observerPtr->hasAssignment = false;
             break;
@@ -54,7 +54,7 @@ void Widget::removeObserver(WidgetObserver *observerPtr){
     };
 };
 
-void Widget::notifyObservers(Widget::WidgetEventType event_ty){
+void Widget::notifyObservers(Widget::WidgetEventType event_ty,Core::Rect * rect){
     for(auto & observer : observers){
         switch (event_ty) {
             case Show : {
@@ -66,7 +66,7 @@ void Widget::notifyObservers(Widget::WidgetEventType event_ty){
                 break;
             };
             case Resize : {
-                observer->onWidgetChangeSize(rootView->rect);
+                observer->onWidgetChangeSize(*rect,rootView->rect);
                 break;
             }
         }

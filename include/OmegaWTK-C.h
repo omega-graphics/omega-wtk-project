@@ -49,6 +49,7 @@ typedef struct  __OmegaWTKCompLayerTree OmegaWTKCompLayerTree;
 typedef struct  __OmegaWTKCompLayerTreeLimb OmegaWTKCompLayerTreeLimb;
 typedef struct  __OmegaWTKCompBrush OmegaWTKCompBrush;
 typedef struct  __OmegaWTKCompColor OmegaWTKCompColor;
+typedef struct  __OmegaWTKCOmpGradient OmegaWTKCompGradient;
 typedef struct  __OmegaWTKCompFont OmegaWTKCompFont;
 
 ENUM : OPT_PARAM {
@@ -90,6 +91,11 @@ typedef OmegaWTKView OmegaWTKCanvasView;
 typedef struct  __OmegaWTKWidget OmegaWTKWidget;
 typedef struct __OmegaWTKWidgetObserver OmegaWTKWidgetObserver;
 
+/// OmegaWTK::Composition::Brush
+OmegaWTKCompBrush *omegawtk_color_brush(OmegaWTKCompColor *init_color);
+void omegawtk_color_brush_set_color(OmegaWTKCompBrush *brush,OmegaWTKCompColor *new_color);
+OmegaWTKCompBrush *omegawtk_gradient_brush(OmegaWTKCompGradient *init_gradient);
+void omegawtk_free_comp_brush(OmegaWTKCompBrush *brush);
 
 /// OmegaWTK::Composition::Layer
 OmegaWTKCompLayer *omegawtk_construct_layer(OmegaWTKWidget *widget,struct OmegaWTKRect rect);

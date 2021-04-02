@@ -44,14 +44,14 @@ protected:
     
 private:
     /// Observers
-    Core::Vector<SharedHandle<WidgetObserver>> observers;
+    Core::Vector<WidgetObserver *> observers;
 protected:
     typedef enum : OPT_PARAM {
         Resize,
         Show,
         Hide
     } WidgetEventType;
-    void notifyObservers(WidgetEventType eventType);
+    void notifyObservers(WidgetEventType eventType,Core::Rect * rect);
 private:
     friend class AppWindow;
     friend class AppWindowManager;
@@ -60,7 +60,7 @@ public:
     /**
      Add a WidgetObserver to be notified.
     */
-    void addObserver(SharedHandle<WidgetObserver> & observer);
+    void addObserver(WidgetObserver * observer);
     /**
      Remove a WidgetObserver from the list of observers currently listening.
     */
@@ -89,7 +89,7 @@ public:
     WidgetObserver();
     /// Implement in subclasses!
     /// Called when the Widget has changed size.
-    virtual void onWidgetChangeSize(Core::Rect & newRect){};
+    virtual void onWidgetChangeSize(Core::Rect oldRect,Core::Rect & newRect){};
     /// Called when the Widget has just been Hidden.
     virtual void onWidgetDidHide(){};
     /// Called when the Widget has just been Shown.
