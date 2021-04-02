@@ -57,7 +57,7 @@ namespace OmegaWTK::Composition {
         ~DXBDCompositionDevice();
         static Core::SharedPtr<BDCompositionDevice> Create();
         Core::SharedPtr<BDCompositionDeviceContext> createContext();
-        Core::SharedPtr<BDCompositionFontFactory> createFontFactory();
+        // Core::SharedPtr<BDCompositionFontFactory> createFontFactory();
     };
 
     class DXBDCompositionDeviceContext : public BDCompositionDeviceContext {

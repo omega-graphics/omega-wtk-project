@@ -2,6 +2,7 @@
 
 #ifdef TARGET_WIN32
 #include <dwrite.h>
+#undef CreateFont
 #pragma comment(lib,"dwrite.lib")
 #endif
 
@@ -81,13 +82,18 @@ public:
 };
 
 class FontEngine {
+#ifdef TARGET_WIN32
+    Core::UniqueComPtr<IDWriteFactory> dwrite_factory;
+    friend class DWriteTextRect;
+#endif
 public:
     Core::SharedPtr<Font> CreateFont(FontDescriptor & desc);
     static FontEngine * const instance;
+    FontEngine();
 private:
     friend class ::OmegaWTK::AppInst;
     static void Create(){
-        
+      
     };
     static void Destroy(){
         delete instance;

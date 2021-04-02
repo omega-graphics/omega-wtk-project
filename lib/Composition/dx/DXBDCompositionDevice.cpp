@@ -170,15 +170,15 @@ namespace OmegaWTK::Composition {
         };
         return DXBDCompositionImageRenderTarget::Create(device,dxImg->rect);
     };
-    Core::SharedPtr<BDCompositionFontFactory> DXBDCompositionDevice::createFontFactory(){
-        HRESULT hr;
-        IDWriteFactory *factory;
-        hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,__uuidof(IDWriteFactory),(IUnknown **)&factory);
-        if(FAILED(hr)){
+    // Core::SharedPtr<BDCompositionFontFactory> DXBDCompositionDevice::createFontFactory(){
+    //     HRESULT hr;
+    //     IDWriteFactory *factory;
+    //     hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,__uuidof(IDWriteFactory),(IUnknown **)&factory);
+    //     if(FAILED(hr)){
 
-        };
-        return DXBDCompositionFontFactory::Create(factory);
-    };
+    //     };
+    //     return DXBDCompositionFontFactory::Create(factory);
+    // };
     void DXBDCompositionDeviceContext::destroyTarget(Layer *layer, Core::SharedPtr<BDCompositionRenderTarget> &target){
 
     };

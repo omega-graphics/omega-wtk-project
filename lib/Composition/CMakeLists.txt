@@ -65,7 +65,7 @@ if(TARGET_WIN32)
     "DCVisualTree.h"
     "DCVisualTree.cpp")
     list(TRANSFORM COMPOSITION_WIN_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/dx/")
-    target_sources("omegaWTKComposition" PRIVATE ${COMPOSITION_WIN_SOURCES})
+    target_sources("omegaWTKComposition" PRIVATE ${COMPOSITION_WIN_SOURCES} "DWriteFontEngine.cpp")
 endif()
 
 if(TARGET_MACOS)

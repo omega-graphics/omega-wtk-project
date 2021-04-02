@@ -36,7 +36,7 @@ namespace OmegaWTK::Composition {
         virtual void fillRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush) = 0;
         virtual Core::SharedPtr<BDCompositionImage> createImageFromBitmapImage(Core::SharedPtr<Media::BitmapImage> &img,Core::Rect &newSize,unsigned v_id) = 0;
         virtual void drawImage(Core::SharedPtr<BDCompositionImage> &img,Core::Position pos) = 0;
-        virtual void drawText(Core::SharedPtr<BDCompositionFont> &font, Core::String &string, Core::Rect &textRect,Core::SharedPtr<Brush> & brush)= 0;
+         virtual void drawText(Core::SharedPtr<TextRect> & textRect,Core::SharedPtr<Brush> & brush) = 0;
         virtual void commit() = 0;
     };
 
@@ -62,10 +62,11 @@ namespace OmegaWTK::Composition {
          void fillRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush);
          Core::SharedPtr<BDCompositionImage> createImageFromBitmapImage(Core::SharedPtr<Media::BitmapImage> &img, Core::Rect &newSize, unsigned int v_id);
          void drawImage(Core::SharedPtr<BDCompositionImage> &img, Core::Position pos);
-         void drawText(Core::SharedPtr<BDCompositionFont> &font, Core::String &string, Core::Rect &textRect, Core::SharedPtr<Brush> &brush);
+        
         DXBDCompositionViewRenderTarget(DXBDCompositionDevice * device,Native::Win::HWNDItem *hwndItem);
         static Core::SharedPtr<BDCompositionViewRenderTarget> Create(DXBDCompositionDevice *device,Native::Win::HWNDItem *item);
         ~DXBDCompositionViewRenderTarget();
+        void drawText(Core::SharedPtr<TextRect> &textRect, Core::SharedPtr<Brush> &brush);
         void commit();
     };
     class DXBDCompositionImageRenderTarget : public IDXBDCompositionRenderTarget<BDCompositionImageRenderTarget> {
@@ -100,7 +101,7 @@ namespace OmegaWTK::Composition {
          void fillRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush);
          Core::SharedPtr<BDCompositionImage> createImageFromBitmapImage(Core::SharedPtr<Media::BitmapImage> &img, Core::Rect &newSize, unsigned int v_id);
          void drawImage(Core::SharedPtr<BDCompositionImage> &img, Core::Position pos);
-         void drawText(Core::SharedPtr<BDCompositionFont> &font, Core::String &string, Core::Rect &textRect, Core::SharedPtr<Brush> &brush);
+        void drawText(Core::SharedPtr<TextRect> &textRect, Core::SharedPtr<Brush> &brush);
         DXBDCompositionImageRenderTarget(DXBDCompositionDevice * device,Core::Rect & rect);
         static Core::SharedPtr<BDCompositionImageRenderTarget> Create(DXBDCompositionDevice *device,Core::Rect & rect);
         ~DXBDCompositionImageRenderTarget();

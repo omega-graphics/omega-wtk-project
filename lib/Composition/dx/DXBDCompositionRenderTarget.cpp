@@ -249,14 +249,15 @@ namespace OmegaWTK::Composition {
         auto & rect = compImg->rect;
         direct2d_device_context->DrawImage(img_ref,D2D1::Point2F(pos.x * scaleFactor,rc.bottom - (rect.dimen.minHeight * scaleFactor) - (pos.y * scaleFactor)));
     };
-    void DXBDCompositionViewRenderTarget::drawText(Core::SharedPtr<BDCompositionFont> &font, Core::String &string, Core::Rect &textRect,Core::SharedPtr<Brush> & brush){
-        DXBDCompositionFont *compFont = reinterpret_cast<DXBDCompositionFont *>(font.get());
-        std::wstring w_str;
-        cpp_str_to_cpp_wstr(string,w_str);
+    void DXBDCompositionViewRenderTarget::drawText(Core::SharedPtr<TextRect> &textRect, Core::SharedPtr<Brush> &brush){
         ID2D1Brush *_brush = omegawtk_brush_to_d2d1_brush(*brush,direct2d_device_context.get());
-        RECT rc = core_rect_to_win_rect(textRect,hwndItem->getHandle());
-        direct2d_device_context->DrawTextA(w_str.c_str(),w_str.size(),compFont->textFormat.get(),D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom),_brush);
-        Core::SafeRelease(&_brush);
+        IDWriteTextLayout *textLayout = (IDWriteTextLayout *)textRect->getNative();
+        FLOAT scaleFactor = FLOAT(dpi)/96.f;
+        RECT rc;
+        GetClientRect(hwndItem->getHandle(),&rc);
+        auto & pos = textRect->rect.pos;
+        auto & rect = textRect->rect;
+       direct2d_device_context->DrawTextLayout(D2D1::Point2F(pos.x * scaleFactor,rc.bottom - (rect.dimen.minHeight * scaleFactor) - (pos.y * scaleFactor)),textLayout,_brush);
     };
     
 
@@ -486,14 +487,14 @@ namespace OmegaWTK::Composition {
         auto & rect = compImg->rect;
         direct2d_device_context->DrawImage(img_ref,D2D1::Point2F(pos.x * scaleFactor,(parent_rc.dimen.minHeight * scaleFactor) - (rect.dimen.minHeight * scaleFactor) - (pos.y * scaleFactor)));
     };
-    void DXBDCompositionImageRenderTarget::drawText(Core::SharedPtr<BDCompositionFont> &font, Core::String &string, Core::Rect &textRect, Core::SharedPtr<Brush> &brush){
-        DXBDCompositionFont *compFont = reinterpret_cast<DXBDCompositionFont *>(font.get());
-        std::wstring w_str;
-        cpp_str_to_cpp_wstr(string,w_str);
+    void DXBDCompositionImageRenderTarget::drawText(Core::SharedPtr<TextRect> &textRect, Core::SharedPtr<Brush> &brush){
         ID2D1Brush *_brush = omegawtk_brush_to_d2d1_brush(*brush,direct2d_device_context.get());
-        RECT rc = core_rect_to_win_rect_from_parent_core_rect(textRect,dpi,this->rect);
-        direct2d_device_context->DrawTextA(w_str.c_str(),w_str.size(),compFont->textFormat.get(),D2D1::RectF(rc.left,rc.top,rc.right,rc.bottom),_brush);
-        Core::SafeRelease(&_brush);
+        IDWriteTextLayout *textLayout = (IDWriteTextLayout *)textRect->getNative();
+        FLOAT scaleFactor = FLOAT(dpi)/96.f;
+         Core::Rect &parent_rc = this->rect;
+        auto & pos = textRect->rect.pos;
+        auto & rect = textRect->rect;
+        direct2d_device_context->DrawTextLayout(D2D1::Point2F(pos.x * scaleFactor,(parent_rc.dimen.minHeight * scaleFactor) - (rect.dimen.minHeight * scaleFactor) - (pos.y * scaleFactor)),textLayout,_brush);
     };
 
     void DXBDCompositionImageRenderTarget::applyEffect(LayerEffect *effect){
