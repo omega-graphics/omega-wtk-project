@@ -21,7 +21,7 @@ namespace OmegaWTK::Composition {
 
 class Font;
 
-class TextRect {
+class OMEGAWTK_EXPORT  TextRect {
 protected:
     Core::String text_val;
     Core::SharedPtr<Font> font;
@@ -40,7 +40,7 @@ protected:
     TextRect(Core::String & _val,Core::SharedPtr<Font> & font,Core::Rect & rect):text_val(_val),rect(rect),font(font){};
 };
 
-struct FontDescriptor {
+struct OMEGAWTK_EXPORT  FontDescriptor {
     typedef enum : OPT_PARAM {
         Regular,
         Italic,
@@ -73,7 +73,7 @@ struct FontDescriptor {
 };
 
 
-class Font {
+class OMEGAWTK_EXPORT  Font {
 public:
     FontDescriptor desc;
     Font(FontDescriptor & desc):desc(desc){};
@@ -81,7 +81,7 @@ public:
 //    virtual void getBoundingBoxesFromTextBox(TextRect &textRect) = 0;
 };
 
-class FontEngine {
+class OMEGAWTK_EXPORT  FontEngine {
 #ifdef TARGET_WIN32
     Core::UniqueComPtr<IDWriteFactory> dwrite_factory;
     friend class DWriteTextRect;

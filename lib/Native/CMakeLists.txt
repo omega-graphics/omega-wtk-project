@@ -33,7 +33,9 @@ if(TARGET_WIN32)
     "WinAppWindow.h" 
     "WinAppWindow.cpp" 
     "WinApp.h" 
-    "WinApp.cpp")
+    "WinApp.cpp"
+    "WinDialog.h"
+    "WinDialog.cpp")
 
     list(TRANSFORM NATIVE_WIN_HEADERS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/private_include/NativePrivate/win/")
     list(TRANSFORM NATIVE_WIN_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/win/")

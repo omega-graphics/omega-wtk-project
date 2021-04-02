@@ -11,6 +11,7 @@ namespace OmegaWTK::Native {
             public:
             HWND hwnd;
             bool enabled = false;
+            bool isScrollView;
             protected:
             Core::Vector<HWND> raw_children;
             Core::Vector<NativeItemPtr> children;
@@ -32,6 +33,10 @@ namespace OmegaWTK::Native {
             };
             void addChildNativeItem(NativeItemPtr nativeItem);
             void removeChildNativeItem(NativeItemPtr nativeItem);
+            /**
+            Constructs a null HWNDItem! (Sets the Core::Rect only)
+            */
+            HWNDItem(Core::Rect & rect);
             public:
             Core::Rect wndrect;
             ATOM getAtom();
@@ -45,17 +50,14 @@ namespace OmegaWTK::Native {
             RECT getClientRect();
             HDC getDCFromHWND();
             void *getBinding(){ return (void *)hwnd;};
+            void setClippedView(NativeItem *clippedView);
             typedef enum : OPT_PARAM {
                 View,
-                PushButton,
+                ScrollView
             } Type;
             private:
             Type type;
             public:
-            /**
-            Constructs a null HWNDItem! (Sets the Core::Rect only)
-            */
-            HWNDItem(Core::Rect & rect);
              /**
             Constructs/Registers an HWND and returns an HWNDItem!
             */

@@ -83,7 +83,7 @@ namespace OmegaWTK::Composition {
         // MessageBoxA(HWND_DESKTOP,"Cleared the Screen","NOTE",MB_OK);
         auto __visual_it = rootLayer->style->visuals.begin();
         while(__visual_it != rootLayer->style->visuals.end()){
-            drawVisual(rootImgTarget.get(),__visual_it->get(),false);
+            drawVisual(rootImgTarget.get(),*__visual_it,false);
             ++__visual_it;
         };
     #if !defined(TARGET_WIN32)
@@ -121,7 +121,7 @@ namespace OmegaWTK::Composition {
                  imgTarget->clear(layer->style->background);
                  auto __visual_it = layer->style->visuals.begin();
                  while(__visual_it != layer->style->visuals.end()){
-                     drawVisual(imgTarget.get(),__visual_it->get(),false);
+                     drawVisual(imgTarget.get(),*__visual_it,false);
                      ++__visual_it;
                  };
         #if !defined(TARGET_WIN32)

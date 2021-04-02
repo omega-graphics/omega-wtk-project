@@ -17,7 +17,7 @@ class WidgetObserver;
  Can be attached either directly to an AppWindow or as a child of another Widget.
  @see AppWindow
 */
-OMEGAWTK_EXPORT class Widget {
+class OMEGAWTK_EXPORT  Widget {
 protected:
     SharedHandle<CanvasView> rootView;
     SharedHandle<Widget> parent;
@@ -80,7 +80,7 @@ public:
 };
 
 /// Similar to a Widget Delegate but a Widget can have more than one.
-class WidgetObserver {
+class OMEGAWTK_EXPORT  WidgetObserver {
     friend class Widget;
     bool hasAssignment;
 protected:

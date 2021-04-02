@@ -4,7 +4,7 @@
 #define OMEGAWTK_UI_TEXTINPUT_H
 
 namespace OmegaWTK::UI {
-    class TextInput : public Widget {
+    class OMEGAWTK_EXPORT  TextInput : public Widget {
         Core::String textStr;
         Core::String placeholder;
     public:

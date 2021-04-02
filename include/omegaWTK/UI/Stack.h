@@ -14,7 +14,7 @@ namespace OmegaWTK::UI {
     typedef StackItemObserver<VStack> VStackItemObserver;
 
 
-    class VStack : public Widget {
+    class OMEGAWTK_EXPORT  VStack : public Widget {
         Core::Vector<SharedHandle<Widget>> childWidgets;
         friend class StackItemObserver<VStack>;
         struct ObserverPair {
@@ -27,7 +27,7 @@ namespace OmegaWTK::UI {
         void removeChildAtIndex(unsigned idx);
     };
 
-    class HStack : public Widget {
+    class OMEGAWTK_EXPORT  HStack : public Widget {
         Core::Vector<SharedHandle<Widget>> childWidgets;
         friend class StackItemObserver<HStack>;
         struct ObserverPair {

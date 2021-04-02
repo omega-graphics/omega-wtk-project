@@ -107,7 +107,7 @@ namespace OmegaWTK::Composition {
     };
 
     template<typename _Val_Ty,typename _Time_Ty>
-    class LayerAnimation_Impl : public LayerAnimation_Base<_Val_Ty,_Time_Ty> {
+    class OMEGAWTK_EXPORT  LayerAnimation_Impl : public LayerAnimation_Base<_Val_Ty,_Time_Ty> {
         typedef LayerAnimation_Base<_Val_Ty,_Time_Ty> PARENT;
         Core::Vector<typename PARENT::Segment> segments;
     public:
@@ -127,7 +127,7 @@ namespace OmegaWTK::Composition {
     };
 
     template<typename _Val_Ty,typename _Time_Ty>
-    class LayerTransition_Impl : public LayerAnimation_Base<_Val_Ty,_Time_Ty> {
+    class OMEGAWTK_EXPORT  LayerTransition_Impl : public LayerAnimation_Base<_Val_Ty,_Time_Ty> {
         typedef LayerAnimation_Base<_Val_Ty,_Time_Ty> PARENT;
         typename PARENT::Segment segment;
     public:
@@ -151,7 +151,7 @@ namespace OmegaWTK::Composition {
     typedef LayerTransition_Impl<float,float> LayerTransition;
     
 
-    class LayerAnimationController {
+    class OMEGAWTK_EXPORT  LayerAnimationController {
         Core::SharedPtr<LayerAnimationTy> anim = nullptr;
         friend class ViewRenderTargetFrameScheduler;
         friend class ::OmegaWTK::ViewAnimator;
@@ -167,7 +167,7 @@ namespace OmegaWTK::Composition {
         LayerAnimationController();
     };
     
-    class LayerAnimationGroupController : public LayerAnimationController {
+    class OMEGAWTK_EXPORT  LayerAnimationGroupController : public LayerAnimationController {
         Core::Vector<Core::SharedPtr<LayerAnimationTy>> anims;
     public:
         /**

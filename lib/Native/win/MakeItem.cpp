@@ -6,6 +6,9 @@ namespace OmegaWTK::Native::Win {
         HWNDItem::Type win_type = HWNDItem::View;
         if(type == Native::Default){
             win_type = HWNDItem::View;
+        }
+        else if(type == Native::ScrollItem){
+            win_type = HWNDItem::ScrollView;
         };
         return new HWNDItem(rect,win_type,(HWNDItem *)parent);
     };

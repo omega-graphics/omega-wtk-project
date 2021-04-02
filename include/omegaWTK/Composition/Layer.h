@@ -122,7 +122,7 @@ class View;
     /**
      A singular surface
      */
-    class WindowLayer {
+    class OMEGAWTK_EXPORT  WindowLayer {
         Native::NWH native_window_ptr;
         Core::Rect & rect;
         SharedHandle<WindowStyle> style;

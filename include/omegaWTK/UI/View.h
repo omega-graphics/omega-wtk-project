@@ -17,12 +17,13 @@ namespace OmegaWTK {
     class AppInst;
     class ViewAnimator;
     class ViewDelegate;
+    class ScrollView;
     /**
         @brief Controls all the basic functionality of a Widget!
         Sometimes referred to as the CanvasView.
         @relates Widget
-     */
-OMEGAWTK_EXPORT class View: public Native::NativeEventEmitter {
+     */ 
+    class OMEGAWTK_EXPORT View : public Native::NativeEventEmitter {
         Core::Vector<SharedHandle<View>> subviews;
     protected:
         SharedHandle<Composition::ViewRenderTarget> renderTarget;
@@ -32,17 +33,38 @@ OMEGAWTK_EXPORT class View: public Native::NativeEventEmitter {
         View * parent_ptr;
         Core::Rect rect;
         ViewDelegate *delegate = nullptr;
-        bool hasDelegate();
+        virtual bool hasDelegate();
         void addSubView(View *view);
         void removeSubView(View * view);
         friend class AppWindow;
         SharedHandle<Composition::LayerTree::Limb> layerTreeLimb;
         friend class ViewAnimator;
+        friend class ScrollView;
         Composition::Compositor *getWidgetCompositor();
+    protected:
+        /**
+            Constructs a View using a Rect param; (With NO Layers!!)
+            NOTE:
+            This Constructed is only called when making a VideoView
+            In other words, the View that is returned has NO layers will be completlty blank.
+            @param rect The Rect to use
+            @returns A View!
+         */
+        View(const Core::Rect & rect,View *parent);
+        /**
+            Constructs a View using a Rect param and a NativeItem; (With NO Layers!!)
+            NOTE:
+            This Constructed is only called when making a ScrollView.
+            In other words, the View that is returned has NO layers will be completlty blank.
+            @param rect The Rect to use
+            @returns A View!
+         */
+        View(const Core::Rect & rect,Native::NativeItemPtr nativeItem,View *parent);
     public:
+        Core::Rect & getRect(){ return rect;};
         Composition::LayerTree::Limb * getLayerTreeLimb(){ return layerTreeLimb.get();};
         bool isRootView(){return parent_ptr == nullptr;};
-        void setDelegate(ViewDelegate *_delegate);
+        virtual void setDelegate(ViewDelegate *_delegate);
         /**
             Constructs a View using a Rect param and constructs a LayerTree::Limb to be used on the layerTree;
             @param rect The Rect to use
@@ -50,15 +72,6 @@ OMEGAWTK_EXPORT class View: public Native::NativeEventEmitter {
             @returns A View!
          */
         View(const Core::Rect & rect,Composition::LayerTree *layerTree,View *parent = nullptr);
-        /**
-            Constructs a View using a Rect param; (With NO Layers!!)
-            NOTE:
-            This Constructed is only called when making a ScrollView or a VideoView
-            In other words, the View that is returned has NO layers will be completlty blank.
-            @param rect The Rect to use
-            @returns A View!
-         */
-        View(const Core::Rect & rect,View *parent = nullptr);
         ~View();
     };
 
@@ -68,7 +81,7 @@ OMEGAWTK_EXPORT class View: public Native::NativeEventEmitter {
     /**
         @brief The Root View delegate class!
      */
-OMEGAWTK_EXPORT class ViewDelegate : public Native::NativeEventProcessor {
+    class OMEGAWTK_EXPORT ViewDelegate : public Native::NativeEventProcessor {
         void onRecieveEvent(Native::NativeEventPtr event);
         friend class View;
         protected:
@@ -119,6 +132,35 @@ OMEGAWTK_EXPORT class ViewDelegate : public Native::NativeEventProcessor {
         ViewDelegate();
         ~ViewDelegate();
     };
+    
+    class ScrollViewDelegate;
+
+    class OMEGAWTK_EXPORT ScrollView : public View {
+        SharedHandle<View> child;
+        Core::Rect * childViewRect;
+        ScrollViewDelegate *delegate = nullptr;
+        bool hasDelegate();
+    public:
+        void setDelegate(ViewDelegate *_delegate);
+        /**
+            @param rect The Rect to use
+            @returns A ScrollView!
+         */
+        ScrollView(const Core::Rect & rect,SharedHandle<View> child,View *parent = nullptr);
+    };
+
+    class OMEGAWTK_EXPORT ScrollViewDelegate : public Native::NativeEventProcessor {
+        void onRecieveEvent(Native::NativeEventPtr event);
+        friend class ScrollView;
+    protected:
+        ScrollView *scrollView;
+
+        virtual void onScrollLeft(){};
+        virtual void onScrollRight(){};
+        virtual void onScrollDown(){};
+        virtual void onScrollUp(){};
+    };
+
 };
 
 #endif

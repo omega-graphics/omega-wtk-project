@@ -9,7 +9,7 @@ namespace OmegaWTK {
 
 class Menu;
 
-OMEGAWTK_EXPORT class MenuItem {
+class OMEGAWTK_EXPORT  MenuItem {
     Core::String name;
     Native::NMI native;
     Menu * subMenu;
@@ -33,8 +33,8 @@ public:
 };
 
 class MenuDelegate;
-
-OMEGAWTK_EXPORT class  Menu {
+ 
+ class OMEGAWTK_EXPORT  Menu {
     Core::String name;
     Core::Vector<MenuItem *> menuItems;
     Native::NM native;
@@ -48,7 +48,7 @@ public:
 //    ~Menu();
 };
 
-OMEGAWTK_EXPORT class  MenuDelegate : public Native::NativeMenuDelegate {
+class OMEGAWTK_EXPORT   MenuDelegate : public Native::NativeMenuDelegate {
 protected:
     Menu *menu;
     friend class Menu;
@@ -77,7 +77,7 @@ OMEGAWTK_EXPORT MenuItem *MenuItemSeperator();
 #ifdef TARGET_WIN32 
 #ifdef WINDOWS_PRIVATE
 
-void select_item_on_win_menu(void * win_menu,unsigned idx);
+OMEGAWTK_EXPORT void select_item_on_win_menu(void * win_menu,unsigned idx);
 
 #endif 
 #endif

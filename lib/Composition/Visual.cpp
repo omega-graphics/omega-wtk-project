@@ -70,7 +70,7 @@ void LayerStyle::add(Visual::TextParams params){
 };
 
 void LayerStyle::setBrush(unsigned id,const Core::SharedPtr<Brush> & new_brush){
-    auto visual = visuals[id].get();
+    auto visual = visuals[id];
     switch (visual->type) {
         case Visual::Rect :{
             Visual::RectParams *params = (Visual::RectParams *)visual->params;
@@ -84,6 +84,22 @@ void LayerStyle::setBrush(unsigned id,const Core::SharedPtr<Brush> & new_brush){
 
 void LayerStyle::addEffect(SharedHandle<LayerEffect> & effect){
     effects.push_back(effect);
+};
+
+LayerStyle::~LayerStyle(){
+    auto visual_it = visuals.begin();
+    while(visual_it != visuals.end()){
+        delete *visual_it;
+        ++visual_it;
+    };
+};
+
+WindowStyle::~WindowStyle(){
+    auto visual_it = visuals.begin();
+    while(visual_it != visuals.end()){
+        delete *visual_it;
+        ++visual_it;
+    };
 };
 
 }

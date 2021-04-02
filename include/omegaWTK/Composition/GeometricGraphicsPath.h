@@ -5,7 +5,7 @@
 #define OMEGAWTK_COMPOSITION_GEOMETRICGRAPHICSPATH_H
 
 namespace OmegaWTK::Composition {
-class GeometricGraphicsPath {
+class OMEGAWTK_EXPORT  GeometricGraphicsPath {
     Core::Math::VectorPath2D path_a;
     Core::Math::VectorPath2D path_b;
 public:

@@ -24,14 +24,14 @@ namespace OmegaWTK {
             
     };
 
-    struct Border {
+    struct OMEGAWTK_EXPORT  Border {
         Core::SharedPtr<Brush> brush;
         unsigned width;
         Border() = delete;
         Border(Core::SharedPtr<Brush> & _brush,unsigned _width):brush(_brush),width(_width){};
     };
     
-    struct LayerEffect {
+    struct OMEGAWTK_EXPORT  LayerEffect {
         typedef enum : OPT_PARAM {
             DropShadow,
             Translation,
@@ -71,7 +71,7 @@ namespace OmegaWTK {
 #define LAYER_EFFECT_DIRECTIONALBLUR(radius,angle) __LAYER_EFFECT ({__LAYER_EFFECT::DirectionalBlur,new __LAYER_EFFECT::DirectionalBlurParams({radius,angle})})
     
     /// An object drawn by a Compositor.
-    struct Visual {
+    struct OMEGAWTK_EXPORT  Visual {
         unsigned id;
         typedef enum : OPT_PARAM {
             Rect,
@@ -133,13 +133,13 @@ namespace OmegaWTK {
 //#undef __COMPOSITION__
     class BackendImpl;
     
-    class LayerStyle {
-        Core::Vector<Core::UniquePtr<Visual>> visuals;
+    class OMEGAWTK_EXPORT  LayerStyle {
+        Core::Vector<Visual *> visuals;
         Core::Vector<SharedHandle<LayerEffect>> effects;
         Color background = Color(Color::White);
         template<class _Ty>
         void _construct_visual(Visual::Type type,_Ty & params){
-            visuals.push_back(std::make_unique<Visual>(visuals.size(),type,(void *)new _Ty(params)));
+            visuals.push_back(new Visual(visuals.size(),type,(void *)new _Ty(params)));
         };
         friend class BackendImpl;
     public:
@@ -170,15 +170,16 @@ namespace OmegaWTK {
         void setBrush(unsigned id,const Core::SharedPtr<Brush> & new_brush);
         void setBackgroundColor(const Color & color){ background = color;};
         void addEffect(SharedHandle<LayerEffect> & effect);
+        ~LayerStyle();
     };
     
-    class WindowStyle {
-        Core::Vector<Core::UniquePtr<Visual>> visuals;
+    class OMEGAWTK_EXPORT  WindowStyle {
+        Core::Vector<Visual *> visuals;
     public:
-        
+        ~WindowStyle();
     };
     
-    class MenuStyle {
+    class OMEGAWTK_EXPORT  MenuStyle {
         
     };
     

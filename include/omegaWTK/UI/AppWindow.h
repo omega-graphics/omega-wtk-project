@@ -19,7 +19,7 @@ class AppWindow;
 class AppWindowManager;
 
     class AppWindowDelegate;
-OMEGAWTK_EXPORT class AppWindow : public Native::NativeEventEmitter {
+ class OMEGAWTK_EXPORT AppWindow : public Native::NativeEventEmitter {
         UniqueHandle<Composition::WindowLayer> layer;
         Composition::Compositor * compositor;
         SharedHandle<AppWindowDelegate> delegate;
@@ -44,7 +44,7 @@ OMEGAWTK_EXPORT class AppWindow : public Native::NativeEventEmitter {
         AppWindow(Core::Rect rect,AppWindowDelegate * delegate = nullptr);
     };
 
-OMEGAWTK_EXPORT class  AppWindowManager {
+ class OMEGAWTK_EXPORT  AppWindowManager {
         SharedHandle<AppWindow> rootWindow;
         public:
         AppWindowManager();
@@ -53,7 +53,7 @@ OMEGAWTK_EXPORT class  AppWindowManager {
     };
     
 
-OMEGAWTK_EXPORT class  AppWindowDelegate : public Native::NativeEventProcessor {
+class OMEGAWTK_EXPORT   AppWindowDelegate : public Native::NativeEventProcessor {
     private:
         void onRecieveEvent(Native::NativeEventPtr event);
         friend class AppWindow;

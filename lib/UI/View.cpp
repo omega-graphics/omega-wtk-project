@@ -47,6 +47,12 @@ namespace OmegaWTK {
         };
     };
 
+View::View(const Core::Rect & rect,Native::NativeItemPtr nativeItem,View *parent):rect(rect),widgetLayerTree(nullptr),renderTarget(std::make_unique<Composition::ViewRenderTarget>(nativeItem)),parent_ptr(parent){
+    if(parent_ptr) {
+        parent->addSubView(this);
+    };
+};
+
 View::~View(){
     std::cout << "View will destruct" << std::endl;
 };
@@ -104,6 +110,27 @@ void ViewDelegate::onRecieveEvent(Native::NativeEventPtr event){
     }
     /// Garbage Collect!
     delete event;
+};
+
+ScrollView::ScrollView(const Core::Rect & rect,SharedHandle<View> child,View *parent):View(rect,Native::make_native_item(rect,Native::Default),parent),delegate(nullptr){
+    Native::set_native_item_event_emitter(renderTarget->getNativePtr(),this);
+    renderTarget->getNativePtr()->setClippedView(child->renderTarget->getNativePtr());
+};
+
+bool ScrollView::hasDelegate(){
+    return delegate != nullptr;
+};
+
+void ScrollView::setDelegate(ViewDelegate *_delegate){
+    ScrollViewDelegate *d = (ScrollViewDelegate *)_delegate;
+
+    delegate = d;
+    delegate->scrollView = this;
+    setReciever(delegate);
+};
+
+void ScrollViewDelegate::onRecieveEvent(Native::NativeEventPtr event){
+    
 };
 
 

@@ -37,6 +37,9 @@ function(add_omega_wtk_app)
 
     if(TARGET_WIN32)
         add_executable(${_ARG_NAME} WIN32 ${_ARG_SOURCES})
+        add_custom_command(TARGET ${_ARG_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy ${OMEGAWTK_MAIN_LIB} ${CMAKE_CURRENT_BINARY_DIR}/OmegaWTK.dll)
+        message("COMMAND:${CMAKE_COMMAND} -E copy ${OMEGAWTK_MAIN_LIB} ${CMAKE_CURRENT_BINARY_DIR}/OmegaWTK.dll")
         set(OMEGAWTK_WINDOWS_UTILS_DIR  ${OMEGAWTK_TARGET_UTILS_DIR}/windows)
         set(WINDOWS_UTIL_FILES "${CMAKE_CURRENT_BINARY_DIR}/${_ARG_NAME}.rc" "${CMAKE_CURRENT_BINARY_DIR}/targetver.h" "${CMAKE_CURRENT_BINARY_DIR}/resource.h" "${CMAKE_CURRENT_BINARY_DIR}/mmain.cpp" "${CMAKE_CURRENT_BINARY_DIR}/${_ARG_NAME}.exe.manifest")
         set(APPNAME ${_ARG_NAME})
@@ -78,9 +81,8 @@ function(add_omega_wtk_app)
 			XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME ${MAC_ICON}
         )
         set(_ARG_LINK_LIBS ${_ARG_LINK_LIBS} ${Cocoa_LIB})
-        add_custom_target(metal-copy DEPENDS ${_ARG_NAME})
         add_custom_command(
-            TARGET "metal-copy" POST_BUILD
+            TARGET ${_ARG_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy ${METAL_LIB} $<TARGET_BUNDLE_DIR:$<TARGET_NAME_IF_EXISTS:${_ARG_NAME}>>/Contents/Resources/default.metallib)
         
     endif()

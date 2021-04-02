@@ -28,6 +28,10 @@ namespace OmegaWTK {
             virtual void *getBinding() = 0;
             virtual void enable() = 0;
             virtual void disable() = 0;
+            /**
+             This Method may only be invoked if NativeItem is a ScrollView
+            */
+            virtual void setClippedView(NativeItem * clippedView) = 0;
             NativeItem();
             // ~NativeItem();
         };
@@ -35,8 +39,7 @@ namespace OmegaWTK {
         
         typedef enum : OPT_PARAM {
             Default,
-//            PushButton,
-//            TextInput
+            ScrollItem
         }ItemType;
 
         /// Makes Native Item (If `parent` arg is nullptr, the native_item will be attached as a child to the root HWND or NSView *)

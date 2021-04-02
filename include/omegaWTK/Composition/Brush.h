@@ -5,7 +5,7 @@
 
 namespace OmegaWTK::Composition {
 
-    struct Brush {
+    struct OMEGAWTK_EXPORT  Brush {
         bool isColor;
         Color color;
         bool isGradient;

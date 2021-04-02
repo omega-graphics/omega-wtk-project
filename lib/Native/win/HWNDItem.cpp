@@ -11,6 +11,14 @@ namespace OmegaWTK::Native::Win {
     HWNDItem::HWNDItem(Core::Rect & rect,Type type,HWNDItem *parent):wndrect(rect){
         std::cout << "Registering Window!" << std::endl;
         atom = HWNDFactory::appFactoryInst->registerWindow();
+        DWORD extra_window_style = 0;
+        if(type == ScrollView){
+            isScrollView = true;
+            // extra_window_style = WS_HSCROLL | WS_VSCROLL;
+        }
+        else {
+            isScrollView = false;
+        };
         if(!atom)
         {
             // MessageBox(HWND_DESKTOP,"Failed to Register HWNDItem Window!",NULL,MB_OKCANCEL);
@@ -19,9 +27,9 @@ namespace OmegaWTK::Native::Win {
             // MessageBoxA(HWND_DESKTOP,"Registered HWNDItem Window!","NOTE",MB_OK);
         };
         if(parent)
-            HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD,(void *)this,parent->hwnd,WS_EX_LAYERED);
+            HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD | extra_window_style,(void *)this,parent->hwnd,WS_EX_LAYERED);
         else 
-            HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD,(void *)this,nullptr,WS_EX_LAYERED);
+            HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD | extra_window_style,(void *)this,nullptr,WS_EX_LAYERED);
 
         if(hwnd == NULL){
             // MessageBoxA(HWND_DESKTOP,"Failed to Create HWNDItem Window!","NOTE",MB_OK);
@@ -30,6 +38,13 @@ namespace OmegaWTK::Native::Win {
         isTracking = false;
         hovered = false;
     };
+    void HWNDItem::setClippedView(NativeItem *clippedView){
+        if(isScrollView) {
+            HWNDItem *child = (HWNDItem *)clippedView;
+            SetParent(child->hwnd,this->hwnd);
+        };
+    };
+
     LRESULT HWNDItem::ProcessWndMsg(UINT u_int,WPARAM wParam,LPARAM lParam){
         LRESULT result = 0;
         if(u_int == WM_NCDESTROY){
