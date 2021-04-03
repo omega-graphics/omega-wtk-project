@@ -83,7 +83,7 @@ template("omega_wtk_static_lib"){
         ]
     }
 
-    invoker.output_name = "../lib/" + target_name
+    invoker.output_dir = "$root_out_dir/libs"
     
     source_set(target_name){
         forward_variables_from(invoker,"*")
@@ -161,6 +161,10 @@ template("omega_wtk_shared_lib"){
         shared_library(framework_name){
            ldflags = [
                "-dylib",
+               "-Xlinker",
+               "-install_name",
+               "-Xlinker",
+               "@rpath/${framework_name}.framework/Versions/${invoker.framework_version}/${framework_name}"
             #    "-force_load",
             #    rebase_path("$out_dir/omegaWTKCore.a"),
             #    "-force_load",
@@ -173,7 +177,7 @@ template("omega_wtk_shared_lib"){
             #     rebase_path("$out_dir/omegaWTKUI.a"),
            ]
             output_extension = ""
-            output_name = "in/${framework_name}"
+            output_dir = "$root_out_dir/in"
             forward_variables_from(invoker,["deps","public_deps","sources","include_dirs","defines","libs","frameworks","public_configs"])
         }
 
@@ -232,7 +236,8 @@ template("omega_wtk_shared_lib"){
               "${invoker.framework_version}"
           ]
           code_signing_outputs = [
-              "$bundle_executable_dir/_CodeSignature"
+              "$bundle_executable_dir/_CodeSignature",
+              "$bundle_root_dir/$framework_name"
           ]
           public_deps = [
               ":${framework_name}_plists"
@@ -272,7 +277,7 @@ template("omega_wtk_shared_lib"){
             else {
                 output_extension = "so"
             }
-            output_name =  rebase_path("$out_dir/$target_name")
+            output_dir = "$out_dir"
             forward_variables_from(invoker,["deps","public_deps","sources","include_dirs","defines","libs","frameworks","public_configs"])
         }
     }
@@ -400,10 +405,10 @@ template("omega_wtk_test"){
         ]
     }
     if(defined(invoker.deps)){
-        invoker.deps += _deps
+        invoker.public_deps += _deps
     }
     else {
-        invoker.deps = _deps
+        invoker.public_deps = _deps
     }
    
     out_dir = "$root_out_dir/obj"
@@ -472,10 +477,10 @@ template("omega_wtk_test"){
     }
 
     if(is_windows || is_linux){
-    invoker.output_name = "tests/" + target_name
+    # invoker.output_name = "tests/" + target_name
     }
     else if(is_mac){
-        invoker.output_name = "obj/${app_name}"
+        # invoker.output_name = "obj/${app_name}"
     }
 
     executable(target_name){
@@ -485,10 +490,17 @@ template("omega_wtk_test"){
         }
         else if(is_mac){
             ldflags = [
-                "-execute",
-                "-rpath",
-                "@executable_path../Frameworks"
+               "-Xlinker",
+               "-rpath",
+               "-Xlinker",
+               "@loader_path/../Frameworks"
             ]
+        }
+        if(is_mac){
+            output_dir = "$root_out_dir/obj"
+        }
+        else {
+            output = "$root_out_dir/tests"
         }
     }
     app_name = "$target_name"
@@ -665,12 +677,12 @@ template("omega_wtk_app"){
         ]
     }
     else if(is_mac){
-        invoker.framework_dirs = [
-            "$root_out_dir/Frameworks"
-        ]
+        # invoker.framework_dirs = [
+        #     "$root_out_dir/Frameworks"
+        # ]
         invoker.frameworks = [
             "Cocoa.framework",
-            "OmegaWTK.framework"
+            # "OmegaWTK.framework"
         ]
         _defines += [
             "TARGET_MACOS"
@@ -713,7 +725,6 @@ template("omega_wtk_app"){
         }
         else if(is_mac){
             ldflags = [
-                "-execute"
             ]
         }
     }

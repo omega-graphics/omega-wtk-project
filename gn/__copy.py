@@ -22,9 +22,13 @@ for arg in args:
         dest = args[idx + 1]
 
 if(sys.api_version > 2.9):
-    if(os.path.isfile(src) and not os.path.exists(dest)):
-        shutil.copyfile(src,dest)
-    elif(os.path.isdir(src) and not os.path.exists(dest)):
+    if(os.path.isfile(src)):
+        if os.path.exists(dest):
+            os.remove(dest)
+        shutil.copy2(src,dest)
+    elif(os.path.isdir(src)):
+        if os.path.exists(dest):
+            shutil.rmtree(dest)
         shutil.copytree(src,dest,True)
 else:
     os.system("cp " + src + " " + dest)

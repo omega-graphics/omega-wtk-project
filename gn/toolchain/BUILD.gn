@@ -17,12 +17,14 @@ toolchain("llvm") {
     }
 
     if(is_mac){
-        lld_command = "ld"
+        cc = "clang"
+        cxx = "clang++"
+        # lld_command = "ld"
     }
 
     tool("cc") {
         depfile = "{{output}}.d"
-        command = "clang -MD -MF $depfile  {{defines}} {{include_dirs}} {{cflags_c}}  -c {{source}}  -o {{output}}"
+        command = "$cc -MD -MF $depfile  {{defines}} {{include_dirs}} {{cflags_c}}  -c {{source}}  -o {{output}}"
         if(is_linux || is_mac){
             depsformat = "gcc"
         }
@@ -37,7 +39,7 @@ toolchain("llvm") {
     tool("cxx"){
         depfile = "{{output}}.d"
         if(is_linux || is_mac){
-            command = "clang++ -MD -MF $depfile -std=c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} -c {{source}} -o {{output}}"
+            command = "$cxx -MD -MF $depfile -std=c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} -c {{source}} -o {{output}}"
         }
         else {
             command = "clang-cl /clang:-MD /clang:-MF /clang:$depfile /std:c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} -c {{source}} -o {{output}}"
@@ -55,7 +57,7 @@ toolchain("llvm") {
     }
     tool("cxx_module"){
         depfile = "{{output}}.d"
-        command = "clang++ -MD -MF $depfile -std=c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} -fmodules -fmodule-name={{label}} -Xclang -Xclang -emit-module-interface -c {{source}} -o {{output}}"
+        command = "$cxx -MD -MF $depfile -std=c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} -fmodules -fmodule-name={{label}} -Xclang -Xclang -emit-module-interface -c {{source}} -o {{output}}"
         if(is_linux || is_mac){
             depsformat = "gcc"
         }
@@ -72,7 +74,7 @@ toolchain("llvm") {
             depfile = "{{output}}.d"
             depsformat = "gcc"
             description = "Compiling OBJC source {{output}}"
-            command = "clang -MD -MF $depfile  {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_objc}}  -c {{source}}  -o {{output}}"
+            command = "$cc -MD -MF $depfile  {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_objc}}  -c {{source}}  -o {{output}}"
             outputs = [
                 "{{source_out_dir}}/{{source_name_part}}.${obj_ext}"
             ]
@@ -81,7 +83,7 @@ toolchain("llvm") {
             depfile = "{{output}}.d"
             depsformat = "gcc"
             description = "Compiling OBJCXX source {{output}}"
-            command = "clang++ -MD -MF $depfile -std=c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} {{cflags_objc}} {{cflags_objcc}} -c {{source}} -o {{output}}"
+            command = "$cxx -MD -MF $depfile -std=c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} {{cflags_objc}} {{cflags_objcc}} -c {{source}} -o {{output}}"
             outputs = [
                 "{{source_out_dir}}/{{source_name_part}}.${obj_ext}"
             ]
@@ -115,10 +117,10 @@ toolchain("llvm") {
             command = "clang-cl /out:{{output}} /machine:x64 {{inputs}} {{arflags}}"
         }
         else if(is_mac) {
-            command = "llvm-ar --format=darwin -rs {{output}} {{inputs}} {{arflags}}"
+            command = "$cxx -o {{output}} {{inputs}} {{arflags}}"
         }
         outputs = [
-            "{{target_out_dir}}/{{target_output_name}}{{output_extension}}"
+            "{{output_dir}}/{{target_output_name}}{{output_extension}}"
         ]
         description = "Linking static archive {{target_output_name}}{{output_extension}}"
         if(is_mac || is_linux){
@@ -131,9 +133,9 @@ toolchain("llvm") {
         }
     }
     tool("solink") {
-        outfile = "{{target_output_name}}{{output_extension}}"
+        outfile = "{{output_dir}}/{{target_output_name}}{{output_extension}}"
         if(is_mac){
-            command = "$lld_command -o $outfile {{ldflags}}  {{inputs}} {{solibs}} {{frameworks}} {{swiftmodules}} {{libs}}"  
+            command = "$cxx -o $outfile -Wl, -Xlinker {{ldflags}} {{inputs}} {{solibs}} {{frameworks}} {{swiftmodules}} {{libs}}"  
         }
         # Link MSVC Runtime
         else {
@@ -141,15 +143,15 @@ toolchain("llvm") {
         }
         outputs = [outfile]
         if(is_windows){
-            outputs += ["{{target_output_name}}.lib"]
+            outputs += ["{{output_dir}}/{{target_output_name}}.lib"]
         }
         description = "Linking shared library $outfile"
-        default_output_dir = "{{root_out_dir}}"
+        # default_output_dir = "{{root_out_dir}}"
     }
     tool("link") {
-        outfile = "{{target_output_name}}{{output_extension}}"
+        outfile = "{{output_dir}}/{{target_output_name}}{{output_extension}}"
         if(is_mac || is_linux){
-            command = "$lld_command -execute -o $outfile {{ldflags}} {{inputs}} {{solibs}} {{frameworks}}  {{libs}} " 
+            command = "$cxx -o $outfile -Wl, {{ldflags}} {{inputs}} {{solibs}} {{frameworks}}  {{libs}} " 
         }
         # Link MSVC Runtime
         else {
@@ -157,7 +159,7 @@ toolchain("llvm") {
         }
         outputs = [outfile]
         description = "Linking executable $outfile"
-        default_output_dir = "{{root_out_dir}}"
+        # default_output_dir = "{{root_out_dir}}"
     }
     tool("copy"){
         

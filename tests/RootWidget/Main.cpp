@@ -61,7 +61,7 @@ public:
         auto _style2 = make<Composition::LayerStyle>();
         _style2->setBackgroundColor({Composition::Color::White,0x00});
         auto br = Composition::ColorBrush(Composition::Color::Black);
-       _style2->add(VISUAL_ROUNDED_RECT_W_FRAME(OmegaWTK::RoundedRect(50,50,150,150,25,25),ColorBrush(Composition::Color::White),Composition::Border(br,1)));
+       _style2->add(VISUAL_RECT(OmegaWTK::Rect(50,50,150,150),ColorBrush(Composition::Color::White)));
 //        str = "Hello World";
 //        textRect = Composition::TextRect::Create(str,global_font,OmegaWTK::Rect(50,50,100,100));
 //        _style2->add(VISUAL_TEXT(textRect,ColorBrush(Composition::Color::Black)));
