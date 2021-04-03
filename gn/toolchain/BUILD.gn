@@ -36,7 +36,12 @@ toolchain("llvm") {
     }
     tool("cxx"){
         depfile = "{{output}}.d"
-        command = "clang++ -MD -MF $depfile -std=c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} -c {{source}} -o {{output}}"
+        if(is_linux || is_mac){
+            command = "clang++ -MD -MF $depfile -std=c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} -c {{source}} -o {{output}}"
+        }
+        else {
+            command = "clang-cl /clang:-MD /clang:-MF /clang:$depfile /std:c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} -c {{source}} -o {{output}}"
+        }
         if(is_linux || is_mac){
             depsformat = "gcc"
         }
@@ -107,7 +112,7 @@ toolchain("llvm") {
     }
     tool("alink") {
         if(is_windows){
-            command = "llvm-lib /out:{{output}} /machine:x64 ucrt.lib User32.lib  {{inputs}} {{arflags}}"
+            command = "clang-cl /out:{{output}} /machine:x64 {{inputs}} {{arflags}}"
         }
         else if(is_mac) {
             command = "llvm-ar --format=darwin -rs {{output}} {{inputs}} {{arflags}}"
@@ -132,10 +137,13 @@ toolchain("llvm") {
         }
         # Link MSVC Runtime
         else {
-            command = "$lld_command /subsystem:CONSOLE /machine:x64 /dll /out:$outfile  {{inputs}} {{solibs}} msvcrt.lib {{libs}} {{ldflags}}"
+            command = "clang-cl  -Wl  /LD /Fe$outfile {{inputs}}  /link {{ldflags}} {{solibs}} msvcrt.lib {{libs}}"
         }
         outputs = [outfile]
-        description = "Linking executable $outfile"
+        if(is_windows){
+            outputs += ["{{target_output_name}}.lib"]
+        }
+        description = "Linking shared library $outfile"
         default_output_dir = "{{root_out_dir}}"
     }
     tool("link") {
@@ -145,7 +153,7 @@ toolchain("llvm") {
         }
         # Link MSVC Runtime
         else {
-            command = "$lld_command {{ldflags}} /machine:x64   /out:$outfile  {{inputs}} {{solibs}} msvcrt.lib {{libs}}"
+            command = "$lld_command {{ldflags}} /machine:x64   /out:$outfile {{inputs}} msvcrt.lib {{libs}}"
         }
         outputs = [outfile]
         description = "Linking executable $outfile"

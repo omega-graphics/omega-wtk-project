@@ -87,9 +87,12 @@ struct OmegaWTKVisualTextParams {
 
 /// UI
 typedef struct  __OmegaWTKView OmegaWTKView;
+typedef struct  __OmegaWTKViewDelegate OmegaWTKViewDelegate;
+typedef struct  __OmegaWTKScrollView OmegaWTKScrollView;
+typedef struct  __OmegaWTKScrollViewDelegate OmegaWTKScrollViewDelegate;
 typedef OmegaWTKView OmegaWTKCanvasView;
 typedef struct  __OmegaWTKWidget OmegaWTKWidget;
-typedef struct __OmegaWTKWidgetObserver OmegaWTKWidgetObserver;
+typedef struct  __OmegaWTKWidgetObserver OmegaWTKWidgetObserver;
 
 /// OmegaWTK::Composition::Brush
 OmegaWTKCompBrush *omegawtk_color_brush(OmegaWTKCompColor *init_color);
@@ -108,11 +111,38 @@ void omegawtk_free_layer_style(OmegaWTKCompLayerStyle *style);
 OmegaWTKCompLayer *omegawtk_layer_tree_limb_get_root_layer(OmegaWTKCompLayerTreeLimb *limb);
 void omegawtk_layer_tree_limb_add_child_layer(OmegaWTKCompLayerTreeLimb *limb,OmegaWTKCompLayer *layer);
 
-/// OmegaWTK::View Class
+/// OmegaWTK::View /OmegaWTK::CanvasView Class
 void omegawtk_view_add_subview(OmegaWTKView *view,OmegaWTKView *parent);
 OmegaWTKCanvasView *omegawtk_construct_canvas_view(OmegaWTKWidget *widget,struct OmegaWTKRect rect,OmegaWTKView *parent);
 OmegaWTKCompLayerTreeLimb * omegawtk_canvas_view_get_layer_tree_limb(OmegaWTKCanvasView *view);
 void omegawtk_free_canvas_view(OmegaWTKCanvasView *view);
+
+/// OmegaWTK::ViewDelegate Class
+ENUM : OPT_PARAM {
+    CursorEnterView,
+    CursorExitView,
+    LMouseDownOverView,
+    LMouseUpOverView,
+    RMouseDownOverView,
+    RMouseUpOverView
+} OmegaWTKViewDelegateEventType;
+OmegaWTKViewDelegate *omegawtk_construct_view_delegate();
+void omegawtk_view_delegate_register_event_handler(OmegaWTKViewDelegate *delegate,OmegaWTKViewDelegateEventType type,...);
+void omegawtk_free_view_delegate(OmegaWTKViewDelegate *delegate);
+/// OmegaWTK::ScrollView Class
+OmegaWTKScrollView *omegawtk_construct_scroll_view(OmegaWTKWidget *widget,struct OmegaWTKRect rect,OmegaWTKView *parent);
+void omegawtk_free_scroll_view(OmegaWTKScrollView *view);
+
+/// OmegaWTK::ScrollViewDelegate Class
+ENUM : OPT_PARAM {
+    ScrollUpView,
+    ScrollDownView,
+    ScrollLeftView,
+    ScrollRightView,
+} OmegaWTKScrollViewDelegateEventType;
+OmegaWTKScrollViewDelegate *omegawtk_construct_scroll_view_delegate();
+void omegawtk_scroll_view_delegate_register_event_handler(OmegaWTKScrollViewDelegate *delegate,OmegaWTKScrollViewDelegateEventType type,...);
+void omegawtk_free_scroll_view_delegate(OmegaWTKScrollViewDelegate *delegate);
 /// OmegaWTK::Widget Class
 OmegaWTKWidget *omegawtk_construct_widget(struct OmegaWTKRect rect,OmegaWTKWidget *parent);
 void omegawtk_widget_set_parent_view(OmegaWTKWidget * widget,OmegaWTKView *parent);
@@ -126,9 +156,9 @@ ENUM : OPT_PARAM {
     WidgetDidResize,
     WidgetDidShow,
     WidgetDidHide
-} OmegaWTKWidgetObserverCallbackType;
+} OmegaWTKWidgetObserverEventType;
 OmegaWTKWidgetObserver *omegawtk_construct_widget_observer();
-void omegawtk_widget_observer_register_callback(OmegaWTKWidgetObserver *observer,OmegaWTKWidgetObserverCallbackType type,...);
+void omegawtk_widget_observer_register_event_handler(OmegaWTKWidgetObserver *observer,OmegaWTKWidgetObserverEventType type,...);
 void omegawtk_free_widget_observer(OmegaWTKWidgetObserver * observer);
 
 

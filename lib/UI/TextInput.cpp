@@ -4,6 +4,8 @@ namespace OmegaWTK::UI {
     Core::String & TextInput::string(){
         return textStr;
     };
+
+    
     TextInput::TextInput(const Core::Rect & rect,Core::String placeholder,SharedHandle<Widget> parent):Widget(rect,parent),textStr(""),placeholder(placeholder){
         /// Assume default style.
         auto rootLayer = rootView->getLayerTreeLimb()->getRootLayer();

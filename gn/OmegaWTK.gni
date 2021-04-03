@@ -84,8 +84,8 @@ template("omega_wtk_static_lib"){
     }
 
     invoker.output_name = "../lib/" + target_name
-
-    static_library(target_name){
+    
+    source_set(target_name){
         forward_variables_from(invoker,"*")
     }
 }
@@ -234,12 +234,26 @@ template("omega_wtk_shared_lib"){
         }
     }
     else {
+        out_dir = "$root_out_dir/lib"
         shared_library(target_name){
-            if(defined(invoker.framework)){
+            if(is_mac){
                 output_extension = "dylib"
             }
-            output_name =  "//$out_dir/$target_name"
-            forward_variables_from(invoker,["deps","public_deps","sources","include_dirs","defines"])
+            else if(is_windows){
+                cflags_cc = [
+                    # "/MD","/Zi","/Ob0","/Od","/RTC1"
+                ]
+                output_extension = "dll"
+                ldflags = [
+                   "/INCREMENTAL",
+                   "/opt:noref"
+                ]
+            }
+            else {
+                output_extension = "so"
+            }
+            output_name =  rebase_path("$out_dir/$target_name")
+            forward_variables_from(invoker,["deps","public_deps","sources","include_dirs","defines","libs","frameworks","public_configs"])
         }
     }
 }

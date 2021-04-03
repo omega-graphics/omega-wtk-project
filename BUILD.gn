@@ -199,6 +199,7 @@ omega_wtk_static_lib("omegaWTKComposition"){
         "$omega_wtk_include_dir/Composition/Color.h",
         "$omega_wtk_include_dir/Composition/Compositor.h",
         "$omega_wtk_include_dir/Composition/GeometricGraphicsPath.h",
+        "$omega_wtk_include_dir/Composition/FontEngine.h",
         "$omega_wtk_include_dir/Composition/Layer.h",
         "$omega_wtk_include_dir/Composition/LayerAnimation.h",
         "$omega_wtk_include_dir/Composition/Text.h",
@@ -227,7 +228,6 @@ omega_wtk_static_lib("omegaWTKComposition"){
         "lib/Composition/GeometricGraphicsPath.cpp",
         "lib/Composition/Layer.cpp",
         "lib/Composition/LayerAnimation.cpp",
-        "lib/Composition/Text.cpp",
         "lib/Composition/Visual.cpp",
         "lib/Composition/ViewRenderTarget.cpp"
 
@@ -252,7 +252,9 @@ omega_wtk_static_lib("omegaWTKComposition"){
             "$directx_backend_src_dir/DXBDCompositionImage.h",
             "$directx_backend_src_dir/DXBDCompositionImage.cpp",
             "$directx_backend_src_dir/DCVisualTree.h",
-            "$directx_backend_src_dir/DCVisualTree.cpp"
+            "$directx_backend_src_dir/DCVisualTree.cpp",
+            # Font Engine
+            "lib/Composition/DWriteFontEngine.cpp"
         ]
     }
     else if(is_mac){
@@ -271,6 +273,8 @@ omega_wtk_static_lib("omegaWTKComposition"){
             "$mtl_backend_src_dir/MTLBDCompositionRenderTarget.mm",
             "$mtl_backend_src_dir/MTLBDTriangulator.h",
             "$mtl_backend_src_dir/MTLBDTriangulator.mm",
+            # Font Engine
+            "lib/Composition/CTFontEngine.mm"
         ]
         frameworks = [
             "QuartzCore.framework",
@@ -312,6 +316,7 @@ omega_wtk_static_lib("omegaWTKUI"){
         "$omega_wtk_include_dir/UI/VideoView.h",
         "$omega_wtk_include_dir/UI/View.h",
         "$omega_wtk_include_dir/UI/ViewAnimator.h",
+        "$omega_wtk_include_dir/UI/Stack.h",
         "$omega_wtk_include_dir/UI/Widget.h",
         # Sources 
         "lib/UI/App.cpp",
@@ -323,6 +328,7 @@ omega_wtk_static_lib("omegaWTKUI"){
         "lib/UI/VideoView.cpp",
         "lib/UI/View.cpp",
         "lib/UI/ViewAnimator.cpp",
+        "lib/UI/Stack.cpp",
         "lib/UI/Widget.cpp"
     ]
     public_deps = [
@@ -338,6 +344,12 @@ omega_wtk_shared_lib("OmegaWTK"){
         framework = true
         framework_version = "A"
         framework_info_plist = "//lib/Info.plist"
+        frameworks = [
+            "Cocoa.framework",
+            "QuartzCore.framework",
+            "Metal.framework",
+            "MetalPerformanceShaders.framework"
+        ]
         # framework_version_plist = "//lib/version.plist"
     }
     if(is_windows) {
@@ -359,12 +371,6 @@ omega_wtk_shared_lib("OmegaWTK"){
         ":omegaWTKMedia",
         ":omegaWTKComposition",
         ":omegaWTKUI"
-    ]
-    frameworks = [
-        "Cocoa.framework",
-        "QuartzCore.framework",
-        "Metal.framework",
-        "MetalPerformanceShaders.framework"
     ]
 }
 

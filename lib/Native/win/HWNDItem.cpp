@@ -7,6 +7,8 @@
 namespace OmegaWTK::Native::Win {
     HWNDItem::HWNDItem(Core::Rect & rect):wndrect(rect){
         /// Passes implemenation to children!
+
+        
     };
     HWNDItem::HWNDItem(Core::Rect & rect,Type type,HWNDItem *parent):wndrect(rect){
         std::cout << "Registering Window!" << std::endl;
