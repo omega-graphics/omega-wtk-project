@@ -140,39 +140,25 @@ template("omega_wtk_shared_lib"){
             ]
         }
 
-       create_bundle("${framework_name}.framework"){
-          bundle_root_dir = "$root_out_dir/Frameworks/$target_name"  
-          bundle_executable_dir = "$bundle_root_dir/Versions/${invoker.framework_version}"
-          bundle_resources_dir = "$bundle_root_dir/Versions/${invoker.framework_version}/Resources"
-          deps = [
-              ":${framework_name}_plists"
-          ]
-       }
-       invoker.public_deps += [
-           ":${framework_name}.framework"
-       ]
-       _libs = [
+        #    lib_name = target_name
+
+            #  symlinks_exist = exec_script("//gn/AppleFramework.py",[
+            #     "--framework",
+            #    rebase_path("$root_out_dir/Frameworks/${framework_name}.framework"),
+            #    "--name",
+            #    "${framework_name}",
+            #    "--current_version",
+            #    "${invoker.framework_version}",
+            #    "--check_links"],"string")
+
+        _libs = [
                 "c",
                 "c++"
         ]
-       invoker.libs = _libs
-    #    out_dir = "$root_out_dir/lib"
-
-       symlinks_exist = exec_script("//gn/AppleFramework.py",[
-                "--framework",
-               rebase_path("$root_out_dir/Frameworks/${framework_name}.framework"),
-               "--name",
-               "${framework_name}",
-               "--current_version",
-               "${invoker.framework_version}",
-               "--check_links"],"string")
         
-       
-     
-        lib_name = target_name
-        
+        invoker.libs = _libs
 
-       shared_library(lib_name){
+        shared_library(framework_name){
            ldflags = [
                "-dylib",
             #    "-force_load",
@@ -187,51 +173,85 @@ template("omega_wtk_shared_lib"){
             #     rebase_path("$out_dir/omegaWTKUI.a"),
            ]
             output_extension = ""
-            output_name = "Frameworks/${framework_name}.framework/Versions/${invoker.framework_version}/$framework_name"
+            output_name = "in/${framework_name}"
             forward_variables_from(invoker,["deps","public_deps","sources","include_dirs","defines","libs","frameworks","public_configs"])
         }
-            
-        if(symlinks_exist == "False") {
-            action("${framework_name}_Sym"){
-                script = rebase_path("//gn//AppleFramework.py")
-                args = [
-                    "--framework",
-                    rebase_path("$root_out_dir/Frameworks/${framework_name}.framework"),
-                    "--name",
-                    "${framework_name}",
-                    "--current_version",
-                    "${invoker.framework_version}"
-                ]
-                public_deps = [
-                    ":${framework_name}"
-                ]
-                outputs = [
-                    "$root_out_dir/Frameworks/${framework_name}.framework/{framework_name}"
-                ]
-            }
-        }
-        action("${framework_name}_Final"){
-            script = rebase_path("//gn/codesign.py")
-            args = [
-                "--sig",
-                code_signature,
-                "--code",
-                rebase_path("$root_out_dir/Frameworks/${framework_name}.framework")
+
+        bundle_data("${framework_name}_exec"){
+            sources = [
+                "$root_out_dir/in/${framework_name}"
             ]
-            if(symlinks_exist == "False") {
-                public_deps = [
-                    ":${framework_name}_Sym"
-                ]
-            }
-            else {
-                public_deps = [
-                    ":${framework_name}"
-                ]
-            }
+            public_deps = [
+                ":${framework_name}"
+            ]
             outputs = [
-                "$root_out_dir/Frameworks/${framework_name}.framework/Versions/Current/_CodeSignature/CodeResources"
+                "{{bundle_executable_dir}}/{{source_file_part}}"
             ]
         }
+            
+        # if(symlinks_exist == "False") {
+        #     action("${framework_name}_Sym"){
+        #         script = rebase_path("//gn//AppleFramework.py")
+        #         args = [
+        #             "--framework",
+        #             rebase_path("$root_out_dir/Frameworks/${framework_name}.framework"),
+        #             "--name",
+        #             "${framework_name}",
+        #             "--current_version",
+        #             "${invoker.framework_version}"
+        #         ]
+        #         public_deps = [
+        #             ":${framework_name}_exec"
+        #         ]
+        #         outputs = [
+        #             "$root_out_dir/Frameworks/${framework_name}.framework/{framework_name}"
+        #         ]
+        #     }
+        # }
+
+       create_bundle("${framework_name}.framework"){
+          bundle_root_dir = "$root_out_dir/Frameworks/$target_name"  
+          bundle_executable_dir = "$bundle_root_dir/Versions/${invoker.framework_version}"
+          bundle_resources_dir = "$bundle_root_dir/Versions/${invoker.framework_version}/Resources"
+
+          code_signing_sources = [
+              "$root_out_dir/in/${framework_name}"
+          ]
+          code_signing_script = rebase_path("//gn/codesign.py")
+          code_signing_args = [
+              "--sig",
+              code_signature,
+              "--code",
+              rebase_path("$root_out_dir/Frameworks/$target_name/Versions/${invoker.framework_version}"),
+              "--framework",
+              "-F",
+              rebase_path("$root_out_dir/Frameworks/${framework_name}.framework"),
+              "--name",
+              "${framework_name}",
+              "--current_version",
+              "${invoker.framework_version}"
+          ]
+          code_signing_outputs = [
+              "$bundle_executable_dir/_CodeSignature"
+          ]
+          public_deps = [
+              ":${framework_name}_plists"
+          ]
+        #   if(symlinks_exist == "False"){
+        #       public_deps += [
+        #           ":${framework_name}_Sym"
+        #       ]
+        #   }
+        #   else {
+              public_deps += [
+                  ":${framework_name}_exec"
+              ]
+        #   }
+       }
+    #    out_dir = "$root_out_dir/lib"
+        
+
+     
     }
     else {
         out_dir = "$root_out_dir/lib"
@@ -375,7 +395,7 @@ template("omega_wtk_test"){
     else if(is_mac){
         t_name = "appdelegate-mm-config__${app_name}"
         _deps += [
-            ":OmegaWTK_Final",
+            ":OmegaWTK.framework",
             ":$t_name",
         ]
     }
@@ -467,7 +487,7 @@ template("omega_wtk_test"){
             ldflags = [
                 "-execute",
                 "-rpath",
-                "@executable_path../Frameworks/OmegaWTK.framework"
+                "@executable_path../Frameworks"
             ]
         }
     }
@@ -505,7 +525,7 @@ template("omega_wtk_test"){
         }
          bundle_data("${target_name}__framework_copy"){
             public_deps = [
-                ":OmegaWTK_Final"
+                ":OmegaWTK.framework"
             ]
             sources = [
                 "$root_out_dir/Frameworks/OmegaWTK.framework"
@@ -600,7 +620,7 @@ template("omega_wtk_app"){
     else if(is_mac){
         t_name = "appdelegate-mm-config__${app_name}"
         _deps += [
-            ":OmegaWTK_Final",
+            ":OmegaWTK.framework",
             ":$t_name",
         ]
     }
@@ -722,7 +742,7 @@ template("omega_wtk_app"){
         }
         bundle_data("${target_name}__framework_copy"){
             public_deps = [
-                ":OmegaWTK_Final"
+                ":OmegaWTK.framework"
             ]
             sources = [
                 "$root_out_dir/Frameworks/OmegaWTK.framework"

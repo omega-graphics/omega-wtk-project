@@ -344,7 +344,7 @@ omega_wtk_static_lib("omegaWTKUI"){
 omega_wtk_shared_lib("OmegaWTK"){
     if(is_mac){
         framework = true
-        framework_version = "A"
+        framework_version = "0.6"
         framework_info_plist = "//lib/Info.plist"
         frameworks = [
             "Cocoa.framework",

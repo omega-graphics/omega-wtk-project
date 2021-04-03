@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
+	<string>English</string>
     <key>CFBundlePackageType</key>
 	<string>FMWK</string>
     <key>CFBundleExecutable</key>
