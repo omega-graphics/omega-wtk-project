@@ -23,9 +23,12 @@ namespace OmegaWTK::Native {
     NativeNoteDialog::NativeNoteDialog(NWH nativeWindow):NativeDialog(nativeWindow){};
     
 
-    // SharedHandle<NativeNoteDialog> NativeNoteDialog::Create(const Descriptor &desc,NWH nativeWindow){
-    //     // return Win::WinNoteDialog::Create(desc,nativeWindow);
-    // };
+     SharedHandle<NativeNoteDialog> NativeNoteDialog::Create(const Descriptor &desc,NWH nativeWindow){
+        #ifdef TARGET_MACOS
+         return Cocoa::make_cocoa_note_dialog(desc,nativeWindow);
+        #endif
+         // return Win::WinNoteDialog::Create(desc,nativeWindow);
+     };
 
     SharedHandle<NativeFSDialog> NativeFSDialog::Create(const Descriptor &desc,NWH nativeWindow){
         #ifdef TARGET_WIN32
@@ -33,6 +36,7 @@ namespace OmegaWTK::Native {
         #endif
         
         #ifdef TARGET_MACOS
+        return Cocoa::make_cocoa_fs_dialog(desc,nativeWindow);
         #endif
     };
 

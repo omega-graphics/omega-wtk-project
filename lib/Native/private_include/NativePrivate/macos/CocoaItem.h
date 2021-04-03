@@ -21,9 +21,6 @@ class CocoaItem;
 -(instancetype) initWithFrame:(NSRect) rect delegate:(OmegaWTK::Native::Cocoa::CocoaItem *) delegate;
 @end
 
-@interface OmegaWTKCocoaScrollView : NSScrollView
-@end
-
 @class CALayer;
 
 
@@ -34,11 +31,13 @@ namespace Cocoa {
 class CocoaItem : public NativeItem {
     OmegaWTKCocoaView * _ptr;
     OmegaWTKCocoaViewController *cont;
+    NSScrollView *scrollView;
     friend class CocoaEventHandler;
     void enable();
     void disable();
     void addChildNativeItem(NativeItem *nativeItem);
     void removeChildNativeItem(NativeItem *nativeItem);
+    void setClippedView(NativeItem *clippedView);
 public:
     Core::Rect rect;
     typedef enum : OPT_PARAM {
@@ -53,7 +52,7 @@ public:
     void setNeedsDisplay();
     void layoutLayerTreeLimb();
     void * getBinding();
-    CocoaItem(const Core::Rect & rect,Type _type);
+    CocoaItem(const Core::Rect & rect,Type _type,CocoaItem *parent);
     ~CocoaItem();
 };
 

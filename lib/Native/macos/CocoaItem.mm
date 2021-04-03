@@ -103,9 +103,23 @@
 
 namespace OmegaWTK::Native::Cocoa {
 
-CocoaItem::CocoaItem(const Core::Rect & rect,CocoaItem::Type _type):rect(rect),type(_type),isReady(false){
-    cont = [[OmegaWTKCocoaViewController alloc] initWithFrame:core_rect_to_cg_rect(rect) delegate:this];
-    _ptr = (OmegaWTKCocoaView *)cont.view;
+CocoaItem::CocoaItem(const Core::Rect & rect,CocoaItem::Type _type,CocoaItem *parent):rect(rect),type(_type),isReady(false){
+    if(type == View){
+        cont = [[OmegaWTKCocoaViewController alloc] initWithFrame:core_rect_to_cg_rect(rect) delegate:this];
+        _ptr = (OmegaWTKCocoaView *)cont.view;
+        scrollView = nil;
+        if(parent != nullptr){
+            parent->addChildNativeItem(this);
+        };
+    };
+    if(type == ScrollView){
+        cont = nil;
+        _ptr = nil;
+        scrollView = [[NSScrollView alloc] initWithFrame:core_rect_to_cg_rect(rect)];
+        if(parent != nullptr){
+            parent->addChildNativeItem(this);
+        };
+    };
 };
 
 void CocoaItem::layoutLayerTreeLimb(){
@@ -132,7 +146,12 @@ void CocoaItem::addChildNativeItem(NativeItemPtr native_item){
 };
 
 void CocoaItem::removeChildNativeItem(NativeItemPtr native_item){
-    [_ptr replaceSubview:(OmegaWTKCocoaView *)native_item with:[[NSView alloc] initWithFrame:NSZeroRect]];
+    [_ptr replaceSubview:(OmegaWTKCocoaView *)native_item with:nil];
+};
+
+void CocoaItem::setClippedView(NativeItemPtr nativeItem){
+    CocoaItem *cocoaItem = (CocoaItem *)nativeItem;
+    scrollView.documentView = cocoaItem->_ptr;
 };
 
 CocoaItem::~CocoaItem(){

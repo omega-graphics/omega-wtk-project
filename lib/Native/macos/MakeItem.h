@@ -9,7 +9,7 @@ namespace OmegaWTK::Native {
 
 namespace Cocoa {
 
-NativeItemPtr make_item_cocoa(const Core::Rect & rect);
+NativeItemPtr make_item_cocoa(const Core::Rect & rect,ItemType type,NativeItemPtr parent);
 NWH make_cocoa_window(Core::Rect & rect,NativeEventEmitter *emitter);
 };
 

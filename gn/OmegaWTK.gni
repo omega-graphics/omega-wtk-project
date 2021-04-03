@@ -156,7 +156,7 @@ template("omega_wtk_shared_lib"){
                 "c++"
         ]
        invoker.libs = _libs
-       out_dir = "$root_out_dir/lib"
+    #    out_dir = "$root_out_dir/lib"
 
        symlinks_exist = exec_script("//gn/AppleFramework.py",[
                 "--framework",
@@ -175,16 +175,16 @@ template("omega_wtk_shared_lib"){
        shared_library(lib_name){
            ldflags = [
                "-dylib",
-               "-force_load",
-               rebase_path("$out_dir/omegaWTKCore.a"),
-               "-force_load",
-                rebase_path("$out_dir/omegaWTKNative.a"),
-               "-force_load",
-                rebase_path("$out_dir/omegaWTKMedia.a"),
-               "-force_load",
-                rebase_path("$out_dir/omegaWTKComposition.a"),
-               "-force_load",
-                rebase_path("$out_dir/omegaWTKUI.a"),
+            #    "-force_load",
+            #    rebase_path("$out_dir/omegaWTKCore.a"),
+            #    "-force_load",
+            #     rebase_path("$out_dir/omegaWTKNative.a"),
+            #    "-force_load",
+            #     rebase_path("$out_dir/omegaWTKMedia.a"),
+            #    "-force_load",
+            #     rebase_path("$out_dir/omegaWTKComposition.a"),
+            #    "-force_load",
+            #     rebase_path("$out_dir/omegaWTKUI.a"),
            ]
             output_extension = ""
             output_name = "Frameworks/${framework_name}.framework/Versions/${invoker.framework_version}/$framework_name"

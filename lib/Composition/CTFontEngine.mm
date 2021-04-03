@@ -9,6 +9,10 @@ namespace OmegaWTK::Composition {
 
 FontEngine * const FontEngine::instance = new FontEngine();
 
+FontEngine::FontEngine(){
+    
+};
+
 class CoreTextFont : public Font {
     CTFontRef native;
     friend class CTTextRect;

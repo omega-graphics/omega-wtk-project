@@ -8,10 +8,14 @@
 
 namespace OmegaWTK::Native::Cocoa {
 
-NativeItemPtr make_item_cocoa(const Core::Rect & rect){
+NativeItemPtr make_item_cocoa(const Core::Rect & rect,ItemType type,NativeItemPtr parent){
     CocoaItem::Type item_type;
-    item_type = CocoaItem::View;
-    return new CocoaItem(rect,item_type);
+    if(type == Default)
+        item_type = CocoaItem::View;
+    else if(type == ScrollItem){
+        item_type = CocoaItem::ScrollView;
+    };
+    return new CocoaItem(rect,item_type,(CocoaItem *)parent);
 };
 
 NWH make_cocoa_window(Core::Rect & rect,NativeEventEmitter *emitter){

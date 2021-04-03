@@ -109,6 +109,8 @@ omega_wtk_static_lib("omegaWTKNative"){
             "$mac_source_prefix/CocoaApp.mm",
             "$mac_source_prefix/CocoaAppWindow.h",
             "$mac_source_prefix/CocoaAppWindow.mm",
+            "$mac_source_prefix/CocoaDialog.h",
+            "$mac_source_prefix/CocoaDialog.mm",
             "$mac_source_prefix/CocoaEvent.mm",
             "$mac_source_prefix/CocoaItem.mm",
             "$mac_source_prefix/CocoaMenu.h",

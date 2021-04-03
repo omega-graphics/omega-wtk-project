@@ -38,12 +38,12 @@ void AppWindow::_add_widget(SharedHandle<Widget> * handle){
     }
 };
 
-UniqueHandle<Native::NativeFSDialog> AppWindow::openFSDialog(){
-    return nullptr;
+SharedHandle<Native::NativeFSDialog> AppWindow::openFSDialog(const Native::NativeFSDialog::Descriptor & desc){
+    return Native::NativeFSDialog::Create(desc,layer->native_window_ptr);
 };
 
-UniqueHandle<Native::NativeNoteDialog> AppWindow::openNoteDialog(){
-    return nullptr;
+SharedHandle<Native::NativeNoteDialog> AppWindow::openNoteDialog(const Native::NativeNoteDialog::Descriptor & desc){
+    return Native::NativeNoteDialog::Create(desc,layer->native_window_ptr);
 };
 
 void AppWindow::drawWidgets(){

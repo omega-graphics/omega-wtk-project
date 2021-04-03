@@ -9,10 +9,10 @@
 
 namespace OmegaWTK::Native::Cocoa {
 class CocoaAppWindow : public NativeWindow {
-    NSWindow *window;
     OmegaWTKNativeCocoaAppWindowController *windowController;
     OmegaWTKNativeCocoaAppWindowDelegate *windowDelegate;
 public:
+    NSWindow *window;
     NativeEventEmitter *getEmitter();
     void disable();
     void enable();
