@@ -1,7 +1,17 @@
 import("//gn/ExternalLibs.gni")
 
+o = "$external_lib_path/pcre2/build"
+
 external_lib("pcre2"){
-    public_deps = []
-    conf = rebase_path("./code/CMakeLists.txt")
-    build = rebase_path("./code/build")
+    conf = rebase_path("./code/pcre2-10.36")
+    outputs = [
+        "${o}/libpcre2-8.${static_lib_suffix}",
+        "${o}/pcre2.h",
+        "${o}/pcre2posix.h"
+    ]
+    public_headers = [
+        rebase_path("${o}/pcre2.h"),
+        rebase_path("./code/pcre2-10.36/src/pcre2posix.h")
+    ]
+    export = "${o}/libpcre2-8.${static_lib_suffix}"
 }

@@ -1,4 +1,4 @@
-#include "omegaWTK/UI/TextInput.h"
+#include "omegaWTK/UI/Text.h"
 
 namespace OmegaWTK::UI {
     Core::String & TextInput::string(){

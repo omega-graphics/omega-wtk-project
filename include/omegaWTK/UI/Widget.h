@@ -43,6 +43,7 @@ protected:
 //    SharedHandle<VideoView> makeVideoView(const Core::Rect & rect,View *parent);
     
 private:
+    bool resizeable;
     /// Observers
     Core::Vector<WidgetObserver *> observers;
 protected:
@@ -65,6 +66,7 @@ public:
      Remove a WidgetObserver from the list of observers currently listening.
     */
     void removeObserver(WidgetObserver *observerPtr);
+    bool & isResizable();
     virtual void resize(Core::Rect & newRect) = 0;
     /**
      Show the Widget if hidden.
@@ -74,6 +76,10 @@ public:
      Hide the Widget if shown
     */
     void hide();
+    /**
+     Redraws the Widget with the current state of its layer tree.
+     */
+    void refresh();
     Widget(const Core::Rect & rect,SharedHandle<Widget> parent);
 //    Widget(Widget &widget);
     ~Widget();

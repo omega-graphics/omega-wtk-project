@@ -1,32 +1,71 @@
+if(is_linux){
+    static_lib_suffix = "a"
+    shared_lib_suffix = "so"
+}
+else if(is_mac){
+    static_lib_suffix = "a"
+    shared_lib_suffix = "dylib"
+}
+else {
+    static_lib_suffix = "lib"
+    shared_lib_suffix = "dll"
+}
+
 external_lib_path = "$root_out_dir/externals/"
 template("external_lib"){
+    # built = exec_script("//gn/external_lib.py",["--exists",rebase_path(invoker.export)],"value")
+    
+    # if(built == false){
 
-    o = exec_script("//gn/external_lib.py",["--conf",invoker.conf,"--build",rebase_path("$root_out_dir/externals/${target_name}/build")],"string")
-    print(o)
-    t_name = target_name
+        o = exec_script("//gn/external_lib.py",["--conf",invoker.conf,"--build",rebase_path("$root_out_dir/externals/${target_name}/build")],"string")
+        print(o)
+        t_name = target_name
 
-    action("__${target_name}"){
-        script = "//gn/external_lib.py"
-        args = [
-            "--make",
-            rebase_path("$root_out_dir/externals/${t_name}/build")
-        ]
-        outputs = invoker.outputs
-        if(defined(invoker.public_deps)){
-            public_deps = invoker.public_deps
+        action("__${target_name}"){
+            script = "//gn/external_lib.py"
+            args = [
+                "--make",
+                rebase_path("$root_out_dir/externals/${t_name}/build")
+            ]
+            if(defined(invoker.old_install_name)){
+                args += [
+                    "--change-install-name",
+                    "--lib",
+                    rebase_path(invoker.export),
+                    "--old-name",
+                    invoker.old_install_name,
+                    "--new-name",
+                    invoker.new_install_name
+                ]
+            }
+            outputs = invoker.outputs
+            if(defined(invoker.public_deps)){
+                public_deps = invoker.public_deps
+            }
         }
-    }
+    # }
 
-    copy(target_name){
-        sources = invoker.public_headers
-        public_deps = [":__${t_name}"]
-        outputs = [
-            "$root_out_dir/externals/${target_name}/include/{{source_file_part}}"
-        ]
-    }
+        copy(target_name){
+            sources = invoker.public_headers
+            # if(built == false){
+                public_deps = [":__${t_name}"]
+                outputs = [
+                    "$root_out_dir/externals/${target_name}/include/{{source_file_part}}"
+                ]
+            # }
+            # else {
+            #     if(defined(invoker.public_deps)) {
+            #         public_deps = invoker.public_deps
+            #     }
+            #     not_needed(invoker,["outputs","conf"])
+            #     outputs = ["$root_out_dir/externals/${target_name}/include/{{source_file_part}}"]
+            # }
+            
+        }
 
     config("${target_name}_config"){
         include_dirs = ["$root_out_dir/externals/${target_name}/include"]
+        libs = [invoker.export]
     }
 
     # if(is_mac || is_linux){

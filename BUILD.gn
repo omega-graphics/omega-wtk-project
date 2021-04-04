@@ -71,9 +71,12 @@ omega_wtk_static_lib("omegaWTKCore"){
     include_dirs = [
         "$vcpkg_installed_path/include"
     ]
-    # libs = [
-    #     "pcre2-8"
-    # ]
+    public_deps = [
+        "//external-libs/pcre2"
+    ]
+    public_configs = [
+        "//external-libs/pcre2:pcre2_config"
+    ]
     sources = [
         # Headers
         "$omega_wtk_include_dir/Core/Core.h",
@@ -176,11 +179,13 @@ omega_wtk_static_lib("omegaWTKMedia"){
     public_deps = [
         ":omegaWTKCore",
         "//external-libs/libpng",
-        "//external-libs/libtiff"
+        "//external-libs/libtiff",
+        "//external-libs/zlib"
     ]
     public_configs = [
         "//external-libs/libpng:libpng_config",
-        "//external-libs/libtiff:libtiff_config"
+        "//external-libs/libtiff:libtiff_config",
+        "//external-libs/zlib:zlib_config"
     ]
     sources = [
         # Headers 
@@ -329,24 +334,30 @@ omega_wtk_static_lib("omegaWTKUI"){
         "$omega_wtk_include_dir/UI/ButtonBase.h",
         "$omega_wtk_include_dir/UI/Menu.h",
         "$omega_wtk_include_dir/UI/PushButton.h",
-        "$omega_wtk_include_dir/UI/TextInput.h",
+        "$omega_wtk_include_dir/UI/Text.h",
         "$omega_wtk_include_dir/UI/VideoView.h",
         "$omega_wtk_include_dir/UI/View.h",
         "$omega_wtk_include_dir/UI/ViewAnimator.h",
         "$omega_wtk_include_dir/UI/Stack.h",
         "$omega_wtk_include_dir/UI/Widget.h",
+        "$omega_wtk_include_dir/UI/DropDown.h",
+        "$omega_wtk_include_dir/UI/Layout.h",
+        "$omega_wtk_include_dir/UI/Panel.h",
         # Sources 
         "lib/UI/App.cpp",
         "lib/UI/AppWindow.cpp",
         "lib/UI/ButtonBase.cpp",
         "lib/UI/Menu.cpp",
         "lib/UI/PushButton.cpp",
-        "lib/UI/TextInput.cpp",
+        "lib/UI/Text.cpp",
         "lib/UI/VideoView.cpp",
         "lib/UI/View.cpp",
         "lib/UI/ViewAnimator.cpp",
         "lib/UI/Stack.cpp",
-        "lib/UI/Widget.cpp"
+        "lib/UI/Widget.cpp",
+        "lib/UI/DropDown.cpp",
+        "lib/UI/Layout.cpp",
+        "lib/UI/Panel.cpp"
     ]
     public_deps = [
         ":omegaWTKCore",
@@ -355,6 +366,8 @@ omega_wtk_static_lib("omegaWTKUI"){
         ":omegaWTKComposition"
     ]
 }
+
+import("//gn/ExternalExports.gni")
 
 omega_wtk_shared_lib("OmegaWTK"){
     if(is_mac){
@@ -367,10 +380,9 @@ omega_wtk_shared_lib("OmegaWTK"){
             "Metal.framework",
             "MetalPerformanceShaders.framework"
         ]
-        # embedded_libs = [
-        #     "$vcpkg_installed_dir/lib/libpng.${shared_lib_suffix}",
-        #     "$vcpkg_installed_dir/lib/lib"
-        # ]
+        embedded_libs = [
+            zlib_link
+        ] + libtiff_link
     }
     if(is_windows) {
         # arflags = [

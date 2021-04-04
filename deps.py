@@ -25,7 +25,8 @@ dep(url="https://github.com/glennrp/libpng.git",gitClone=True,installName="libpn
 dep(url="https://github.com/libjpeg-turbo/libjpeg-turbo.git",gitClone=True,installName="libjpeg-turbo")
 dep(url="https://gitlab.com/libtiff/libtiff.git",gitClone=True,installName="libtiff")
 dep(url="https://github.com/madler/zlib.git",gitClone=True,installName="zlib")
-# dep(url="https://ftp.pcre.org/pub/pcre/pcre2-10.36.zip",gitClone=False,installName="pcre2",fileExt=".zip")
+dep(url="https://ftp.pcre.org/pub/pcre/pcre2-10.36.zip",gitClone=False,installName="pcre2",fileExt=".zip")
+dep(url="https://webrtc.googlesource.com/src",gitClone=True,installName="webrtc")
 
 if os.path.exists("./temp"):
     clean_temp_folder()

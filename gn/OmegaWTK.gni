@@ -164,7 +164,11 @@ template("omega_wtk_shared_lib"){
                "-Xlinker",
                "-install_name",
                "-Xlinker",
-               "@rpath/${framework_name}.framework/Versions/${invoker.framework_version}/${framework_name}"
+               "@rpath/${framework_name}.framework/Versions/${invoker.framework_version}/${framework_name}",
+               "-Xlinker",
+               "-rpath",
+               "-Xlinker",
+               "@loader_path/Libraries"
             #    "-force_load",
             #    rebase_path("$out_dir/omegaWTKCore.a"),
             #    "-force_load",
@@ -228,6 +232,12 @@ template("omega_wtk_shared_lib"){
               "--current_version",
               "${invoker.framework_version}"
           ]
+          if(defined(invoker.embedded_libs)){
+              code_signing_args += [
+                  "--symlink-other-dirs",
+                  "Libraries"
+              ]
+          }
           code_signing_outputs = [
               "$bundle_executable_dir/_CodeSignature",
               "$bundle_root_dir/$framework_name"
@@ -489,7 +499,11 @@ template("omega_wtk_test"){
                "-Xlinker",
                "-rpath",
                "-Xlinker",
-               "@loader_path/../Frameworks"
+               "@loader_path/../Frameworks",
+                "-Xlinker",
+               "-rpath",
+               "-Xlinker",
+               "@loader_path/../Frameworks/OmegaWTK.framework/Libraries"
             ]
         }
         if(is_mac){

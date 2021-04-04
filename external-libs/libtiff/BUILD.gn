@@ -1,12 +1,13 @@
 import("//gn/ExternalLibs.gni")
+import("//gn/ExternalExports.gni")
 
 o =  "$root_out_dir/externals/libtiff/build"
 
 external_lib("libtiff"){
     conf = rebase_path("./code")
     outputs = [
-        "${o}/libtiff/libtiff.5.6.0.dylib",
-        "${o}/libtiff/libtiffxx.5.6.0.dylib",
+        "${o}/libtiff/libtiff.5.${shared_lib_suffix}",
+        "${o}/libtiff/libtiffxx.5.${shared_lib_suffix}",
         "${o}/libtiff/tiffconf.h"
     ]
     public_deps = [
@@ -20,4 +21,9 @@ external_lib("libtiff"){
         rebase_path("./code/libtiff/tiffio.hxx"),
         rebase_path("./code/libtiff/tiffvers.h")
     ]
+    export = "${o}/libtiff/libtiffxx.5.${shared_lib_suffix}"
+    # if(is_mac){
+    #     old_install_name = "@rpath/libtiffxx.5.dylib"
+    #     new_install_name = "@rpath/libtiffxx.5.6.0.dylib"
+    # }
 }
