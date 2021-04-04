@@ -8,6 +8,11 @@
 #include <optional>
 #include <sstream>
 #include <fstream>
+
+/// Regex Lib
+// #define PCRE2_CODE_UNIT_WIDTH 8
+// #include <pcre2.h>
+
 #include "OmegaWTKExport.h"
 
 #ifdef TARGET_WIN32
@@ -313,6 +318,24 @@ namespace OmegaWTK {
             };
         };
         #endif
+
+        // class OMEGAWTK_EXPORT RegularExpression {
+        //     pcre2_code *code;
+        // public:
+        //     RegularExpression(String pattern,bool multiLine = true);
+            
+        //     struct Match {
+        //         pcre2_match_data *mdata;
+        //     public:
+        //         String main;
+        //         String getSubMatchByNum(unsigned n);
+        //         ~Match();
+        //     };
+        //     Match match(String subject);
+        //     ~RegularExpression();
+        // };
+
+        // typedef RegularExpression Regex;
     };
 OMEGAWTK_EXPORT Core::Rect Rect(unsigned x,unsigned y,unsigned width,unsigned height,float angle = 0);
 OMEGAWTK_EXPORT Core::Ellipse Ellipse(unsigned x,unsigned y,unsigned radius_x,unsigned radius_y);

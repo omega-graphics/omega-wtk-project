@@ -1,0 +1,14 @@
+import("//gn/ExternalLibs.gni")
+
+external_lib("libpng"){
+    conf = rebase_path("./code")
+    outputs = [
+        "${external_lib_path}/libpng/build/libpng16.16.38.git.dylib",
+        "${external_lib_path}/libpng/build/pnglibconf.h"
+    ]
+    public_headers = [
+        rebase_path("./code/png.h"),
+        rebase_path("./code/pngconf.h"),
+        rebase_path("${external_lib_path}/libpng/build/pnglibconf.h")
+    ]
+}

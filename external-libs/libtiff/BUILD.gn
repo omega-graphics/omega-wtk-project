@@ -1,0 +1,23 @@
+import("//gn/ExternalLibs.gni")
+
+o =  "$root_out_dir/externals/libtiff/build"
+
+external_lib("libtiff"){
+    conf = rebase_path("./code")
+    outputs = [
+        "${o}/libtiff/libtiff.5.6.0.dylib",
+        "${o}/libtiff/libtiffxx.5.6.0.dylib",
+        "${o}/libtiff/tiffconf.h"
+    ]
+    public_deps = [
+        "//external-libs/zlib",
+        "//external-libs/libjpeg-turbo"
+    ]
+    public_headers = [
+        rebase_path("./code/libtiff/tiff.h"),
+        rebase_path("${o}/libtiff/tiffconf.h"),
+        rebase_path("./code/libtiff/tiffio.h"),
+        rebase_path("./code/libtiff/tiffio.hxx"),
+        rebase_path("./code/libtiff/tiffvers.h")
+    ]
+}

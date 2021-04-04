@@ -1,0 +1,7 @@
+import("//gn/ExternalLibs.gni")
+
+external_lib("pcre2"){
+    public_deps = []
+    conf = rebase_path("./code/CMakeLists.txt")
+    build = rebase_path("./code/build")
+}

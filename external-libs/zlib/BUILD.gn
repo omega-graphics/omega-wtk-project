@@ -1,0 +1,17 @@
+import("//gn/ExternalLibs.gni")
+
+o = "$root_out_dir/externals/zlib/build"
+
+external_lib("zlib"){
+    conf = rebase_path("./code")
+    outputs = [
+        "${o}/libz.1.2.11.dylib",
+        "${o}/zconf.h"  
+    ]
+    public_headers = [
+        rebase_path("./code/zlib.h"),
+        rebase_path("${o}/zconf.h")
+    ]
+}
+
+zlib = "${o}/libz.1.2.11.dylib"

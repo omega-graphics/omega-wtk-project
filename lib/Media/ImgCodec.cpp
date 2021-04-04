@@ -65,8 +65,8 @@ class PNGCodec : public ImgCodec {
         BitmapImage::ColorFormat colorFormat;
         BitmapImage::AlphaFormat alphaFormat;
         
-        uint32 width;
-        uint32 height;
+        uint32_t width;
+        uint32_t height;
         int bitDepth;
         int channels;
         int color_type;

@@ -1,0 +1,18 @@
+import("//gn/ExternalLibs.gni")
+
+o = "$root_out_dir/externals/libpng/build"
+external_lib("libjpeg-turbo"){
+    conf = rebase_path("./code")
+    outputs = [
+        "${o}/libjpeg.62.3.0.dylib",
+        "${o}/libturbojpeg.0.2.0.dylib",
+        "${o}/jconfig.h"
+    ]
+    public_headers = [
+        rebase_path("./code/jpeglib.h"),
+        rebase_path("./code/jmorecfg.h"),
+        rebase_path("${o}/jconfig.h"),
+        rebase_path("./code/jerror.h"),
+        rebase_path("./code/turbojpeg.h")
+    ]
+}

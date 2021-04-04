@@ -142,14 +142,14 @@ template("omega_wtk_shared_lib"){
 
         #    lib_name = target_name
 
-            #  symlinks_exist = exec_script("//gn/AppleFramework.py",[
-            #     "--framework",
-            #    rebase_path("$root_out_dir/Frameworks/${framework_name}.framework"),
-            #    "--name",
-            #    "${framework_name}",
-            #    "--current_version",
-            #    "${invoker.framework_version}",
-            #    "--check_links"],"string")
+        #      symlinks_exist = exec_script("//gn/AppleFramework.py",[
+        #         "--framework",
+        #        rebase_path("$root_out_dir/Frameworks/${framework_name}.framework"),
+        #        "--name",
+        #        "${framework_name}",
+        #        "--current_version",
+        #        "${invoker.framework_version}",
+        #        "--check_links"],"string")
 
         _libs = [
                 "c",
@@ -192,26 +192,19 @@ template("omega_wtk_shared_lib"){
                 "{{bundle_executable_dir}}/{{source_file_part}}"
             ]
         }
-            
-        # if(symlinks_exist == "False") {
-        #     action("${framework_name}_Sym"){
-        #         script = rebase_path("//gn//AppleFramework.py")
-        #         args = [
-        #             "--framework",
-        #             rebase_path("$root_out_dir/Frameworks/${framework_name}.framework"),
-        #             "--name",
-        #             "${framework_name}",
-        #             "--current_version",
-        #             "${invoker.framework_version}"
-        #         ]
-        #         public_deps = [
-        #             ":${framework_name}_exec"
-        #         ]
-        #         outputs = [
-        #             "$root_out_dir/Frameworks/${framework_name}.framework/{framework_name}"
-        #         ]
-        #     }
-        # }
+
+        if(defined(invoker.embedded_libs)) {
+
+            bundle_data("${framework_name}__external_libs"){
+                sources = invoker.embedded_libs
+                public_deps = [
+                    ":${framework_name}"
+                ]
+                outputs = [
+                    "{{bundle_executable_dir}}/Libraries/{{source_file_part}}"
+                ]
+            }
+        }
 
        create_bundle("${framework_name}.framework"){
           bundle_root_dir = "$root_out_dir/Frameworks/$target_name"  
@@ -240,6 +233,7 @@ template("omega_wtk_shared_lib"){
               "$bundle_root_dir/$framework_name"
           ]
           public_deps = [
+              ":${framework_name}_exec",
               ":${framework_name}_plists"
           ]
         #   if(symlinks_exist == "False"){
@@ -248,9 +242,11 @@ template("omega_wtk_shared_lib"){
         #       ]
         #   }
         #   else {
+            if(defined(invoker.embedded_libs)) {
               public_deps += [
-                  ":${framework_name}_exec"
+                  ":${framework_name}__external_libs",
               ]
+            }
         #   }
        }
     #    out_dir = "$root_out_dir/lib"

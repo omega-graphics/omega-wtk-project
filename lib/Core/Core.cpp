@@ -85,6 +85,52 @@ bool Ellipse::compare(Ellipse & other){
     //     std::move(_data,_data + _size,begin());
     //     len = _len;
     // };
+
+    // RegularExpression::RegularExpression(Core::String pattern,bool multiLine){
+    //     int errc;
+    //     size_t err_offset;
+    //     uint32_t extra;
+    //     if(multiLine)
+    //         extra =  PCRE2_MULTILINE;
+    //     else 
+    //         extra = 0;
+    //     code = pcre2_compile(PCRE2_SPTR(pattern.c_str()),pattern.size(),PCRE2_UTF | extra,&errc,&err_offset,NULL);
+    //     if(errc >= 0){
+    //         std::cout << "Regex Successfuly Compiled" << std::endl;
+    //     }
+    //     else {
+    //         std::cerr << "Failed to Compile Regex" << std::endl;
+    //     };
+    // };
+
+    // RegularExpression::Match RegularExpression::match(Core::String subject){
+    //     pcre2_match_data *data = pcre2_match_data_create_from_pattern(code,NULL);
+    //     auto errc = pcre2_match_8(code,PCRE2_SPTR(subject.c_str()),subject.size(),0,PCRE2_COPY_MATCHED_SUBJECT,data,NULL);
+    //     String rc;
+    //     Match m;
+    //     rc.reserve(pcre2_get_ovector_count(data));
+    //     memcpy(rc.data(),pcre2_get_ovector_pointer(data),pcre2_get_match_data_size(data));
+    //     m.mdata = data;
+    //     m.main = std::move(rc);
+    //     return m;
+    // };
+
+    // String RegularExpression::Match::getSubMatchByNum(unsigned int n){
+    //     PCRE2_UCHAR8 *buffer;
+        
+    //     size_t size;
+    //     pcre2_substring_get_bynumber(mdata,n,&buffer,&size);
+    //     return String((const char *)buffer,size);
+    // };
+
+    // RegularExpression::Match::~Match(){
+    //     pcre2_match_data_free(mdata);
+    // };
+
+    // RegularExpression::~RegularExpression(){
+    //     pcre2_code_free(code);
+    // };
+
 }
 
 namespace OmegaWTK {

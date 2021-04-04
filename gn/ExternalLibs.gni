@@ -1,0 +1,48 @@
+external_lib_path = "$root_out_dir/externals/"
+template("external_lib"){
+
+    o = exec_script("//gn/external_lib.py",["--conf",invoker.conf,"--build",rebase_path("$root_out_dir/externals/${target_name}/build")],"string")
+    print(o)
+    t_name = target_name
+
+    action("__${target_name}"){
+        script = "//gn/external_lib.py"
+        args = [
+            "--make",
+            rebase_path("$root_out_dir/externals/${t_name}/build")
+        ]
+        outputs = invoker.outputs
+        if(defined(invoker.public_deps)){
+            public_deps = invoker.public_deps
+        }
+    }
+
+    copy(target_name){
+        sources = invoker.public_headers
+        public_deps = [":__${t_name}"]
+        outputs = [
+            "$root_out_dir/externals/${target_name}/include/{{source_file_part}}"
+        ]
+    }
+
+    config("${target_name}_config"){
+        include_dirs = ["$root_out_dir/externals/${target_name}/include"]
+    }
+
+    # if(is_mac || is_linux){
+    #     target_name = "lib${target_name}"
+    # }
+    # shared_library(target_name){
+    #     forward_variables_from(invoker,["sources","public_deps","libs","cflags_c","cflags_cc","defines"])
+    #     if(is_mac){
+    #         output_extension = "dylib"
+    #     }
+    #     else if(is_linux){
+    #         output_extension = "so"
+    #     }
+    #     else {
+    #         output_extension = "dll"
+    #     }
+    #     output_dir = "$root_out_dir/external-libs"
+    # }
+}

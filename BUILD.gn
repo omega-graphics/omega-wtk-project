@@ -32,39 +32,48 @@ config("external_media_libs_config") {
         lib_dirs = [
             "$vcpkg_installed_path/lib"
         ]
-    }
-    else {
 
-    }
-    if(useVcpkg){
         include_dirs = [
             "$vcpkg_installed_path/include"
         ]
-    }
-    if(is_windows){
-        if(useVcpkg){
+    
+        if(is_windows){
+                libs = [
+                    "$vcpkg_installed_path/lib/avcodec.lib",
+                    "$vcpkg_installed_path/lib/avutil.lib",
+                    "$vcpkg_installed_path/lib/libpng16.lib",
+                    "$vcpkg_installed_path/lib/tiffxx.lib",
+                ]
+        }
+        else {
             libs = [
-                "$vcpkg_installed_path/lib/avcodec.lib",
-                "$vcpkg_installed_path/lib/avutil.lib",
-                "$vcpkg_installed_path/lib/libpng16.lib",
-                "$vcpkg_installed_path/lib/tiffxx.lib",
+                "avcodec",
+                "avutil",
+                "png",
+                "tiff",
+                "z"
             ]
         }
+
     }
     else {
-        libs = [
-            "avcodec",
-            "avutil",
-            "png",
-            "tiff",
-            "z"
-        ]
+
     }
 }
-
 omega_wtk_include_dir = "//include/omegaWTK"
 
 omega_wtk_static_lib("omegaWTKCore"){
+    if(useVcpkg) {
+        lib_dirs = [
+            "$vcpkg_installed_path/lib"
+        ]
+    }
+    include_dirs = [
+        "$vcpkg_installed_path/include"
+    ]
+    # libs = [
+    #     "pcre2-8"
+    # ]
     sources = [
         # Headers
         "$omega_wtk_include_dir/Core/Core.h",
@@ -164,6 +173,15 @@ omega_wtk_static_lib("omegaWTKMedia"){
     configs = [
         ":external_media_libs_config"
     ]
+    public_deps = [
+        ":omegaWTKCore",
+        "//external-libs/libpng",
+        "//external-libs/libtiff"
+    ]
+    public_configs = [
+        "//external-libs/libpng:libpng_config",
+        "//external-libs/libtiff:libtiff_config"
+    ]
     sources = [
         # Headers 
         "$omega_wtk_include_dir/Media/ImgCodec.h",
@@ -176,9 +194,6 @@ omega_wtk_static_lib("omegaWTKMedia"){
         "lib/Media/VideoCodec.cpp",
         # "lib/Media/VideoCapture.cpp",
         # "lib/Media/AudioCapture.cpp"
-    ]
-    public_deps = [
-        ":omegaWTKCore"
     ]
 }
 
@@ -352,7 +367,10 @@ omega_wtk_shared_lib("OmegaWTK"){
             "Metal.framework",
             "MetalPerformanceShaders.framework"
         ]
-        # framework_version_plist = "//lib/version.plist"
+        # embedded_libs = [
+        #     "$vcpkg_installed_dir/lib/libpng.${shared_lib_suffix}",
+        #     "$vcpkg_installed_dir/lib/lib"
+        # ]
     }
     if(is_windows) {
         # arflags = [

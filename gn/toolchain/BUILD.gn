@@ -1,6 +1,6 @@
 declare_args(){
     debug = false
-    python3 = ""
+    # python3 = ""
 }
 
 toolchain("llvm") {
@@ -9,7 +9,7 @@ toolchain("llvm") {
         obj_ext = "obj"
     }
     if(is_mac || is_linux){
-        python_path = python3
+        # python_path = python3
         obj_ext = "o"
     }
     else {
@@ -164,7 +164,7 @@ toolchain("llvm") {
     tool("copy"){
         
         python_copy = rebase_path("../__copy.py")
-        command = "$python_path \"$python_copy\" --src {{source}} --dest {{output}}"
+        command = "$python_path $python_copy --src {{source}} --dest {{output}}"
         description = "Copying {{source}} to {{output}}"
     }
     tool("rc"){
