@@ -5,7 +5,8 @@
 #include <cctype>
 #include <iostream>
 
-
+#include "assetc.h"
+#include "AssetsPriv.h"
 
 
 #ifdef TARGET_WIN32
@@ -18,6 +19,7 @@
 #endif
 
 namespace OmegaWTK::Core {
+
 
 bool Rect::compare(Rect & other){
     return (pos.x == other.pos.x) && (pos.y == other.pos.y) && (dimen.minWidth == other.dimen.minWidth) && (dimen.minHeight == other.dimen.minHeight);
@@ -134,6 +136,38 @@ bool Ellipse::compare(Ellipse & other){
 }
 
 namespace OmegaWTK {
+
+Core::Map<Core::String,AssetFileLoader::AssetBuffer>  AssetFileLoader::assets_res;
+
+
+void AssetFileLoader::loadAssetFile(FSPath & path){
+        auto str = path.serialize();
+        std::ifstream in(str,std::ifstream::binary);
+        assetc::AssetsFileHeader header;
+        in.read((char *)&header,sizeof(assetc::AssetsFileHeader));
+        for(uint64_t i = 0;i < header.asset_count;i++){
+            assetc::AssetsFileEntry fentry;
+            in.read((char *)&fentry,sizeof(assetc::AssetsFileEntry));
+            /// Read/Buffer the Asset Name
+            char * name = new char[fentry.string_size];
+            in.read(name,fentry.string_size);
+
+            /// Read/Buffer the Asset Data
+            char * data = new char[fentry.file_size];
+            in.read(data,fentry.file_size);
+
+            std::string filename (name,fentry.string_size);
+            AssetBuffer buffer;
+            buffer.filesize = fentry.file_size;
+            buffer.data = data;
+            assets_res.insert(std::make_pair(std::move(filename),std::move(buffer)));
+        };
+    };
+
+void loadAssetFile(FSPath path){
+    AssetFileLoader::loadAssetFile(path);
+};
+
 
 Core::Rect Rect(unsigned x,unsigned y,unsigned width,unsigned height,float angle){
     return {{x,y},{width,height},angle};
@@ -264,7 +298,14 @@ Core::String FSPath::filename(){
         };
         ++it;
     };
+    return "";
 };
+
+Core::String & FSPath::str(){
+    return _str;
+};
+
+
 
 Core::String FSPath::serialize(){
 #ifdef TARGET_WIN32
@@ -308,6 +349,7 @@ Core::String FSPath::serialize(){
 };
 
 FSPath::FSPath(const Core::String & str){
+    _str = str;
     parse(str);
 };
 

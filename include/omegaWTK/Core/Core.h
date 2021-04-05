@@ -347,6 +347,7 @@ OMEGAWTK_EXPORT Core::FRoundedRect FRoundedRect(float x,float y,float w,float h,
 
 
  class OMEGAWTK_EXPORT  FSPath {
+       Core::String _str;
         struct Token {
             typedef enum : OPT_PARAM {
                 ID,
@@ -369,13 +370,14 @@ OMEGAWTK_EXPORT Core::FRoundedRect FRoundedRect(float x,float y,float w,float h,
             };
             return out.str();
         };
-        // Core::String dir();
+        Core::String &str();
         Core::String filename();
         Core::String & ext();
         Core::String serialize();
         FSPath(const Core::String & str);
         ~FSPath();
     };
+    void loadAssetFile(FSPath path);
 };
 
 template<class _Ty>

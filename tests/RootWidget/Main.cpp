@@ -38,15 +38,15 @@ class MyWidget : public Widget {
     };
     MyRootDelegate *delegate;
 public:
-    MyWidget(const Core::Rect & rect):Widget(rect,nullptr),delegate(new MyRootDelegate(&selected)){
+    MyWidget(const Core::Rect & rect,SharedHandle<Media::BitmapImage> & img):Widget(rect,nullptr),delegate(new MyRootDelegate(&selected)){
         rootView->setDelegate(delegate);
         auto black = Composition::ColorBrush(Composition::Color::Black);
         auto rootLayer = rootView->getLayerTreeLimb()->getRootLayer();
         auto layerStyle = make<Composition::LayerStyle>();
         // layerStyle->setBackgroundColor(Composition::Color::Blue);
-        layerStyle->add(VISUAL_RECT(OmegaWTK::Rect(0,0,300,300),ColorBrush(Composition::Color::Orange)));
+        // layerStyle->add(VISUAL_RECT(OmegaWTK::Rect(0,0,300,300),ColorBrush(Composition::Color::Orange)));
 //        layerStyle->add(VISUAL_TEXT("Hello World",ColorBrush(Composition::Color::Black),Rect(0,0,200,200),25,Composition::Text::Font("Arial",OmegaWTK::Composition::Text::Font::Regular)));
-        // layerStyle->add(VISUAL_IMG(img,Rect(100,0,100,100)));
+        layerStyle->add(VISUAL_IMG(img,OmegaWTK::Rect(0,0,300,300)));
 //        rootLayer->setBackgroundColor(Composition::Color::Blue);
         //        rootLayer->drawRect(Rect(0,0,100,100),Composition::ColorBrush(Composition::Color::Red),Composition::Border(black,5));
         //          rootLayer->drawRoundedRect(RoundedRect(0,0,200,200,25,25),Composition::ColorBrush(Composition::Color::Green));
@@ -55,20 +55,20 @@ public:
         //        rootLayer->drawText("Hello World!",25,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,200,200));
         //        rootLayer->drawText("Hello World!",50,Composition::ColorBrush(Composition::Color::Black),Rect(0,0,300,200));
         rootLayer->setStyle(layerStyle);
-        auto subLayer = makeLayer(OmegaWTK::Rect(0,0,200,200));
-        auto shadow = make<Composition::LayerEffect>(LAYER_EFFECT_DROPSHADOW(-5.0,-5.0,5,1.0,1.0,Composition::Color::Black));
-    //    auto blur = make<LayerEffect>(LAYER_EFFECT_DIRECTIONALBLUR(4.0,0.0));
-        auto _style2 = make<Composition::LayerStyle>();
-        _style2->setBackgroundColor({Composition::Color::White,0x00});
-        auto br = Composition::ColorBrush(Composition::Color::Black);
-       _style2->add(VISUAL_RECT(OmegaWTK::Rect(50,50,150,150),ColorBrush(Composition::Color::White)));
-//        str = "Hello World";
-//        textRect = Composition::TextRect::Create(str,global_font,OmegaWTK::Rect(50,50,100,100));
-//        _style2->add(VISUAL_TEXT(textRect,ColorBrush(Composition::Color::Black)));
-        _style2->addEffect(shadow);
+//         auto subLayer = makeLayer(OmegaWTK::Rect(0,0,200,200));
+//         auto shadow = make<Composition::LayerEffect>(LAYER_EFFECT_DROPSHADOW(-5.0,-5.0,5,1.0,1.0,Composition::Color::Black));
+//     //    auto blur = make<LayerEffect>(LAYER_EFFECT_DIRECTIONALBLUR(4.0,0.0));
+//         auto _style2 = make<Composition::LayerStyle>();
+//         _style2->setBackgroundColor({Composition::Color::White,0x00});
+//         auto br = Composition::ColorBrush(Composition::Color::Black);
+//        _style2->add(VISUAL_RECT(OmegaWTK::Rect(50,50,150,150),ColorBrush(Composition::Color::White)));
+// //        str = "Hello World";
+// //        textRect = Composition::TextRect::Create(str,global_font,OmegaWTK::Rect(50,50,100,100));
+// //        _style2->add(VISUAL_TEXT(textRect,ColorBrush(Composition::Color::Black)));
+//         _style2->addEffect(shadow);
     //    _style2->addEffect(blur);
-        subLayer->setStyle(_style2);
-        rootView->getLayerTreeLimb()->addLayer(subLayer);
+        // subLayer->setStyle(_style2);
+        // rootView->getLayerTreeLimb()->addLayer(subLayer);
     };
     void resize(Core::Rect &newRect){
         
@@ -116,8 +116,8 @@ int omegaWTKMain(AppInst *app)
         })
     }));
 
-    FSPath path = Core::String("./assets/test.png");
-    // auto r_rectFrame = Composition::RoundedRectFrame(FRoundedRect(200.f,200.f,100.f,75.f,20.f,20.f),5.f);
+//     FSPath path = Core::String("./assets/test.png");
+// auto r_rectFrame = Composition::RoundedRectFrame(FRoundedRect(200.f,200.f,100.f,75.f,20.f,20.f),5.f);
     
 //    Core::Math::VectorPath2D vectorPath ({0,0});
 //    vectorPath.append({50,50});
@@ -126,12 +126,12 @@ int omegaWTKMain(AppInst *app)
 //    std::cout << vectorPath.toStr();
     
     
-    std::cout << path.serialize() << std::endl;
+//     std::cout << path.serialize() << std::endl;
     
-    // auto img = IMPORT_IMG("test.png");
+   SharedImageHandle img = IMPORT_IMG("Songalong-Logo-Mac.png");
     // auto img2 = IMPORT_IMG("test-1.png");
     // auto widget = make<UI::TextInput>(UI::TextInput({{0,0},{200,100}}));
-   auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}}));
+   auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}},img));
     //   auto widget = make<UI::PushButton>(UI::PushButton({{0,0},{400,400}},nullptr));
 
 //    auto widget2 = make<MyWidget>(MyWidget({{0,500},{400,400}}));

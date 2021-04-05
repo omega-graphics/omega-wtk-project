@@ -13,7 +13,7 @@
 
 #if defined(TARGET_WIN32) && defined(OMEGAWTK_APP)
 #define OMEGAWTK_EXPORT __declspec(dllimport)
-#else 
+#elif defined(TARGET_WIN32)
 #define OMEGAWTK_EXPORT __declspec(dllexport)
 #endif
 

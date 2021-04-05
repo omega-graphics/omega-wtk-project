@@ -1,5 +1,8 @@
 #include "omegaWTK/Media/ImgCodec.h"
 
+#include "AssetsPriv.h"
+
+#include <sstream>
 #include <zlib.h>
 
 #include <png.h>
@@ -331,7 +334,7 @@ public:
 
 class TiffCodec : public ImgCodec {
     bool load_tiff_from_file(){
-        TIFF *tiff = TIFFStreamOpen("r",&in);
+        TIFF *tiff = TIFFStreamOpen("rb",&in);
 
         uint32_t width,height,bitDepth,channelCount,compression;
         
@@ -415,6 +418,20 @@ Core::UniquePtr<ImgCodec> obtainCodecForImageFormat(BitmapImage::Format &format,
     }
    
 };
+
+    Core::SharedPtr<BitmapImage> loadImageFromAssets(FSPath path){
+        BitmapImage img;
+        auto ext = path.ext();
+        BitmapImage::Format f;
+        if(ext == "png"){
+            f = BitmapImage::PNG;
+        };
+        auto & asset = AssetFileLoader::assets_res[path.str()];
+        std::istringstream in(std::string((char *)asset.data,asset.filesize),std::ios::binary);
+        Core::UniquePtr<ImgCodec> codec = obtainCodecForImageFormat(f,in,&img);
+        codec->readToStorage();
+        return std::make_shared<BitmapImage>(std::move(img));
+    };
     
     Core::SharedPtr<BitmapImage> loadImageFromFile(FSPath path) {
         BitmapImage img;

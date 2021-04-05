@@ -33,13 +33,17 @@ add_omega_wtk_app(
 )
 ```
 - #### With GN (Preferred)
-> Note make sure you have `cmake` in your `$PATH`
+##### NOTE: Make sure you have `cmake` in your `$PATH`
 1. Install GN ( Visit https://gn.googlesource.com/gn for installation)   
-2. Run 
+2. Run (Downloads dependencies)
 ```shell
-gn gen out --args=" vcpkg_installed_dir=\"/Users/myuser/dir/to/vcpkg/installed/os\""
+python deps.py
 ```
-3. Then run `ninja -C ./out` to build the project
+3. Then run GN
+```shell
+gn gen out --args=""
+```
+3. Lastly run `ninja -C ./out` to build the project
 4. Use.
 
 Example Usage

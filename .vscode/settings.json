@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\alex\\AppData\\Local\\Microsoft\\WindowsApps\\python3.9.exe",
+    "python.pythonPath": "/usr/local/bin/python3",
     "restructuredtext.confPath": ""
 }

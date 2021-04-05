@@ -69,7 +69,7 @@ omega_wtk_static_lib("omegaWTKCore"){
     #     ]
     # }
     include_dirs = [
-        "$vcpkg_installed_path/include"
+        "tools/assetc"
     ]
     public_deps = [
         "//external-libs/pcre2"
@@ -175,6 +175,9 @@ omega_wtk_static_lib("omegaWTKNative"){
 omega_wtk_static_lib("omegaWTKMedia"){
     configs = [
         ":external_media_libs_config"
+    ]
+    include_dirs = [
+        "//lib/Core"
     ]
     public_deps = [
         ":omegaWTKCore",
@@ -403,7 +406,15 @@ omega_wtk_shared_lib("OmegaWTK"){
     ]
 }
 
+omega_wtk_tool("omegawtk-assetc"){
+    sources = [
+        "tools/assetc/main.cpp"
+    ]
+}
+
+
 omega_wtk_test("RootWidgetTest"){
+    assets_dir = "tests/RootWidget/MyAssets"
     sources = [
         "tests/RootWidget/Main.cpp"
     ]

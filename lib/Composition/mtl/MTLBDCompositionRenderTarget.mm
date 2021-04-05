@@ -7,6 +7,8 @@
 
 namespace OmegaWTK::Composition {
 
+
+
 #define EIGHTBIT_TO_FLOATING_POINT(val) (val/255.f)
 NSColor * color_to_ns_color(Color & color){
     return [NSColor colorWithRed:EIGHTBIT_TO_FLOATING_POINT(color.r) green:EIGHTBIT_TO_FLOATING_POINT(color.g) blue:EIGHTBIT_TO_FLOATING_POINT(color.b) alpha:EIGHTBIT_TO_FLOATING_POINT(color.a)];
@@ -225,6 +227,8 @@ void MTLBDCompositionViewRenderTarget::commit(){
             NSLog(@"Going to Present Drawable");
             [finalCommandBuffer presentDrawable:currentDrawable];
             NSLog(@"Presented Drawable!");
+
+            
 //            [finalCommandBuffer encodeSignalEvent:deviceContext->currentEvent() value:deviceContext->bufferCount + 1];
 //            [finalCommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer){
 ////                    auto buffer_it = vertexBuffers.begin();

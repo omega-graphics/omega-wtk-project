@@ -7,7 +7,7 @@
 
 namespace OmegaWTK::Composition {
 
-FontEngine * const FontEngine::instance = new FontEngine();
+FontEngine * FontEngine::instance;
 
 FontEngine::FontEngine(){
     

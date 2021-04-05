@@ -23,6 +23,9 @@
 #include "omegaWTK/UI/PushButton.h"
 #include "omegaWTK/UI/Text.h"
 #include "omegaWTK/UI/Stack.h"
+#include "omegaWTK/UI/DropDown.h"
+#include "omegaWTK/UI/Layout.h"
+#include "omegaWTK/UI/Panel.h"
 
 #include "omegaWTK/Main.h"
 

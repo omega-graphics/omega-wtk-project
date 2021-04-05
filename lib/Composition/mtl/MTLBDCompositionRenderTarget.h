@@ -256,7 +256,7 @@ Core::SharedPtr<BDCompositionImage> MTLBDCompositionRenderTarget<_Ty>::createIma
     scaleFix.scaleTransform = &transform;
 
     id<MTLCommandBuffer> _commandBuffer = deviceContext->makeNewMTLCommandBuffer();
-    [_commandBuffer encodeWaitForEvent:deviceContext->currentEvent() value:deviceContext->bufferCount];
+    // [_commandBuffer encodeWaitForEvent:deviceContext->currentEvent() value:deviceContext->bufferCount];
     MTLTextureDescriptor *destTextureDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm width:fnewSize.dimen.minWidth height:fnewSize.dimen.minHeight mipmapped:NO];
     destTextureDesc.usage = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
     id<MTLTexture> destTexture = [device->metal_device newTextureWithDescriptor:destTextureDesc];
@@ -273,7 +273,6 @@ Core::SharedPtr<BDCompositionImage> MTLBDCompositionRenderTarget<_Ty>::createIma
 //    else {
     fin = destTexture;
 //    };
-    [_commandBuffer encodeSignalEvent:deviceContext->currentEvent() value:deviceContext->bufferCount + 1];
     [_commandBuffer enqueue];
 //    [commandBuffer waitUntilCompleted];
 
