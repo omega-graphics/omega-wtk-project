@@ -31,7 +31,7 @@ namespace Core {
      which allows for thread-safe read/write access for a shared resource.
     */
     template<class _Ty>
-    OMEGAWTK_EXPORT class CopyOnWritePtr {
+    class OMEGAWTK_EXPORT  CopyOnWritePtr {
         Core::SharedPtr<_Ty> data;
         std::mutex mutex;
         bool status;
@@ -83,7 +83,7 @@ namespace Core {
     
 
     template<class _PTy = void>
-    OMEGAWTK_EXPORT class CPUThreadP {
+    class OMEGAWTK_EXPORT CPUThreadP {
         std::thread t;
         std::promise<_PTy> prom;
         std::future<_PTy> future;

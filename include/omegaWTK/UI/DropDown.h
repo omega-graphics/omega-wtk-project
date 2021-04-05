@@ -5,8 +5,10 @@
 
 namespace OmegaWTK::UI {
 
-    class DropDown : public Widget {
-        
+    class OMEGAWTK_EXPORT DropDown : public Widget {
+        Core::Vector<SharedHandle<Widget>> childWidgets;
+    public:
+        void addChildWidget(SharedHandle<Widget> & widget);
     };
 };
 

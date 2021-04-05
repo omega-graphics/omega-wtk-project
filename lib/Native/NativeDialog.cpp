@@ -27,7 +27,9 @@ namespace OmegaWTK::Native {
         #ifdef TARGET_MACOS
          return Cocoa::make_cocoa_note_dialog(desc,nativeWindow);
         #endif
-         // return Win::WinNoteDialog::Create(desc,nativeWindow);
+         #ifdef TARGET_WIN32
+         return Win::WinNoteDialog::Create(desc,nativeWindow);
+         #endif
      };
 
     SharedHandle<NativeFSDialog> NativeFSDialog::Create(const Descriptor &desc,NWH nativeWindow){

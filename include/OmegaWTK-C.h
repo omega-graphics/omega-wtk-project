@@ -8,6 +8,10 @@
 #ifndef OMEGAWTK_C_LIB_H
 #define OMEGAWTK_C_LIB_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  Typedefs!
  */
@@ -70,9 +74,9 @@ struct OmegaWTKVisualRoundedRectParams {
     OmegaWTKCompBrush *brush;
 };
 
-struct OmegaWTKVisualEllipseParams {
+// struct OmegaWTKVisualEllipseParams {
     
-};
+// };
 
 struct OmegaWTKVisualImageParams {
     struct OmegaWTKRect rect;
@@ -164,3 +168,6 @@ void omegawtk_free_widget_observer(OmegaWTKWidgetObserver * observer);
 
 #endif
 
+#ifdef __cplusplus
+}
+#endif

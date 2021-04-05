@@ -13,6 +13,11 @@ external_lib("libpng"){
         lib_name,
         "${external_lib_path}/libpng/build/pnglibconf.h"
     ]
+    if(is_windows){
+        outputs += [
+            "${external_lib_path}/libpng/build/libpng16.dll"
+        ]
+    }
     public_deps = [
         "//external-libs/zlib"
     ]

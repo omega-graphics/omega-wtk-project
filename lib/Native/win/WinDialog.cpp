@@ -45,4 +45,8 @@ namespace OmegaWTK::Native::Win {
             return std::make_shared<WinFSDialog>(false,nativeWindow);
         }
     };
+
+    WinNoteDialog::WinNoteDialog(const Descriptor &desc,NWH nativeWindow):NativeNoteDialog(nativeWindow){
+        
+    };
 }

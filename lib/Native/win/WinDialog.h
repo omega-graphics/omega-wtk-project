@@ -3,6 +3,7 @@
 #include <CommCtrl.h>
 #include <ShObjIdl.h>
 #include <atlbase.h>
+#include <windowsx.h>
 
 #include "omegaWTK/Native/NativeDialog.h"
 
@@ -14,12 +15,22 @@ namespace OmegaWTK::Native::Win {
         bool read_or_write;
         ATL::CComPtr<IFileOpenDialog> dialog_ty_1;
         ATL::CComPtr<IFileSaveDialog> dialog_ty_2;
-        void close() override;
-        void show() override;
+        void close();
+        void show();
     public:
         WinFSDialog(bool read_or_write,NWH nativeWindow);
         ~WinFSDialog();
         static SharedHandle<NativeFSDialog> Create(const Descriptor & desc,NWH nativeWindow);
+    };
+
+    class WinNoteDialog : public NativeNoteDialog {
+        
+        public:
+        WinNoteDialog(const Descriptor & desc,NWH nativeWindow);
+        ~WinNoteDialog();
+        void show();
+        void close();
+        static SharedHandle<NativeNoteDialog> Create(const Descriptor & desc,NWH nativeWindow);
     };
 }
 

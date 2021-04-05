@@ -5,7 +5,7 @@
 
 namespace OmegaWTK::UI {
 
-    class OMEGAWTK_EXPORT   Panel : public Widget {
+    class OMEGAWTK_EXPORT Panel : public Widget {
         SharedHandle<ViewAnimator> rootViewAnim;
         SharedHandle<Composition::LayerStyle> visiblelayerStyle;
     public:

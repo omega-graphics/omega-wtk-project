@@ -1,12 +1,18 @@
 import("//gn/ExternalLibs.gni")
 
-o = "$root_out_dir/externals/libpng/build"
+o = "$root_out_dir/externals/libjpeg-turbo/build"
 external_lib("libjpeg-turbo"){
     conf = rebase_path("./code")
     outputs = [
         "${o}/${lib_prefix}turbojpeg.${static_lib_suffix}",
         "${o}/jconfig.h"
     ]
+    if(is_windows){
+        outputs += [
+              "${o}/jpeg62.dll",
+             "${o}/turbojpeg.dll"
+        ]
+    }
     public_headers = [
         rebase_path("./code/jpeglib.h"),
         rebase_path("./code/jmorecfg.h"),
