@@ -49,4 +49,20 @@ namespace OmegaWTK::Native::Win {
     WinNoteDialog::WinNoteDialog(const Descriptor &desc,NWH nativeWindow):NativeNoteDialog(nativeWindow){
         
     };
+
+    WinNoteDialog::~WinNoteDialog(){
+        
+    };
+
+    SharedHandle<NativeNoteDialog> WinNoteDialog::Create(const Descriptor &desc, NWH nativeWindow){
+        return std::make_shared<WinNoteDialog>(desc,nativeWindow);
+    };
+
+    void WinNoteDialog::show(){
+
+    };
+
+    void WinNoteDialog::close(){
+
+    };
 }

@@ -542,7 +542,7 @@ template("omega_wtk_test"){
     }
            
     if(is_windows){
-        app_assets_dest = output_dir
+        app_assets_dest = "$root_out_dir/tests/${app_name}"
 
         copy("${app_name}__dlls"){
             public_deps = [

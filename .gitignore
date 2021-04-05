@@ -42,6 +42,7 @@ sphinxout
 
 *.sh
 *.bat
+!gn/vc.bat
 
 # Output Folders
 

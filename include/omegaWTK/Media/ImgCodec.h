@@ -11,7 +11,7 @@ namespace OmegaWTK {
         };
         struct ImgHeader;
     
-        struct BitmapImage {
+        struct OMEGAWTK_EXPORT BitmapImage {
             Core::UniquePtr<ImgProfile> profile;
             Core::UniquePtr<ImgHeader> header;
             void *data;
@@ -47,8 +47,8 @@ namespace OmegaWTK {
             BitmapImage::AlphaFormat alpha_format;
             size_t stride;
         };
-        Core::SharedPtr<BitmapImage> loadImageFromFile(FSPath path);
-        Core::SharedPtr<BitmapImage> loadImageFromAssets(FSPath path);
+        OMEGAWTK_EXPORT Core::SharedPtr<BitmapImage> loadImageFromFile(FSPath path);
+        OMEGAWTK_EXPORT Core::SharedPtr<BitmapImage> loadImageFromAssets(FSPath path);
     #define IMPORT_IMG(img) ::OmegaWTK::Media::loadImageFromAssets(::OmegaWTK::Core::String(img))
     };
 typedef Core::SharedPtr<Media::BitmapImage> SharedImageHandle;
