@@ -1,3 +1,5 @@
+import("./ExternalExports.gni")
+
 declare_args(){
     python_path = ""
     omega_wtk_include_dir = rebase_path("//include","../",".")
@@ -443,6 +445,7 @@ template("omega_wtk_test"){
     _defines = []
     if(is_windows) {
         _defines += [
+            "OMEGAWTK_APP",
             "TARGET_WIN32",
             "WINDOWS_PRIVATE"
         ]
@@ -493,6 +496,17 @@ template("omega_wtk_test"){
         forward_variables_from(invoker,["libs","include_dirs","output_name","sources","defines","deps","public_deps","frameworks","framework_dirs"])
         if(is_windows) {
             output_extension = "exe"
+            ldflags = [
+                # "/Od",
+                "User32.lib",
+                # "/link",
+                # "/MANIFEST:embed",
+                # "/MANIFESTINPUT:" + rebase_path("//target/windows/app.exe.manifest"),
+                # "/MANIFESTINPUT:" + rebase_path("//target/windows/intermediate.manifest")
+            ]
+            cflags_cc = [
+               
+            ]
         }
         else if(is_mac){
             ldflags = [
@@ -510,10 +524,29 @@ template("omega_wtk_test"){
             output_dir = "$root_out_dir/obj"
         }
         else {
-            output = "$root_out_dir/tests"
+            output_dir = "$root_out_dir/tests"
         }
     }
+
     app_name = "$target_name"
+
+    if(is_windows){
+
+        copy("${app_name}__dlls"){
+            public_deps = [
+                ":${app_name}"
+            ]
+            sources = [
+                "$root_out_dir/lib/OmegaWTK.dll",
+                zlib_link
+            ] + libtiff_link
+            outputs = [
+                "$root_out_dir/tests/{{source_file_part}}"
+            ]
+        }
+
+    }
+
     if(is_mac){
 
         # action("compile-nib__${target_name}") {

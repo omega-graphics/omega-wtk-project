@@ -88,12 +88,12 @@ class OMEGAWTK_EXPORT  FontEngine {
 #endif
 public:
     Core::SharedPtr<Font> CreateFont(FontDescriptor & desc);
-    static FontEngine * const instance;
+    static FontEngine * instance;
     FontEngine();
 private:
     friend class ::OmegaWTK::AppInst;
     static void Create(){
-      
+        instance = new FontEngine();
     };
     static void Destroy(){
         delete instance;

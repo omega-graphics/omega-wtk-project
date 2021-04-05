@@ -1,14 +1,17 @@
 if(is_linux){
     static_lib_suffix = "a"
     shared_lib_suffix = "so"
+    lib_prefix = "lib"
 }
 else if(is_mac){
     static_lib_suffix = "a"
     shared_lib_suffix = "dylib"
+    lib_prefix = "lib"
 }
 else {
     static_lib_suffix = "lib"
     shared_lib_suffix = "dll"
+    lib_prefix = ""
 }
 
 external_lib_path = "$root_out_dir/externals/"

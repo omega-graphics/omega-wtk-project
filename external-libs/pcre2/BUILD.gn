@@ -1,11 +1,17 @@
 import("//gn/ExternalLibs.gni")
 
 o = "$external_lib_path/pcre2/build"
+if(is_mac || is_linux) {
+    lib_name = "${o}/${lib_prefix}pcre2-8.${static_lib_suffix}"
+}
+else {
+    lib_name = "${o}/${lib_prefix}pcre2-8.${static_lib_suffix}"
+}
 
 external_lib("pcre2"){
     conf = rebase_path("./code/pcre2-10.36")
     outputs = [
-        "${o}/libpcre2-8.${static_lib_suffix}",
+        lib_name,
         "${o}/pcre2.h",
         "${o}/pcre2posix.h"
     ]
@@ -13,5 +19,5 @@ external_lib("pcre2"){
         rebase_path("${o}/pcre2.h"),
         rebase_path("./code/pcre2-10.36/src/pcre2posix.h")
     ]
-    export = "${o}/libpcre2-8.${static_lib_suffix}"
+    export = lib_name
 }

@@ -1,9 +1,16 @@
 import("//gn/ExternalLibs.gni")
 
+if(is_mac || is_linux){
+    lib_name = "${external_lib_path}/libpng/build/libpng16.${static_lib_suffix}"
+}
+else {
+    lib_name = "${external_lib_path}/libpng/build/libpng16.${static_lib_suffix}"
+}
+
 external_lib("libpng"){
     conf = rebase_path("./code")
     outputs = [
-        "${external_lib_path}/libpng/build/libpng16.${static_lib_suffix}",
+        lib_name,
         "${external_lib_path}/libpng/build/pnglibconf.h"
     ]
     public_deps = [
@@ -14,5 +21,5 @@ external_lib("libpng"){
         rebase_path("./code/pngconf.h"),
         rebase_path("${external_lib_path}/libpng/build/pnglibconf.h")
     ]
-    export = "${external_lib_path}/libpng/build/libpng16.${static_lib_suffix}"
+    export = lib_name
 }

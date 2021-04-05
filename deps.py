@@ -1,4 +1,4 @@
-#! usr/env/python3
+#!usr/env/python3
 
 import os
 import sys
@@ -15,7 +15,7 @@ def dep(url:str,gitClone:bool,installName:str,fileExt:str = ".zip"):
             os.makedirs("./temp")
         os.system("curl " + url + " --output ./temp/" + installName + fileExt)
         if fileExt == ".zip":
-            os.system("unzip " + "./temp/" + installName + fileExt + " -d " + "./external-libs/" + installName + "/code")
+            os.system("tar -xf " + "./temp/" + installName + fileExt + " -C " + "./external-libs/" + installName + "/code")
 
 def clean_temp_folder():
     shutil.rmtree("./temp")
@@ -26,7 +26,7 @@ dep(url="https://github.com/libjpeg-turbo/libjpeg-turbo.git",gitClone=True,insta
 dep(url="https://gitlab.com/libtiff/libtiff.git",gitClone=True,installName="libtiff")
 dep(url="https://github.com/madler/zlib.git",gitClone=True,installName="zlib")
 dep(url="https://ftp.pcre.org/pub/pcre/pcre2-10.36.zip",gitClone=False,installName="pcre2",fileExt=".zip")
-dep(url="https://webrtc.googlesource.com/src",gitClone=True,installName="webrtc")
+# dep(url="https://webrtc.googlesource.com/src",gitClone=True,installName="webrtc")
 
 if os.path.exists("./temp"):
     clean_temp_folder()

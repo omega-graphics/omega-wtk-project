@@ -1,5 +1,10 @@
 import("ExternalLibs.gni")
 
-
-zlib_link = "${external_lib_path}/zlib/build/libz.1.2.11.${shared_lib_suffix}"
-libtiff_link = ["${external_lib_path}/libtiff/build/libtiff/libtiff.5.${shared_lib_suffix}","${external_lib_path}/libtiff/build/libtiff/libtiffxx.5.${shared_lib_suffix}"]
+if(is_mac || is_linux){
+    zlib_link = "${external_lib_path}/zlib/build/libz.1.2.11.${shared_lib_suffix}"
+    libtiff_link = ["${external_lib_path}/libtiff/build/libtiff/libtiff.5.${shared_lib_suffix}","${external_lib_path}/libtiff/build/libtiff/libtiffxx.5.${shared_lib_suffix}"]
+}
+else {
+    zlib_link = "${external_lib_path}/zlib/build/zlib.${shared_lib_suffix}"
+    libtiff_link = ["${external_lib_path}/libtiff/build/libtiff/tiff.${shared_lib_suffix}","${external_lib_path}/libtiff/build/libtiff/tiffxx.${shared_lib_suffix}"]
+}

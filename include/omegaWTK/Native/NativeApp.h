@@ -6,7 +6,7 @@
 
 namespace OmegaWTK::Native {
 
-class NativeApp {
+class OMEGAWTK_EXPORT NativeApp {
 public:
     virtual void terminate() = 0;
     NativeApp();

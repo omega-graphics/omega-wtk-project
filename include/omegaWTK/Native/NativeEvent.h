@@ -9,7 +9,7 @@ namespace Native {
 
 typedef void* NativeEventParams;
 
-class NativeEvent {
+class OMEGAWTK_EXPORT NativeEvent {
 public:
     typedef enum : OPT_PARAM {
         /**View Events*/
@@ -62,7 +62,7 @@ typedef struct {
 
 class NativeEventProcessor;
 //
-class NativeEventEmitter {
+class OMEGAWTK_EXPORT NativeEventEmitter {
     NativeEventProcessor *message_reciever;
     friend class NativeEventProcessor;
 public:
@@ -74,7 +74,7 @@ public:
 };
 
 /// Listens for native events! (Only some types!)
-class NativeEventProcessor {
+class OMEGAWTK_EXPORT NativeEventProcessor {
     public:
     virtual void onRecieveEvent(NativeEventPtr event) = 0;
     NativeEventProcessor();

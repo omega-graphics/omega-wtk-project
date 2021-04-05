@@ -72,7 +72,7 @@ class View;
         Compositor *widgetCompositor;
         friend class ::OmegaWTK::View;
     public:
-        class Limb : public Native::NativeLayerTreeLimb {
+        class OMEGAWTK_EXPORT Limb : public Native::NativeLayerTreeLimb {
             Layer *limbRoot;
             bool enabled;
             ViewRenderTarget *renderTarget;

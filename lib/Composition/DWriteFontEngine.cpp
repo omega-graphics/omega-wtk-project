@@ -8,10 +8,10 @@ namespace OmegaWTK::Composition {
         res = std::move(w_str);
     };
 
-    FontEngine * const FontEngine::instance = new FontEngine();
+    FontEngine * FontEngine::instance;
 
     FontEngine::FontEngine(){
-
+        
         HRESULT hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,__uuidof(IDWriteFactory),(IUnknown **)&dwrite_factory);
         if(FAILED(hr)){
             exit(1);

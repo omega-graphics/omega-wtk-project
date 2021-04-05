@@ -5,6 +5,7 @@ declare_args(){
 
 toolchain("llvm") {
     if(is_windows){
+        cc = "clang-cl"
         win_cmd_prefix = "cmd.exe /c"
         obj_ext = "obj"
     }
@@ -13,7 +14,7 @@ toolchain("llvm") {
         obj_ext = "o"
     }
     else {
-        lld_command = "lld-link"
+        # lld_command = "lld-link"
     }
 
     if(is_mac){
@@ -24,12 +25,14 @@ toolchain("llvm") {
 
     tool("cc") {
         depfile = "{{output}}.d"
-        command = "$cc -MD -MF $depfile  {{defines}} {{include_dirs}} {{cflags_c}}  -c {{source}}  -o {{output}}"
+        
         if(is_linux || is_mac){
             depsformat = "gcc"
+            command = "$cc -MD -MF $depfile  {{defines}} {{include_dirs}} {{cflags_c}}  -c {{source}}  -o {{output}}"
         }
         else {
             depsformat = "msvc"
+            command = "$cc /clang:-MD /clang:-MF /clang:$depfile  {{defines}} {{include_dirs}} {{cflags_c}}  -c {{source}}  -o {{output}}"
         }
         description = "Compiling C source {{output}}"
         outputs = [
@@ -57,12 +60,14 @@ toolchain("llvm") {
     }
     tool("cxx_module"){
         depfile = "{{output}}.d"
-        command = "$cxx -MD -MF $depfile -std=c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} -fmodules -fmodule-name={{label}} -Xclang -Xclang -emit-module-interface -c {{source}} -o {{output}}"
+        
         if(is_linux || is_mac){
             depsformat = "gcc"
+            command = "$cxx -MD -MF $depfile -std=c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} -fmodules -fmodule-name={{label}} -Xclang -Xclang -emit-module-interface -c {{source}} -o {{output}}"
         }
         else {
             depsformat = "msvc"
+            command = "clang-cl /clang:-MD /clang:-MF /clang:$depfile /std:c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} -c {{source}} -o {{output}} -fmodules -fmodule-name={{label}} -Xclang -Xclang -emit-module-interface -c {{source}} -o {{output}}"
         }
         description = "Compiling CXX source for module {{label}} {{output}}"
         outputs = [
@@ -139,11 +144,13 @@ toolchain("llvm") {
         }
         # Link MSVC Runtime
         else {
-            command = "clang-cl  -Wl  /LD /Fe$outfile {{inputs}}  /link {{ldflags}} {{solibs}} msvcrt.lib {{libs}}"
+            command = "clang-cl  -Wl  /LD /Fe$outfile {{inputs}}  /link {{ldflags}} {{solibs}} {{libs}}"
         }
-        outputs = [outfile]
         if(is_windows){
-            outputs += ["{{output_dir}}/{{target_output_name}}.lib"]
+            outputs = ["{{output_dir}}/{{target_output_name}}.lib","{{output_dir}}/{{target_output_name}}{{output_extension}}"]
+        }
+        else {
+            outputs = [outfile]
         }
         description = "Linking shared library $outfile"
         # default_output_dir = "{{root_out_dir}}"
@@ -155,7 +162,7 @@ toolchain("llvm") {
         }
         # Link MSVC Runtime
         else {
-            command = "$lld_command {{ldflags}} /machine:x64   /out:$outfile {{inputs}} msvcrt.lib {{libs}}"
+            command = "clang-cl /MT /Fe$outfile -Wl {{ldflags}} {{solibs}} {{inputs}} {{libs}}"
         }
         outputs = [outfile]
         description = "Linking executable $outfile"

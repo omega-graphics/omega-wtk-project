@@ -63,11 +63,11 @@ config("external_media_libs_config") {
 omega_wtk_include_dir = "//include/omegaWTK"
 
 omega_wtk_static_lib("omegaWTKCore"){
-    if(useVcpkg) {
-        lib_dirs = [
-            "$vcpkg_installed_path/lib"
-        ]
-    }
+    # if(useVcpkg) {
+    #     lib_dirs = [
+    #         "$vcpkg_installed_path/lib"
+    #     ]
+    # }
     include_dirs = [
         "$vcpkg_installed_path/include"
     ]
@@ -389,9 +389,6 @@ omega_wtk_shared_lib("OmegaWTK"){
         #     "/WHOLEARCHIVE"
         # ]
     }
-    public_configs = [
-        ":external_media_libs_config"
-    ]
     sources = [
         "//include/OmegaWTK.h",
         "//include/omegaWTK/Main.h",

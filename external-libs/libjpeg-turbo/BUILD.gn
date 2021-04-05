@@ -4,7 +4,7 @@ o = "$root_out_dir/externals/libpng/build"
 external_lib("libjpeg-turbo"){
     conf = rebase_path("./code")
     outputs = [
-        "${o}/libturbojpeg.${static_lib_suffix}",
+        "${o}/${lib_prefix}turbojpeg.${static_lib_suffix}",
         "${o}/jconfig.h"
     ]
     public_headers = [
@@ -14,5 +14,5 @@ external_lib("libjpeg-turbo"){
         rebase_path("./code/jerror.h"),
         rebase_path("./code/turbojpeg.h")
     ]
-    export = "${o}/libturbojpeg.${static_lib_suffix}"
+    export = "${o}/${lib_prefix}turbojpeg.${static_lib_suffix}"
 }

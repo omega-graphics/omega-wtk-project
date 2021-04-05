@@ -20,8 +20,8 @@ namespace OmegaWTK::Composition {
         Brush(const Gradient & gradient);
     };
 
-Core::SharedPtr<Brush> ColorBrush(const Color &color);
-Core::SharedPtr<Brush> GradientBrush();
+OMEGAWTK_EXPORT Core::SharedPtr<Brush> ColorBrush(const Color &color);
+OMEGAWTK_EXPORT Core::SharedPtr<Brush> GradientBrush();
 
 };
 
