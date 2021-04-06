@@ -239,6 +239,7 @@ template<class _Ty>
 Core::SharedPtr<BDCompositionImage> MTLBDCompositionRenderTarget<_Ty>::createImageFromBitmapImage(Core::SharedPtr<Media::BitmapImage> & img, Core::Rect & newSize,unsigned v_id){
     auto device = deviceContext->getParentDevice();
     auto imgHeader = img->header.get();
+    NSLog(@"Pixel Format:%i",int(computePixelFormat(imgHeader->bitDepth, imgHeader->channels,img->sRGB)));
     MTLTextureDescriptor *textureDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:computePixelFormat(imgHeader->bitDepth, imgHeader->channels,img->sRGB) width:imgHeader->width height:imgHeader->height mipmapped:NO];
     textureDesc.textureType = MTLTextureType2D;
     id<MTLTexture> texture = [device->metal_device newTextureWithDescriptor:textureDesc];

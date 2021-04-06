@@ -420,8 +420,15 @@ omega_wtk_test("RootWidgetTest"){
     ]
 }
 
-omega_wtk_test("COnly"){
+omega_wtk_test("BasicAppTest"){
     sources = [
-        "tests/COnly/main.c"
+        "tests/BasicAppTest/main.cpp"
     ]
+    bundle_id = "org.omegagraphics.OmegaWTKBasicAppTest"
 }
+
+# omega_wtk_test("COnly"){
+#     sources = [
+#         "tests/COnly/main.c"
+#     ]
+# }

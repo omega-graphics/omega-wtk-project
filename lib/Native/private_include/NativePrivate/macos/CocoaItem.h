@@ -48,6 +48,7 @@ private:
     Type type;
 public:
     bool isReady;
+    void resize(Core::Rect &newRect);
     CALayer *getLayer(){ return [_ptr getCALayer];};
     void setNeedsDisplay();
     void layoutLayerTreeLimb();

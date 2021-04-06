@@ -167,7 +167,7 @@ void omegawtk_widget_observer_register_event_handler(OmegaWTKWidgetObserver *obs
 void omegawtk_free_widget_observer(OmegaWTKWidgetObserver * observer);
 
 
-int omegawtk_main(OmegaWTKAppInst *appInst);
+// int omegawtk_main(OmegaWTKAppInst *appInst);
 
 #endif
 

@@ -6,7 +6,7 @@
 
 using namespace OmegaWTK::assetc;
 
-typedef char Byte;
+typedef unsigned char Byte;
 
 int main(int argc,char * const argv[]){
 
@@ -54,7 +54,7 @@ int main(int argc,char * const argv[]){
                 /// Write the Filename
                 out.write(file.c_str(),file.size());
                 /// Write the Asset Data
-                out.write(ptr,filesize);
+                out.write((char *)ptr,filesize);
             }
             else {
                 std::cerr << "ERROR: Cannot Open File: " << file << "\nExiting..." << std::endl;

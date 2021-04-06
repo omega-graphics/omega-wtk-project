@@ -140,13 +140,18 @@ void CocoaItem::disable(){
         [_ptr setHidden:YES];
 };
 
+void CocoaItem::resize(Core::Rect &newRect){
+    rect = newRect;
+    [_ptr setFrame:core_rect_to_cg_rect(newRect)];
+};
+
 void CocoaItem::addChildNativeItem(NativeItemPtr native_item){
     OmegaWTKCocoaView *cocoaview = (OmegaWTKCocoaView *)native_item;
     [_ptr addSubview:cocoaview];
 };
 
 void CocoaItem::removeChildNativeItem(NativeItemPtr native_item){
-    [_ptr replaceSubview:(OmegaWTKCocoaView *)native_item with:nil];
+    [_ptr replaceSubview:(OmegaWTKCocoaView *)native_item with:[[NSView alloc] initWithFrame:NSZeroRect]];
 };
 
 void CocoaItem::setClippedView(NativeItemPtr nativeItem){

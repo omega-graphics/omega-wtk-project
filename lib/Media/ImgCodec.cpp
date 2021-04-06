@@ -419,6 +419,12 @@ Core::UniquePtr<ImgCodec> obtainCodecForImageFormat(BitmapImage::Format &format,
    
 };
 
+struct ImgBuffer : public std::streambuf {
+    ImgBuffer(void *begin,void *end){
+        this->setg((char *)begin,(char *)begin,(char *)end);
+    };
+};
+
     Core::SharedPtr<BitmapImage> loadImageFromAssets(FSPath path){
         BitmapImage img;
         auto ext = path.ext();
@@ -427,7 +433,8 @@ Core::UniquePtr<ImgCodec> obtainCodecForImageFormat(BitmapImage::Format &format,
             f = BitmapImage::PNG;
         };
         auto & asset = AssetFileLoader::assets_res[path.str()];
-        std::istringstream in(std::string((char *)asset.data,asset.filesize),std::ios::binary);
+        ImgBuffer buffer (asset.data,(char *)asset.data + asset.filesize);
+        std::istream in(&buffer);
         Core::UniquePtr<ImgCodec> codec = obtainCodecForImageFormat(f,in,&img);
         codec->readToStorage();
         return std::make_shared<BitmapImage>(std::move(img));

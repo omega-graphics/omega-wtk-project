@@ -311,6 +311,17 @@ template("omega_wtk_app_config"){
         "-DAPPNAME=" + target_name,
     ]
 
+    if(defined(invoker.bundle_id)){
+        config_defines += [
+            "-DBUNDLE_ID=" + invoker.bundle_id
+        ]
+    }
+    else {
+        config_defines += [
+            "-DBUNDLE_ID=\"\"" 
+        ]
+    }
+
     app_name =  target_name
 
     if(is_windows){
@@ -434,6 +445,11 @@ template("omega_wtk_test"){
     omega_wtk_app_config(target_name){
         # deps = invoker.deps 
         out_dir =  out_dir
+        if(is_mac){
+            if(defined(invoker.bundle_id)){
+                bundle_id = invoker.bundle_id
+            }
+        }
     }
 
     invoker.include_dirs += [
@@ -529,7 +545,7 @@ template("omega_wtk_test"){
         }
 
         if(is_mac){
-            output_dir = "$root_out_dir/obj"
+            output_dir = "$root_out_dir/obj/${app_name}"
            
         }
         else {
@@ -629,8 +645,13 @@ template("omega_wtk_test"){
             }
             sources = [
                 "//target/macos/MainMenu.nib",
-                o
+               
             ]
+            if(defined(invoker.assets_dir)){
+                sources += [
+                    o
+                ]
+            }
             outputs = [
                 "{{bundle_resources_dir}}/{{source_file_part}}",
             ]

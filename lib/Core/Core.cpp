@@ -138,12 +138,14 @@ bool Ellipse::compare(Ellipse & other){
 
 namespace OmegaWTK {
 
+typedef unsigned char Byte;
+
 Core::Map<Core::String,AssetFileLoader::AssetBuffer>  AssetFileLoader::assets_res;
 
 
 void AssetFileLoader::loadAssetFile(FSPath & path){
         auto str = path.serialize();
-        std::ifstream in(str,std::ifstream::binary);
+        std::ifstream in(str,std::ios::binary | std::ios::in);
         assetc::AssetsFileHeader header;
         in.read((char *)&header,sizeof(assetc::AssetsFileHeader));
         unsigned i = 0;
@@ -151,20 +153,22 @@ void AssetFileLoader::loadAssetFile(FSPath & path){
             assetc::AssetsFileEntry fentry;
             in.read((char *)&fentry,sizeof(assetc::AssetsFileEntry));
             /// Read/Buffer the Asset Name
-            char * name = new char[fentry.string_size];
-            in.read(name,fentry.string_size);
+            Byte * name = new Byte[fentry.string_size];
+            in.read((char *)name,fentry.string_size);
 
             /// Read/Buffer the Asset Data
-            char * data = new char[fentry.file_size];
-            in.read(data,fentry.file_size);
+            Byte * data = new Byte[fentry.file_size];
+            in.read((char *)data,fentry.file_size);
 
-            std::string filename (name,fentry.string_size);
+            std::string filename ((char *)name,fentry.string_size);
             AssetBuffer buffer;
             buffer.filesize = fentry.file_size;
             buffer.data = data;
             assets_res.insert(std::make_pair(std::move(filename),std::move(buffer)));
             i += 1;
         };
+
+        in.close();
     };
 
 void loadAssetFile(FSPath path){
@@ -308,7 +312,11 @@ Core::String & FSPath::str(){
     return _str;
 };
 
-
+bool FSPath::exists(){
+    #ifdef TARGET_MACOS
+        return file_exists(serialize().c_str());
+    #endif
+};
 
 Core::String FSPath::serialize(){
 #ifdef TARGET_WIN32

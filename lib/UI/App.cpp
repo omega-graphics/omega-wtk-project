@@ -13,7 +13,9 @@ AppInst * AppInst::instance;
 AppInst::AppInst():ptr(Native::make_native_app()),windowManager(std::make_unique<AppWindowManager>()){
     instance = this;
     Composition::FontEngine::Create();
-    loadAssetFile(Core::String("./assets.omxa"));
+    FSPath assets_path = Core::String("./assets.omxa");
+    if(assets_path.exists())
+        loadAssetFile(Core::String("./assets.omxa"));
 };
 
 void AppInst::terminate() {

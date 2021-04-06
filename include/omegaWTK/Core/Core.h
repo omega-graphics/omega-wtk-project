@@ -374,6 +374,7 @@ OMEGAWTK_EXPORT Core::FRoundedRect FRoundedRect(float x,float y,float w,float h,
         Core::String filename();
         Core::String & ext();
         Core::String serialize();
+        bool exists();
         FSPath(const Core::String & str);
         ~FSPath();
     };
