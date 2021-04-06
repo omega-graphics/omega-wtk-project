@@ -25,6 +25,7 @@ namespace OmegaWTK {
             void sendEventToEmitter(NativeEvent *ptr);
             bool hasEventEmitter();
             void setLayerTreeLimb(NativeLayerTreeLimb *limb){ layerTreelimb = limb;};
+            virtual void resize(Core::Rect & newRect) = 0;
             virtual void *getBinding() = 0;
             virtual void enable() = 0;
             virtual void disable() = 0;

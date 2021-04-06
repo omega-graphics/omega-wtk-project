@@ -9,7 +9,8 @@ namespace Composition {
 
 class Layer;
 
-class OMEGAWTK_EXPORT Backend {
+
+class Backend {
 protected:
 //    std::mutex mutex_lock;
 //    std::condition_variable occupied_condition;

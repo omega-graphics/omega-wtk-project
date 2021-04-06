@@ -419,3 +419,9 @@ omega_wtk_test("RootWidgetTest"){
         "tests/RootWidget/Main.cpp"
     ]
 }
+
+omega_wtk_test("COnly"){
+    sources = [
+        "tests/COnly/main.c"
+    ]
+}

@@ -3,9 +3,25 @@
 #include "OmegaWTK.h"
 
 
+
 struct __OmegaWTKCObject {
     void *object;
 };
+
+#define COBJECT_STD_MALLOC(o) __OmegaWTKCObject * o = (__OmegaWTKCObject *)malloc(sizeof(__OmegaWTKCObject))
+#define COBJECT_STD_INIT(o,desc) memmove(o,&desc,sizeof(__OmegaWTKCObject))
+#define COBJECT_STD_FREE(o) free(o)
+
+// int omegaWTKMain(OmegaWTK::AppInst *app){
+//     COBJECT_STD_MALLOC(obj);
+//     __OmegaWTKCObject desc;
+//     desc.object = app;
+//     COBJECT_STD_INIT(obj,desc);
+
+//     int rc = omegawtk_main((OmegaWTKAppInst *)obj);
+//     COBJECT_STD_FREE(obj);
+//     return rc;
+// };
 
 class __OmegaWTKCWidget : public OmegaWTK::Widget {
 public:

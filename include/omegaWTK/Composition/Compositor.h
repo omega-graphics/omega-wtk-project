@@ -1,6 +1,7 @@
 #include "omegaWTK/Core/Core.h"
 #include "Layer.h"
 #include <chrono>
+#include <thread>
 
 #ifndef OMEGAWTK_COMPOSTION_COMPOSITOR_H
 #define OMEGAWTK_COMPOSTION_COMPOSITOR_H
@@ -14,7 +15,7 @@ namespace OmegaWTK::Composition {
 //        std::chrono::time_point<std::chrono::high_resolution_clock> timeStamp;
 //        std::chrono::time_point<std::chrono::high_resolution_clock> threashold;
 //    };
-//
+
 //    struct CompositionRenderCommand {
 //        typedef enum {
 //            DrawCanvasView,
@@ -35,9 +36,15 @@ namespace OmegaWTK::Composition {
 //        float videoFPS;
 //        Backend *executor;
 //    };
-//    
+   
 //    class RenderCommandExecutionScheduler {
-//        Core::Vector<CompositionRenderCommand> renderCommands;
+//    public:
+//        static RenderCommandExecutionScheduler* instance;
+//        Core::Vector<Backend *> backend_refs;
+//        std::thread * t;
+//        void run();
+//        RenderCommandExecutionScheduler();
+//        ~RenderCommandExecutionScheduler();
 //    };
 
    

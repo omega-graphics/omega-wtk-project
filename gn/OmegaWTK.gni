@@ -429,7 +429,7 @@ template("omega_wtk_test"){
         invoker.public_deps = _deps
     }
    
-    out_dir = "$root_out_dir/obj"
+    out_dir = "$root_out_dir/obj/${target_name}"
 
     omega_wtk_app_config(target_name){
         # deps = invoker.deps 
@@ -538,11 +538,15 @@ template("omega_wtk_test"){
     }
 
     if(is_mac){
-        app_assets_dest = "$root_out_dir/obj/tests/${app_name}"
+        if(defined(invoker.assets_dir)){
+            app_assets_dest = "$root_out_dir/obj/tests/${app_name}"
+        }
     }
            
     if(is_windows){
-        app_assets_dest = "$root_out_dir/tests/${app_name}"
+        if(defined(invoker.assets_dir)){
+            app_assets_dest = "$root_out_dir/tests/${app_name}"
+        }
 
         copy("${app_name}__dlls"){
             public_deps = [
@@ -562,7 +566,7 @@ template("omega_wtk_test"){
 
     # template("compile_assets"){
 
-    assert(defined(invoker.assets_dir))
+    if(defined(invoker.assets_dir)){
 
     exec_ext = ""
     if(is_windows){
@@ -571,22 +575,26 @@ template("omega_wtk_test"){
 
     o = app_assets_dest + "/assets.omxa"
 
-    action("${o}__${app_name}"){
-        script = "//gn/assetc.py"
-        public_deps = [
-            ":omegawtk-assetc"
-        ]
-        args = [
-            "--assetc",
-            rebase_path("$root_out_dir/tools/omegawtk-assetc${exec_ext}"),
-            "--output",
-            rebase_path(o),
-            "--dir",
-            rebase_path(invoker.assets_dir)
-        ]
-        outputs = [
-            o
-        ]
+    
+
+        action("${o}__${app_name}"){
+            script = "//gn/assetc.py"
+            public_deps = [
+                ":omegawtk-assetc"
+            ]
+            args = [
+                "--assetc",
+                rebase_path("$root_out_dir/tools/omegawtk-assetc${exec_ext}"),
+                "--output",
+                rebase_path(o),
+                "--dir",
+                rebase_path(invoker.assets_dir)
+            ]
+            outputs = [
+                o
+            ]
+        }
+
     }
 
     # }
@@ -614,9 +622,11 @@ template("omega_wtk_test"){
             ]
         }
         bundle_data("${target_name}__res_copy"){
-            public_deps = [
-                ":${o}__${app_name}"
-            ]
+            if(defined(invoker.assets_dir)){
+                public_deps = [
+                    ":${o}__${app_name}"
+                ]
+            }
             sources = [
                 "//target/macos/MainMenu.nib",
                 o

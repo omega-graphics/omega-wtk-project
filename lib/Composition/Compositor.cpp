@@ -1,8 +1,25 @@
 #include "omegaWTK/Composition/Compositor.h"
 #include "omegaWTK/Composition/Backend.h"
 #include "omegaWTK/Composition/Layer.h"
-
 namespace OmegaWTK::Composition {
+
+// RenderCommandExecutionScheduler::RenderCommandExecutionScheduler(){
+//     instance = this;
+//     run();
+// };
+
+// void RenderCommandExecutionScheduler::run(){
+//     t = new std::thread([&](){
+        
+//     });
+// };
+
+// RenderCommandExecutionScheduler::~RenderCommandExecutionScheduler(){
+//     t->join();
+//     delete t;
+// };
+
+
 Compositor::Compositor():backend(make_backend()){
     
 };

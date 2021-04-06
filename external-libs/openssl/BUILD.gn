@@ -1,0 +1,25 @@
+import("//gn/ExternalLibs.gni")
+
+
+
+external_lib("openssl"){
+    conf = rebase_path("./code")
+    custom_conf = true
+    conf_command = "perl Configure"
+    custom_build = true
+    custom_copy = true
+    copy_lib_inputs = [
+        
+    ]
+    copy_include_inputs = [
+
+    ]
+    copy_lib_dest = ""
+    copy_include_dest = ""
+    if(is_windows){
+        build_command = "vc.bat && nmake"
+    }
+    else {
+        build_command "make"
+    }
+}

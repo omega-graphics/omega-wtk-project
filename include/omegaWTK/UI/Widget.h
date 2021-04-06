@@ -85,6 +85,11 @@ public:
     ~Widget();
 };
 
+#define WIDGET_NOTIFY_OBSERVERS_SHOW() notifyObservers(Widget::Show,nullptr)
+#define WIDGET_NOTIFY_OBSERVERS_HIDE() notifyObservers(Widget::Hide,nullptr)
+#define WIDGET_NOTIFY_OBSERVERS_RESIZE(rect) notifyObservers(Widget::Resize,&rect)
+
+
 /// Similar to a Widget Delegate but a Widget can have more than one.
 class OMEGAWTK_EXPORT  WidgetObserver {
     friend class Widget;

@@ -80,6 +80,10 @@ if(TIFF_FOUND)
     message("Found libtiff")
 endif()
 
+find_package(OpenSSL REQUIRED)
+    
+endif()
+
 include_directories("include")
 include(ExternalProject)
 

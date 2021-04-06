@@ -13,8 +13,9 @@ namespace OmegaWTK::Native {
             bool enabled = false;
             bool isScrollView;
             protected:
+            HWNDItem *parent;
             Core::Vector<HWND> raw_children;
-            Core::Vector<NativeItemPtr> children;
+            Core::Vector<HWNDItem *> children;
             UINT currentDpi;
             bool isTracking;
             bool hovered;
@@ -31,6 +32,7 @@ namespace OmegaWTK::Native {
                 enabled = false;
                 // ShowWindow(hwnd,SW_HIDE);
             };
+            void resize(Core::Rect &newRect);
             void addChildNativeItem(NativeItemPtr nativeItem);
             void removeChildNativeItem(NativeItemPtr nativeItem);
             public:

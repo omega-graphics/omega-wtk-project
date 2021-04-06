@@ -17,7 +17,7 @@ namespace OmegaWTK::UI {
         void resize(Core::Rect &newRect);
     };
 
-    class OMEGAWTK_EXPORT  TextInput : public Widget {
+    class OMEGAWTK_EXPORT TextInput : public Widget {
         Core::String textStr;
         Core::String placeholder;
     public:

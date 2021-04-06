@@ -146,7 +146,8 @@ void AssetFileLoader::loadAssetFile(FSPath & path){
         std::ifstream in(str,std::ifstream::binary);
         assetc::AssetsFileHeader header;
         in.read((char *)&header,sizeof(assetc::AssetsFileHeader));
-        for(uint64_t i = 0;i < header.asset_count;i++){
+        unsigned i = 0;
+        while(i < header.asset_count){
             assetc::AssetsFileEntry fentry;
             in.read((char *)&fentry,sizeof(assetc::AssetsFileEntry));
             /// Read/Buffer the Asset Name
@@ -162,6 +163,7 @@ void AssetFileLoader::loadAssetFile(FSPath & path){
             buffer.filesize = fentry.file_size;
             buffer.data = data;
             assets_res.insert(std::make_pair(std::move(filename),std::move(buffer)));
+            i += 1;
         };
     };
 

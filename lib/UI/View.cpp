@@ -47,6 +47,10 @@ namespace OmegaWTK {
         };
     };
 
+    void View::resize(Core::Rect newRect){
+        renderTarget->getNativePtr()->resize(newRect);
+    };
+
 View::View(const Core::Rect & rect,Native::NativeItemPtr nativeItem,View *parent):rect(rect),widgetLayerTree(nullptr),renderTarget(std::make_unique<Composition::ViewRenderTarget>(nativeItem)),parent_ptr(parent){
     if(parent_ptr) {
         parent->addSubView(this);

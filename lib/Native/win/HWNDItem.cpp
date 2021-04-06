@@ -11,6 +11,7 @@ namespace OmegaWTK::Native::Win {
         
     };
     HWNDItem::HWNDItem(Core::Rect & rect,Type type,HWNDItem *parent):wndrect(rect){
+        this->parent = parent;
         std::cout << "Registering Window!" << std::endl;
         atom = HWNDFactory::appFactoryInst->registerWindow();
         DWORD extra_window_style = 0;
@@ -164,10 +165,11 @@ namespace OmegaWTK::Native::Win {
         return GetWindowLongPtr(hwnd,GWL_STYLE);
     };
     void HWNDItem::addChildNativeItem(NativeItem *nativeItem){
-        children.push_back(nativeItem);
+        children.push_back((HWNDItem *)nativeItem);
         HWND child = ((HWNDItem *)nativeItem)->hwnd;
         raw_children.push_back(child);
         SetParent(child,hwnd);
+        ((HWNDItem *)nativeItem)->parent = this;
     };
     void HWNDItem::removeChildNativeItem(NativeItem * nativeItem){
         auto _ni_ptr_it = children.begin();
@@ -179,12 +181,22 @@ namespace OmegaWTK::Native::Win {
                 raw_children.erase(_hwnd_it);
                 HWND child = ((HWNDItem *)nativeItem)->hwnd;
                 SetParent(child,NULL);
+                ((HWNDItem *)nativeItem)->parent = nullptr;
                 return;
                 break;
             }; 
             ++_ni_ptr_it;
             ++_hwnd_it;
         };
+    };
+    void HWNDItem::resize(Core::Rect & newRect){
+        this->wndrect = newRect;
+
+        auto rect = parent->wndrect;
+        UINT dpi = GetDpiForWindow(hwnd);
+        FLOAT scaleFactor = FLOAT(dpi)/96.f;
+
+        SetWindowPos(hwnd,hwnd,wndrect.pos.x * scaleFactor,(rect.dimen.minHeight - wndrect.pos.y - wndrect.dimen.minHeight) * scaleFactor,wndrect.dimen.minWidth * scaleFactor,wndrect.dimen.minHeight * scaleFactor,SWP_NOACTIVATE | SWP_NOZORDER);
     };
     RECT HWNDItem::getClientRect(){
         RECT r;

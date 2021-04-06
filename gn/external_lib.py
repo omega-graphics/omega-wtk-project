@@ -4,6 +4,8 @@ import json
 import install_name
 
 parser = argparse.ArgumentParser()
+parser.add_argument("--custom-conf",dest="custom_conf",type=str)
+parser.add_argument("--custom-make",dest="custom_make",type=str)
 parser.add_argument("--exists",type=str)
 parser.add_argument("--make",type=str)
 parser.add_argument("--conf",type=str)
@@ -16,7 +18,20 @@ cmake = "cmake"
 
 os.chdir("../gn")
 
-if(args[0].exists):
+if(args[0].custom_conf):
+    print("Configuring custom configuration command")
+    if(sys.platform == "win32"):
+        stream = os.popen("vc.bat && " + args[0].custom_conf)
+    else:
+        stream = os.popen(args[0].custom_conf)
+    data = (stream.read())
+    print(data)
+elif(args[0].custom_make):
+    if(sys.platform == "win32"):
+        os.system("vc.bat && " + args[0].custom_make)
+    else:
+        os.system(args[0].custom_make)
+elif(args[0].exists):
     sys.stdout.write(json.dumps(os.path.exists(args[0].exists)))
 elif(args[0].make):
     if(sys.platform == "win32"):
@@ -34,4 +49,4 @@ else:
         stream = os.popen(cmake + ' -S ' + args[0].conf + ' -B ' + args[0].build + ' -G"Ninja" -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++')
 
     data = (stream.read())
-    print(data);
+    print(data)

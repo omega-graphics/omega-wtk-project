@@ -90,6 +90,7 @@ struct OmegaWTKVisualTextParams {
 };
 
 /// UI
+typedef struct  __OmegaWTKAppInst OmegaWTKAppInst;
 typedef struct  __OmegaWTKView OmegaWTKView;
 typedef struct  __OmegaWTKViewDelegate OmegaWTKViewDelegate;
 typedef struct  __OmegaWTKScrollView OmegaWTKScrollView;
@@ -165,6 +166,8 @@ OmegaWTKWidgetObserver *omegawtk_construct_widget_observer();
 void omegawtk_widget_observer_register_event_handler(OmegaWTKWidgetObserver *observer,OmegaWTKWidgetObserverEventType type,...);
 void omegawtk_free_widget_observer(OmegaWTKWidgetObserver * observer);
 
+
+int omegawtk_main(OmegaWTKAppInst *appInst);
 
 #endif
 

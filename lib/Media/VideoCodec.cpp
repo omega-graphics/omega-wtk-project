@@ -6,9 +6,9 @@
 namespace OmegaWTK::Media {
 
 // /// Do not Initialize this class.
-// class VideoCodec {
+class VideoCodec {
 //     // AVCodec *mpeg4_c;
-//     public:
+public:
 //     // VideoCodec(){
 //     //     mpeg4_c = avcodec_find_decoder(AV_CODEC_ID_MPEG4);
 //     // };
@@ -24,11 +24,19 @@ namespace OmegaWTK::Media {
 //     //     AVPacket *pkt = av_packet_alloc();
         
 //     // };
-//     static Core::UniquePtr<VideoCodec> instance;
+    static Core::UniquePtr<VideoCodec> instance;
 // };
 
-// void create_video_codec(){
-//    VideoCodec::instance = std::make_unique<VideoCodec>();
-// };
+
+};
+
+VideoIStream decode_video(void *data, size_t data_size, VideoCodecType type){
+
+};
+
+void encode_video(VideoOStream ostream, VideoCodecType type){
+    
+};
+
 
 };

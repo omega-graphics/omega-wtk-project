@@ -26,7 +26,6 @@ namespace OmegaWTK::Composition {
         if(FAILED(hr)){
 
         };
-
         hr = D3D12CreateDevice(NULL,D3D_FEATURE_LEVEL_12_0,IID_PPV_ARGS(&direct3d_device));
         if(FAILED(hr)){
 

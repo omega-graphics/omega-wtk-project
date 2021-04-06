@@ -30,9 +30,11 @@ SharedHandle<View> Widget::makeCanvasView(const Core::Rect & rect,View *parent){
 
 void Widget::show(){
     rootView->renderTarget->getNativePtr()->enable();
+    WIDGET_NOTIFY_OBSERVERS_SHOW();
 };
 void Widget::hide(){
     rootView->renderTarget->getNativePtr()->disable();
+    WIDGET_NOTIFY_OBSERVERS_HIDE();
 };
 
 void Widget::addObserver(WidgetObserver * observer){

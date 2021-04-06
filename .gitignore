@@ -43,6 +43,7 @@ sphinxout
 *.sh
 *.bat
 !gn/vc.bat
+!external-libs/openssl/vc.bat
 
 # Output Folders
 
