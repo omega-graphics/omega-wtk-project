@@ -20,30 +20,38 @@ template("external_lib"){
             o = exec_script("//gn/external_lib.py",["--conf",invoker.conf,"--build",rebase_path("$root_out_dir/externals/${target_name}/build"),"--check-outputs",invoker.export],"string")
             print(o)
         }
-        else {
-            if(!defined(invoker.custom_conf)){
+        else if(invoker.custom_conf == true) {
+            if(!defined(invoker.conf_command)){
                 print("Custom configure command not set!\nExiting...")
             }
+            
             o = exec_script("//gn/external_lib.py",["--custom-conf",invoker.conf_command,"--build-dir",invoker.conf,"--check-outputs",invoker.export],"string")
             print(o)
         }
         
         t_name = target_name
 
-        action("__${target_name}"){
+        if(!defined(invoker.custom_build)){
+            action_name = "__${t_name}"
+        }
+        else if(invoker.custom_build == true) {
+            action_name = t_name
+        }
+
+        action(action_name){
             script = "//gn/external_lib.py"
             if(defined(invoker.custom_build)){
                 args = [
                     "--custom-make",
                     invoker.build_command,
                     "--copy-headers"] +
-                    copy_include_inputs + [
+                    invoker.copy_include_inputs + [
                     "--copy-headers-dest",
-                    copy_include_dest,
+                    invoker.copy_include_dest,
                     "--copy-libs"] +
-                    copy_lib_inputs + [
+                    invoker.copy_lib_inputs + [
                     "--copy-libs-dest",
-                    copy_lib_dest
+                    invoker.copy_lib_dest
                 ]
             }
             else {
@@ -73,8 +81,9 @@ template("external_lib"){
             }
         }
     # }
+    if(!defined(invoker.custom_build)){
 
-        copy(target_name){
+        copy(t_name){
             sources = invoker.public_headers
             # if(built == false){
                 public_deps = [":__${t_name}"]
@@ -82,71 +91,12 @@ template("external_lib"){
                     "$root_out_dir/externals/${target_name}/include/{{source_file_part}}"
                 ]
             # }
-            # else {
-            #     if(defined(invoker.public_deps)) {
-            #         public_deps = invoker.public_deps
-            #     }
-            #     not_needed(invoker,["outputs","conf"])
-            #     outputs = ["$root_out_dir/externals/${target_name}/include/{{source_file_part}}"]
-            # }
-            
         }
+    }
 
     config("${target_name}_config"){
         include_dirs = ["$root_out_dir/externals/${target_name}/include"]
         libs = [invoker.export]
     }
 
-    # if(is_mac || is_linux){
-    #     target_name = "lib${target_name}"
-    # }
-    # shared_library(target_name){
-    #     forward_variables_from(invoker,["sources","public_deps","libs","cflags_c","cflags_cc","defines"])
-    #     if(is_mac){
-    #         output_extension = "dylib"
-    #     }
-    #     else if(is_linux){
-    #         output_extension = "so"
-    #     }
-    #     else {
-    #         output_extension = "dll"
-    #     }
-    #     output_dir = "$root_out_dir/external-libs"
-    # }
 }
-
-# template("external_lib_target"){
-#     assert(defined(invoker.type))
-#     target(invoker.type,target_name){
-#         if(is_windows){
-#             if(invoker.type == "executable"){
-#                 output_extension = "exe"
-#             }
-#             else if(invoker.type == "shared") {
-#                 output_extension = "dll"
-#             }
-#             else if(invoker.type == "static"){
-#                 output_extension = "lib"
-#             }
-#         }
-#         else if(is_mac){
-#             if(invoker.type == "executable"){
-#                 output_extension = ""
-#             }
-#             else if(invoker.type == "shared") {
-#                 output_extension = "dylib"
-#             }
-#             else if(invoker.type == "static"){
-#                 output_extension = "a"
-#             }
-#         }
-#         forward_variables_from(invoker,["libs","sources","include_dirs","cflags_cc","cflags_c","asmflags","ldflags","arflags"])
-#     }
-# }
-
-# template("external_dep"){
-    
-#     group(target_name){
-#         deps = invoker.targets
-#     }
-# }

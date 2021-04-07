@@ -296,6 +296,19 @@ template("omega_wtk_tool"){
         forward_variables_from(invoker,["deps","public_deps","sources","include_dirs","defines","libs","frameworks","public_configs"])
         output_dir = "$root_out_dir/tools"
     }
+
+    if(defined(invoker.external_shared_libs)){
+        t_name = target_name
+        copy("${t_name}__shared_libs_copy"){
+            public_deps = [
+                ":$t_name"
+            ]
+            sources = invoker.external_shared_libs
+            outputs = [
+                "$root_out_dir/tools/{{source_file_part}}"
+            ]
+        }
+    }
 }
 
 
@@ -582,32 +595,34 @@ template("omega_wtk_test"){
 
     if(defined(invoker.assets_dir)){
 
-    exec_ext = ""
-    if(is_windows){
-        exec_ext = ".exe"
-    }
-
-    o = app_assets_dest + "/assets.omxa"
-
-    
-
-        action("${o}__${app_name}"){
-            script = "//gn/assetc.py"
-            public_deps = [
-                ":omegawtk-assetc"
-            ]
-            args = [
-                "--assetc",
-                rebase_path("$root_out_dir/tools/omegawtk-assetc${exec_ext}"),
-                "--output",
-                rebase_path(o),
-                "--dir",
-                rebase_path(invoker.assets_dir)
-            ]
-            outputs = [
-                o
-            ]
+        exec_ext = ""
+        if(is_windows){
+            exec_ext = ".exe"
         }
+
+        o = app_assets_dest + "/assets.omxa"
+
+        
+
+            action("${o}__${app_name}"){
+                script = "//gn/assetc.py"
+                public_deps = [
+                    ":omegawtk-assetc"
+                ]
+                args = [
+                    "--assetc",
+                    rebase_path("$root_out_dir/tools/omegawtk-assetc${exec_ext}"),
+                    "--output",
+                    rebase_path(o),
+                    "--dir",
+                    rebase_path(invoker.assets_dir),
+                    "--app-id",
+                    invoker.bundle_id
+                ]
+                outputs = [
+                    o
+                ]
+            }
 
     }
 

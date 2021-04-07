@@ -9,4 +9,5 @@ else {
     libjpeg_turbo_link = ["${external_lib_path}/libjpeg-turbo/build/jpeg62.dll","${external_lib_path}/libjpeg-turbo/build/turbojpeg.dll"]
     zlib_link = "${external_lib_path}/zlib/build/zlib.${shared_lib_suffix}"
     libtiff_link = ["${external_lib_path}/libtiff/build/libtiff/tiff.${shared_lib_suffix}","${external_lib_path}/libtiff/build/libtiff/tiffxx.${shared_lib_suffix}"]
+    openssl_link = ["${external_lib_path}/openssl/build/libssl-3-x64.${shared_lib_suffix}","${external_lib_path}/openssl/build/libcrypto-3-x64.${shared_lib_suffix}"]
 }

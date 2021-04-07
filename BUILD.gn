@@ -410,6 +410,13 @@ omega_wtk_tool("omegawtk-assetc"){
     sources = [
         "tools/assetc/main.cpp"
     ]
+    public_deps = [
+        "//external-libs/openssl",
+    ]
+    public_configs = [
+        "//external-libs/openssl:openssl_config"
+    ]
+    external_shared_libs = openssl_link
 }
 
 
@@ -418,6 +425,7 @@ omega_wtk_test("RootWidgetTest"){
     sources = [
         "tests/RootWidget/Main.cpp"
     ]
+    bundle_id = "org.omegagraphics.OmegaWTKRootWidgetTest"
 }
 
 omega_wtk_test("BasicAppTest"){
