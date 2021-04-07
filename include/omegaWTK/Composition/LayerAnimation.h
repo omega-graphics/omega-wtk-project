@@ -150,7 +150,9 @@ namespace OmegaWTK::Composition {
     typedef LayerAnimation_Impl<float,float>  LayerAnimation;
     typedef LayerTransition_Impl<float,float> LayerTransition;
     
-
+    /**
+     The standard class for managing LayerAnimation real time playback.
+    */
     class OMEGAWTK_EXPORT  LayerAnimationController {
         Core::SharedPtr<LayerAnimationTy> anim = nullptr;
         friend class ViewRenderTargetFrameScheduler;
@@ -166,7 +168,11 @@ namespace OmegaWTK::Composition {
         virtual void playReverse();
         LayerAnimationController();
     };
-    
+
+    /**
+     Similar to the LayerAnimationController however it can control more than one animation simultaneously.
+     @see LayerAnimationController
+    */
     class OMEGAWTK_EXPORT  LayerAnimationGroupController : public LayerAnimationController {
         Core::Vector<Core::SharedPtr<LayerAnimationTy>> anims;
     public:
