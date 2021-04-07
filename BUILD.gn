@@ -424,7 +424,9 @@ omega_wtk_test("BasicAppTest"){
     sources = [
         "tests/BasicAppTest/main.cpp"
     ]
-    bundle_id = "org.omegagraphics.OmegaWTKBasicAppTest"
+    if(!is_windows){
+        bundle_id = "org.omegagraphics.OmegaWTKBasicAppTest"
+    }
 }
 
 # omega_wtk_test("COnly"){

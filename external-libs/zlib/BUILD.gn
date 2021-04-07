@@ -26,9 +26,9 @@ external_lib("zlib"){
         rebase_path("${o}/zconf.h")
     ]
     if(is_linux || is_mac){
-        export = lib_name
+        export = rebase_path(lib_name)
     }
     else {
-        export = "${o}/zlib.${static_lib_suffix}"
+        export = rebase_path("${o}/zlib.${static_lib_suffix}")
     }
 }

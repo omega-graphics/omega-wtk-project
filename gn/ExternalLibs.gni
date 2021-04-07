@@ -16,19 +16,45 @@ else {
 
 external_lib_path = "$root_out_dir/externals/"
 template("external_lib"){
-    # built = exec_script("//gn/external_lib.py",["--exists",rebase_path(invoker.export)],"value")
-    
-    # if(built == false){
-
-        o = exec_script("//gn/external_lib.py",["--conf",invoker.conf,"--build",rebase_path("$root_out_dir/externals/${target_name}/build")],"string")
-        print(o)
+        if(!defined(invoker.custom_conf)){
+            o = exec_script("//gn/external_lib.py",["--conf",invoker.conf,"--build",rebase_path("$root_out_dir/externals/${target_name}/build"),"--check-outputs",invoker.export],"string")
+            print(o)
+        }
+        else {
+            if(!defined(invoker.custom_conf)){
+                print("Custom configure command not set!\nExiting...")
+            }
+            o = exec_script("//gn/external_lib.py",["--custom-conf",invoker.conf_command,"--build-dir",invoker.conf,"--check-outputs",invoker.export],"string")
+            print(o)
+        }
+        
         t_name = target_name
 
         action("__${target_name}"){
             script = "//gn/external_lib.py"
-            args = [
-                "--make",
-                rebase_path("$root_out_dir/externals/${t_name}/build")
+            if(defined(invoker.custom_build)){
+                args = [
+                    "--custom-make",
+                    invoker.build_command,
+                    "--copy-headers"] +
+                    copy_include_inputs + [
+                    "--copy-headers-dest",
+                    copy_include_dest,
+                    "--copy-libs"] +
+                    copy_lib_inputs + [
+                    "--copy-libs-dest",
+                    copy_lib_dest
+                ]
+            }
+            else {
+                args = [
+                    "--make",
+                    rebase_path("$root_out_dir/externals/${t_name}/build")
+                ]
+            }
+            args += [
+                "--check-outputs",
+                invoker.export
             ]
             if(defined(invoker.old_install_name)){
                 args += [
@@ -88,3 +114,39 @@ template("external_lib"){
     #     output_dir = "$root_out_dir/external-libs"
     # }
 }
+
+# template("external_lib_target"){
+#     assert(defined(invoker.type))
+#     target(invoker.type,target_name){
+#         if(is_windows){
+#             if(invoker.type == "executable"){
+#                 output_extension = "exe"
+#             }
+#             else if(invoker.type == "shared") {
+#                 output_extension = "dll"
+#             }
+#             else if(invoker.type == "static"){
+#                 output_extension = "lib"
+#             }
+#         }
+#         else if(is_mac){
+#             if(invoker.type == "executable"){
+#                 output_extension = ""
+#             }
+#             else if(invoker.type == "shared") {
+#                 output_extension = "dylib"
+#             }
+#             else if(invoker.type == "static"){
+#                 output_extension = "a"
+#             }
+#         }
+#         forward_variables_from(invoker,["libs","sources","include_dirs","cflags_cc","cflags_c","asmflags","ldflags","arflags"])
+#     }
+# }
+
+# template("external_dep"){
+    
+#     group(target_name){
+#         deps = invoker.targets
+#     }
+# }

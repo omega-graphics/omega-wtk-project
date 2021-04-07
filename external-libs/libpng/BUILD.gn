@@ -10,7 +10,7 @@ else {
 external_lib("libpng"){
     conf = rebase_path("./code")
     outputs = [
-        lib_name,
+       lib_name,
         "${external_lib_path}/libpng/build/pnglibconf.h"
     ]
     if(is_windows){
@@ -26,5 +26,5 @@ external_lib("libpng"){
         rebase_path("./code/pngconf.h"),
         rebase_path("${external_lib_path}/libpng/build/pnglibconf.h")
     ]
-    export = lib_name
+    export = rebase_path(lib_name)
 }

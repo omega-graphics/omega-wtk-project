@@ -2,10 +2,6 @@ libjpeg-turbo/code
 libpng/code
 libtiff/code 
 pcre2/code
-<<<<<<< Updated upstream
-zlib/code
-webrtc/code
-=======
 webrtc/code
 zlib/code
->>>>>>> Stashed changes
+openssl/code

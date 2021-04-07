@@ -513,8 +513,6 @@ template("omega_wtk_test"){
     
     app_name = target_name
 
-    app_name = target_name
-
     executable(target_name){
         forward_variables_from(invoker,["libs","include_dirs","output_name","sources","defines","deps","public_deps","frameworks","framework_dirs"])
         if(is_windows) {

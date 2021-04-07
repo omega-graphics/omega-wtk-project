@@ -1,6 +1,6 @@
 import("//gn/ExternalLibs.gni")
 
-
+o = "$root_out_dir/externals/openssl/build"
 
 external_lib("openssl"){
     conf = rebase_path("./code")
@@ -8,18 +8,29 @@ external_lib("openssl"){
     conf_command = "perl Configure"
     custom_build = true
     custom_copy = true
-    copy_lib_inputs = [
-        
-    ]
-    copy_include_inputs = [
-
-    ]
-    copy_lib_dest = ""
-    copy_include_dest = ""
     if(is_windows){
-        build_command = "vc.bat && nmake"
+        build_command = "nmake"
     }
     else {
         build_command "make"
     }
+    outputs = [
+        "${o}/build/libssl-3-x64.dll",
+        "${o}/build/libcrypto-3-x64.dll",
+        "${o}/build/libcrypto.lib",
+        "${o}/build/libssl.lib"
+    ]
+    copy_lib_inputs = [
+        rebase_path("code/libssl-3-x64.dll"),
+        rebase_path("code/libcrypto-3-x64.dll"),
+        rebase_path("code/libcrypto.lib"),
+        rebase_path("code/libssl.lib")
+    ]
+    copy_include_inputs = [
+        rebase_path("code/include/openssl")
+    ]
+    copy_lib_dest = rebase_path("${o}/build")
+    copy_include_dest = rebase_path("${o}/include")
+    
+    export = rebase_path("${o}/build/libssl.lib")
 }

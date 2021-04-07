@@ -3,6 +3,13 @@ declare_args(){
     # python3 = ""
 }
 
+if(debug){
+    debug_flag = "-gdwarf"
+}
+else {
+    debug_flag = ""
+}
+
 toolchain("llvm") {
     if(is_windows){
         cc = "clang-cl"
@@ -23,16 +30,28 @@ toolchain("llvm") {
         # lld_command = "ld"
     }
 
+    tool("asm"){
+        if(is_linux || is_mac){
+            command = "clang {{defines}} -o {{output}}"
+        }
+        else {
+            command = "clang-cl {{defines}} {{source}} -o {{output}}"
+        }
+        outputs = [
+            "{{source_out_dir}}/{{source_name_part}}.${obj_ext}"
+        ]
+        description = "Compiling ASM source {{output}}"
+    }
     tool("cc") {
         depfile = "{{output}}.d"
         
         if(is_linux || is_mac){
             depsformat = "gcc"
-            command = "$cc -MD -MF $depfile  {{defines}} {{include_dirs}} {{cflags_c}}  -c {{source}}  -o {{output}}"
+            command = "$cc -MD -MF $depfile  {{defines}} {{include_dirs}} $debug_flag {{cflags_c}}  -c {{source}}  -o {{output}}"
         }
         else {
             depsformat = "msvc"
-            command = "$cc /clang:-MD /clang:-MF /clang:$depfile  {{defines}} {{include_dirs}} {{cflags_c}}  -c {{source}}  -o {{output}}"
+            command = "$cc /clang:-MD /clang:-MF /clang:$depfile  {{defines}} {{include_dirs}} $debug_flag {{cflags_c}}  -c {{source}}  -o {{output}}"
         }
         description = "Compiling C source {{output}}"
         outputs = [
@@ -42,10 +61,10 @@ toolchain("llvm") {
     tool("cxx"){
         depfile = "{{output}}.d"
         if(is_linux || is_mac){
-            command = "$cxx -MD -MF $depfile -std=c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} -c {{source}} -o {{output}}"
+            command = "$cxx -MD -MF $depfile -std=c++17 {{defines}} {{include_dirs}} $debug_flag {{cflags_c}} {{cflags_cc}} -c {{source}} -o {{output}}"
         }
         else {
-            command = "clang-cl /clang:-MD /clang:-MF /clang:$depfile /std:c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} -c {{source}} -o {{output}}"
+            command = "clang-cl /clang:-MD /clang:-MF /clang:$depfile /std:c++17 {{defines}} {{include_dirs}} $debug_flag {{cflags_c}} {{cflags_cc}} -c {{source}} -o {{output}}"
         }
         if(is_linux || is_mac){
             depsformat = "gcc"
@@ -79,7 +98,7 @@ toolchain("llvm") {
             depfile = "{{output}}.d"
             depsformat = "gcc"
             description = "Compiling OBJC source {{output}}"
-            command = "$cc -MD -MF $depfile  {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_objc}}  -c {{source}}  -o {{output}}"
+            command = "$cc -MD -MF $depfile  {{defines}} {{include_dirs}} $debug_flag {{cflags_c}} {{cflags_objc}}  -c {{source}}  -o {{output}}"
             outputs = [
                 "{{source_out_dir}}/{{source_name_part}}.${obj_ext}"
             ]
@@ -88,7 +107,7 @@ toolchain("llvm") {
             depfile = "{{output}}.d"
             depsformat = "gcc"
             description = "Compiling OBJCXX source {{output}}"
-            command = "$cxx -MD -MF $depfile -std=c++17 {{defines}} {{include_dirs}} {{cflags_c}} {{cflags_cc}} {{cflags_objc}} {{cflags_objcc}} -c {{source}} -o {{output}}"
+            command = "$cxx -MD -MF $depfile -std=c++17 {{defines}} {{include_dirs}} $debug_flag {{cflags_c}} {{cflags_cc}} {{cflags_objc}} {{cflags_objcc}} -c {{source}} -o {{output}}"
             outputs = [
                 "{{source_out_dir}}/{{source_name_part}}.${obj_ext}"
             ]
@@ -106,7 +125,7 @@ toolchain("llvm") {
         _new_out = rebase_path("../../out/gen")
 
         description = "Compiling SWIFT source {{output}}"
-        command = "xcrun -sdk macosx swiftc  {{defines}} {{swiftflags}} {{module_dirs}} -emit-dependencies -module-name {{module_name}} -o {{output}} {{include_dirs}} -emit-module -emit-object -enable-library-evolution -emit-module-interface-path $_new_out/{{module_name}}.swiftinterface  {{inputs}}"
+        command = "xcrun -sdk macosx swiftc  {{defines}} $debug_flag {{swiftflags}} {{module_dirs}} -emit-dependencies -module-name {{module_name}} -o {{output}} {{include_dirs}} -emit-module -emit-object -enable-library-evolution -emit-module-interface-path $_new_out/{{module_name}}.swiftinterface  {{inputs}}"
         outputs = [
             "{{target_gen_dir}}/{{module_name}}.swiftmodule",
             "{{target_gen_dir}}/{{module_name}}.h",
@@ -177,7 +196,7 @@ toolchain("llvm") {
     tool("rc"){
         command = "rc.exe /nologo {{defines}} {{include_dirs}} /FO {{output}} {{source}}"
         outputs = [
-            "obj/{{source_name_part}}.res"
+            "{{source_out_dir}}/{{source_name_part}}.res"
         ]
         depsformat = "msvc"
         description = "Compiling rc script {{output}}"

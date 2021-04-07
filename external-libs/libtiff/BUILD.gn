@@ -32,9 +32,9 @@ external_lib("libtiff"){
         rebase_path("./code/libtiff/tiffvers.h")
     ]
     if(is_linux || is_mac){
-        export = "${o}/libtiff/${lib_prefix}tiffxx.5.${shared_lib_suffix}"
+        export = rebase_path("${o}/libtiff/${lib_prefix}tiffxx.5.${shared_lib_suffix}")
     }
     else {
-        export = "${o}/libtiff/${lib_prefix}tiffxx.${static_lib_suffix}"
+        export = rebase_path("${o}/libtiff/${lib_prefix}tiffxx.${static_lib_suffix}")
     }
 }

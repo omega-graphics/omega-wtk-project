@@ -2,8 +2,13 @@
 #include <OmegaWTK.h>
 #include <wrl.h>
 #include <debugapi.h>
+#include <Shlwapi.h>
+#include <PathCch.h>
+#include <atlstr.h>
+#include <string>
 
 #pragma comment(lib, "runtimeobject.lib")
+#pragma comment(lib, "pathcch.lib")
 
 #define MAX_LOADSTRING 100
 
@@ -11,9 +16,17 @@
 // LPCSTR szWindowClass = "@APPNAME@"; 
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLine, int nShowCmd){
-
-    // MessageBoxA(HWND_DESKTOP,"LoadingApp","NOTE",MB_OK);
     HRESULT hr;
+    LPTSTR exec_string = GetCommandLineA();
+    ATL::CStringW str(exec_string);
+    std::wstring ws(str.GetBuffer());
+    hr = PathCchRemoveFileSpec(ws.data(),ws.size());
+    if(FAILED(hr)){
+
+    };
+    // MessageBoxW(HWND_DESKTOP,ws.data(),L"NOTE",MB_OK);
+    SetCurrentDirectoryW(ws.data());
+    
     hr = CoInitializeEx(NULL,COINIT_MULTITHREADED);
     if(!SUCCEEDED(hr))
     {

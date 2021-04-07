@@ -12,6 +12,7 @@
 
 #ifdef TARGET_WIN32
 #include <windows.h>
+#include <Shlwapi.h>
 #endif
 
 #ifdef TARGET_MACOS
@@ -148,6 +149,7 @@ void AssetFileLoader::loadAssetFile(FSPath & path){
         std::ifstream in(str,std::ios::binary | std::ios::in);
         assetc::AssetsFileHeader header;
         in.read((char *)&header,sizeof(assetc::AssetsFileHeader));
+        // MessageBoxA(GetDesktopWindow(),(std::string("Asset Count:") + std::to_string(header.asset_count)).c_str(),"NOTE", MB_OK);
         unsigned i = 0;
         while(i < header.asset_count){
             assetc::AssetsFileEntry fentry;
@@ -167,6 +169,7 @@ void AssetFileLoader::loadAssetFile(FSPath & path){
             assets_res.insert(std::make_pair(std::move(filename),std::move(buffer)));
             i += 1;
         };
+        // MessageBoxA(GetDesktopWindow(),"Read Assets File","NOTE", MB_OK);
 
         in.close();
     };
@@ -313,6 +316,9 @@ Core::String & FSPath::str(){
 };
 
 bool FSPath::exists(){
+#ifdef TARGET_WIN32
+    return PathFileExistsA(serialize().c_str()) == TRUE;
+#endif
     #ifdef TARGET_MACOS
         return file_exists(serialize().c_str());
     #endif

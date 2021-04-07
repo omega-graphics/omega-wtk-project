@@ -128,7 +128,7 @@ int omegaWTKMain(AppInst *app)
     
 //     std::cout << path.serialize() << std::endl;
     
-   SharedImageHandle img = IMPORT_IMG("Songalong-Logo-Mac.png");
+   SharedImageHandle img = IMPORT_IMG("vortex-rtde.png");
     // auto img2 = IMPORT_IMG("test-1.png");
     // auto widget = make<UI::TextInput>(UI::TextInput({{0,0},{200,100}}));
    auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}},img));

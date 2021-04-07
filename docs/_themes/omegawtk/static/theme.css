@@ -5,7 +5,13 @@
 
 body {
     font-family: 'Avenir';
-    background-color: azure;
-    
+    background-color: #525252;    
 }
+
+body h1 {
+    font-size: 32;
+    margin: auto;
+    background-color: #808080;
+}
+
 

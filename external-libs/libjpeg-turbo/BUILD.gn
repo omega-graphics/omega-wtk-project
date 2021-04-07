@@ -9,8 +9,8 @@ external_lib("libjpeg-turbo"){
     ]
     if(is_windows){
         outputs += [
-              "${o}/jpeg62.dll",
-             "${o}/turbojpeg.dll"
+            "${o}/jpeg62.dll",
+            "${o}/turbojpeg.dll"
         ]
     }
     public_headers = [
@@ -20,5 +20,5 @@ external_lib("libjpeg-turbo"){
         rebase_path("./code/jerror.h"),
         rebase_path("./code/turbojpeg.h")
     ]
-    export = "${o}/${lib_prefix}turbojpeg.${static_lib_suffix}"
+    export = rebase_path("${o}/${lib_prefix}turbojpeg.${static_lib_suffix}")
 }
