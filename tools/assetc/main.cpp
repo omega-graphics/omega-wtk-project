@@ -5,7 +5,7 @@
 #include <vector>
 #include <iomanip>
 
-#include <openssl/evp.h>
+// #include <openssl/evp.h>
 
 using namespace OmegaWTK::assetc;
 

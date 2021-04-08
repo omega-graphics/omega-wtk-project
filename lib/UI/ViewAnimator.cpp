@@ -1,4 +1,5 @@
 #include "omegaWTK/UI/ViewAnimator.h"
+#include <chrono>
 
 namespace OmegaWTK {
 
@@ -23,6 +24,11 @@ void ViewAnimator::activateTrigger(unsigned identifier){
 
 void ViewAnimator::assignController(int id,SharedHandle<Composition::LayerAnimationController> & controller){
     animControllers.insert(std::make_pair(id,controller));
+};
+
+void ViewAnimator::scheduleFrame(std::chrono::milliseconds deadline_delta){
+    auto current_time_stamp = std::chrono::high_resolution_clock::now();
+    auto deadline_timp_stamp = current_time_stamp + deadline_delta;
 };
 
 //SharedHandle<ViewAnimator> ViewAnimator::Create(View *view){

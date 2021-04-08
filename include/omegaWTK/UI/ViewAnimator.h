@@ -1,5 +1,6 @@
 #include "View.h"
 #include "omegaWTK/Composition/ViewRenderTarget.h"
+#include <chrono>
 
 #ifndef OMEGAWTK_UI_VIEWANIMATOR_H
 #define OMEGAWTK_UI_VIEWANIMATOR_H
@@ -7,7 +8,6 @@ namespace OmegaWTK {
     /**
      @brief A CanvasView's Animation Execution Engine and Scheduler
      @discussion
-     p
      */
  class OMEGAWTK_EXPORT  ViewAnimator {
 //        Core::UniquePtr<Composition::ViewRenderTargetFrameScheduler> frameScheduler;
@@ -22,7 +22,7 @@ namespace OmegaWTK {
     private:
         Core::Map<unsigned,Action> triggers;
         Core::Map<int,SharedHandle<Composition::LayerAnimationController>> animControllers;
-        void scheduleFrame(float timeDelta);
+        void scheduleFrame(std::chrono::milliseconds deadline_delta);
         ViewAnimator(Core::UniquePtr<Composition::ViewRenderTarget> & renderTarget,Composition::Compositor *compositor);
     public:
         struct TriggerDescriptor {
