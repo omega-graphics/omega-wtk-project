@@ -35,7 +35,7 @@ namespace OmegaWTK::Native::Win {
             HWNDFactory::appFactoryInst->makeWindow(atom,"",wndrect,WS_CHILD | extra_window_style,(void *)this,nullptr,WS_EX_LAYERED);
 
         if(hwnd == NULL){
-            // MessageBoxA(HWND_DESKTOP,"Failed to Create HWNDItem Window!","NOTE",MB_OK);
+            MessageBoxA(HWND_DESKTOP,"Failed to Create HWNDItem Window!","NOTE",MB_OK);
         };
         currentDpi = GetDpiForWindow(hwnd);
         isTracking = false;
@@ -138,7 +138,7 @@ namespace OmegaWTK::Native::Win {
         case WM_PAINT : {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd,&ps);
-
+            
             layerTreelimb->redraw();
 
             EndPaint(hwnd,&ps);

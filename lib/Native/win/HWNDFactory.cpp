@@ -3,6 +3,8 @@
 #include "WinAppWindow.h"
 #include "omegaWTK/Native/NativeApp.h"
 
+#pragma comment(lib,"gdi32.lib")
+
 namespace OmegaWTK::Native::Win {
 
     void updateAllHWNDPos(UINT root_wnd_height,Core::Vector<HWND> * hwnds_to_update){
@@ -112,10 +114,17 @@ namespace OmegaWTK::Native::Win {
         
         // unsigned wndHeight = rc.bottom - rc.top;
         // unsigned height = rect.dimen.minHeight * scaleFactor;
-        HWND hwnd = CreateWindowA(MAKEINTATOM(atom),name,base_style,rect.pos.x *scaleFactor,(rc.bottom - (rect.dimen.minHeight) * scaleFactor) - (rect.pos.y * scaleFactor),rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor,wind_parent,NULL,hInst,custom_params);
-        // SetLayeredWindowAttributes(hwnd,RGB(0xFF,0xFF,0xFF),0,LWA_ALPHA | LWA_COLORKEY);
-        // if(parent == nullptr)
-        //     all_hwnds.push_back(hwnd);
+        HWND hwnd = CreateWindowExA(ext_style,MAKEINTATOM(atom),name,base_style,rect.pos.x *scaleFactor,(rc.bottom - (rect.dimen.minHeight) * scaleFactor) - (rect.pos.y * scaleFactor),rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor,wind_parent,NULL,hInst,custom_params);
+        // UpdateWindow(hwnd);
+        BLENDFUNCTION blend = { 0 };
+        blend.BlendOp = AC_SRC_OVER;
+        blend.SourceConstantAlpha = 255;
+        blend.AlphaFormat = AC_SRC_ALPHA;
+        HDC hdcScreen = GetDC(NULL);
+        HDC hdcMem = CreateCompatibleDC(hdcScreen);
+        UpdateLayeredWindow(hwnd,hdcScreen,NULL,NULL,hdcMem,NULL,RGB(0xFF,0xFF,0xFF),&blend,ULW_ALPHA);
+        DeleteDC(hdcMem);
+        // ShowWindow(hwnd,SW_SHOWDEFAULT);
         return hwnd;
         #undef DEFAULT_DPI
         
