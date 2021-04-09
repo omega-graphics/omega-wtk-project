@@ -7,7 +7,6 @@ namespace OmegaWTK::UI {
         auto rootLayer = rootView->getLayerTreeLimb()->getRootLayer();
         auto defaultStyle = make<Composition::LayerStyle>();
         defaultStyle->setBackgroundColor(Composition::Color::Transparent);
-        defaultStyle->add(VISUAL_RECT(Rect(0,0,rect.dimen.minWidth,rect.dimen.minHeight),Composition::ColorBrush(Composition::Color::Blue)));
         rootLayer->setStyle(defaultStyle);
     };
 

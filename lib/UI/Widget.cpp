@@ -12,7 +12,7 @@ Widget::Widget(const Core::Rect & rect,SharedHandle<Widget> parent):parent(paren
 //    std::cout << "RenderTargetPtr:" << rootView->renderTarget.get() << std::endl;
 };
 
-SharedHandle<Composition::Layer> Widget::makeLayer(const Core::Rect & rect){
+SharedHandle<Composition::Layer> Widget::makeLayer(Core::Rect rect){
     return std::make_shared<Composition::Layer>(rect,compositor);
 };
 

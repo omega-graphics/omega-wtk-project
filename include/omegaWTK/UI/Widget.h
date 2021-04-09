@@ -25,7 +25,7 @@ protected:
     /**
      Constructs a Layer with Widget's Compositor Pointer and Core::Rect
      */
-    SharedHandle<Composition::Layer> makeLayer(const Core::Rect & rect);
+    SharedHandle<Composition::Layer> makeLayer(Core::Rect rect);
     Composition::Compositor * compositor;
         /**
      Makes a Canvas View attached to this widget and returns it.

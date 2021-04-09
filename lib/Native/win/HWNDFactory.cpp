@@ -113,6 +113,7 @@ namespace OmegaWTK::Native::Win {
         // unsigned wndHeight = rc.bottom - rc.top;
         // unsigned height = rect.dimen.minHeight * scaleFactor;
         HWND hwnd = CreateWindowA(MAKEINTATOM(atom),name,base_style,rect.pos.x *scaleFactor,(rc.bottom - (rect.dimen.minHeight) * scaleFactor) - (rect.pos.y * scaleFactor),rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor,wind_parent,NULL,hInst,custom_params);
+        // SetLayeredWindowAttributes(hwnd,RGB(0xFF,0xFF,0xFF),0,LWA_ALPHA | LWA_COLORKEY);
         // if(parent == nullptr)
         //     all_hwnds.push_back(hwnd);
         return hwnd;
