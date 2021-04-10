@@ -195,8 +195,9 @@ namespace OmegaWTK::Native::Win {
         auto rect = parent->wndrect;
         UINT dpi = GetDpiForWindow(hwnd);
         FLOAT scaleFactor = FLOAT(dpi)/96.f;
-
-        SetWindowPos(hwnd,hwnd,wndrect.pos.x * scaleFactor,(rect.dimen.minHeight - wndrect.pos.y - wndrect.dimen.minHeight) * scaleFactor,wndrect.dimen.minWidth * scaleFactor,wndrect.dimen.minHeight * scaleFactor,SWP_NOACTIVATE | SWP_NOZORDER);
+        HDWP dp = BeginDeferWindowPos(1);
+        DeferWindowPos(dp,hwnd,hwnd,wndrect.pos.x * scaleFactor,(rect.dimen.minHeight - wndrect.pos.y - wndrect.dimen.minHeight) * scaleFactor,wndrect.dimen.minWidth * scaleFactor,wndrect.dimen.minHeight * scaleFactor,SWP_NOACTIVATE | SWP_NOZORDER);
+        EndDeferWindowPos(dp);
     };
     RECT HWNDItem::getClientRect(){
         RECT r;

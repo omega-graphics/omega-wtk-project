@@ -250,7 +250,61 @@ namespace OmegaWTK {
             };
 
         };
-    
+        /** @brief A queue data type that preallocates its memory on the heap that has a limited capacity, however it can be resized when nesscary.
+            @paragraph
+             This class typically gets used in a scenario
+             where there could be thousands of objects that get dynamically constructed and destroyed by a standard data type such as std::vector 
+             but in a scenario as such, all the standard types are extremely inefficient and can cause fragmented memory. 
+
+             The QueueHeap class has a similar implementation to a heap data type rather it has more control over how the data gets copied to/removed from the heap. 
+             In addition, it only allows construction/destruction of objects in the notions of a "first in, first out" data type.
+        */
+        template<class _Ty>
+        class QueueHeap {
+            _Ty *_data;
+            public:
+            using size_type = unsigned;
+            private:
+            size_type len = 0;
+            size_type max_len;
+            public:
+            using reference = _Ty &;
+            bool empty() noexcept {return len == 0;};
+            reference first(){ return _data[0];};
+            reference last(){ return _data[len-1];};
+            private:
+            void __push_el(const _Ty & el){
+                memcpy(_data + (sizeof(_Ty) * len),&el,sizeof(_Ty));
+                ++len;
+            };
+            public:
+            void push(const _Ty & el){
+                __push_el(el);
+            };
+            void push(_Ty && el){
+                __push_el(el);
+            };
+            void pop(){
+                assert(!empty() && "Cannot call pop() on empty StackQueue!");
+                first().~_Ty();
+                --len;
+                memcpy(_data,_data + sizeof(_Ty),sizeof(_Ty) * len);
+            };
+            void resize(size_type new_max_size){
+                assert(max_len < new_max_size && "");
+                realloc(_data,sizeof(_Ty) * new_max_size);
+                max_len = new_max_size;
+            };
+
+            QueueHeap(size_type max_size):_data(malloc(sizeof(_Ty) * max_size)),max_len(max_size){
+
+            };
+            ~QueueHeap(){
+                while(!empty())
+                    pop();
+                free(_data);
+            };
+        };
         
         
         /// A basic reimplementation of the std::string class!

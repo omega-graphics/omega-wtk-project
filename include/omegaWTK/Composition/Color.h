@@ -54,17 +54,19 @@ namespace OmegaWTK {
         };
 
         struct OMEGAWTK_EXPORT Gradient {
-            struct GradientStop {
-                float pos;
-                Color color;
-            };
-            typedef enum : OPT_PARAM {
+             typedef enum : OPT_PARAM {
                 Linear,
                 Radial
             } GradientType;
             GradientType type;
+            struct GradientStop {
+                float pos;
+                Color color;
+            };
             Core::Vector<GradientStop> stops;
-
+            static GradientStop CreateStop(float pos,Color color);
+            static Gradient CreateLinear(std::initializer_list<GradientStop> stops);
+            static Gradient CreateRadial(std::initializer_list<GradientStop> stops);
         };
     };
 };

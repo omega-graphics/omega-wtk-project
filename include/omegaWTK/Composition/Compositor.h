@@ -37,15 +37,15 @@ namespace OmegaWTK::Composition {
 //        Backend *executor;
 //    };
    
-//    class RenderCommandExecutionScheduler {
-//    public:
-//        static RenderCommandExecutionScheduler* instance;
-//        Core::Vector<Backend *> backend_refs;
-//        std::thread * t;
-//        void run();
-//        RenderCommandExecutionScheduler();
-//        ~RenderCommandExecutionScheduler();
-//    };
+   class RenderCommandExecutionScheduler {
+   public:
+       static RenderCommandExecutionScheduler* instance;
+       Core::Vector<Backend *> backend_refs;
+       std::thread * t;
+       void run();
+       RenderCommandExecutionScheduler();
+       ~RenderCommandExecutionScheduler();
+   };
 
    
     /**
