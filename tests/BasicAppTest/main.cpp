@@ -13,6 +13,8 @@ public:
 
 
 int omegaWTKMain(AppInst *app){
+
+    std::cout << "Hello World" << std::endl;
     
     auto panel = make<UI::Panel>(OmegaWTK::Rect(50,50,700,700));
     auto layerStyle = make<Composition::LayerStyle>();

@@ -10,6 +10,7 @@ namespace OmegaWTK::Native::Win {
     void updateAllHWNDPos(UINT root_wnd_height,Core::Vector<HWND> * hwnds_to_update){
      RECT rc;
      auto it = hwnds_to_update->begin();
+     HDWP hdwp = BeginDeferWindowPos(hwnds_to_update->size());
      while(it != hwnds_to_update->end()){
          HWND hwnd = *it;
          rc = __get_hwnd_real_coords(hwnd);
@@ -23,10 +24,10 @@ namespace OmegaWTK::Native::Win {
 
         //  auto n_str = std::string("RECT {") + "x:" + std::to_string(rc.left * scaleFactor) + ",y:" + std::to_string(root_wnd_height - (rc.top* scaleFactor)) + ",w:" + std::to_string(w * scaleFactor) + ",h:" + std::to_string(h* scaleFactor) + "}";
         //   MessageBoxA(GetForegroundWindow(),n_str.c_str(),"NOTE",MB_OK);
-
-         SetWindowPos(hwnd,hwnd,rc.left * scaleFactor,(root_wnd_height - (rc.top* scaleFactor)),w * scaleFactor,h* scaleFactor,SWP_NOZORDER | SWP_NOACTIVATE);
+         DeferWindowPos(hdwp,hwnd,hwnd,rc.left * scaleFactor,(root_wnd_height - (rc.top* scaleFactor)),w * scaleFactor,h* scaleFactor,SWP_NOZORDER | SWP_NOACTIVATE);
          ++it;
      };
+     EndDeferWindowPos(hdwp);
  };
 
     int windowID = 0;

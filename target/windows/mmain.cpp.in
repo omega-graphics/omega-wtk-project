@@ -6,6 +6,8 @@
 #include <PathCch.h>
 #include <atlstr.h>
 #include <string>
+#include <io.h>
+#include <fcntl.h>
 
 #pragma comment(lib, "runtimeobject.lib")
 #pragma comment(lib, "pathcch.lib")
@@ -14,8 +16,82 @@
 
 // LPCSTR szTitle = "@APPNAME@";                
 // LPCSTR szWindowClass = "@APPNAME@"; 
+static const WORD MAX_CONSOLE_LINES = 500;
+
+bool setupDebugConsole(){
+    CONSOLE_SCREEN_BUFFER_INFO coninfo;
+    FILE *fp;
+    bool result;
+
+    AllocConsole();
+
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo);
+    coninfo.dwSize.Y = MAX_CONSOLE_LINES;
+    SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), coninfo.dwSize);
+
+    if (GetStdHandle(STD_INPUT_HANDLE) != INVALID_HANDLE_VALUE){
+        if (freopen_s(&fp, "CONIN$", "r", stdin) != 0)
+            result = false;
+        else
+            setvbuf(stdin, NULL, _IONBF, 0);
+    }
+
+    // Redirect STDOUT if the console has an output handle
+    if (GetStdHandle(STD_OUTPUT_HANDLE) != INVALID_HANDLE_VALUE){
+        if (freopen_s(&fp, "CONOUT$", "w", stdout) != 0)
+            result = false;
+        else
+            setvbuf(stdout, NULL, _IONBF, 0);
+    }
+
+    // Redirect STDERR if the console has an error handle
+    if (GetStdHandle(STD_ERROR_HANDLE) != INVALID_HANDLE_VALUE) {
+        if (freopen_s(&fp, "CONOUT$", "w", stderr) != 0)
+            result = false;
+        else
+            setvbuf(stderr, NULL, _IONBF, 0);
+    }
+
+
+    std::ios::sync_with_stdio();
+
+    std::wcout.clear();
+    std::cout.clear();
+    std::wcerr.clear();
+    std::cerr.clear();
+    std::wcin.clear();
+    std::cin.clear();
+
+    return result;
+};
+
+bool ReleaseConsole(){
+    FILE *fp;
+    bool result;
+    // Redirect STDIN to NUL
+    if (freopen_s(&fp, "NUL:", "r", stdin) != 0)
+        result = false;
+    else
+        setvbuf(stdin, NULL, _IONBF, 0);
+
+    // Redirect STDOUT to NUL
+    if (freopen_s(&fp, "NUL:", "w", stdout) != 0)
+        result = false;
+    else
+        setvbuf(stdout, NULL, _IONBF, 0);
+
+    // Redirect STDERR to NUL
+    if (freopen_s(&fp, "NUL:", "w", stderr) != 0)
+        result = false;
+    else
+        setvbuf(stderr, NULL, _IONBF, 0);
+
+    FreeConsole();
+    return result;
+}
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLine, int nShowCmd){
+    setupDebugConsole();
     HRESULT hr;
     LPTSTR exec_string = GetCommandLineA();
     ATL::CStringW str(exec_string);
@@ -57,6 +133,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLi
     CoUninitialize();
 
     delete appInst;
+
+    ReleaseConsole();
 
     return msg.wParam;
 

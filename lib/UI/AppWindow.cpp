@@ -30,9 +30,9 @@ void AppWindow::setMenuStyle(SharedHandle<Composition::MenuStyle> & style){
 
 void AppWindow::_add_widget(SharedHandle<Widget> * handle){
 //    (*handle)->compositor->prepareDraw((*handle)->layerTree.get());
-    std::ostringstream ss; 
+    std::ostringstream ss(""); 
     ss << "WidgetRootViewPtr:" << (*handle)->rootView << std::endl << "WidgetRootTargetPtr:" << (*handle)->rootView->renderTarget << std::endl;
-    // MessageBoxA(GetForegroundWindow(),ss.str().c_str(),"DEBUG",MB_OK);
+    std::cout << ss.str() << std::endl;
 
     if((*handle)->rootView->renderTarget) {
         layer->native_window_ptr->addNativeItem((*handle)->rootView->renderTarget->getNativePtr());
