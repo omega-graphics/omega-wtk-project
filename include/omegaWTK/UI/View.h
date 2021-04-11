@@ -47,7 +47,8 @@ namespace OmegaWTK {
             NOTE:
             This Constructed is only called when making a VideoView
             In other words, the View that is returned has NO layers will be completlty blank.
-            @param rect The Rect to use
+            @param rect[in] The Rect to use
+            @param parent[in] The Parent View
             @returns A View!
          */
         View(const Core::Rect & rect,View *parent);
@@ -56,7 +57,9 @@ namespace OmegaWTK {
             NOTE:
             This Constructed is only called when making a ScrollView.
             In other words, the View that is returned has NO layers will be completlty blank.
-            @param rect The Rect to use
+            @param rect[in] The Rect to use
+            @param nativeItem[in] The Native View to bind to
+            @param parent[in] The Parent View
             @returns A View!
          */
         View(const Core::Rect & rect,Native::NativeItemPtr nativeItem,View *parent);
@@ -141,13 +144,16 @@ namespace OmegaWTK {
         Core::Rect * childViewRect;
         ScrollViewDelegate *delegate = nullptr;
         bool hasDelegate();
+        bool hasVericalScrollBar,hasHorizontalScrollBar;
     public:
+        void toggleVerticalScrollBar();
+        void toggleHorizontalScrollBar();
         void setDelegate(ViewDelegate *_delegate);
         /**
             @param rect The Rect to use
             @returns A ScrollView!
          */
-        ScrollView(const Core::Rect & rect,SharedHandle<View> child,View *parent = nullptr);
+        ScrollView(const Core::Rect & rect,SharedHandle<View> child,bool hasVericalScrollBar,bool hasHorizontalScrollBar,View *parent = nullptr);
     };
 
     class OMEGAWTK_EXPORT ScrollViewDelegate : public Native::NativeEventProcessor {

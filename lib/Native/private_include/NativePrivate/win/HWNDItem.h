@@ -52,7 +52,12 @@ namespace OmegaWTK::Native {
             RECT getClientRect();
             HDC getDCFromHWND();
             void *getBinding(){ return (void *)hwnd;};
+            /// @name ScrollView Methods
+            /// @{
+            void toggleHorizontalScrollBar(bool & state);
+            void toggleVerticalScrollBar(bool & state);
             void setClippedView(NativeItem *clippedView);
+            /// @}
             typedef enum : OPT_PARAM {
                 View,
                 ScrollView

@@ -29,10 +29,15 @@ namespace OmegaWTK {
             virtual void *getBinding() = 0;
             virtual void enable() = 0;
             virtual void disable() = 0;
+            /// @name ScrollItem Methods
+            ///@{
+            virtual void toggleHorizontalScrollBar(bool & state) = 0;
+            virtual void toggleVerticalScrollBar(bool & state) = 0;
             /**
              This Method may only be invoked if NativeItem is a ScrollView
             */
             virtual void setClippedView(NativeItem * clippedView) = 0;
+            /// @}
             NativeItem();
             // ~NativeItem();
         };

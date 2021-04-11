@@ -15,6 +15,11 @@ class AppWindow;
 class AppWindowManager;
 
     class AppWindowDelegate;
+    /**
+     @brief A standard application window for attaching and displaying widgets. Similar to a Widget, it can be styled.
+     @paragraph
+
+    */
  class OMEGAWTK_EXPORT AppWindow : public Native::NativeEventEmitter {
         UniqueHandle<Composition::WindowLayer> layer;
         Composition::Compositor * compositor;
@@ -39,7 +44,9 @@ class AppWindowManager;
         };
         AppWindow(Core::Rect rect,AppWindowDelegate * delegate = nullptr);
     };
-
+/**
+ @brief Manages the displaying of AppWindows as well as the window heirarchy for a single application.
+*/
  class OMEGAWTK_EXPORT  AppWindowManager {
         SharedHandle<AppWindow> rootWindow;
         public:
@@ -48,7 +55,12 @@ class AppWindowManager;
         void displayRootWindow();
     };
     
+/**
+ @brief An interface used for response code to a native event emitted by an AppWindow, for example when the window resizes.
+ @paragraph
 
+
+*/
 class OMEGAWTK_EXPORT   AppWindowDelegate : public Native::NativeEventProcessor {
     private:
         void onRecieveEvent(Native::NativeEventPtr event);

@@ -41,6 +41,37 @@ namespace OmegaWTK::Native::Win {
         isTracking = false;
         hovered = false;
     };
+
+    void HWNDItem::toggleHorizontalScrollBar(bool & state){
+        if(isScrollView){
+            if(!state) {
+                SetWindowLongPtrA(hwnd,GWL_STYLE,GetWindowLongPtrA(hwnd,GWL_STYLE) | WS_HSCROLL);
+                state = true;
+                UpdateWindow(hwnd);
+            }
+            else {
+                SetWindowLongPtrA(hwnd,GWL_STYLE,GetWindowLongPtrA(hwnd,GWL_STYLE) & ~WS_HSCROLL);
+                state = false;
+                UpdateWindow(hwnd);
+            }
+        };
+    };
+
+    void HWNDItem::toggleVerticalScrollBar(bool & state){
+        if(isScrollView) {
+            if(!state) {
+                SetWindowLongPtrA(hwnd,GWL_STYLE,GetWindowLongPtrA(hwnd,GWL_STYLE) | WS_VSCROLL);
+                state = true;
+                UpdateWindow(hwnd);
+            }
+            else {
+                SetWindowLongPtrA(hwnd,GWL_STYLE,GetWindowLongPtrA(hwnd,GWL_STYLE) & ~WS_VSCROLL);
+                state = false;
+                UpdateWindow(hwnd);
+            }
+        };
+    };
+
     void HWNDItem::setClippedView(NativeItem *clippedView){
         if(isScrollView) {
             HWNDItem *child = (HWNDItem *)clippedView;

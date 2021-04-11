@@ -32,7 +32,7 @@ void AppWindow::_add_widget(SharedHandle<Widget> * handle){
 //    (*handle)->compositor->prepareDraw((*handle)->layerTree.get());
     std::ostringstream ss(""); 
     ss << "WidgetRootViewPtr:" << (*handle)->rootView << std::endl << "WidgetRootTargetPtr:" << (*handle)->rootView->renderTarget << std::endl;
-    std::cout << ss.str() << std::endl;
+    std::cout << ss.str();
 
     if((*handle)->rootView->renderTarget) {
         layer->native_window_ptr->addNativeItem((*handle)->rootView->renderTarget->getNativePtr());

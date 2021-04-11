@@ -13,8 +13,10 @@ class VideoView;
 class WidgetObserver;
 
 /**
- A moduler UI component. 
+ @brief A moduler UI component. 
  Can be attached either directly to an AppWindow or as a child of another Widget.
+ @paragraph
+
  @see AppWindow
 */
 class OMEGAWTK_EXPORT  Widget {
@@ -90,7 +92,10 @@ public:
 #define WIDGET_NOTIFY_OBSERVERS_RESIZE(rect) notifyObservers(Widget::Resize,&rect)
 
 
-/// Similar to a Widget Delegate but a Widget can have more than one.
+/** 
+ @brief Similar to the concept of a Widget Delegate but a Widget can have more than one.
+ @paragraph
+*/
 class OMEGAWTK_EXPORT  WidgetObserver {
     friend class Widget;
     bool hasAssignment;
