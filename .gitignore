@@ -42,6 +42,7 @@ sphinxout
 
 *.sh
 *.bat
+!vc.bat
 !gn/vc.bat
 !external-libs/openssl/vc.bat
 
