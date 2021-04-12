@@ -2,7 +2,6 @@ import("./ExternalExports.gni")
 
 declare_args(){
     python_path = ""
-    omega_wtk_include_dir = rebase_path("//include","../",".")
     code_signature = ""
 }
 
@@ -18,7 +17,7 @@ if(is_mac){
         _o_dir = invoker.output_dir
         _args = ["--metallib","-O",rebase_path(_o_dir + "/" + target_name) + ".metallib"] + n_sources
         action(target_name){
-            script = rebase_path("//gn/shaderc.py")
+            script = rebase_path("./shaderc.py")
             args = _args
             outputs = ["$_o_dir/$target_name.metallib"]
         }
@@ -32,14 +31,14 @@ template("configure_file"){
     _args = ["-I",rebase_path(target_name),"-O",rebase_path(invoker.output_name),""]
     if(defined(invoker.defines)){
         action(invoker.dep_name){
-            script = rebase_path("//gn/ConfigFile.py")
+            script = rebase_path("./ConfigFile.py")
             args = invoker.defines + _args
             outputs = [invoker.output_name]
         }
     }
     else{
         action(invoker.dep_name){
-            script =rebase_path( "//gn/ConfigFile.py")
+            script = rebase_path( "./ConfigFile.py")
             args = _args
             outputs = [invoker.output_name]
         }
@@ -76,12 +75,12 @@ template("omega_wtk_static_lib"){
 
     if(defined(invoker.include_dirs)) {
         invoker.include_dirs += [
-            "//include"
+            "../include"
         ]
     }
     else {
         invoker.include_dirs = [
-            "//include"
+            "../include"
         ]
     }
 
@@ -116,12 +115,12 @@ template("omega_wtk_shared_lib"){
 
     if(defined(invoker.include_dirs)) {
         invoker.include_dirs += [
-            "//include"
+            "../include"
         ]
     }
     else {
         invoker.include_dirs = [
-            "//include"
+            "../include"
         ]
     }
 
@@ -220,7 +219,7 @@ template("omega_wtk_shared_lib"){
           code_signing_sources = [
               "$root_out_dir/in/${framework_name}"
           ]
-          code_signing_script = rebase_path("//gn/codesign.py")
+          code_signing_script = rebase_path("./codesign.py")
           code_signing_args = [
               "--sig",
               code_signature,
@@ -340,8 +339,8 @@ template("omega_wtk_app_config"){
     if(is_windows){
         copy("other-res" + app_name){
             sources = [
-                "target/windows/small.ico",
-                "target/windows/targetver.h"
+                "../target/windows/small.ico",
+                "../target/windows/targetver.h"
             ]
             outputs = [
                 "$out_dir/{{source_file_part}}"
@@ -349,29 +348,29 @@ template("omega_wtk_app_config"){
         }
         copy("app_ico" + app_name){
             sources = [
-                "target/windows/app.ico"
+                "../target/windows/app.ico"
             ]
             outputs = [
                 "$out_dir/${app_name}.ico"
             ]
         }
 
-        configure_file("//target/windows/mmain.cpp.in"){
+        configure_file("../target/windows/mmain.cpp.in"){
             defines = config_defines
             dep_name = "main-cpp-config__${app_name}"
             output_name = "$out_dir/mmain.cpp"
         }
-        configure_file("//target/windows/resource.h.in"){
+        configure_file("../target/windows/resource.h.in"){
             defines = config_defines
             dep_name = "resource-h-config__${app_name}"
             output_name  = "$out_dir/resource.h"
         }
-        configure_file("//target/windows/resource_script.rc.in"){
+        configure_file("../target/windows/resource_script.rc.in"){
             defines = config_defines
             dep_name = "resource-rc-config__${app_name}_1"
             output_name = "$out_dir/resource_script.rc"
         }
-        configure_file("//target/windows/manifest.rc.in"){
+        configure_file("../target/windows/manifest.rc.in"){
             defines = [
                 "-DEMBED=" + rebase_path("//target/windows/app.exe.manifest")
             ]
@@ -388,21 +387,21 @@ template("omega_wtk_app_config"){
 
         copy("other-res" + app_name){
             sources = [
-                "//target/macos/main.mm",
-                "//target/macos/English.lproj/MainMenu.xib",
-                "//target/macos/AppDelegate.h"
+                "../target/macos/main.mm",
+                "../target/macos/English.lproj/MainMenu.xib",
+                "../target/macos/AppDelegate.h"
             ]
             outputs = [
                 "$out_dir/{{source_file_part}}"
             ]
         }
 
-        configure_file("//target/macos/AppDelegate.mm"){
+        configure_file("../target/macos/AppDelegate.mm"){
             defines = config_defines
             dep_name = t_name
             output_name = "$out_dir/AppDelegate.mm"
         }
-        configure_file("//target/macos/Info.plist.in"){
+        configure_file("../target/macos/Info.plist.in"){
             defines = config_defines
             dep_name = t_name_2
             output_name = "$out_dir/Info.plist"
@@ -466,7 +465,7 @@ template("omega_wtk_test"){
     }
 
     invoker.include_dirs += [
-        rebase_path("$omega_wtk_include_dir"),
+        "../include",
         "$out_dir"
     ] 
     if(is_windows){
@@ -605,7 +604,7 @@ template("omega_wtk_test"){
         
 
             action("${o}__${app_name}"){
-                script = "//gn/assetc.py"
+                script = rebase_path("./assetc.py")
                 public_deps = [
                     ":omegawtk-assetc"
                 ]
@@ -657,7 +656,7 @@ template("omega_wtk_test"){
                 ]
             }
             sources = [
-                "//target/macos/MainMenu.nib",
+                "../target/macos/MainMenu.nib",
                
             ]
             if(defined(invoker.assets_dir)){
@@ -701,12 +700,12 @@ template("omega_wtk_test"){
         
         create_bundle("${target_name}.app"){
 
-            bundle_root_dir = "$root_build_dir/tests/$target_name"
+            bundle_root_dir = "$root_out_dir/tests/$target_name"
             bundle_contents_dir  = "$bundle_root_dir/Contents"
             bundle_resources_dir = "$bundle_contents_dir/Resources"
             bundle_executable_dir = "$bundle_contents_dir/MacOS"
 
-            code_signing_script = "//gn/codesign.py"
+            code_signing_script = rebase_path("./codesign.py")
             code_signing_sources = [
                 "$out_dir/$app_name"
             ]

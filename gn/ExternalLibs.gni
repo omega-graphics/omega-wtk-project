@@ -20,7 +20,7 @@ template("external_lib"){
         if(!defined(invoker.custom_conf)){
             assert(defined(invoker.cmake_other_args))
             action(target_name + "__conf"){
-                script = "//gn/external_lib.py"
+                script = rebase_path("./external_lib.py")
                 if(invoker.cmake_other_args != "") {
                     args = ["--conf",invoker.conf,"--build",rebase_path("$root_out_dir/externals/${t_name}/build"),"--check-outputs",invoker.export,"--cmake-args","\"" + invoker.cmake_other_args + "\""]
                 }
@@ -54,7 +54,7 @@ template("external_lib"){
             public_deps = [
                 ":${t_name}__conf"
             ]
-            script = "//gn/external_lib.py"
+            script = rebase_path(".external_lib.py")
             if(defined(invoker.custom_build)){
                 args = [
                     "--custom-make",
