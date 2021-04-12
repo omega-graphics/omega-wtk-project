@@ -30,6 +30,9 @@ template("external_lib"){
                 outputs = [
                     "${external_lib_path}/${t_name}/CONF"
                 ]
+                if(defined(invoker.public_deps)){
+                    public_deps = invoker.public_deps
+                }
             }
         }
         # else if(invoker.custom_conf == true) {
@@ -88,9 +91,6 @@ template("external_lib"){
                 ]
             }
             outputs = invoker.outputs
-            if(defined(invoker.public_deps)){
-                public_deps += invoker.public_deps
-            }
         }
     # }
     if(!defined(invoker.custom_build)){

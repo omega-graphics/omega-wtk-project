@@ -2,13 +2,19 @@ import os, sys ,shutil
 import argparse 
 import json
 import install_name
-
+import PyUtils
 
 def checkOutputs(libs:"list[str]"):
     for l in libs:
         if os.path.exists(l) == False:
             return False
     return True 
+
+def stripQuotes(s:str):
+   s = PyUtils.str_slice(s,0)
+   s = PyUtils.str_slice(s,len(s)-1,len(s)-1)
+   return s
+        
 
 def stampFile(file:str):
     str = open(file,"w")
@@ -74,10 +80,11 @@ else:
         
         if(sys.platform == "win32"):
             if(args[0].cmake_args != "\"\""):
-                os.system("vc.bat && " + cmake + ' -S ' + args[0].conf + ' -B ' + args[0].build + ' -G"Ninja" -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_BUILD_TYPE=Release ' + args[0].cmake_args)
+                print("CONF_COMMAND:" + cmake + ' -S ' + args[0].conf + ' -B ' + args[0].build + ' -G"Ninja" -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_BUILD_TYPE=Release ' + stripQuotes(args[0].cmake_args))
+                os.system("vc.bat && " + cmake + ' -S ' + args[0].conf + ' -B ' + args[0].build + ' -G"Ninja" -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_BUILD_TYPE=Release ' + stripQuotes(args[0].cmake_args))
             else:
                 os.system("vc.bat && " + cmake + ' -S ' + args[0].conf + ' -B ' + args[0].build + ' -G"Ninja" -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_BUILD_TYPE=Release ')
         else:
-            os.system(cmake + ' -S ' + args[0].conf + ' -B ' + args[0].build + ' -G"Ninja" -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ' + args[0].cmake_args)
+            os.system(cmake + ' -S ' + args[0].conf + ' -B ' + args[0].build + ' -G"Ninja" -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ' + stripQuotes(args[0].cmake_args))
         stampFile(os.path.join(args[0].build,"../CONF"))
         
