@@ -49,7 +49,9 @@ gn gen out --args=""
 Example Usage
 
 ```GN
-import("//mybuild/externals/omega-wtk-project/gn/OmegaWTK.gni")
+import("//mybuild/externals/omega-wtk-project/gn/EXPORT.gni")
+OmegaWTK_Export(){}
+
 
 omega_wtk_app("TestApplication"){
     sources = [
