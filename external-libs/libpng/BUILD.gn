@@ -8,6 +8,9 @@ else {
 }
 
 external_lib("libpng"){
+    cmake_other_args = 
+        "-DZLIB_INCLUDE_DIRS=" + rebase_path("//out/externals/zlib/include") + ";" + rebase_path("//out/externals/zlib/build") 
+    + " -DZLIB_LIBRARIES=" + rebase_path("//out/externals/zlib/build")
     conf = rebase_path("./code")
     outputs = [
        lib_name,

@@ -11,6 +11,7 @@ else if(is_windows){
 }
 
 external_lib("zlib"){
+    cmake_other_args = ""
     conf = rebase_path("./code")
     outputs = [
         lib_name,

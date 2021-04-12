@@ -16,20 +16,29 @@ else {
 
 external_lib_path = "$root_out_dir/externals/"
 template("external_lib"){
+    t_name = target_name
         if(!defined(invoker.custom_conf)){
-            o = exec_script("//gn/external_lib.py",["--conf",invoker.conf,"--build",rebase_path("$root_out_dir/externals/${target_name}/build"),"--check-outputs",invoker.export],"string")
-            print(o)
-        }
-        else if(invoker.custom_conf == true) {
-            if(!defined(invoker.conf_command)){
-                print("Custom configure command not set!\nExiting...")
+            assert(defined(invoker.cmake_other_args))
+            action(target_name + "__conf"){
+                script = "//gn/external_lib.py"
+                if(invoker.cmake_other_args != "") {
+                    args = ["--conf",invoker.conf,"--build",rebase_path("$root_out_dir/externals/${t_name}/build"),"--check-outputs",invoker.export,"--cmake-args","\"" + invoker.cmake_other_args + "\""]
+                }
+                else {
+                    args = ["--conf",invoker.conf,"--build",rebase_path("$root_out_dir/externals/${t_name}/build"),"--check-outputs",invoker.export,"--cmake-args","\"\""]
+                }
+                outputs = [
+                    "${external_lib_path}/${t_name}/CONF"
+                ]
             }
-            
-            o = exec_script("//gn/external_lib.py",["--custom-conf",invoker.conf_command,"--build-dir",invoker.conf,"--check-outputs",invoker.export],"string")
-            print(o)
         }
-        
-        t_name = target_name
+        # else if(invoker.custom_conf == true) {
+        #     if(!defined(invoker.conf_command)){
+        #         print("Custom configure command not set!\nExiting...")
+        #     }
+            
+        #     o = exec_script("//gn/external_lib.py",["--custom-conf",invoker.conf_command,"--build-dir",invoker.conf,"--check-outputs",invoker.export],"string")
+        # }
 
         if(!defined(invoker.custom_build)){
             action_name = "__${t_name}"
@@ -39,6 +48,9 @@ template("external_lib"){
         }
 
         action(action_name){
+            public_deps = [
+                ":${t_name}__conf"
+            ]
             script = "//gn/external_lib.py"
             if(defined(invoker.custom_build)){
                 args = [
@@ -77,7 +89,7 @@ template("external_lib"){
             }
             outputs = invoker.outputs
             if(defined(invoker.public_deps)){
-                public_deps = invoker.public_deps
+                public_deps += invoker.public_deps
             }
         }
     # }

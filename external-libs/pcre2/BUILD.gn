@@ -9,6 +9,7 @@ else {
 }
 
 external_lib("pcre2"){
+    cmake_other_args = ""
     conf = rebase_path("./code/pcre2-10.36")
     outputs = [
         lib_name,

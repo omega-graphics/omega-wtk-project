@@ -2,6 +2,7 @@ import("//gn/ExternalLibs.gni")
 
 o = "$root_out_dir/externals/libjpeg-turbo/build"
 external_lib("libjpeg-turbo"){
+    cmake_other_args = "-DZLIB_INCLUDE_DIRS=" + rebase_path("//out/externals/zlib/include") + ";" + rebase_path("//out/externals/zlib/build") + "-DZLIB_LIBRARIES=" + rebase_path("//out/externals/zlib/build")
     conf = rebase_path("./code")
     outputs = [
         "${o}/${lib_prefix}turbojpeg.${static_lib_suffix}",
@@ -13,6 +14,9 @@ external_lib("libjpeg-turbo"){
             "${o}/turbojpeg.dll"
         ]
     }
+    public_deps = [
+        "//external-libs/zlib"
+    ]
     public_headers = [
         rebase_path("./code/jpeglib.h"),
         rebase_path("./code/jmorecfg.h"),
