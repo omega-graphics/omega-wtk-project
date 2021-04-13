@@ -7,8 +7,16 @@ else {
     lib_name = "${external_lib_path}/libpng/build/libpng16.${static_lib_suffix}"
 }
 
+if(is_mac || is_linux){
+    zlib_name = "${external_lib_path}/zlib/build/libz.1.2.11.${shared_lib_suffix}"
+}
+else {
+    zlib_name = "${external_lib_path}/zlib/build/zlib.lib"
+}
+
+
 external_lib("libpng"){
-    cmake_other_args = "-DZLIB_INCLUDE_DIR=\"" + rebase_path("//out/externals/zlib/include") + "\"" + " -DZLIB_LIBRARY=\"" + rebase_path("//out/externals/zlib/build/zlib.lib") + "\""
+    cmake_other_args = "-DZLIB_INCLUDE_DIR=\"" + rebase_path("//out/externals/zlib/include") + "\"" + " -DZLIB_LIBRARY=\"" + rebase_path(zlib_name) + "\""
     conf = rebase_path("./code")
     outputs = [
        lib_name,
