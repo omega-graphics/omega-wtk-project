@@ -9,6 +9,7 @@
 namespace OmegaWTK::Composition {
 /**
  Converts Geometric Shapes/VectorPaths into 2D Meshes. (Triangle Vectors)
+ NOTE: Rect Position Inputs are NOT scaled to the backingScaleFactor however the Dimenensions are.
  */
 class MTLBDTriangulator {
     Core::Rect & targetFrame;

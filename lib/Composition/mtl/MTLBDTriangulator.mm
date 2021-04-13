@@ -7,7 +7,7 @@ namespace OmegaWTK::Composition {
 MTLBDTriangulator::MTLBDTriangulator(Core::Rect &targetFrame):targetFrame(targetFrame),scaleFactor(0.0){};
 
 Core::Math::Point2D MTLBDTriangulator::getRenderTargetCenter(){
-    return {static_cast<float>(targetFrame.dimen.minWidth/2),static_cast<float>(targetFrame.dimen.minHeight/2)};
+    return {float(targetFrame.dimen.minWidth)/2.f,float(targetFrame.dimen.minHeight)/2.f};
 };
 
 void MTLBDTriangulator::triangulateRect(Core::FRect rect,SolidColor2DMesh &res){
@@ -27,7 +27,6 @@ void MTLBDTriangulator::triangulateRect(Core::FRect rect,SolidColor2DMesh &res){
     NSLog(@"Metal Coords: x:%f , y:%f, w:%f , h:%f",mtl_coord_x,mtl_coord_y,mtl_width,mtl_height);
     
     tri2.a.position = tri1.a.position = {mtl_coord_x,mtl_coord_y + mtl_height};
-    
     tri1.b.position = {mtl_coord_x + mtl_width,mtl_coord_y + mtl_height};
     tri2.b.position = {mtl_coord_x,mtl_coord_y};
     
@@ -156,36 +155,36 @@ MTLBDTriangulator::TriangulationResult<MTLBDTriangulator::SolidColor2DMesh>  MTL
     }
     else {
         // Middle Rect
-        auto middle = FRect(rect.pos.x + rect.radius_x,rect.pos.y + rect.radius_y,rect.dimen.minWidth - (2 * rect.radius_x ) * scaleFactor,rect.dimen.minHeight - (2 * rect.radius_y) * scaleFactor);
+        auto middle = FRect(rect.pos.x + (rect.radius_x) * scaleFactor,rect.pos.y + (rect.radius_y) * scaleFactor,rect.dimen.minWidth - (2 * rect.radius_x ),rect.dimen.minHeight - (2 * rect.radius_y));
         triangulateRect(middle,*rc);
         /// Bottom Rect
-        auto bottom = FRect(rect.pos.x + rect.radius_x,rect.pos.y,rect.dimen.minWidth - (2 * rect.radius_x),rect.radius_y);
+        auto bottom = FRect(rect.pos.x + (rect.radius_x) * scaleFactor,rect.pos.y,rect.dimen.minWidth - (2 * rect.radius_x),rect.radius_y);
         triangulateRect(bottom,*rc);
-////        /// Left Rect
-        auto left = FRect(rect.pos.x,rect.pos.y + rect.radius_y,rect.radius_x,rect.dimen.minHeight - (2 * rect.radius_y));
+// ////        /// Left Rect
+        auto left = FRect(rect.pos.x,rect.pos.y + (rect.radius_y) * scaleFactor,rect.radius_x,rect.dimen.minHeight - (2 * rect.radius_y));
         triangulateRect(left,*rc);
-////        /// Top Rect
-        auto top = FRect(rect.pos.x + rect.radius_x,(rect.pos.y * scaleFactor) + rect.dimen.minHeight,rect.dimen.minWidth - (2 * rect.radius_x),rect.radius_y);
+// ////        /// Top Rect
+        auto top = FRect(rect.pos.x + (rect.radius_x) * scaleFactor,rect.pos.y + (rect.dimen.minHeight - rect.radius_y) * scaleFactor,rect.dimen.minWidth - (2 * rect.radius_x),rect.radius_y);
         triangulateRect(top,*rc);
-//        /// Right Rect
-        auto right = FRect(rect.pos.x + rect.dimen.minWidth - rect.radius_x,rect.pos.y + rect.radius_y,rect.radius_x,rect.dimen.minHeight - (2 * rect.radius_y * scaleFactor));
+// //        /// Right Rect
+        auto right = FRect(rect.pos.x + (rect.dimen.minWidth - rect.radius_x) * scaleFactor,rect.pos.y + (rect.radius_y) * scaleFactor,rect.radius_x,rect.dimen.minHeight - (2 * rect.radius_y));
         triangulateRect(right,*rc);
          // Lower Left Arc
         Core::Math::Arc arc;
-        arc.center.x = rect.pos.x + rect.radius_x;
-        arc.center.y = rect.pos.y + rect.radius_y;
-        arc.radius_x = rect.radius_x;
-        arc.radius_y = rect.radius_y;
+        arc.center.x = rect.pos.x + (rect.radius_x * scaleFactor);
+        arc.center.y = rect.pos.y + (rect.radius_y * scaleFactor);
+        arc.radius_x = rect.radius_x * scaleFactor;
+        arc.radius_y = rect.radius_y * scaleFactor;
         arc.radians = Core::Math::PI / 2.f;
         triangulateArc(arc,*arcs,Core::Math::PI);
-//        // Upper Left Arc
-        arc.center.y = rect.pos.y + rect.dimen.minHeight - rect.radius_y;
+// //        // Upper Left Arc
+        arc.center.y = rect.pos.y + (rect.dimen.minHeight - rect.radius_y) * scaleFactor;
         triangulateArc(arc,*arcs,Core::Math::PI / 2.f);
-//        /// Upper Right Arc
-        arc.center.x = rect.pos.x + rect.dimen.minWidth - rect.radius_x;
+// //        /// Upper Right Arc
+        arc.center.x = rect.pos.x + (rect.dimen.minWidth - rect.radius_x) * scaleFactor;
         triangulateArc(arc,*arcs,0.f);
-//        /// Lower Right Arc
-        arc.center.y = rect.pos.y + rect.radius_y;
+// //        /// Lower Right Arc
+        arc.center.y = rect.pos.y + (rect.radius_y) * scaleFactor;
         triangulateArc(arc,*arcs,(3.f * Core::Math::PI) / 2.f);
     };
     

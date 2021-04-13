@@ -19,6 +19,7 @@ class CocoaItem;
 
 @interface OmegaWTKCocoaViewController : NSViewController
 -(instancetype) initWithFrame:(NSRect) rect delegate:(OmegaWTK::Native::Cocoa::CocoaItem *) delegate;
+-(void)setClass:(Class)cls;
 @end
 
 @class CALayer;
@@ -37,7 +38,10 @@ class CocoaItem : public NativeItem {
     void disable();
     void addChildNativeItem(NativeItem *nativeItem);
     void removeChildNativeItem(NativeItem *nativeItem);
+
     void setClippedView(NativeItem *clippedView);
+    void toggleHorizontalScrollBar(bool &state);
+    void toggleVerticalScrollBar(bool &state);
 public:
     Core::Rect rect;
     typedef enum : OPT_PARAM {

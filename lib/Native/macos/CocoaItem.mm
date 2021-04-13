@@ -8,12 +8,13 @@
 @property (nonatomic) OmegaWTK::Native::Cocoa::CocoaItem *delegate;
 @end
 
+
 @implementation OmegaWTKCocoaView
 - (instancetype)initWithFrame:(NSRect)rect delegate:(OmegaWTK::Native::Cocoa::CocoaItem *)delegate{
     if(self = [super initWithFrame:rect]){
         self.wantsLayer = YES;
         self.layer = [CALayer layer];
-        self.layer.backgroundColor = [NSColor blueColor].CGColor;
+        self.layer.backgroundColor = [NSColor clearColor].CGColor;
         self.layer.masksToBounds = YES;
         self.layer.frame = rect;
         self.layer.bounds = CGRectMake(0.0,0.0,rect.size.width,rect.size.height);
@@ -69,6 +70,7 @@
 
 @implementation OmegaWTKCocoaViewController{
     OmegaWTK::Native::Cocoa::CocoaItem *_delegate;
+    Class _class;
     NSRect _rect;
 }
 - (instancetype)initWithFrame:(NSRect)rect delegate:(OmegaWTK::Native::Cocoa::CocoaItem *)delegate{
@@ -79,9 +81,18 @@
     return self;
 };
 
+-(void)setClass:(Class)cls {
+    _class = cls;
+}
+
 - (void)loadView{
     NSLog(@"Load the View!");
-    self.view = [[OmegaWTKCocoaView alloc] initWithFrame:_rect delegate:_delegate];
+    if(_class == [OmegaWTKCocoaView class]){
+        self.view = [[_class alloc] initWithFrame:_rect delegate:_delegate];
+    }
+    else {
+        self.view = [[_class alloc] initWithFrame:_rect];
+    }
     self.view.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
 };
 
@@ -106,6 +117,7 @@ namespace OmegaWTK::Native::Cocoa {
 CocoaItem::CocoaItem(const Core::Rect & rect,CocoaItem::Type _type,CocoaItem *parent):rect(rect),type(_type),isReady(false){
     if(type == View){
         cont = [[OmegaWTKCocoaViewController alloc] initWithFrame:core_rect_to_cg_rect(rect) delegate:this];
+        [cont setClass:[OmegaWTKCocoaView class]];
         _ptr = (OmegaWTKCocoaView *)cont.view;
         scrollView = nil;
         if(parent != nullptr){
@@ -113,9 +125,12 @@ CocoaItem::CocoaItem(const Core::Rect & rect,CocoaItem::Type _type,CocoaItem *pa
         };
     };
     if(type == ScrollView){
-        cont = nil;
         _ptr = nil;
-        scrollView = [[NSScrollView alloc] initWithFrame:core_rect_to_cg_rect(rect)];
+        cont = [[OmegaWTKCocoaViewController alloc] initWithFrame:core_rect_to_cg_rect(rect) delegate:this];
+        [cont setClass:[NSScrollView class]];
+        scrollView = (NSScrollView *)cont.view;
+        scrollView.autohidesScrollers = NO;
+        scrollView.borderType = NSNoBorder;
         if(parent != nullptr){
             parent->addChildNativeItem(this);
         };
@@ -142,21 +157,49 @@ void CocoaItem::disable(){
 
 void CocoaItem::resize(Core::Rect &newRect){
     rect = newRect;
-    [_ptr setFrame:core_rect_to_cg_rect(newRect)];
+    if(_ptr != nil){
+        [_ptr setFrame:core_rect_to_cg_rect(newRect)];
+    }
+     
 };
 
 void CocoaItem::addChildNativeItem(NativeItemPtr native_item){
-    OmegaWTKCocoaView *cocoaview = (OmegaWTKCocoaView *)native_item;
-    [_ptr addSubview:cocoaview];
+    CocoaItem *cocoaview = (CocoaItem *)native_item;
+    if(cocoaview->_ptr != nil){
+        [_ptr addSubview:cocoaview->_ptr];
+    }
+    else if(cocoaview->scrollView != nil){
+        [_ptr addSubview:cocoaview->scrollView];
+    }
 };
 
 void CocoaItem::removeChildNativeItem(NativeItemPtr native_item){
-    [_ptr replaceSubview:(OmegaWTKCocoaView *)native_item with:[[NSView alloc] initWithFrame:NSZeroRect]];
+    CocoaItem *cocoaview = (CocoaItem *)native_item;
+    if(cocoaview->_ptr != nil){
+        [cocoaview->_ptr removeFromSuperview];
+    }
+    else if(cocoaview->scrollView != nil){
+        [cocoaview->scrollView removeFromSuperview];
+    }
 };
 
 void CocoaItem::setClippedView(NativeItemPtr nativeItem){
     CocoaItem *cocoaItem = (CocoaItem *)nativeItem;
     scrollView.documentView = cocoaItem->_ptr;
+};
+
+void CocoaItem::toggleHorizontalScrollBar(bool &state){
+    if(state)
+        [scrollView setHasHorizontalScroller:YES];
+    else 
+        [scrollView setHasHorizontalScroller:NO];
+};
+
+void CocoaItem::toggleVerticalScrollBar(bool &state){
+    if(state)
+        [scrollView setHasVerticalScroller:YES];
+    else 
+        [scrollView setHasVerticalScroller:NO];
 };
 
 CocoaItem::~CocoaItem(){

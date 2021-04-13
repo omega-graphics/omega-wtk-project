@@ -5,6 +5,9 @@ declare_args(){
     code_signature = ""
 }
 
+omegawtk_include_dir = get_path_info("../include","abspath")
+shaderc = get_path_info("./shaderc.py","abspath")
+
 if(is_mac){
     template("metal_library"){
         assert(defined(target_name))
@@ -17,12 +20,14 @@ if(is_mac){
         _o_dir = invoker.output_dir
         _args = ["--metallib","-O",rebase_path(_o_dir + "/" + target_name) + ".metallib"] + n_sources
         action(target_name){
-            script = rebase_path("./shaderc.py")
+            script = shaderc
             args = _args
             outputs = ["$_o_dir/$target_name.metallib"]
         }
     }
 }
+
+config_file = get_path_info("./ConfigFile.py","abspath")
 
 template("configure_file"){
     assert(defined(target_name))
@@ -31,14 +36,14 @@ template("configure_file"){
     _args = ["-I",rebase_path(target_name),"-O",rebase_path(invoker.output_name),""]
     if(defined(invoker.defines)){
         action(invoker.dep_name){
-            script = rebase_path("./ConfigFile.py")
+            script = config_file
             args = invoker.defines + _args
             outputs = [invoker.output_name]
         }
     }
     else{
         action(invoker.dep_name){
-            script = rebase_path( "./ConfigFile.py")
+            script = config_file
             args = _args
             outputs = [invoker.output_name]
         }
@@ -75,12 +80,12 @@ template("omega_wtk_static_lib"){
 
     if(defined(invoker.include_dirs)) {
         invoker.include_dirs += [
-            "../include"
+            omegawtk_include_dir
         ]
     }
     else {
         invoker.include_dirs = [
-            "../include"
+            omegawtk_include_dir
         ]
     }
 
@@ -90,6 +95,8 @@ template("omega_wtk_static_lib"){
         forward_variables_from(invoker,"*")
     }
 }
+
+codesign = get_path_info("codesign.py","abspath")
 
 template("omega_wtk_shared_lib"){
     assert(defined(invoker.sources))
@@ -115,12 +122,12 @@ template("omega_wtk_shared_lib"){
 
     if(defined(invoker.include_dirs)) {
         invoker.include_dirs += [
-            "../include"
+            omegawtk_include_dir
         ]
     }
     else {
         invoker.include_dirs = [
-            "../include"
+            omegawtk_include_dir
         ]
     }
 
@@ -219,7 +226,7 @@ template("omega_wtk_shared_lib"){
           code_signing_sources = [
               "$root_out_dir/in/${framework_name}"
           ]
-          code_signing_script = rebase_path("./codesign.py")
+          code_signing_script = codesign
           code_signing_args = [
               "--sig",
               code_signature,
@@ -309,7 +316,29 @@ template("omega_wtk_tool"){
         }
     }
 }
+# App Config Global Vars
 
+if(is_windows){
+    win_other_res = [
+        get_path_info("../target/windows/small.ico","abspath"),
+        get_path_info("../target/windows/targetver.h","abspath")
+    ]
+    win_app_ico = get_path_info("../target/windows/app.ico","abspath")
+    win_mmain = get_path_info("../target/windows/mmain.cpp.in","abspath")
+    win_res_h = get_path_info("../target/windows/resource.h.in","abspath")
+    win_res_rc = get_path_info("../target/windows/resource_script.rc.in","abspath")
+    win_manifest_rc = get_path_info("../target/windows/manifest.rc.in","abspath")
+}
+else if(is_mac){
+    mac_other_res = [
+        get_path_info("../target/macos/main.mm","abspath"),
+        # "../target/macos/English.lproj/MainMenu.xib",
+        get_path_info("../target/macos/AppDelegate.h","abspath")
+    ]
+    mac_app_delegate = get_path_info("../target/macos/AppDelegate.mm","abspath")
+    mac_info_plist = get_path_info("../target/macos/Info.plist.in","abspath")
+    mac_app_nib = get_path_info("../target/macos/MainMenu.nib","abspath")
+}
 
 template("omega_wtk_app_config"){
     #  assert(defined(sources))
@@ -338,39 +367,36 @@ template("omega_wtk_app_config"){
 
     if(is_windows){
         copy("other-res" + app_name){
-            sources = [
-                "../target/windows/small.ico",
-                "../target/windows/targetver.h"
-            ]
+            sources = win_other_res
             outputs = [
                 "$out_dir/{{source_file_part}}"
             ]
         }
         copy("app_ico" + app_name){
             sources = [
-                "../target/windows/app.ico"
+                win_app_ico
             ]
             outputs = [
                 "$out_dir/${app_name}.ico"
             ]
         }
 
-        configure_file("../target/windows/mmain.cpp.in"){
+        configure_file(win_mmain){
             defines = config_defines
             dep_name = "main-cpp-config__${app_name}"
             output_name = "$out_dir/mmain.cpp"
         }
-        configure_file("../target/windows/resource.h.in"){
+        configure_file(win_res_h){
             defines = config_defines
             dep_name = "resource-h-config__${app_name}"
             output_name  = "$out_dir/resource.h"
         }
-        configure_file("../target/windows/resource_script.rc.in"){
+        configure_file(win_res_rc){
             defines = config_defines
             dep_name = "resource-rc-config__${app_name}_1"
             output_name = "$out_dir/resource_script.rc"
         }
-        configure_file("../target/windows/manifest.rc.in"){
+        configure_file(win_manifest_rc){
             defines = [
                 "-DEMBED=" + rebase_path("//target/windows/app.exe.manifest")
             ]
@@ -386,28 +412,26 @@ template("omega_wtk_app_config"){
         t_name_2 = "info-plist-config__${app_name}"
 
         copy("other-res" + app_name){
-            sources = [
-                "../target/macos/main.mm",
-                "../target/macos/English.lproj/MainMenu.xib",
-                "../target/macos/AppDelegate.h"
-            ]
+            sources = mac_other_res
             outputs = [
                 "$out_dir/{{source_file_part}}"
             ]
         }
 
-        configure_file("../target/macos/AppDelegate.mm"){
+        configure_file(mac_app_delegate){
             defines = config_defines
             dep_name = t_name
             output_name = "$out_dir/AppDelegate.mm"
         }
-        configure_file("../target/macos/Info.plist.in"){
+        configure_file(mac_info_plist){
             defines = config_defines
             dep_name = t_name_2
             output_name = "$out_dir/Info.plist"
         }
     }
 }
+
+assetc = get_path_info("assetc.py","abspath")
 
 template("omega_wtk_test"){
     assert(defined(invoker.sources))
@@ -465,7 +489,7 @@ template("omega_wtk_test"){
     }
 
     invoker.include_dirs += [
-        "../include",
+        omegawtk_include_dir,
         "$out_dir"
     ] 
     if(is_windows){
@@ -601,10 +625,8 @@ template("omega_wtk_test"){
 
         o = app_assets_dest + "/assets.omxa"
 
-        
-
             action("${o}__${app_name}"){
-                script = rebase_path("./assetc.py")
+                script = assetc
                 public_deps = [
                     ":omegawtk-assetc"
                 ]
@@ -656,8 +678,7 @@ template("omega_wtk_test"){
                 ]
             }
             sources = [
-                "../target/macos/MainMenu.nib",
-               
+                mac_app_nib,
             ]
             if(defined(invoker.assets_dir)){
                 sources += [
@@ -705,7 +726,7 @@ template("omega_wtk_test"){
             bundle_resources_dir = "$bundle_contents_dir/Resources"
             bundle_executable_dir = "$bundle_contents_dir/MacOS"
 
-            code_signing_script = rebase_path("./codesign.py")
+            code_signing_script = codesign
             code_signing_sources = [
                 "$out_dir/$app_name"
             ]

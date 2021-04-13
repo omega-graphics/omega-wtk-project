@@ -15,12 +15,13 @@ else {
 }
 
 external_lib_path = "$root_out_dir/externals/"
+external_lib_script = get_path_info("./external_lib.py","abspath")
 template("external_lib"){
     t_name = target_name
         if(!defined(invoker.custom_conf)){
             assert(defined(invoker.cmake_other_args))
             action(target_name + "__conf"){
-                script = rebase_path("./external_lib.py")
+                script = external_lib_script
                 if(invoker.cmake_other_args != "") {
                     args = ["--conf",invoker.conf,"--build",rebase_path("$root_out_dir/externals/${t_name}/build"),"--check-outputs",invoker.export,"--cmake-args","\"" + invoker.cmake_other_args + "\""]
                 }
@@ -54,7 +55,7 @@ template("external_lib"){
             public_deps = [
                 ":${t_name}__conf"
             ]
-            script = rebase_path(".external_lib.py")
+            script = external_lib_script
             if(defined(invoker.custom_build)){
                 args = [
                     "--custom-make",
