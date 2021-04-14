@@ -137,7 +137,7 @@ MTLBDCompositionViewRenderTarget::MTLBDCompositionViewRenderTarget(MTLBDComposit
 //    metalLayer.presentsWithTransaction = YES;
     NSLog(@"Position: x%f, y%f",metalLayer.frame.origin.x,metalLayer.frame.origin.y);
     metalLayer.contentsScale = scaleFactor;
-    metalLayer.masksToBounds = YES;
+    metalLayer.masksToBounds = NO;
 //    metalLayer.contentsCenter = CGRectMake(0,0,1,1);
     metalLayer.framebufferOnly = YES;
 //    metalLayer.allowsNextDrawableTimeout = YES;

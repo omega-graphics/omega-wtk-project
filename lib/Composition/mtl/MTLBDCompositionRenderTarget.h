@@ -157,7 +157,7 @@ void MTLBDCompositionRenderTarget<_Ty>::fillRoundedRect(Core::RoundedRect & rect
         [encoder setLabel:@"Arc Render for Rounded Rect Pipeline"];
         [encoder setVertexBuffer:vertexBuffers[v_id] offset:0 atIndex:OMEGAWTK_METAL_VERICES_BUFFER];
         auto v_count = vertexBuffers[v_id].length / sizeof(MTLBDSolidColorVertex);
-        [encoder drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:v_count];
+        [encoder drawPrimitives:MTLPrimitiveTypeLineStrip vertexStart:0 vertexCount:v_count];
     };
     
     renderPasses.push(std::move(rp1));
@@ -170,15 +170,17 @@ template<class _Ty>
 void MTLBDCompositionRenderTarget<_Ty>::drawText(Core::SharedPtr<TextRect> & textRect,Core::SharedPtr<Brush> & brush){
     auto device = deviceContext->getParentDevice();
     
-    auto ftextRect = FRect(textRect->rect.pos.x,textRect->rect.pos.y,textRect->rect.dimen.minWidth,textRect->rect.dimen.minHeight);
+    CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+
+    auto ftextRect = FRect(float(textRect->rect.pos.x) * scaleFactor,float(textRect->rect.pos.y) * scaleFactor,float(textRect->rect.dimen.minWidth) * scaleFactor,float(textRect->rect.dimen.minHeight) * scaleFactor);
     
     typedef unsigned char Byte;
     void *data = new Byte[ftextRect.dimen.minWidth * ftextRect.dimen.minHeight * 4];
     /// Setup CGContext!
     CGContextRef context = CGBitmapContextCreate(data,ftextRect.dimen.minWidth,ftextRect.dimen.minHeight,8,ftextRect.dimen.minWidth * 4,CGColorSpaceCreateDeviceRGB(),kCGImageAlphaPremultipliedLast);
     CGContextSetTextMatrix(context,CGAffineTransformIdentity);
-    CGContextTranslateCTM(context,0,ftextRect.pos.y + ftextRect.dimen.minHeight);
-    CGContextScaleCTM(context,1.0,-1.0);
+    CGContextTranslateCTM(context,-ftextRect.pos.x,-ftextRect.pos.y);
+    // CGContextScaleCTM(context,1.0,-1.0);
 //    CGContextSetInterpolationQuality(context,kCGInterpolationHigh);
 //    CGContextSetAllowsAntialiasing(context,true);
 //    CGContextSetAllowsFontSmoothing(context,true);
@@ -197,10 +199,10 @@ void MTLBDCompositionRenderTarget<_Ty>::drawText(Core::SharedPtr<TextRect> & tex
     auto & mesh = *mesh_ptr;
     auto & tri1 = mesh[0];
     auto & tri2 = mesh[1];
-    tri2.a.textureCoord = tri1.a.textureCoord = {0.f,1.f};
-    tri1.b.textureCoord = {1.f,1.f};
-    tri2.b.textureCoord = {0.f,0.f};
-    tri2.c.textureCoord = tri1.c.textureCoord = {1.f,0.f};
+    tri2.a.textureCoord = tri1.a.textureCoord = {0.f,0.f};
+    tri1.b.textureCoord = {1.f,0.f};
+    tri2.b.textureCoord = {0.f,1.f};
+    tri2.c.textureCoord = tri1.c.textureCoord = {1.f,1.f};
     /// Buffer ID = Visual Id + 0;
     id<MTLBuffer> v_buffer = textured_mesh_to_mtl_vertex_buffer(mesh_ptr.get(),device->metal_device);
     vertexBuffers.push_back(v_buffer);
@@ -228,6 +230,7 @@ void MTLBDCompositionRenderTarget<_Ty>::drawText(Core::SharedPtr<TextRect> & tex
         [encoder setVertexBuffer:vertexBuffers[v_id] offset:0 atIndex:OMEGAWTK_METAL_VERICES_BUFFER];
         [encoder setFragmentTexture:textures[v_id] atIndex:OMEGAWTK_METAL_TEXTURE_BUFFER];
         [encoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:6];
+        std::cout << "Text Will Render" << std::endl;
         textures.erase(textures.find(v_id));
     };
 

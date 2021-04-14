@@ -9,7 +9,7 @@
 namespace OmegaWTK::Core {
     namespace Math {
     
-    const long double PI = std::acos(-1);
+    const auto PI = std::acosf(-1.f);
     
         template<class _Num_Ty,typename _Angle_Ty>
         class Vector2D_Base {

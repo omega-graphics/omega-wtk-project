@@ -59,13 +59,9 @@ namespace OmegaWTK::Composition {
         };
         case Visual::Text : {
             Visual::TextParams *params = (Visual::TextParams *)visual->params;
-            // if(updatePass){
+            std::cout << "Will Draw Text" << std::endl;
             target->drawText(params->textRect,params->brush);
-            // }
-            // else{
-//            auto font = global_font_factory->createFont(params->text.getFont(),params->text.getFontSize());
-//            target->drawText(font,params->text.getString(),params->rect,params->brush);
-            // };
+            
             break;
         };
         default: 

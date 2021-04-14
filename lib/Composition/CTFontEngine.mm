@@ -7,6 +7,10 @@
 
 namespace OmegaWTK::Composition {
 
+CFStringRef core_string_to_cf_string_ref(Core::String & str){
+    return CFStringCreateWithCString(kCFAllocatorDefault,str.c_str(),CFStringGetSystemEncoding());
+};
+
 FontEngine * FontEngine::instance;
 
 FontEngine::FontEngine(){
@@ -117,7 +121,8 @@ public:
         strData = [[NSAttributedString alloc] initWithString:Native::Cocoa::core_string_to_ns_string(text_val) attributes:@{NSParagraphStyleAttributeName:paragraphStyle,NSFontAttributeName:(__bridge id)fontRef->native}];
         // Draw Text to CGBitmap!
         framesetterRef = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)strData);
-        frame = CTFramesetterCreateFrame(framesetterRef,CFRangeMake(0,text_val.size()),CGPathCreateWithRect(CGRectMake(ftextRect.pos.x,ftextRect.pos.y, ftextRect.dimen.minWidth, ftextRect.dimen.minHeight),NULL),NULL);
+        frame = CTFramesetterCreateFrame(framesetterRef,CFRangeMake(0,0),CGPathCreateWithRect(CGRectMake(ftextRect.pos.x,ftextRect.pos.y, ftextRect.dimen.minWidth, ftextRect.dimen.minHeight),NULL),NULL);
+        // CFRetain(frame);
     };
     void * getNative(){
         return (void *)frame;
@@ -139,9 +144,9 @@ public:
         }
     };
     ~CTTextRect(){
-        CFRelease(frame);
-        CFRelease(framesetterRef);
-        [strData release];
+        // CFRelease(frame);
+        // CFRelease(framesetterRef);
+        // [strData release];
     };
 };
 
@@ -150,8 +155,7 @@ Core::SharedPtr<TextRect> TextRect::Create(Core::String & _val,Core::SharedPtr<F
 };
 
 Core::SharedPtr<Font> FontEngine::CreateFont(FontDescriptor & desc){
-    CTFontRef ref = CTFontCreateWithNameAndOptions((__bridge CFStringRef)[NSString stringWithCString:desc.family.c_str() encoding:NSUTF8StringEncoding],CGFloat(desc.size),NULL,kCTFontOptionsPreferSystemFont);
-    
+    CTFontRef ref = CTFontCreateWithNameAndOptions(core_string_to_cf_string_ref(desc.family),CGFloat(desc.size),NULL,kCTFontOptionsPreferSystemFont);
     CTFontSymbolicTraits fontTraits;
     
     switch (desc.style) {
@@ -173,7 +177,7 @@ Core::SharedPtr<Font> FontEngine::CreateFont(FontDescriptor & desc){
     
     auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
     
-    CTFontRef _font_final = CTFontCreateCopyWithSymbolicTraits(ref,CGFloat(desc.size * scaleFactor),NULL,kCTFontTraitBold | kCTFontTraitItalic, fontTraits);
+    CTFontRef _font_final = CTFontCreateCopyWithSymbolicTraits(ref,CGFloat(desc.size) * scaleFactor,NULL,kCTFontTraitBold | kCTFontTraitItalic, fontTraits);
     CFRelease(ref);
     return std::make_shared<CoreTextFont>(desc,_font_final);
 };

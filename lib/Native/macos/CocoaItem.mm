@@ -15,7 +15,7 @@
         self.wantsLayer = YES;
         self.layer = [CALayer layer];
         self.layer.backgroundColor = [NSColor clearColor].CGColor;
-        self.layer.masksToBounds = YES;
+        self.layer.masksToBounds = NO;
         self.layer.frame = rect;
         self.layer.bounds = CGRectMake(0.0,0.0,rect.size.width,rect.size.height);
         self.layer.autoresizingMask = kCALayerHeightSizable | kCALayerWidthSizable;

@@ -74,7 +74,7 @@ void MTLBDTriangulator::triangulateRect(Core::FRect rect,Textured2DMesh & res){
 };
 
 void MTLBDTriangulator::triangulateArc(Core::Math::Arc & arc,SolidColor2DMesh &res,float startAngle){
-    float step = 0.005;
+    float step = 0.0005f;
     float angle = 0;
     auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
     
@@ -85,20 +85,20 @@ void MTLBDTriangulator::triangulateArc(Core::Math::Arc & arc,SolidColor2DMesh &r
         return pt;
     };
     
-    NSLog(@"Start Point: x:%f, y:%f",float(arc.radius_x) * std::cos(startAngle) + float(arc.center.x),float(arc.radius_y) * std::sin(startAngle) + float(arc.center.y));
+    NSLog(@"Start Point: x:%f, y:%f",float(arc.radius_x) * std::cosf(startAngle) + float(arc.center.x),float(arc.radius_y) * std::sinf(startAngle) + float(arc.center.y));
     
     auto mtl_center_coord = translateCoordinate(arc.center.x, arc.center.y);
     while(arc.radians >= angle){
-        float x1 = float(arc.radius_x) * std::cos(startAngle) + float(arc.center.x);
-        float y1 = float(arc.radius_y) * std::sin(startAngle) + float(arc.center.y);
+        float x1 = float(arc.radius_x) * std::cosf(startAngle) + float(arc.center.x);
+        float y1 = float(arc.radius_y) * std::sinf(startAngle) + float(arc.center.y);
         
         auto mtl_coord_a = translateCoordinate(x1, y1);
         
         angle += step;
         startAngle += step;
         
-        float x2 = float(arc.radius_x) * std::cos(startAngle) + float(arc.center.x);
-        float y2 = float(arc.radius_y) * std::sin(startAngle) + float(arc.center.y);
+        float x2 = float(arc.radius_x) * std::cosf(startAngle) + float(arc.center.x);
+        float y2 = float(arc.radius_y) * std::sinf(startAngle) + float(arc.center.y);
         
         auto mtl_coord_b = translateCoordinate(x2, y2);
         
