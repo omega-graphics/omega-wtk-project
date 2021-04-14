@@ -79,10 +79,22 @@ class MyWindowDelegate : public AppWindowDelegate {
     AppInst *inst;
 public:
     void windowWillClose(Native::NativeEventPtr event) {
-        inst->terminate();
+        // inst->terminate();
     };
     MyWindowDelegate(AppInst *inst):inst(inst){};
 };
+
+class TopMenuDelegate : public MenuDelegate {
+public:
+    void onSelectItem(unsigned int itemIndex) {
+        if(itemIndex == 1){
+            AppInst::instance->terminate();
+        };
+    };
+    TopMenuDelegate(){};
+};
+
+Native::NativeNoteDialog::Descriptor aboutDesc;
 
 class MyMenuDelegate : public MenuDelegate {
 public:
@@ -91,6 +103,11 @@ public:
             auto item = menu->getItemByIdx(0);
             item->disable();
             std::cout << "Disabled Item!" << std::endl;
+        }
+        else if(itemIndex == 3){
+            SharedHandle<AppWindow> rootWindow = AppInst::instance->windowManager->getRootWindow();
+            auto dialog = rootWindow->openNoteDialog(aboutDesc);
+            dialog->show();
         };
     };
     MyMenuDelegate(){};
@@ -98,10 +115,15 @@ public:
 
 int omegaWTKMain(AppInst *app)
 {
+    aboutDesc.title = "About RootWidgetTest";
+    aboutDesc.str = "Copyright 2021 OmegaGraphics";
 //    auto f_desc = Composition::FontDescriptor("Arial",20);
 //    global_font = Composition::FontEngine::instance->CreateFont(f_desc);
 #ifdef TARGET_MACOS
-    auto appMenu = CategoricalMenu("RootWidgetTest",{new MenuItem("Here",false,nullptr)});
+    auto appMenu = CategoricalMenu("RootWidgetTest",{
+        ButtonMenuItem("Here"),
+        ButtonMenuItem("Quit RootWidgetTest")
+        },new TopMenuDelegate());
 #endif
     auto menu = make<Menu>(Menu("AppMenu",{
 #ifdef TARGET_MACOS
@@ -111,7 +133,8 @@ int omegaWTKMain(AppInst *app)
             SubMenu("Inside",{
                 ButtonMenuItem("Here!"),
                 MenuItemSeperator(),
-                ButtonMenuItem("Test!")
+                ButtonMenuItem("Test!"),
+                ButtonMenuItem("About")
             },new MyMenuDelegate())
         })
     }));

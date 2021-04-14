@@ -19,6 +19,7 @@ AppInst::AppInst():ptr(Native::make_native_app()),windowManager(std::make_unique
 };
 
 void AppInst::terminate() {
+    windowManager->closeAllWindows();
     ptr->terminate();
 };
 

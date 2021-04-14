@@ -25,6 +25,7 @@ namespace OmegaWTK::Native {
         virtual void disable() = 0;
         virtual void initialDisplay() = 0;
         virtual void attachWidgets() = 0;
+        virtual void close() = 0;
         void setMenu(NM menu);
         void addNativeItem(NativeItemPtr item);
         #ifdef TARGET_MACOS

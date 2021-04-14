@@ -64,6 +64,11 @@ void CocoaAppWindow::initialDisplay(){
     [windowController showWindow:NSApp.delegate];
 };
 
+void CocoaAppWindow::close(){
+    if([window isVisible] == YES)
+        [window close];
+};
+
 };
 
 @implementation OmegaWTKNativeCocoaAppWindowDelegate

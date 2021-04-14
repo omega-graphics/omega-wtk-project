@@ -18,6 +18,7 @@ public:
     void enable();
     void attachWidgets();
     void initialDisplay();
+    void close();
     CocoaAppWindow(Core::Rect & rect,NativeEventEmitter *emitter);
 };
 };

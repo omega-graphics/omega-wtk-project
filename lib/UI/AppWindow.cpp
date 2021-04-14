@@ -56,16 +56,28 @@ void AppWindow::drawWidgets(){
     };
 };
 
+void AppWindow::close(){
+    layer->native_window_ptr->close();
+};
+
 AppWindowManager::AppWindowManager():rootWindow(nullptr){};
 
 void AppWindowManager::setRootWindow(SharedHandle<AppWindow> & handle){
     rootWindow = handle;
 };
 
+SharedHandle<AppWindow> AppWindowManager::getRootWindow(){
+    return rootWindow;
+};
+
 void AppWindowManager::displayRootWindow(){
     rootWindow->layer->native_window_ptr->attachWidgets();
     rootWindow->drawWidgets();
     rootWindow->layer->native_window_ptr->initialDisplay();
+};
+
+void AppWindowManager::closeAllWindows(){
+    rootWindow->close();
 };
 
 void AppWindowDelegate::onRecieveEvent(Native::NativeEventPtr event){

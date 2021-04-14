@@ -36,6 +36,7 @@ class AppWindowManager;
         void setMenu(SharedHandle<Menu> & menu);
         void setLayerStyle(SharedHandle<Composition::WindowStyle> & style);
         void setMenuStyle(SharedHandle<Composition::MenuStyle> & style);
+        void close();
         SharedHandle<Native::NativeFSDialog> openFSDialog(const Native::NativeFSDialog::Descriptor & desc);
         SharedHandle<Native::NativeNoteDialog> openNoteDialog(const Native::NativeNoteDialog::Descriptor & desc);
         template<class _Ty,std::enable_if_t<std::is_base_of_v<Widget,_Ty>,int> = 0>
@@ -49,9 +50,12 @@ class AppWindowManager;
 */
  class OMEGAWTK_EXPORT  AppWindowManager {
         SharedHandle<AppWindow> rootWindow;
+        void closeAllWindows();
+        friend class AppInst;
         public:
         AppWindowManager();
         void setRootWindow(SharedHandle<AppWindow> & handle);
+        SharedHandle<AppWindow> getRootWindow();
         void displayRootWindow();
     };
     

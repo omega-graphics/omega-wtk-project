@@ -6,16 +6,6 @@
 #define OMEGAWTK_UI_APP_H
 
 
-// #if defined(TARGET_WIN32)
-// #define OMEGAWTK_APP_ENTRY_BEGIN int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow){
-// #define OMEGAWTK_INIT_APP(app) 1
-// #define OMEGAWTK_APP_ENTRY_END }
-// #elif defined(TARGET_MACOS)
-// #define OMEGAWTK_APP_ENTRY_BEGIN int main(int argc,char *argv[]) {
-// #define OMEGAWTK_INIT_APP(app)
-// #define OMEGAWTK_APP_ENTRY_END return OmegaWTK::Native::cocoa_app_init(argc,argv);}
-// #endif
-
 namespace OmegaWTK {
 
     namespace Native {

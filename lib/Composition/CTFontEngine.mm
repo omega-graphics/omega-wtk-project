@@ -181,4 +181,45 @@ Core::SharedPtr<Font> FontEngine::CreateFont(FontDescriptor & desc){
     CFRelease(ref);
     return std::make_shared<CoreTextFont>(desc,_font_final);
 };
+
+Core::SharedPtr<Font> FontEngine::CreateFontFromFile(FSPath path, FontDescriptor &desc){
+    CTFontSymbolicTraits fontTraits;
+    
+    switch (desc.style) {
+        case FontDescriptor::Bold:
+            fontTraits = kCTFontTraitBold;
+            break;
+        case FontDescriptor::Italic:
+            fontTraits = kCTFontTraitItalic;
+            break;
+        case FontDescriptor::BoldAndItalic:
+            fontTraits = kCTFontTraitBold | kCTFontTraitItalic;
+            break;
+        case FontDescriptor::Regular :
+            fontTraits = 0;
+            break;
+        default:
+            break;
+    }
+
+    NSURL *url = [NSURL fileURLWithPath:Native::Cocoa::core_string_to_ns_string(path.serialize()) isDirectory:NO];
+    CFArrayRef fontDescriptors = CTFontManagerCreateFontDescriptorsFromURL((__bridge CFURLRef)url);
+    CTFontDescriptorRef idealFont;
+    for(unsigned i = 0;i < CFArrayGetCount(fontDescriptors);i++){
+        CTFontDescriptorRef fd = (CTFontDescriptorRef)CFArrayGetValueAtIndex(fontDescriptors,i);
+        CFStringRef name = (CFStringRef)CTFontDescriptorCopyAttribute(fd,kCTFontNameAttribute);
+        CFNumberRef symbolicTraits = (CFNumberRef)CTFontDescriptorCopyAttribute(fd,kCTFontSymbolicTrait);
+        NSString *str = (__bridge id)name;
+        int val;
+        CFNumberGetValue(symbolicTraits,kCFNumberIntType,&val);
+        if(desc.family == str.UTF8String && fontTraits == val){
+            idealFont = fd;
+        };
+    }; 
+
+    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+
+    CTFontRef f = CTFontCreateWithFontDescriptor(idealFont,CGFloat(desc.size) * scaleFactor,NULL);
+    return std::make_shared<CoreTextFont>(desc,f);
+};
 };

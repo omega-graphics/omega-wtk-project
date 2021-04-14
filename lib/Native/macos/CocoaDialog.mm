@@ -17,6 +17,7 @@ namespace OmegaWTK::Native::Cocoa {
             NSWindow *parentWindow = ((CocoaAppWindow *)this->parentWindow)->window;
             [dialog beginSheetModalForWindow:parentWindow completionHandler:^(NSModalResponse response){
 //                this->close();
+                
             }];
         };
         void close(){
