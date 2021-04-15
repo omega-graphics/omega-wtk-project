@@ -221,6 +221,11 @@ namespace OmegaWTK::Native::Win {
         };
     };
 
+    void WinAppWindow::close(){
+        if(IsWindow(hwnd))
+            DestroyWindow(hwnd);
+    };
+
     void WinAppWindow::initialDisplay(){
         auto it = windowWidgetRootViews.begin();
         while(it != windowWidgetRootViews.end()){
@@ -231,6 +236,9 @@ namespace OmegaWTK::Native::Win {
         };
         ShowWindow(hwnd,SW_SHOWDEFAULT);
         UpdateWindow(hwnd);
+    };
+    WinAppWindow::~WinAppWindow(){
+        close();
     };
 };
 

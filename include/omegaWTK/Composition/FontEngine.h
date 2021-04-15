@@ -130,12 +130,8 @@ public:
 private:
     FontEngine();
     friend class ::OmegaWTK::AppInst;
-    static void Create(){
-        instance = new FontEngine();
-    };
-    static void Destroy(){
-        delete instance;
-    };
+    static void Create();
+    static void Destroy();
 };
 
 };

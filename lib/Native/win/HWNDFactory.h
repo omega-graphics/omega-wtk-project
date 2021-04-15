@@ -10,13 +10,13 @@ namespace OmegaWTK::Native{
         /// Factory for registering and creating HWNDs.
         /// NOTE: Only instiantitate this class once!
         class HWNDFactory {
-            HINSTANCE hInst;
             Core::Vector<Core::String> wndclassregistry;
             /// Root hwnd children!
             Core::Vector<HWND> all_hwnds;
             static LRESULT WndProc(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
             static LRESULT WndProc2(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
             public:
+            HINSTANCE hInst;
             static HWNDFactory * appFactoryInst;
             auto getAllHwnds(){ return &all_hwnds;};
             void setRootWindowAndHINST(HWND root,HINSTANCE hinst);

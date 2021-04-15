@@ -1,5 +1,9 @@
 #include "WinDialog.h"
 #include "NativePrivate/win/HWNDItem.h"
+#include "HWNDFactory.h"
+#include "WinAppWindow.h"
+#include <iostream>
+#include <atlstr.h>
 
 namespace OmegaWTK::Native::Win {
 
@@ -46,12 +50,109 @@ namespace OmegaWTK::Native::Win {
         }
     };
 
+    LPWORD lpwAlign(LPWORD lpIn)
+    {
+        ULONG ul;
+
+        ul = (ULONG)lpIn;
+        ul ++;
+        ul >>=1;
+        ul <<=1;
+        return (LPWORD)ul;
+    }
+
+    INT_PTR CALLBACK WinNoteDialog::DlgProc(HWND hDlg,UINT msg,WPARAM wParam,LPARAM lParam){
+        /// LParam is ptr to WinNoteDialog!
+        INT_PTR res = FALSE;
+        switch (msg) {
+            case WM_INITDIALOG: {
+                SetWindowLongPtrA(hDlg,DWLP_USER,lParam);
+                res = TRUE;
+                break;
+            }
+            case WM_COMMAND: {
+                if (LOWORD(wParam) == IDOK){
+                    EndDialog(hDlg, LOWORD(wParam));
+                    res = TRUE;
+                };
+                break;
+            }
+            // default: {
+            //     DefDlgProcA(hDlg,msg,wParam,lParam);
+            //     break;
+            // }
+        }
+        return res;
+    };
+
+    #define ID_TEXT 4
+
     WinNoteDialog::WinNoteDialog(const Descriptor &desc,NWH nativeWindow):NativeNoteDialog(nativeWindow){
-        
+        ATL::CStringW message_str(desc.title.c_str());
+        LPDLGTEMPLATE lpdt;
+        LPDLGITEMTEMPLATE lpdtItem;
+        LPWORD lpw;
+        LPWSTR wstr;
+        UINT nchar;
+        hgbl = GlobalAlloc(GMEM_ZEROINIT,1024);
+        if (!hgbl) {
+            std::cout << "Failed to Allocate Mem For Template" << std::endl;
+            exit(1);
+        }
+
+        lpdt = (LPDLGTEMPLATE)GlobalLock(hgbl);
+        lpdt->style = WS_POPUP | WS_BORDER | WS_SYSMENU | DS_MODALFRAME | WS_CAPTION;
+        lpdt->cdit = 2;
+        lpdt->x  = 10;  lpdt->y  = 10;
+        lpdt->cx = 200; lpdt->cy = 200;
+        lpw = (LPWORD)(lpdt + 1);
+        *lpw++ = 0;             // No menu
+        *lpw++ = 0; 
+        wstr = (LPWSTR)lpw;
+        nchar = 1 + MultiByteToWideChar(CP_ACP, 0,desc.title.c_str(), -1,wstr,50);
+        lpw += nchar;
+
+        /**
+         Define an OK button.
+        */
+        lpw = lpwAlign(lpw);    // Align DLGITEMTEMPLATE on DWORD boundary
+        lpdtItem = (LPDLGITEMTEMPLATE)lpw;
+        lpdtItem->x  = 10; lpdtItem->y  = 70;
+        lpdtItem->cx = 80; lpdtItem->cy = 20;
+        lpdtItem->id = IDOK;       // OK button identifier
+        lpdtItem->style = WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON;
+
+        lpw = (LPWORD)(lpdtItem + 1);
+        *lpw++ = 0xFFFF;
+        *lpw++ = 0x0080;        // Button class
+
+        wstr = (LPWSTR)lpw;
+        nchar = 1 + MultiByteToWideChar(CP_ACP, 0, "OK", -1, wstr, 50);
+        lpw += nchar;
+        *lpw++ = 0;  
+
+        lpw = lpwAlign(lpw);    // Align DLGITEMTEMPLATE on DWORD boundary
+        lpdtItem = (LPDLGITEMTEMPLATE)lpw;
+        lpdtItem->x  = 10; lpdtItem->y  = 10;
+        lpdtItem->cx = 40; lpdtItem->cy = 20;
+        lpdtItem->id = ID_TEXT;    // Text identifier
+        lpdtItem->style = WS_CHILD | WS_VISIBLE | SS_LEFT;
+
+        lpw = (LPWORD)(lpdtItem + 1);
+        *lpw++ = 0xFFFF;
+        *lpw++ = 0x0082;        // Static class
+
+        LPWSTR msg_ptr = message_str.GetBuffer();
+
+        for (wstr = (LPWSTR)lpw;*wstr++ = (WCHAR)*msg_ptr++;);
+        lpw = (LPWORD)wstr;
+        *lpw++ = 0;     
+
+        GlobalUnlock(hgbl); 
     };
 
     WinNoteDialog::~WinNoteDialog(){
-        
+        GlobalFree(hgbl); 
     };
 
     SharedHandle<NativeNoteDialog> WinNoteDialog::Create(const Descriptor &desc, NWH nativeWindow){
@@ -59,10 +160,10 @@ namespace OmegaWTK::Native::Win {
     };
 
     void WinNoteDialog::show(){
-
+        DialogBoxIndirectParamA(HWNDFactory::appFactoryInst->hInst,dlgTemp,((WinAppWindow *)parentWindow)->hwnd,WinNoteDialog::DlgProc,(LPARAM)this);
     };
 
     void WinNoteDialog::close(){
-
+        // 
     };
 }

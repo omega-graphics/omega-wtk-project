@@ -257,6 +257,12 @@ namespace OmegaWTK::Composition {
         GetClientRect(hwndItem->getHandle(),&rc);
         auto & pos = textRect->rect.pos;
         auto & rect = textRect->rect;
+
+        DWRITE_TEXT_RANGE r;
+        r.startPosition = 0;
+        r.length = textRect->getString().size();
+        textLayout->SetDrawingEffect(_brush,r);
+        
        direct2d_device_context->DrawTextLayout(D2D1::Point2F(pos.x * scaleFactor,rc.bottom - (rect.dimen.minHeight * scaleFactor) - (pos.y * scaleFactor)),textLayout,_brush);
     };
     
@@ -490,6 +496,10 @@ namespace OmegaWTK::Composition {
     void DXBDCompositionImageRenderTarget::drawText(Core::SharedPtr<TextRect> &textRect, Core::SharedPtr<Brush> &brush){
         ID2D1Brush *_brush = omegawtk_brush_to_d2d1_brush(*brush,direct2d_device_context.get());
         IDWriteTextLayout *textLayout = (IDWriteTextLayout *)textRect->getNative();
+        DWRITE_TEXT_RANGE r;
+        r.startPosition = 0;
+        r.length = textRect->getString().size();
+        textLayout->SetDrawingEffect(_brush,r);
         FLOAT scaleFactor = FLOAT(dpi)/96.f;
          Core::Rect &parent_rc = this->rect;
         auto & pos = textRect->rect.pos;

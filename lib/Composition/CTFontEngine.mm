@@ -17,6 +17,14 @@ FontEngine::FontEngine(){
     
 };
 
+void FontEngine::Create(){
+        instance = new FontEngine();
+    };
+
+    void FontEngine::Destroy(){
+        delete instance;
+    };
+
 class CoreTextFont : public Font {
     CTFontRef native;
     friend class CTTextRect;

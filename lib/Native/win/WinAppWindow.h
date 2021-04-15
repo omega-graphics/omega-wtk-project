@@ -12,9 +12,11 @@ namespace OmegaWTK::Native::Win {
         void disable();
         void attachWidgets();
         void initialDisplay();
+        void close();
         LRESULT ProcessWndMsg(UINT,WPARAM,LPARAM);
         BOOL ProcessWndMsgImpl(HWND, UINT, WPARAM, LPARAM, LRESULT *);
         WinAppWindow(Core::Rect & rect,NativeEventEmitter *emitter);
+        ~WinAppWindow();
     };
 };
 

@@ -24,7 +24,7 @@ int omegaWTKMain(AppInst *app){
     auto panel = make<UI::Panel>(OmegaWTK::Rect(0,0,500,500));
     auto layerStyle = make<Composition::LayerStyle>();
     auto b = Composition::ColorBrush(0xCCCCCC);
-    auto black = Composition::ColorBrush(Composition::Color::White);
+    auto black = Composition::ColorBrush(Composition::Color::Black);
     layerStyle->setBackgroundColor(Composition::Color::Transparent);
     layerStyle->add(VISUAL_ROUNDED_RECT_W_FRAME(OmegaWTK::RoundedRect(50,50,400,400,25,25),Composition::ColorBrush(Composition::Color::White),Composition::Border(b,2)));
     layerStyle->add(VISUAL_TEXT(textRect,black));

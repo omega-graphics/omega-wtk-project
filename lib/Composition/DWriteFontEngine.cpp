@@ -10,6 +10,14 @@ namespace OmegaWTK::Composition {
 
     FontEngine * FontEngine::instance;
 
+    void FontEngine::Create(){
+        instance = new FontEngine();
+    };
+
+    void FontEngine::Destroy(){
+        delete instance;
+    };
+
     FontEngine::FontEngine(){
         
         HRESULT hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,__uuidof(IDWriteFactory),(IUnknown **)&dwrite_factory);
@@ -45,9 +53,10 @@ namespace OmegaWTK::Composition {
         DWriteTextRect(Core::String & _val,Core::SharedPtr<Font> & font,Core::Rect & rect):TextRect(_val,font,rect){
             HRESULT hr;
             std::wstring textVal;
+            FLOAT scaleFactor = FLOAT(GetDpiForWindow(GetForegroundWindow()))/96.f;
             DWriteFont *dwrite_font = (DWriteFont *)font.get();
             cpp_str_to_cpp_wstr(_val,textVal);
-            hr = FontEngine::instance->dwrite_factory->CreateTextLayout(textVal.c_str(),textVal.size(),dwrite_font->textFormat.get(),rect.dimen.minWidth,rect.dimen.minHeight,&textLayout);
+            hr = FontEngine::instance->dwrite_factory->CreateTextLayout(textVal.c_str(),textVal.size(),dwrite_font->textFormat.get(),rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor,&textLayout);
             if(FAILED(hr)){
                 // MessageBox!!
                 exit(1);
@@ -74,6 +83,10 @@ namespace OmegaWTK::Composition {
             f->GetMetrics(&f_metrics);
             
         };
+    };
+
+    SharedHandle<TextRect> TextRect::Create(Core::String &_val, Core::SharedPtr<Font> &font, Core::Rect rect){
+        return std::make_shared<DWriteTextRect>(_val,font,rect);
     };
 
     Core::SharedPtr<Font> FontEngine::CreateFont(FontDescriptor &desc){
