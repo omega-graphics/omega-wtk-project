@@ -66,7 +66,7 @@ namespace OmegaWTK::Native::Win {
         INT_PTR res = FALSE;
         switch (msg) {
             case WM_INITDIALOG: {
-                SetWindowLongPtrA(hDlg,DWLP_USER,lParam);
+                // SetWindowLongPtrA(hDlg,DWLP_USER,lParam);
                 res = TRUE;
                 break;
             }
@@ -97,6 +97,7 @@ namespace OmegaWTK::Native::Win {
         hgbl = GlobalAlloc(GMEM_ZEROINIT,1024);
         if (!hgbl) {
             std::cout << "Failed to Allocate Mem For Template" << std::endl;
+            MessageBoxA(GetForegroundWindow(),"Failed to Allocate Mem For Template",NULL,MB_OK);
             exit(1);
         }
 
@@ -160,7 +161,7 @@ namespace OmegaWTK::Native::Win {
     };
 
     void WinNoteDialog::show(){
-        DialogBoxIndirectParamA(HWNDFactory::appFactoryInst->hInst,dlgTemp,((WinAppWindow *)parentWindow)->hwnd,WinNoteDialog::DlgProc,(LPARAM)this);
+        DialogBoxIndirectA(HWNDFactory::appFactoryInst->hInst,(LPDLGTEMPLATEA)hgbl,((WinAppWindow *)parentWindow)->hwnd,WinNoteDialog::DlgProc);
     };
 
     void WinNoteDialog::close(){
