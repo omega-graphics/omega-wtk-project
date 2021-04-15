@@ -7,7 +7,7 @@ class MyWindowDelegate : public AppWindowDelegate {
 public:
     MyWindowDelegate(AppInst *app):app(app){};
     void windowWillClose(Native::NativeEventPtr event){
-        app->terminate();
+        
     };
 };
 

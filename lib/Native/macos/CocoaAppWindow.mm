@@ -69,6 +69,10 @@ void CocoaAppWindow::close(){
         [window close];
 };
 
+// CocoaAppWindow::~CocoaAppWindow(){
+//     close();
+// };
+
 };
 
 @implementation OmegaWTKNativeCocoaAppWindowDelegate

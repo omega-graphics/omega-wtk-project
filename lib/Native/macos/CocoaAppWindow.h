@@ -20,6 +20,7 @@ public:
     void initialDisplay();
     void close();
     CocoaAppWindow(Core::Rect & rect,NativeEventEmitter *emitter);
+    // ~CocoaAppWindow();
 };
 };
 

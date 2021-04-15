@@ -33,7 +33,6 @@ namespace OmegaWTK::Native {
         Core::Rect & rect;
         public:
         NativeWindow(Core::Rect & rect);
-        ~NativeWindow();
         #endif
     };
     typedef NativeWindow *NWH;
