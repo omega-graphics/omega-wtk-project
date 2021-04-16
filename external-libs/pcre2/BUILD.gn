@@ -1,4 +1,4 @@
-import("//gn/ExternalLibs.gni")
+import("../../gn/ExternalLibs.gni")
 
 o = "$external_lib_path/pcre2/build"
 if(is_mac || is_linux) {

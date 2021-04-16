@@ -1,4 +1,4 @@
-import("//gn/ExternalLibs.gni")
+import("../../gn/ExternalLibs.gni")
 
 if(is_mac || is_linux){
     lib_name = "${external_lib_path}/libpng/build/libpng16.${static_lib_suffix}"
@@ -28,7 +28,7 @@ external_lib("libpng"){
         ]
     }
     public_deps = [
-        "//external-libs/zlib"
+        "../zlib"
     ]
     public_headers = [
         rebase_path("./code/png.h"),

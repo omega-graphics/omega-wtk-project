@@ -1,4 +1,4 @@
-import("//gn/ExternalLibs.gni")
+import("../../gn/ExternalLibs.gni")
 
 o = "$root_out_dir/externals/openssl/build"
 
