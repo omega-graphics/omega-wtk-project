@@ -1,5 +1,5 @@
-import("//gn/ExternalLibs.gni")
-import("//gn/ExternalExports.gni")
+import("../../gn/ExternalLibs.gni")
+import("../../gn/ExternalExports.gni")
 
 o = "$root_out_dir/externals/zlib/build"
 

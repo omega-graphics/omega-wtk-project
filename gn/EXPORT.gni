@@ -9,9 +9,26 @@ declare_args(){
         
 }
 
+omegawtk_src_dir = get_path_info("../lib","abspath")
+
+assetc_dir = get_path_info("../tools/assetc","abspath")
+pcre2_lib = get_path_info("../external-libs/pcre2","abspath")
+pcre2_config = get_path_info("../external-libs/pcre2:pcre2_config","abspath")
+
+external_media_libs = [
+     get_path_info("../external-libs/zlib","abspath"),
+    get_path_info("../external-libs/libtiff","abspath"),
+    get_path_info("../external-libs/libpng","abspath")
+]
+external_media_libs_conf = [
+     get_path_info("../external-libs/libpng:libpng_config","abspath"),
+    get_path_info("../external-libs/libtiff:libtiff_config","abspath"),
+    get_path_info("../external-libs/zlib:zlib_config","abspath")
+]
+
 template("OmegaWTK_Export"){
 
-    omega_wtk_include_dir = "../include/omegaWTK"
+    omega_wtk_include_dir = omegawtk_include_dir
 
     omega_wtk_static_lib("omegaWTKCore"){
         # if(useVcpkg) {
@@ -20,13 +37,13 @@ template("OmegaWTK_Export"){
         #     ]
         # }
         include_dirs = [
-            "../tools/assetc"
+            assetc_dir
         ]
         public_deps = [
-            "../external-libs/pcre2"
+            pcre2_lib
         ]
         public_configs = [
-            "../external-libs/pcre2:pcre2_config"
+            pcre2_config
         ]
         sources = [
             # Headers
@@ -34,12 +51,12 @@ template("OmegaWTK_Export"){
             "$omega_wtk_include_dir/Core/Math.h",
             "$omega_wtk_include_dir/Core/MultiThreading.h",
             # Sources
-            "../lib/Core/Core.cpp",
-            "../lib/Core/MultiThreading.cpp"
+            "${omegawtk_src_dir}/Core/Core.cpp",
+            "${omegawtk_src_dir}/Core/MultiThreading.cpp"
         ]
         if(is_mac){
             sources += [
-                "lib/Core/FSCocoa.mm"
+                "${omegawtk_src_dir}/Core/FSCocoa.mm"
             ]
         }
     }
@@ -54,18 +71,18 @@ template("OmegaWTK_Export"){
             "$omega_wtk_include_dir/Native/NativeMenu.h",
             "$omega_wtk_include_dir/Native/NativeWindow.h",
             # Sources
-            "../lib/Native/NativeApp.cpp",
-            "../lib/Native/NativeDialog.cpp",
-            "../lib/Native/NativeEvent.cpp",
-            "../lib/Native/NativeItem.cpp",
-            "../lib/Native/NativeMenu.cpp",
-            "../lib/Native/NativeWindow.cpp"
+            "${omegawtk_src_dir}/Native/NativeApp.cpp",
+            "${omegawtk_src_dir}/Native/NativeDialog.cpp",
+            "${omegawtk_src_dir}/Native/NativeEvent.cpp",
+            "${omegawtk_src_dir}/Native/NativeItem.cpp",
+            "${omegawtk_src_dir}/Native/NativeMenu.cpp",
+            "${omegawtk_src_dir}/Native/NativeWindow.cpp"
         ]
         include_dirs = [
-            "../lib/Native/private_include"
+            "${omegawtk_src_dir}/Native/private_include"
         ]
         if(is_mac){
-            mac_source_prefix = "../lib/Native/macos"
+            mac_source_prefix = "${omegawtk_src_dir}/Native/macos"
             sources += [
                 # Sources
                 "$mac_source_prefix/CocoaApp.h",
@@ -82,9 +99,9 @@ template("OmegaWTK_Export"){
                 "$mac_source_prefix/MakeItem.h",
                 "$mac_source_prefix/MakeItem.mm",
                 # Headers
-                "../lib/Native/private_include/NativePrivate/macos/CocoaEvent.h",
-                "../lib/Native/private_include/NativePrivate/macos/CocoaItem.h",
-                "../lib/Native/private_include/NativePrivate/macos/CocoaUtils.h"
+                "${omegawtk_src_dir}/Native/private_include/NativePrivate/macos/CocoaEvent.h",
+                "${omegawtk_src_dir}/Native/private_include/NativePrivate/macos/CocoaItem.h",
+                "${omegawtk_src_dir}/Native/private_include/NativePrivate/macos/CocoaUtils.h"
             ]
             frameworks = [
                 "Cocoa.framework"
@@ -94,7 +111,7 @@ template("OmegaWTK_Export"){
             defines = [
                 "WINDOWS_PRIVATE"
             ]
-            win_source_prefix = "../lib/Native/win"
+            win_source_prefix = "${omegawtk_src_dir}/Native/win"
             sources += [
                 "$win_source_prefix/HWNDFactory.h",
                 "$win_source_prefix/HWNDFactory.cpp",
@@ -111,8 +128,8 @@ template("OmegaWTK_Export"){
                 "$win_source_prefix/WinDialog.h",
                 "$win_source_prefix/WinDialog.cpp",
                 # Headers
-                "../lib/Native/private_include/NativePrivate/win/HWNDItem.h",
-                "../lib/Native/private_include/NativePrivate/win/WinEvent.h"
+                "${omegawtk_src_dir}/Native/private_include/NativePrivate/win/HWNDItem.h",
+                "${omegawtk_src_dir}/Native/private_include/NativePrivate/win/WinEvent.h"
             ]
         }
         else {
@@ -125,19 +142,12 @@ template("OmegaWTK_Export"){
 
     omega_wtk_static_lib("omegaWTKMedia"){
         include_dirs = [
-            "../lib/Core"
+            "${omegawtk_src_dir}/Core"
         ]
         public_deps = [
             ":omegaWTKCore",
-            "../external-libs/zlib",
-            "../external-libs/libtiff",
-            "../external-libs/libpng"
-        ]
-        public_configs = [
-            "../external-libs/libpng:libpng_config",
-            "../external-libs/libtiff:libtiff_config",
-            "../external-libs/zlib:zlib_config"
-        ]
+        ] + external_media_libs
+        public_configs = external_media_libs_conf
         sources = [
             # Headers 
             "$omega_wtk_include_dir/Media/ImgCodec.h",
@@ -146,15 +156,15 @@ template("OmegaWTK_Export"){
             "$omega_wtk_include_dir/Media/AudioCapture.h",
 
             # Sources 
-            "../lib/Media/ImgCodec.cpp",
-            "../lib/Media/VideoCodec.cpp",
+            "${omegawtk_src_dir}/Media/ImgCodec.cpp",
+            "${omegawtk_src_dir}/Media/VideoCodec.cpp",
             # "lib/Media/VideoCapture.cpp",
             # "lib/Media/AudioCapture.cpp"
         ]
     }
 
     if(is_mac) {
-        mtl_backend_src_dir = "../lib/Composition/mtl"
+        mtl_backend_src_dir = "${omegawtk_src_dir}/Composition/mtl"
         metal_library("omegawtk"){
             sources = [
                 rebase_path("$mtl_backend_src_dir/OmegaWTKShaders.metal")
@@ -181,35 +191,35 @@ template("OmegaWTK_Export"){
 
             # Sources
             # Backend SRC
-            "../lib/Composition/Backend.cpp",
-            "../lib/Composition/BackendPriv.h",
-            "../lib/Composition/BackendPriv.cpp",
-            "../lib/Composition/BDCompositionDevice.h",
-            "../lib/Composition/BDCompositionDevice.cpp",
-            "../lib/Composition/BDCompositionFontFactory.h",
-            "../lib/Composition/BDCompositionFontFactory.cpp",
-            "../lib/Composition/BDCompositionImage.h",
-            "../lib/Composition/BDCompositionImage.cpp",
-            "../lib/Composition/BDCompositionRenderTarget.h",
-            "../lib/Composition/BDCompositionRenderTarget.cpp",
-            "../lib/Composition/BDCompositionVisualTree.h",
-            "../lib/Composition/BDCompositionVisualTree.cpp",
+            "${omegawtk_src_dir}/Composition/Backend.cpp",
+            "${omegawtk_src_dir}/Composition/BackendPriv.h",
+            "${omegawtk_src_dir}/Composition/BackendPriv.cpp",
+            "${omegawtk_src_dir}/Composition/BDCompositionDevice.h",
+            "${omegawtk_src_dir}/Composition/BDCompositionDevice.cpp",
+            "${omegawtk_src_dir}/Composition/BDCompositionFontFactory.h",
+            "${omegawtk_src_dir}/Composition/BDCompositionFontFactory.cpp",
+            "${omegawtk_src_dir}/Composition/BDCompositionImage.h",
+            "${omegawtk_src_dir}/Composition/BDCompositionImage.cpp",
+            "${omegawtk_src_dir}/Composition/BDCompositionRenderTarget.h",
+            "${omegawtk_src_dir}/Composition/BDCompositionRenderTarget.cpp",
+            "${omegawtk_src_dir}/Composition/BDCompositionVisualTree.h",
+            "${omegawtk_src_dir}/Composition/BDCompositionVisualTree.cpp",
             # Frontend SRC
-            "../lib/Composition/Brush.cpp",
-            "../lib/Composition/Color.cpp",
-            "../lib/Composition/Compositor.cpp",
-            "../lib/Composition/GeometricGraphicsPath.cpp",
-            "../lib/Composition/Layer.cpp",
-            "../lib/Composition/LayerAnimation.cpp",
-            "../lib/Composition/Visual.cpp",
-            "../lib/Composition/ViewRenderTarget.cpp"
+            "${omegawtk_src_dir}/Composition/Brush.cpp",
+            "${omegawtk_src_dir}/Composition/Color.cpp",
+            "${omegawtk_src_dir}/Composition/Compositor.cpp",
+            "${omegawtk_src_dir}/Composition/GeometricGraphicsPath.cpp",
+            "${omegawtk_src_dir}/Composition/Layer.cpp",
+            "${omegawtk_src_dir}/Composition/LayerAnimation.cpp",
+            "${omegawtk_src_dir}/Composition/Visual.cpp",
+            "${omegawtk_src_dir}/Composition/ViewRenderTarget.cpp"
 
         ]
         include_dirs = [
-            "../lib/Native/private_include"
+            "${omegawtk_src_dir}/Native/private_include"
         ]
         if(is_windows){
-            directx_backend_src_dir = "../lib/Composition/dx"
+            directx_backend_src_dir = "${omegawtk_src_dir}/Composition/dx"
             if(directx_12){
                 defines = [
                     "DIRECT3D_12"
@@ -227,7 +237,7 @@ template("OmegaWTK_Export"){
                 "$directx_backend_src_dir/DCVisualTree.h",
                 "$directx_backend_src_dir/DCVisualTree.cpp",
                 # Font Engine
-                "../lib/Composition/DWriteFontEngine.cpp"
+                "${omegawtk_src_dir}/Composition/DWriteFontEngine.cpp"
             ]
         }
         else if(is_mac){
@@ -247,7 +257,7 @@ template("OmegaWTK_Export"){
                 "$mtl_backend_src_dir/MTLBDTriangulator.h",
                 "$mtl_backend_src_dir/MTLBDTriangulator.mm",
                 # Font Engine
-                "../lib/Composition/CTFontEngine.mm"
+                "${omegawtk_src_dir}/Composition/CTFontEngine.mm"
             ]
             frameworks = [
                 "QuartzCore.framework",
@@ -295,20 +305,20 @@ template("OmegaWTK_Export"){
             "$omega_wtk_include_dir/UI/Layout.h",
             "$omega_wtk_include_dir/UI/Panel.h",
             # Sources 
-            "../lib/UI/App.cpp",
-            "../lib/UI/AppWindow.cpp",
-            "../lib/UI/ButtonBase.cpp",
-            "../lib/UI/Menu.cpp",
-            "../lib/UI/PushButton.cpp",
-            "../lib/UI/Text.cpp",
-            "../lib/UI/VideoView.cpp",
-            "../lib/UI/View.cpp",
-            "../lib/UI/ViewAnimator.cpp",
-            "../lib/UI/Stack.cpp",
-            "../lib/UI/Widget.cpp",
-            "../lib/UI/DropDown.cpp",
-            "../lib/UI/Layout.cpp",
-            "../lib/UI/Panel.cpp"
+            "${omegawtk_src_dir}/UI/App.cpp",
+            "${omegawtk_src_dir}/UI/AppWindow.cpp",
+            "${omegawtk_src_dir}/UI/ButtonBase.cpp",
+            "${omegawtk_src_dir}/UI/Menu.cpp",
+            "${omegawtk_src_dir}/UI/PushButton.cpp",
+            "${omegawtk_src_dir}/UI/Text.cpp",
+            "${omegawtk_src_dir}/UI/VideoView.cpp",
+            "${omegawtk_src_dir}/UI/View.cpp",
+            "${omegawtk_src_dir}/UI/ViewAnimator.cpp",
+            "${omegawtk_src_dir}/UI/Stack.cpp",
+            "${omegawtk_src_dir}/UI/Widget.cpp",
+            "${omegawtk_src_dir}/UI/DropDown.cpp",
+            "${omegawtk_src_dir}/UI/Layout.cpp",
+            "${omegawtk_src_dir}/UI/Panel.cpp"
         ]
         public_deps = [
             ":omegaWTKCore",
@@ -322,7 +332,7 @@ template("OmegaWTK_Export"){
         if(is_mac){
             framework = true
             framework_version = "0.6"
-            framework_info_plist = "../lib/Info.plist"
+            framework_info_plist = "${omegawtk_src_dir}/Info.plist"
             frameworks = [
                 "Cocoa.framework",
                 "QuartzCore.framework",
@@ -339,9 +349,7 @@ template("OmegaWTK_Export"){
             # ]
         }
         sources = [
-            "../include/OmegaWTK.h",
-            "../include/omegaWTK/Main.h",
-            "../lib/OmegaWTK.cpp"
+            "${omegawtk_src_dir}/OmegaWTK.cpp"
         ]
         public_deps = [
             ":omegaWTKCore",
@@ -354,7 +362,7 @@ template("OmegaWTK_Export"){
 
     omega_wtk_tool("omegawtk-assetc"){
         sources = [
-            "../tools/assetc/main.cpp"
+            "${assetc_dir}/main.cpp"
         ]
         # public_deps = [
         #     "//external-libs/openssl",
@@ -364,5 +372,8 @@ template("OmegaWTK_Export"){
         # ]
         # external_shared_libs = openssl_link
     }
+
+    not_needed("*",[target_name])
+    not_needed(invoker,[])
 
 }

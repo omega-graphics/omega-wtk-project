@@ -1,5 +1,5 @@
-import("//gn/ExternalLibs.gni")
-import("//gn/ExternalExports.gni")
+import("../../gn/ExternalLibs.gni")
+import("../../gn/ExternalExports.gni")
 
 o =  "$root_out_dir/externals/libtiff/build"
 
@@ -26,8 +26,8 @@ external_lib("libtiff"){
         ]
     }
     public_deps = [
-        "//external-libs/zlib",
-        "//external-libs/libjpeg-turbo"
+        "../zlib",
+        "../libjpeg-turbo"
     ]
     public_headers = [
         rebase_path("./code/libtiff/tiff.h"),

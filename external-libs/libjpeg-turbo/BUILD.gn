@@ -1,4 +1,4 @@
-import("//gn/ExternalLibs.gni")
+import("../../gn/ExternalLibs.gni")
 
 o = "$root_out_dir/externals/libjpeg-turbo/build"
 external_lib("libjpeg-turbo"){
@@ -15,7 +15,7 @@ external_lib("libjpeg-turbo"){
         ]
     }
     public_deps = [
-        "//external-libs/zlib"
+        "../zlib"
     ]
     public_headers = [
         rebase_path("./code/jpeglib.h"),
