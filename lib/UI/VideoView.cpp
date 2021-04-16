@@ -5,8 +5,8 @@ namespace OmegaWTK {
 
 
 
-//VideoView::VideoView(const Core::Rect & rect,Composition::Compositor *compositor,View *parent ):View(rect,parent),frameScheduler(Composition::ViewRenderTargetFrameScheduler::Create(renderTarget,compositor)){
-//    
-//};
+VideoView::VideoView(const Core::Rect & rect,Composition::Compositor *compositor,View *parent ):View(rect,parent){
+   
+};
 
 };

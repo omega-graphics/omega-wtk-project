@@ -7,16 +7,18 @@ namespace OmegaWTK::Media {
 
     class VideoCaptureSession;
 
-    class VideoDevice {
+    class OMEGAWTK_EXPORT VideoDevice {
     public:
         virtual UniqueHandle<VideoCaptureSession> createCaptureSession() = 0;
     };
 
     Core::Vector<VideoDevice *> enumerateVideoDevices();
+    class VideoCaptureSessionPreviewOutput {
 
+    };
     class VideoCaptureSession {
     public:
-        virtual void startPreview() = 0;
+        virtual void startPreview(VideoCaptureSessionPreviewOutput & output) = 0;
         virtual void startRecord() = 0;
         virtual void stopRecord() = 0;
         virtual void stopPreview() = 0;

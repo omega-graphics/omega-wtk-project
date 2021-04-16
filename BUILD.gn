@@ -182,12 +182,12 @@ omega_wtk_static_lib("omegaWTKMedia"){
     public_deps = [
         ":omegaWTKCore",
         "//external-libs/zlib",
-        "//external-libs/libtiff",
+        # "//external-libs/libtiff",
         "//external-libs/libpng"
     ]
     public_configs = [
         "//external-libs/libpng:libpng_config",
-        "//external-libs/libtiff:libtiff_config",
+        # "//external-libs/libtiff:libtiff_config",
         "//external-libs/zlib:zlib_config"
     ]
     sources = [
@@ -203,6 +203,18 @@ omega_wtk_static_lib("omegaWTKMedia"){
         # "lib/Media/VideoCapture.cpp",
         # "lib/Media/AudioCapture.cpp"
     ]
+    if(is_mac){
+        sources += [
+            "lib/Media/macos/AVFVideoCapture.mm",
+            "lib/Media/macos/VideoToolboxCodec.mm"
+        ]
+        frameworks = [
+            "AVFoundation.framework"
+        ]
+    }
+    else if(is_windows){
+
+    }
 }
 
 if(is_mac) {
@@ -385,7 +397,7 @@ omega_wtk_shared_lib("OmegaWTK"){
         ]
         embedded_libs = [
             zlib_link
-        ] + libtiff_link
+        ]
     }
     if(is_windows) {
         # arflags = [
@@ -434,6 +446,15 @@ omega_wtk_test("BasicAppTest"){
     ]
     if(!is_windows){
         bundle_id = "org.omegagraphics.OmegaWTKBasicAppTest"
+    }
+}
+
+omega_wtk_test("VideoViewTest"){
+    sources = [
+        "tests/VideoViewTest/main.cpp"
+    ]
+    if(!is_windows){
+        bundle_id = "org.omegagraphics.OmegaWTKVideoViewTest"
     }
 }
 

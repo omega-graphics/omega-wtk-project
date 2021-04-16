@@ -30,13 +30,13 @@ public:
 
 };
 
-VideoIStream decode_video(void *data, size_t data_size, VideoCodecType type){
+// VideoIStream decode_video(void *data, size_t data_size, VideoCodecType type){
 
-};
+// };
 
-void encode_video(VideoOStream ostream, VideoCodecType type){
+// void encode_video(VideoOStream ostream, VideoCodecType type){
     
-};
+// };
 
 
 };

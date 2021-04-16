@@ -8,7 +8,7 @@
 #include <png.h>
 
 //#include <tiff.h>
-#include <tiffio.hxx>
+// #include <tiffio.hxx>
 
 // #include <jpeglib.h>
 // #include <turbojpeg.h>
@@ -332,52 +332,52 @@ public:
     ~PNGCodec(){};
 };
 
-class TiffCodec : public ImgCodec {
-    bool load_tiff_from_file(){
-        TIFF *tiff = TIFFStreamOpen("rb",&in);
+// class TiffCodec : public ImgCodec {
+//     bool load_tiff_from_file(){
+//         TIFF *tiff = TIFFStreamOpen("rb",&in);
 
-        uint32_t width,height,bitDepth,channelCount,compression;
+//         uint32_t width,height,bitDepth,channelCount,compression;
         
-        ImgHeader header;
+//         ImgHeader header;
 
-        TIFFGetField(tiff,TIFFTAG_IMAGEWIDTH,&width);
-        TIFFGetField(tiff,TIFFTAG_IMAGELENGTH,&height);
-        TIFFGetField(tiff,TIFFTAG_BITSPERSAMPLE,&bitDepth);
-        TIFFGetField(tiff,TIFFTAG_SAMPLESPERPIXEL,&channelCount);
-        TIFFGetField(tiff,TIFFTAG_COMPRESSION,&compression);
+//         TIFFGetField(tiff,TIFFTAG_IMAGEWIDTH,&width);
+//         TIFFGetField(tiff,TIFFTAG_IMAGELENGTH,&height);
+//         TIFFGetField(tiff,TIFFTAG_BITSPERSAMPLE,&bitDepth);
+//         TIFFGetField(tiff,TIFFTAG_SAMPLESPERPIXEL,&channelCount);
+//         TIFFGetField(tiff,TIFFTAG_COMPRESSION,&compression);
         
-        header.color_format = BitmapImage::ColorFormat::RGBA;
-        header.bitDepth = bitDepth;
-        header.channels = channelCount;
-        header.width = width;
-        header.height = height;
+//         header.color_format = BitmapImage::ColorFormat::RGBA;
+//         header.bitDepth = bitDepth;
+//         header.channels = channelCount;
+//         header.width = width;
+//         header.height = height;
         
-        bool rc = false;
+//         bool rc = false;
 
-        size_t pixelCount = width * height;
-        uint32_t * buffer = (uint32_t *)_TIFFmalloc(pixelCount * sizeof(uint32_t));
-        if(buffer != nullptr){
-            if(TIFFReadRGBAImage(tiff,width,height,buffer,0)){
-                storage->data = buffer;
-                storage->header =std::make_unique<ImgHeader>(std::move(header));
-                storage->profile = nullptr;
-                rc = true;
-            };
-//            _TIFFfree(buffer);
-        };
-        TIFFClose(tiff);
-        return rc;
-    };
-public:
-    void readToStorage(){
-        if(!load_tiff_from_file()){
-            storage->data = nullptr;
-            storage->header = nullptr;
-            storage->profile = nullptr;
-        };
-    };
-    TiffCodec(Core::IStream & stream,BitmapImage *res):ImgCodec(stream,res){};
-};
+//         size_t pixelCount = width * height;
+//         uint32_t * buffer = (uint32_t *)_TIFFmalloc(pixelCount * sizeof(uint32_t));
+//         if(buffer != nullptr){
+//             if(TIFFReadRGBAImage(tiff,width,height,buffer,0)){
+//                 storage->data = buffer;
+//                 storage->header =std::make_unique<ImgHeader>(std::move(header));
+//                 storage->profile = nullptr;
+//                 rc = true;
+//             };
+// //            _TIFFfree(buffer);
+//         };
+//         TIFFClose(tiff);
+//         return rc;
+//     };
+// public:
+//     void readToStorage(){
+//         if(!load_tiff_from_file()){
+//             storage->data = nullptr;
+//             storage->header = nullptr;
+//             storage->profile = nullptr;
+//         };
+//     };
+//     TiffCodec(Core::IStream & stream,BitmapImage *res):ImgCodec(stream,res){};
+// };
 
 
 // class JPEGCodec : public ImgCodec {
