@@ -86,12 +86,21 @@ void AppWindowDelegate::onRecieveEvent(Native::NativeEventPtr event){
             windowWillClose(event);
             break;
         }
+        case Native::NativeEvent::WindowWillResize : {
+            Native::WindowWillResize *params = (Native::WindowWillResize *)event->params;
+            windowWillResize(params->rect);
+        }
         default:
             break;
     }
+    delete event;
 };
 
 void AppWindowDelegate::windowWillClose(Native::NativeEventPtr event){
+    /// To Be Overrided by its sub-classes!
+};
+
+void AppWindowDelegate::windowWillResize(Core::Rect & nRect){
     /// To Be Overrided by its sub-classes!
 };
 

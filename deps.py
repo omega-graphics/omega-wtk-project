@@ -4,11 +4,16 @@ import os
 import sys
 import shutil
 
-def dep(url:str,gitClone:bool,installName:str,fileExt:str = ".zip"):
+def dep(url:str,gitClone:bool,installName:str,fileExt:str = ".zip",custom_commands:"list[str]" = []):
     """
     Defines a dependency
     """
-    if gitClone:
+    if custom_commands:
+        os.chdir("./external-libs/" + installName)
+        os.makedirs("./code")
+        for command in custom_commands:
+            os.system(command)
+    elif gitClone:
         os.system("git clone " + url + " ./external-libs/" + installName + "/code")
     else:
         if not os.path.exists("./temp"):
@@ -28,7 +33,7 @@ dep(url="https://gitlab.com/libtiff/libtiff.git",gitClone=True,installName="libt
 dep(url="https://github.com/madler/zlib.git",gitClone=True,installName="zlib")
 dep(url="https://ftp.pcre.org/pub/pcre/pcre2-10.36.zip",gitClone=False,installName="pcre2",fileExt=".zip")
 # dep(url="git://git.openssl.org/openssl.git",gitClone=True,installName="openssl")
-# dep(url="https://webrtc.googlesource.com/src",gitClone=True,installName="webrtc")
+dep(gitClone=False,installName="webrtc",custom_commands=["gclient config","fetch --nohooks webrtc","gclient sync"])
 
 if os.path.exists("./temp"):
     clean_temp_folder()

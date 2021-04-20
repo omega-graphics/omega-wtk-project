@@ -9,7 +9,7 @@ namespace OmegaWTK::Composition {
 Layer::Layer(const Core::Rect &rect,
              Compositor *compPtr)
     : surface_rect(rect),
-      ownerCompositor(compPtr),parent_ptr(nullptr) {
+      ownerCompositor(compPtr),parent_ptr(nullptr),needsNativeResize(false) {
   
 };
 
@@ -37,6 +37,11 @@ void Layer::removeSubLayer(SharedHandle<Layer> &layer) {
 
 void Layer::setStyle(SharedHandle<LayerStyle> & style){
     this->style = style;
+};
+
+void Layer::resize(Core::Rect &newRect){
+    surface_rect = newRect;
+    needsNativeResize = true;
 };
 
 //void Layer::redraw() { ownerCompositor->updateRequestedLayer(this); };

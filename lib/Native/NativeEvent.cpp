@@ -2,6 +2,8 @@
 
 namespace OmegaWTK::Native {
 
+WindowWillResize::WindowWillResize(Core::Rect rect):rect(rect){};
+
 NativeEventEmitter::NativeEventEmitter():message_reciever(nullptr){
 
 };

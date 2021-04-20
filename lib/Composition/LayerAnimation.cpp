@@ -5,14 +5,37 @@ namespace OmegaWTK::Composition {
         this->anim = anim;
     };
 
-    void LayerAnimationController::playForward(){
+    void LayerAnimationController::setFrameRate(float fps){
+        currentFPS = fps;
+    };
 
+    void LayerAnimationController::playForward(){
+        assert(!thread && "Cannot Open new thread while playing!");
+        thread = Core::CPUThread::OpenWithVoidReturn([&](Core::CPUThread *){
+            while(true){
+                anim->traverseCurve(1.f/currentFPS);
+                if(condition){
+                    break;
+                };
+            };
+        });
     };
     void LayerAnimationController::playReverse(){
-
+        assert(!thread && "Cannot Open new thread while playing!");
+        thread = Core::CPUThread::OpenWithVoidReturn([&](Core::CPUThread *){
+            while(true){
+                anim->traverseCurve(-1.f/currentFPS);
+                if(condition){
+                    break;
+                };
+            };
+        });
     };
     void LayerAnimationController::pause(){
-
+        condition = true;
+        thread->close();
+        thread.reset();
+        condition = false;
     };
 
     void LayerAnimationGroupController::addAnimation(SharedHandle<LayerAnimationTy> &anim){

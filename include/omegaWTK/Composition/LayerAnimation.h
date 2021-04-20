@@ -1,4 +1,5 @@
 #include "omegaWTK/Core/Math.h"
+#include "omegaWTK/Core/MultiThreading.h"
 
 #ifndef OMEGAWTK_COMPOSITION_LAYERANIMATION_H
 #define OMEGAWTK_COMPOSITION_LAYERANIMATION_H
@@ -20,6 +21,7 @@ namespace OmegaWTK::Composition {
     */
     template<typename _Val_Ty,typename _Time_Ty>
     class OMEGAWTK_EXPORT LayerAnimation_Base {
+        friend class LayerAnimationController;
     public:
         enum class SegmentType : OPT_PARAM {
             Linear,
@@ -157,6 +159,8 @@ namespace OmegaWTK::Composition {
         Core::SharedPtr<LayerAnimationTy> anim = nullptr;
         friend class ViewRenderTargetFrameScheduler;
         friend class ::OmegaWTK::ViewAnimator;
+        bool condition;
+        SharedHandle<Core::CPUThread> thread;
     protected:
         float currentFPS;
 //        ViewRenderTargetFrameScheduler *scheduler = nullptr;

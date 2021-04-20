@@ -138,7 +138,7 @@ toolchain("llvm") {
     }
     tool("alink") {
         if(is_windows){
-            command = "clang-cl /out:{{output}} /machine:x64 {{inputs}} {{arflags}}"
+            command = "clang-cl $debug_flag  /out:{{output}} /machine:x64 {{inputs}} {{arflags}}"
         }
         else if(is_mac) {
             command = "$cxx -o {{output}} {{inputs}} {{arflags}}"
@@ -163,7 +163,7 @@ toolchain("llvm") {
         }
         # Link MSVC Runtime
         else {
-            command = "clang-cl  -Wl  /LD /Fe$outfile {{inputs}}  /link {{ldflags}} {{solibs}} {{libs}}"
+            command = "clang-cl $debug_flag   -Wl  /LD /Fe$outfile {{inputs}}  /link {{ldflags}} {{solibs}} {{libs}}"
         }
         if(is_windows){
             outputs = ["{{output_dir}}/{{target_output_name}}.lib","{{output_dir}}/{{target_output_name}}{{output_extension}}"]
@@ -181,7 +181,7 @@ toolchain("llvm") {
         }
         # Link MSVC Runtime
         else {
-            command = "clang-cl /MT /Fe$outfile -Wl {{ldflags}} {{solibs}} {{inputs}} {{libs}}"
+            command = "clang-cl $debug_flag  /MT /Fe$outfile -Wl {{ldflags}} {{solibs}} {{inputs}} {{libs}}"
         }
         outputs = [outfile]
         description = "Linking executable $outfile"

@@ -58,9 +58,11 @@ class BDCompositionViewRenderTarget : public BDCompositionRenderTarget {
 public:
 #ifdef TARGET_WIN32
     virtual void redoSwapChain() = 0;
+    // virtual void redoSwapChainWithNewSize(Core::Rect & newRect) = 0;
     virtual bool needsSwapChain() = 0;
     virtual void redoDeviceContext() = 0;
 #endif
+    virtual void resizeBuffers(Core::Rect & newRect) = 0;
 };
 /**
  Composition interface for rendering to an image
@@ -71,10 +73,12 @@ public:
 #ifdef TARGET_WIN32
     virtual bool needsSwapChain() = 0;
     virtual void redoDeviceContext() = 0;
+    virtual void redoSwapChainWithNewSize(Core::Rect & newRect) = 0;
     virtual void redoSwapChain() = 0;
     virtual void applyEffect(LayerEffect *effect) = 0;
     virtual void commitEffects() = 0;
 #endif
+    virtual void resizeBuffers(Core::Rect & newRect) = 0;
     /**
      Get the underlying image
      @returns A shared handle to a Composition Image

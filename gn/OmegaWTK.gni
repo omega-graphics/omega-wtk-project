@@ -606,7 +606,7 @@ template("omega_wtk_test"){
                 "$root_out_dir/lib/OmegaWTK.dll",
                 zlib_link,
                 libpng_link
-            ] + libtiff_link + libjpeg_turbo_link
+            ] # + libjpeg_turbo_link + libtiff_link
             outputs = [
                 "$root_out_dir/tests/${app_name}/{{source_file_part}}"
             ]

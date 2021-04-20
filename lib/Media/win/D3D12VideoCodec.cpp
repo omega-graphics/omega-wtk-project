@@ -1,17 +1,18 @@
 #include "omegaWTK/Media/VideoCodec.h"
 
 #include <d3d12video.h>
-#include <mfmediaengine.h>
+#include <mfidl.h>
 #include <atlbase.h>
 
 #include "../VideoCodec.cpp"
 
 namespace OmegaWTK::Media {
 
-    class D3D12VideoCodec : public VideoCodec {
+    class D3D12VideoCodec {
         Core::UniqueComPtr<ID3D12VideoDevice2> device;
         ID3D12Device8 *ptr;
     public:
+        static Core::UniquePtr<D3D12VideoCodec> instance;
         D3D12VideoCodec(ID3D12Device8 *_ptr):ptr(_ptr){
             HRESULT hr;
             hr = ptr->QueryInterface(&device);
@@ -31,11 +32,11 @@ namespace OmegaWTK::Media {
     };
 
     void create_video_codec(void *gpu_device_ptr){
-        VideoCodec::instance = std::make_unique<D3D12VideoCodec>((ID3D12Device8 *)gpu_device_ptr);
+        D3D12VideoCodec::instance = std::make_unique<D3D12VideoCodec>((ID3D12Device8 *)gpu_device_ptr);
     };
 
     void destroy_video_codec(){
-        VideoCodec::instance.reset();
+       D3D12VideoCodec::instance.reset();
     };
 
 };

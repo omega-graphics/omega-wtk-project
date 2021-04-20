@@ -69,7 +69,9 @@ public:
     */
     void removeObserver(WidgetObserver *observerPtr);
     bool & isResizable();
-    virtual void resize(Core::Rect & newRect) = 0;
+    virtual void resize(Core::Rect & newRect){
+        std::cout << "THIS WIDGET IS NOT RESIZABLE" << std::endl;
+    };
     /**
      Show the Widget if hidden.
     */
@@ -110,6 +112,59 @@ public:
     virtual void onWidgetDidHide(){};
     /// Called when the Widget has just been Shown.
     virtual void onWidgetDidShow(){};
+};
+
+template<class _Ty>
+class WidgetState;
+
+
+template<class _State_Ty>
+class WidgetStateObserver;
+
+template<class _Ty>
+class WidgetStateObserver<WidgetState<_Ty>> {
+protected:
+    virtual void stateHasChanged(_Ty & newVal){
+        /// TO BE IMPLEMENTED BY SUBCLASSES!!
+    };
+};
+
+
+template<class _Ty>
+class WidgetState {
+    Core::Optional<_Ty> val;
+    Core::Vector<WidgetStateObserver<WidgetState<_Ty>> *> observers;
+public: 
+    void setValue(_Ty newVal){
+        val = newVal;
+        for(auto & observer : observers){
+            observer->stateHasChanged(newVal);
+        };
+    };
+    static SharedHandle<WidgetState<_Ty>> Create(Core::Optional<_Ty> initalValue = {}){
+        SharedHandle<WidgetState<_Ty>> rc(new WidgetState<_Ty>);
+        rc->val = initalValue;
+        return rc;
+    };
+
+    void addObserver(SharedHandle<WidgetStateObserver<WidgetState<_Ty>>> observer){
+        observers.push_back(observer.get());
+    };
+
+    void addObserver(WidgetStateObserver<WidgetState<_Ty>> *observer){
+        observers.push_back(observer);
+    };
+
+    void removeObserver(WidgetStateObserver<WidgetState<_Ty>> *observer){
+        auto ob_it = observers.begin();
+        while(ob_it != observers.end()){
+            if(*ob_it == observer){
+                observers.erase(ob_it);
+                break;
+            };
+            ++ob_it;
+        };
+    };
 };
 
 };

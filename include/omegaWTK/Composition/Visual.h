@@ -11,19 +11,8 @@
 
 namespace OmegaWTK {
     namespace Composition {
-        /// Visual Params Validation Result!
-    struct VPVR {
-        typedef enum : int {
-            Success = 0,
-            Failed = -1
-        } Code;
-        Code code;
-        void * res;
-        template<class _Ty>
-        _Ty & getRes(){ return *((_Ty *)res);};
-            
-    };
-
+    
+        
     struct OMEGAWTK_EXPORT  Border {
         Core::SharedPtr<Brush> brush;
         unsigned width;
@@ -111,12 +100,6 @@ namespace OmegaWTK {
         void * params;
         Visual() = delete;
         Visual(unsigned id,Type type,void * params):id(id),type(type),params(params){};
-        void setColor(const Color & new_color);
-        void setRect(const Core::Rect & bew_rect);
-//        void setFont(const Text::Font & new_font);
-        VPVR getColor();
-        VPVR getRect();
-        VPVR getFont();
     };
     
 #define __COMPOSITION__ ::OmegaWTK::Composition::
@@ -170,6 +153,44 @@ namespace OmegaWTK {
         void setBrush(unsigned id,const Core::SharedPtr<Brush> & new_brush);
         void setBackgroundColor(const Color & color){ background = color;};
         void addEffect(SharedHandle<LayerEffect> & effect);
+        template<class _Ty>
+        _Ty * getVisualAtIndex(unsigned idx);
+
+
+        template<>
+        Visual::BitmapParams * getVisualAtIndex(unsigned idx)
+        {
+            return (Visual::BitmapParams *)visuals[idx]->params;
+        };
+
+        template<>
+        Visual::EllipseParams * getVisualAtIndex(unsigned idx)
+        {
+            return (Visual::EllipseParams *)visuals[idx]->params;
+        };
+
+        template<>
+        Visual::RectParams * getVisualAtIndex(unsigned idx)
+        {
+            return (Visual::RectParams *)visuals[idx]->params;
+        };
+
+        template<>
+        Visual::RoundedRectParams * getVisualAtIndex(unsigned idx)
+        {
+            return (Visual::RoundedRectParams *)visuals[idx]->params;
+        };
+
+        template<>
+        Visual::TextParams * getVisualAtIndex(unsigned idx)
+        {
+            return (Visual::TextParams *)visuals[idx]->params;
+        };
+        
+        template<class _Ty>
+        _Ty * operator[](unsigned idx){
+            return getVisualAtIndex<_Ty>(idx);
+        };
         ~LayerStyle();
     };
     

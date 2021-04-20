@@ -21,18 +21,18 @@ namespace OmegaWTK::Composition {
 //   }                                                                            \
 //   };
 
-void Visual::setColor(const Color &new_color) {
-  // VISUAL_SET_PARAMS(params->color = std::move(new_color);)
-};
-//void Visual::setFont(const Text::Font &new_font){
-//    if(type == Text){
-//        TextParams *params = (TextParams *)this->params;
-//        params->text.setFont(std::move(new_font));
-//    };
-//};
-void Visual::setRect(const Core::Rect &new_rect){
+// void Visual::setColor(const Color &new_color) {
+//   // VISUAL_SET_PARAMS(params->color = std::move(new_color);)
+// };
+// //void Visual::setFont(const Text::Font &new_font){
+// //    if(type == Text){
+// //        TextParams *params = (TextParams *)this->params;
+// //        params->text.setFont(std::move(new_font));
+// //    };
+// //};
+// void Visual::setRect(const Core::Rect &new_rect){
     
-};
+// };
 
 // VPVR Visual::getRect(){
 

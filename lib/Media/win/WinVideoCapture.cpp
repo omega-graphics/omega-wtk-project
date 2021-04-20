@@ -1,6 +1,7 @@
 #include "omegaWTK/Media/VideoCapture.h"
 
 #include <mfidl.h>
+#include <mfapi.h>
 #include <mfcaptureengine.h>
 
 #pragma comment(lib,"mf.lib")
@@ -15,6 +16,18 @@ namespace OmegaWTK::Media {
     };
 
     Core::Vector<VideoDevice *> enumerateVideoDevices(){
+        IMFMediaSource **sources = nullptr;
+       IMFAttributes *attrs = nullptr;
+       IMFActivate **devices = nullptr;
+      HRESULT hr = MFCreateAttributes(&attrs,1);
+      if(FAILED(hr)){
 
+      };
+      hr = attrs->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE,MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
+      if(FAILED(hr)){
+
+      };
+      UINT32 count;
+      hr = MFEnumDeviceSources(attrs,&devices, &count);
     };
 };

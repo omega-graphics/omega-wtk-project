@@ -5,6 +5,12 @@
 // Native Exports
 #include "omegaWTK/Native/NativeApp.h"
 
+// Media Exports
+#include "omegaWTK/Media/ImgCodec.h"
+#include "omegaWTK/Media/VideoCodec.h"
+#include "omegaWTK/Media/VideoCapture.h"
+#include "omegaWTK/Media/AudioCapture.h"
+
 // Composition Exports
 #include "omegaWTK/Composition/Compositor.h"
 #include "omegaWTK/Composition/Layer.h"

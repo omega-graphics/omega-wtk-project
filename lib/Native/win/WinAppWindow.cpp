@@ -155,9 +155,14 @@ namespace OmegaWTK::Native::Win {
                 };
                 case WM_SIZE : {
                     if(isReady) {
+                        FLOAT scaleFactor = currentDpi/96.f;
                         RECT rc = getClientRect();
                         UINT height = rc.bottom - rc.top;
+                        UINT width = rc.right - rc.left;
                         updateAllHWNDPos(height,&raw_children);
+                        wndrect = OmegaWTK::Rect(wndrect.pos.x,wndrect.pos.y,FLOAT(width)/scaleFactor,FLOAT(height)/scaleFactor);
+                        auto params = new Native::WindowWillResize(wndrect);
+                        emitIfPossible(new NativeEvent(NativeEvent::WindowWillResize,params));
                     };
                     break;
                 };

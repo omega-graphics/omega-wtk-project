@@ -203,8 +203,13 @@ namespace OmegaWTK::Composition {
 
         DCVisualTree::Visual *rootV = (DCVisualTree::Visual *)tree->root_v.get();
         UINT rootVHeight = ((DXBDCompositionImageRenderTarget *)rootV->img.get())->rect.dimen.minHeight;
-        hr = rootV->visual->SetOpacityMode(DCOMPOSITION_OPACITY_MODE_LAYER);
-        hr = target->SetRoot(rootV->visual);
+
+        if(!updatePass){
+
+            hr = rootV->visual->SetOpacityMode(DCOMPOSITION_OPACITY_MODE_LAYER);
+            hr = target->SetRoot(rootV->visual);
+
+        }
 
         UINT dpi = GetDpiForWindow(((Native::Win::HWNDItem *)view->getNativePtr())->hwnd);
         FLOAT scaleFactor = FLOAT(dpi)/96.f;
@@ -229,8 +234,8 @@ namespace OmegaWTK::Composition {
                         MessageBoxA(GetForegroundWindow(),"Failed to set DComp Visual Content for Shadow",NULL,MB_OK);
                     };
                     IDCompositionShadowEffect *shadowEffect;
-                     hr = device->dcomp_device_2->CreateShadowEffect(&shadowEffect);
-                     if(FAILED(hr)){
+                    hr = device->dcomp_device_2->CreateShadowEffect(&shadowEffect);
+                    if(FAILED(hr)){
                         MessageBoxA(GetForegroundWindow(),"Failed to create Shadow Effect",NULL,MB_OK);
                     };
                     shadowEffect->SetStandardDeviation((params->radius/3.f));
@@ -258,16 +263,34 @@ namespace OmegaWTK::Composition {
 
                     // hr = shadowVisual->AddVisual(childV->visual,FALSE,NULL);
                    
+                   if(updatePass){
+                       hr = rootV->visual->RemoveVisual(childV->visual);
+                       hr = rootV->visual->RemoveVisual(childV->shadowVisual);
 
-                    hr = rootV->visual->AddVisual(shadowVisual,FALSE,NULL);
-                    if(FAILED(hr)){
+                       hr = rootV->visual->AddVisual(shadowVisual,FALSE,NULL);
+                       Core::SafeRelease(&childV->shadowVisual);
 
-                    };
+                       childV->shadowVisual = shadowVisual;
 
-                    hr = rootV->visual->AddVisual(childV->visual,TRUE,shadowVisual);
-                    if(FAILED(hr)){
+                       hr = rootV->visual->AddVisual(childV->visual,TRUE,childV->shadowVisual);
 
-                    };
+
+                   }
+                   else {
+
+                        hr = rootV->visual->AddVisual(shadowVisual,FALSE,NULL);
+                        if(FAILED(hr)){
+
+                        };
+
+                        hr = rootV->visual->AddVisual(childV->visual,TRUE,shadowVisual);
+                        if(FAILED(hr)){
+
+                        };
+
+                        childV->shadowVisual = shadowVisual;
+
+                   }
 
                     // Core::SharedPtr<BDCompositionImageRenderTarget> img = makeImageRenderTarget(__img->rect);
                     // Composition::Color b(Composition::Color::Black,0x00);
@@ -302,15 +325,15 @@ namespace OmegaWTK::Composition {
                     hr = childV->visual->SetOffsetY((rootVHeight - childV->pos.y - __img->rect.dimen.minHeight) * scaleFactor);
 
 
-                
+                    if(!updatePass){
 
-                    hr = childV->visual->SetOpacityMode(DCOMPOSITION_OPACITY_MODE_INHERIT);
+                        hr = childV->visual->SetOpacityMode(DCOMPOSITION_OPACITY_MODE_INHERIT);
 
-                    if(FAILED(hr)){
+                        
+
+                        hr = rootV->visual->AddVisual(childV->visual,FALSE,NULL);
 
                     };
-
-                    hr = rootV->visual->AddVisual(childV->visual,FALSE,NULL);
 
                 };
                 

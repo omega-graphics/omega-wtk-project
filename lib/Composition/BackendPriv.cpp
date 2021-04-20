@@ -157,81 +157,122 @@ namespace OmegaWTK::Composition {
     };
     void BackendImpl::doUpdate(){
 //         // MessageBoxA(HWND_DESKTOP,"Do Update","NOTE",MB_OK);
-//         auto & tree = visualTrees[currentLimb->renderTarget];
-//         auto & rootTarget = layerTargets[currentLimb->limbRoot];
+        auto & tree = visualTrees[currentLimb->renderTarget];
+        auto & context = deviceContexts[currentLimb->renderTarget];
+        auto rootTarget = std::shared_ptr<BDCompositionImageRenderTarget>(context->layerForRenderTarget(currentLimb->limbRoot));
 //         auto & rootLayer = currentLimb->limbRoot;
-//     #if defined(TARGET_WIN32)
-//         if(rootTarget->needsSwapChain()){
-//             rootTarget->redoSwapChain();
-//             auto r_visual = tree->makeVisual(rootTarget);
-//             tree->replaceRootVisual(r_visual);
-//         }
-//         else if(rootTarget->needsDeviceContext()){
-//             rootTarget->redoDeviceContext();
-//
-//         };
-//     #endif
-//         /// Redraw Visuals!
-//         rootTarget->clear(rootLayer->style->background);
-//         auto __visual_it = rootLayer->style->visuals.begin();
-//         while(__visual_it != rootLayer->style->visuals.end()){
-//             drawVisual(rootTarget.get(),__visual_it->get(),true);
-//             ++__visual_it;
-//         };
-//         rootTarget->commit();
-//        
-//     #if !defined(TARGET_WIN32)
-//         Core::SharedPtr<BDCompositionImage> img = rootTarget->getImg();
-//         auto effect_it = rootLayer->style->effects.begin();
-//         while(effect_it !=rootLayer->style->effects.end()){
-//             img->applyEffect(effect_it->get());
-//             ++effect_it;
-//         };
-//         img->commitEffects();
-//     #else
-//       auto effect_it = rootLayer->style->effects.begin();
-//         while(effect_it !=rootLayer->style->effects.end()){
-//             rootTarget->applyEffect(effect_it->get());
-//             ++effect_it;
-//         };
-//         rootTarget->commitEffects();
-//     #endif
-//
-//         auto v_it = currentLimb->begin();
-//         while(v_it != currentLimb->end()){
-//             auto child = v_it->get();
-//             auto & imgTarget = layerTargets[child];
-//     #if defined(TARGET_WIN32)
-//         if(imgTarget->needsSwapChain()){
-//             imgTarget->redoSwapChain();
-//             auto _visual = tree->makeVisual(imgTarget);
-//             tree->addVisual(_visual);
-//             tree->replaceVisualWithTargetPtr(imgTarget,_visual);
-//         }
-//         else if(imgTarget->needsDeviceContext()){
-//             imgTarget->redoDeviceContext();
-//
-//         };
-//     #endif
-//         /// Redraw Visuals!
-//             imgTarget->clear(child->style->background);
-//             auto __visual_it = child->style->visuals.begin();
-//             while(__visual_it != child->style->visuals.end()){
-//                 drawVisual(imgTarget.get(),__visual_it->get(),true);
-//                 ++__visual_it;
-//             };
-//             rootTarget->commit();
-//             Core::SharedPtr<BDCompositionImage> img = imgTarget->getImg();
-//             auto effect_it = child->style->effects.begin();
-//             while(effect_it != child->style->effects.end()){
-//                 img->applyEffect(effect_it->get());
-//                 ++effect_it;
-//             };
-//             img->commitEffects();
-//             ++v_it;
-//         };
-//
-//         global_device->renderVisualTreeToView(tree,currentLimb->renderTarget,true);
+
+    #if defined(TARGET_WIN32)
+        if(rootTarget->needsSwapChain()){
+            if(currentLimb->limbRoot->needsNativeResize) {
+                rootTarget->redoSwapChainWithNewSize(currentLimb->limbRoot->surface_rect);
+                currentLimb->limbRoot->needsNativeResize = false;
+            }
+            else
+                rootTarget->redoSwapChain();
+            auto r_visual = tree->makeVisual(rootTarget);
+            tree->replaceRootVisual(r_visual);
+        }
+        else if(rootTarget->needsDeviceContext()){
+            rootTarget->redoDeviceContext();
+
+        };
+    #endif
+
+        if(currentLimb->limbRoot->needsNativeResize) {
+            rootTarget->resizeBuffers(currentLimb->limbRoot->surface_rect);
+            currentLimb->limbRoot->needsNativeResize = false;
+        }
+        auto & rootLayer = currentLimb->limbRoot;
+
+        rootTarget->clear(rootLayer->style->background);
+        auto __visual_it = rootLayer->style->visuals.begin();
+        while(__visual_it != rootLayer->style->visuals.end()){
+            drawVisual(rootTarget.get(),*__visual_it,true);
+            ++__visual_it;
+        };
+        rootTarget->commit();
+       
+    #if !defined(TARGET_WIN32)
+        Core::SharedPtr<BDCompositionImage> img = rootTarget->getImg();
+        auto effect_it = rootLayer->style->effects.begin();
+        while(effect_it !=rootLayer->style->effects.end()){
+            img->applyEffect(effect_it->get());
+            ++effect_it;
+        };
+        img->commitEffects();
+    #else
+         auto effect_it = rootLayer->style->effects.begin();
+        while(effect_it !=rootLayer->style->effects.end()){
+            rootTarget->applyEffect(effect_it->get());
+            ++effect_it;
+        };
+        rootTarget->commitEffects();
+    #endif
+
+
+     {
+             /// TODO: Eventually Change to Branch Iteration Model!
+            auto it = currentLimb->begin();
+            while(it != currentLimb->end()){
+                 
+                Layer *layer = it->get();
+                auto imgTarget = context->layerForRenderTarget(layer);
+            #if defined(TARGET_WIN32)
+                if(imgTarget->needsSwapChain()){
+                    if(layer->needsNativeResize) {
+                        imgTarget->redoSwapChainWithNewSize(layer->surface_rect);
+                        layer->needsNativeResize = false;
+                    }
+                    else 
+                        imgTarget->redoSwapChain();
+                }  
+                else if(imgTarget->needsDeviceContext()){
+                    imgTarget->redoDeviceContext();
+
+                };
+            #endif
+
+                if(layer->needsNativeResize){
+                    imgTarget->resizeBuffers(layer->surface_rect);
+                    layer->needsNativeResize = false;
+                };
+
+                imgTarget->clear(layer->style->background);
+                auto __visual_it = layer->style->visuals.begin();
+                while(__visual_it != layer->style->visuals.end()){
+                     drawVisual(imgTarget,*__visual_it,false);
+                     ++__visual_it;
+                };
+        #if !defined(TARGET_WIN32)
+                imgTarget->commit();
+        #endif
+         #if defined(TARGET_WIN32)
+                auto effect_it = layer->style->effects.begin();
+                while(effect_it !=layer->style->effects.end()){
+                    imgTarget->applyEffect(effect_it->get());
+                    ++effect_it;
+                };
+                imgTarget->commitEffects();  
+                imgTarget->commit();
+                //  auto _visual = tree->makeVisual(imgTarget);
+         #else
+                 Core::SharedPtr<BDCompositionImage> img = imgTarget->getImg();
+                 auto effect_it = layer->style->effects.begin();
+                 while(effect_it !=layer->style->effects.end()){
+                     img->applyEffect(effect_it->get());
+                     ++effect_it;
+                 };
+                 img->commitEffects();
+                 auto _visual = visualTree->makeVisual(img);
+         #endif
+                //  std::cout << "Visual has been Created... Mounting child" << std::endl;
+                //  tree->replaceVisualWithTargetPtr(imgTarget,_visual);
+                 ++it;
+             };
+         }
+
+        context->renderVisualTreeToView(tree,currentLimb->renderTarget,true);
     };
 
     void BackendImpl::redoLayout(){

@@ -62,7 +62,7 @@ namespace OmegaWTK::Composition {
          void fillRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush);
          Core::SharedPtr<BDCompositionImage> createImageFromBitmapImage(Core::SharedPtr<Media::BitmapImage> &img, Core::Rect &newSize, unsigned int v_id);
          void drawImage(Core::SharedPtr<BDCompositionImage> &img, Core::Position pos);
-        
+        void resizeBuffers(Core::Rect & newRect);
         DXBDCompositionViewRenderTarget(DXBDCompositionDevice * device,Native::Win::HWNDItem *hwndItem);
         static Core::SharedPtr<BDCompositionViewRenderTarget> Create(DXBDCompositionDevice *device,Native::Win::HWNDItem *item);
         ~DXBDCompositionViewRenderTarget();
@@ -95,6 +95,8 @@ namespace OmegaWTK::Composition {
     public:
          void redoDeviceContext();
           void redoSwapChain();
+          void redoSwapChainWithNewSize(Core::Rect & newRect);
+          void resizeBuffers(Core::Rect & newRect);
          void frameRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush, unsigned int width);
          void frameRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush, unsigned int width);
          void fillRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush);

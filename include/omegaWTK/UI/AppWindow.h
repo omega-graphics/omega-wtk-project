@@ -72,6 +72,7 @@ class OMEGAWTK_EXPORT   AppWindowDelegate : public Native::NativeEventProcessor 
     protected:
        AppWindow * window;
         virtual void windowWillClose(Native::NativeEventPtr event);
+        virtual void windowWillResize(Core::Rect & nRect);
     };
 
 

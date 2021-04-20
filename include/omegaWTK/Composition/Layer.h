@@ -33,13 +33,14 @@ class View;
             Layer * parent_ptr;
             Core::Rect surface_rect;
             bool enabled;
+            bool needsNativeResize;
             Compositor *ownerCompositor;
             friend class Compositor;
             friend class BackendImpl;
             friend class LayerTree;
             void addSubLayer(SharedHandle<Layer> & layer);
             void removeSubLayer(SharedHandle<Layer> & layer);
-            public:
+        public:
             /// @name Base Functions
             /// @{
 //            Native::NativeItemPtr getTargetNativePtr(){return compTarget->native;};
@@ -47,6 +48,9 @@ class View;
 //                compTarget->style.reset(new Style(std::move(style)));
 //            };
 //            auto & getStyle(){return *compTarget->style;};
+
+            /// Resize the Layer with the new rect
+            void resize(Core::Rect & newRect);
             Core::Rect & getLayerRect(){return surface_rect;};
             void setEnabled(bool state){enabled = state;};
             bool isChildLayer(){return parent_ptr != nullptr;}

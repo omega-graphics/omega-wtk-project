@@ -18,6 +18,7 @@ class DCVisualTree : public BDCompositionVisualTree {
     public:
     struct Visual : Parent::Visual {
         IDCompositionVisual2 * visual;
+        IDCompositionVisual2 * shadowVisual = nullptr;
         Core::SharedPtr<BDCompositionImageRenderTarget> img;
         Core::Position pos;
         Visual(IDCompositionVisual2 *v,Core::SharedPtr<BDCompositionImageRenderTarget> &img,Core::Position &pos);

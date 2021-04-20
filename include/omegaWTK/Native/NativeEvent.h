@@ -36,6 +36,11 @@ public:
 
 typedef NativeEvent * NativeEventPtr;
 
+struct WindowWillResize {
+    Core::Rect rect;
+    WindowWillResize(Core::Rect rect);
+};
+
 typedef struct {
     
 } ViewHasLoaded;

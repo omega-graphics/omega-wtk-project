@@ -297,6 +297,10 @@ namespace OmegaWTK::Composition {
         };
     };
 
+    void DXBDCompositionViewRenderTarget::resizeBuffers(Core::Rect &newRect){
+
+    };
+
     DXBDCompositionViewRenderTarget::~DXBDCompositionViewRenderTarget(){
         Core::SafeRelease(&dxgi_surface);
         Core::SafeRelease(&dxgi_swap_chain);
@@ -417,6 +421,45 @@ namespace OmegaWTK::Composition {
         };
 
         direct2d_device_context->SetTarget(first_target.get());
+
+        recreateSwapChain = false;
+        recreateDeviceContext = false;
+        newTarget = true;
+    };
+
+    void DXBDCompositionImageRenderTarget::redoSwapChainWithNewSize(Core::Rect &newRect){
+        rect = newRect;
+        redoSwapChain();
+    };
+
+    void DXBDCompositionImageRenderTarget::resizeBuffers(Core::Rect &newRect){
+        rect = newRect;
+        dpi = GetDpiForWindow(GetForegroundWindow());
+        FLOAT scaleFactor = FLOAT(dpi)/96.f;
+        HRESULT hr;
+        hr = dxgi_swap_chain_3->ResizeBuffers(2,rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor, DXGI_FORMAT_UNKNOWN,DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING);
+        if(FAILED(hr)){
+            exit(1);
+        };
+
+        Core::SafeRelease(&dxgi_surface);
+        Core::SafeRelease(&direct2d_bitmap);
+
+        UINT idx = dxgi_swap_chain_3->GetCurrentBackBufferIndex();
+        hr = dxgi_swap_chain_3->GetBuffer(idx,IID_PPV_ARGS(&dxgi_surface));
+
+        if(FAILED(hr)){
+            std::stringstream ss;
+            ss << std::hex << hr;
+            /// Handle Error!
+            MessageBoxA(HWND_DESKTOP,(std::string("Failed to Begin Draw Surface.. ERROR:") + ss.str()).c_str(),NULL, MB_OK);
+        };
+
+        hr = direct2d_device_context->CreateBitmapFromDxgiSurface(dxgi_surface.get(),D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&direct2d_bitmap);
+        if(FAILED(hr)){
+            /// Handle Error!
+            MessageBoxA(HWND_DESKTOP,"Failed to Create Bitmap from DXGI Surface",NULL, MB_OK);
+        };
 
         recreateSwapChain = false;
         recreateDeviceContext = false;

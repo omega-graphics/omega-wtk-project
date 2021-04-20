@@ -117,6 +117,8 @@ namespace OmegaWTK {
             float angle;
             Rect(Position _pos,Dimensions _dimen,float angle = 0):pos(_pos),dimen(_dimen),angle(angle){};
         };
+
+        #define RECT_COMPONENTS(rect) rect.pos.x,rect.pos.y,rect.dimen.minWidth,rect.dimen.minHeight
     
         struct OMEGAWTK_EXPORT  RoundedRect : public Rect {
             unsigned radius_x;
