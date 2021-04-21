@@ -192,7 +192,7 @@ namespace OmegaWTK::Composition {
         if(!tree->hwndTarget.get()){
            hr = device->dcomp_device_1->CreateTargetForHwnd(hwndItem->hwnd,FALSE,&target);
            if(FAILED(hr)){
-               MessageBoxA(HWND_DESKTOP,"Failed to Create Target For HWND","NOTE",MB_OK);
+            //    MessageBoxA(HWND_DESKTOP,"Failed to Create Target For HWND","NOTE",MB_OK);
                // Handle Error
                // Dont't attach to hwndtarget!
            };
@@ -346,7 +346,7 @@ namespace OmegaWTK::Composition {
 
         hr = device->dcomp_device_1->Commit();
         if(FAILED(hr)){
-             MessageBoxA(HWND_DESKTOP,"Failed to Commit Changes","NOTE",MB_OK);
+            
         };
     };
 };

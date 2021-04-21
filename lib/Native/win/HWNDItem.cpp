@@ -166,11 +166,19 @@ namespace OmegaWTK::Native::Win {
             emitIfPossible(button_event_to_native_event(NativeEvent::RMouseUp,&pt));
             break;
         };
+        // case WM_SIZE : {
+        //     FLOAT scaleFactor = currentDpi/96.f;
+        //     UINT width = LOWORD(lParam);
+        //     UINT height = HIWORD(lParam);
+        //     wndrect.dimen.minHeight = height/scaleFactor;
+        //     wndrect.dimen.minHeight = width/scaleFactor;
+        //     break;
+        // }
         case WM_PAINT : {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd,&ps);
             
-            layerTreelimb->redraw();
+            // layerTreelimb->redraw();
 
             EndPaint(hwnd,&ps);
             break;
@@ -223,11 +231,11 @@ namespace OmegaWTK::Native::Win {
     void HWNDItem::resize(Core::Rect & newRect){
         this->wndrect = newRect;
 
-        auto rect = parent->wndrect;
+        auto & rect = parent->wndrect;
         UINT dpi = GetDpiForWindow(hwnd);
         FLOAT scaleFactor = FLOAT(dpi)/96.f;
         HDWP dp = BeginDeferWindowPos(1);
-        DeferWindowPos(dp,hwnd,hwnd,wndrect.pos.x * scaleFactor,(rect.dimen.minHeight - wndrect.pos.y - wndrect.dimen.minHeight) * scaleFactor,wndrect.dimen.minWidth * scaleFactor,wndrect.dimen.minHeight * scaleFactor,SWP_NOACTIVATE | SWP_NOZORDER);
+        DeferWindowPos(dp,hwnd,hwnd,wndrect.pos.x * scaleFactor,(rect.dimen.minHeight - wndrect.pos.y - wndrect.dimen.minHeight) * scaleFactor,wndrect.dimen.minWidth * scaleFactor,wndrect.dimen.minHeight * scaleFactor,SWP_NOZORDER);
         EndDeferWindowPos(dp);
     };
     RECT HWNDItem::getClientRect(){

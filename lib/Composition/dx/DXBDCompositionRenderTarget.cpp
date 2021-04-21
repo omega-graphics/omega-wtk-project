@@ -446,6 +446,10 @@ namespace OmegaWTK::Composition {
     };
 
     void DXBDCompositionImageRenderTarget::resizeBuffers(Core::Rect &newRect){
+        bool makeNewBitmap = false;
+        if((rect.dimen.minHeight < newRect.dimen.minHeight) || (rect.dimen.minWidth < newRect.dimen.minWidth)){
+            makeNewBitmap = true;
+        };
         rect = newRect;
         dpi = GetDpiForWindow(GetForegroundWindow());
         FLOAT scaleFactor = FLOAT(dpi)/96.f;
@@ -469,6 +473,22 @@ namespace OmegaWTK::Composition {
             /// Handle Error!
             MessageBoxA(HWND_DESKTOP,"Failed to Create Device Context",NULL, MB_OK);
         };
+
+        if(makeNewBitmap){
+
+            delete imgData;
+            Core::SafeRelease(&first_target);
+
+            imgData = new Byte[rect.dimen.minWidth * 4 * rect.dimen.minHeight * (scaleFactor * scaleFactor)];
+            hr = direct2d_device_context->CreateBitmap(D2D1::SizeU(rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor),imgData,rect.dimen.minWidth * 4 * scaleFactor,D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET,D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&first_target);
+            if(FAILED(hr)){
+                /// Handle Error!
+                MessageBoxA(HWND_DESKTOP,"Failed to Create Bitmap",NULL, MB_OK);
+            };
+
+        }
+
+
         /// Set Target to Bitmap (to be drawn to Back Buffer)
         direct2d_device_context->SetTarget(first_target.get());
 
@@ -764,7 +784,11 @@ namespace OmegaWTK::Composition {
     // };
 
     DXBDCompositionImageRenderTarget::~DXBDCompositionImageRenderTarget(){
-
+         delete imgData;
+         Core::SafeRelease(&first_target);
+         Core::SafeRelease(&dxgi_surface);
+        Core::SafeRelease(&direct2d_device_context);
+        Core::SafeRelease(&direct2d_bitmap);
     };
 
 };

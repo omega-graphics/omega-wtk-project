@@ -156,9 +156,8 @@ namespace OmegaWTK::Native::Win {
                 case WM_SIZE : {
                     if(isReady) {
                         FLOAT scaleFactor = currentDpi/96.f;
-                        RECT rc = getClientRect();
-                        UINT height = rc.bottom - rc.top;
-                        UINT width = rc.right - rc.left;
+                        UINT width = LOWORD(lParam);
+                        UINT height = HIWORD(lParam);
                         updateAllHWNDPos(height,&raw_children);
                         wndrect = OmegaWTK::Rect(wndrect.pos.x,wndrect.pos.y,FLOAT(width)/scaleFactor,FLOAT(height)/scaleFactor);
                         auto params = new Native::WindowWillResize(wndrect);
@@ -166,14 +165,14 @@ namespace OmegaWTK::Native::Win {
                     };
                     break;
                 };
-                case WM_SIZING : {
-                    if(isReady) {
-                        RECT rc = getClientRect();
-                        UINT height = rc.bottom - rc.top;
-                        updateAllHWNDPos(height,&raw_children);
-                    };
-                    break;
-                };
+                // case WM_SIZING : {
+                //     // if(isReady) {
+                //     //     RECT rc = getClientRect();
+                //     //     UINT height = rc.bottom - rc.top;
+                //     //     updateAllHWNDPos(height,&raw_children);
+                //     // };
+                //     break;
+                // };
                 case WM_PAINT : {
                     PAINTSTRUCT ps;
                     HDC hdc = BeginPaint(hwnd,&ps);

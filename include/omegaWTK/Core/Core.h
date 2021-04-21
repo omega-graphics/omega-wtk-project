@@ -116,6 +116,20 @@ namespace OmegaWTK {
             bool compare(Rect & other);
             float angle;
             Rect(Position _pos,Dimensions _dimen,float angle = 0):pos(_pos),dimen(_dimen),angle(angle){};
+            Rect(const Rect & other):pos(other.pos),dimen(other.dimen),angle(other.angle){};
+            Rect(Rect && other):pos(other.pos),dimen(other.dimen),angle(other.angle){};
+            inline Rect & operator=(Rect & other){
+                pos = other.pos;
+                dimen = other.dimen;
+                angle = other.angle;
+                return *this;
+            };
+            inline Rect & operator=(Rect && other){
+                pos = other.pos;
+                dimen = other.dimen;
+                angle = other.angle;
+                return *this;
+            };
         };
 
         #define RECT_COMPONENTS(rect) rect.pos.x,rect.pos.y,rect.dimen.minWidth,rect.dimen.minHeight
