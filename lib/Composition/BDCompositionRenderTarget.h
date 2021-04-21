@@ -86,6 +86,7 @@ public:
     #if !defined(TARGET_WIN32)
     virtual Core::SharedPtr<BDCompositionImage> getImg() = 0;
     #endif
+    virtual ~BDCompositionImageRenderTarget(){};
 };
 
 }

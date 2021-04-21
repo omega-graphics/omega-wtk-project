@@ -16,7 +16,7 @@ Core::SharedPtr<MTLBDCALayerTree> MTLBDCALayerTree::Create(MTLBDCompositionDevic
     return std::make_shared<MTLBDCALayerTree>(deviceContext);
 };
 
-Core::SharedPtr<BDCompositionVisualTree::Visual> MTLBDCALayerTree::makeVisual(Core::SharedPtr<BDCompositionImage> & img){
+Core::SharedPtr<BDCompositionVisualTree::Visual> MTLBDCALayerTree::makeVisual(Core::SharedPtr<BDCompositionImageRenderTarget> & imgTarget,Core::SharedPtr<BDCompositionImage> & img){
     MTLBDCompositionImage *mtlImg = (MTLBDCompositionImage *)img.get();
 //    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
 //    Core::Rect scaleTarget = Rect(mtlImg->n_rect.pos.x * scaleFactor,mtlImg->n_rect.pos.y * scaleFactor,mtlImg->n_rect.dimen.minWidth * scaleFactor,mtlImg->n_rect.dimen.minHeight * scaleFactor);
@@ -41,6 +41,36 @@ Core::SharedPtr<BDCompositionVisualTree::Visual> MTLBDCALayerTree::makeVisual(Co
     visual.metalLayer = metalLayer;
     visual.pos = mtlImg->n_rect.pos;
     visual.transformLayer = nullptr;
+    visual.imgTarget = imgTarget.get();
+    return std::make_shared<Visual>(std::move(visual));
+};
+
+Core::SharedPtr<BDCompositionVisualTree::Visual> MTLBDCALayerTree::makeVisual(BDCompositionImageRenderTarget * imgTarget,Core::SharedPtr<BDCompositionImage> & img){
+     MTLBDCompositionImage *mtlImg = (MTLBDCompositionImage *)img.get();
+//    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+//    Core::Rect scaleTarget = Rect(mtlImg->n_rect.pos.x * scaleFactor,mtlImg->n_rect.pos.y * scaleFactor,mtlImg->n_rect.dimen.minWidth * scaleFactor,mtlImg->n_rect.dimen.minHeight * scaleFactor);
+    auto caLayerRenderTarget = deviceContext->makeCALayerRenderTarget(mtlImg->n_rect);
+    Color bkgrd {Composition::Color::Black,0x00};
+    caLayerRenderTarget->clear(bkgrd);
+    caLayerRenderTarget->drawImage(img,Core::FPosition({0.f,0.f}));
+    caLayerRenderTarget->commit();
+    CAMetalLayer *metalLayer = caLayerRenderTarget->metalLayer;
+//    metalLayer.anchorPoint = CGPointMake(0.0,0.0);
+    if(mtlImg->dropShadow){
+        LayerEffect::DropShadowParams *params = (LayerEffect::DropShadowParams *)mtlImg->dropShadow->params;
+        metalLayer.shadowColor = color_to_ns_color(params->color).CGColor;
+        metalLayer.shadowOpacity = params->opacity;
+        metalLayer.shadowRadius = params->radius;
+        metalLayer.shadowOffset = CGSizeMake(params->x_offset,params->y_offset);
+    };
+    NSLog(@"Creating Visual");
+    Visual visual;
+    visual.attachTransformLayer = false;
+    visual.img = img;
+    visual.metalLayer = metalLayer;
+    visual.pos = mtlImg->n_rect.pos;
+    visual.transformLayer = nullptr;
+    visual.imgTarget = imgTarget;
     return std::make_shared<Visual>(std::move(visual));
 };
 
@@ -49,11 +79,29 @@ void MTLBDCALayerTree::setRootVisual(Core::SharedPtr<BDCompositionVisualTree::Vi
 };
 
 void MTLBDCALayerTree::replaceRootVisual(Core::SharedPtr<BDCompositionVisualTree::Visual> visual){
-    
+    MTLBDCALayerTree::Visual *_n_v = (MTLBDCALayerTree::Visual *)visual.get();
+    MTLBDCALayerTree::Visual *r_v = (MTLBDCALayerTree::Visual *)root_v.get();
+    r_v->img = _n_v->img;
+    r_v->attachTransformLayer = _n_v->attachTransformLayer;
+    r_v->pos = _n_v->pos;
+    r_v->metalLayer = _n_v->metalLayer;
+    r_v->transformLayer = _n_v->transformLayer;
 };
 
-void MTLBDCALayerTree::replaceVisualWithTargetPtr(Core::SharedPtr<BDCompositionImageRenderTarget> & imgTarget,Core::SharedPtr<BDCompositionVisualTree::Visual> visual){
-    
+void MTLBDCALayerTree::replaceVisualWithTargetPtr(BDCompositionImageRenderTarget * imgTarget,Core::SharedPtr<BDCompositionVisualTree::Visual> visual){
+    MTLBDCALayerTree::Visual *_n_v = (MTLBDCALayerTree::Visual *)visual.get();
+    for(auto & v : body){
+        MTLBDCALayerTree::Visual *_v = (MTLBDCALayerTree::Visual *)v.get();
+        if(_v->imgTarget == imgTarget){
+            _v->img = _n_v->img;
+            _v->attachTransformLayer = _n_v->attachTransformLayer;
+            _v->pos = _n_v->pos;
+            _v->metalLayer = _n_v->metalLayer;
+            _v->transformLayer = _n_v->transformLayer;
+            break;
+            return;
+        };
+    };
 };
 
 void MTLBDCALayerTree::addVisual(Core::SharedPtr<BDCompositionVisualTree::Visual> & visual){

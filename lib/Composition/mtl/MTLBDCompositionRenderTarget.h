@@ -381,17 +381,22 @@ public:
     MTLBDCompositionViewRenderTarget(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & rect);
     static Core::SharedPtr<MTLBDCompositionViewRenderTarget> Create(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & rect);
     void commit();
+    void resizeBuffers(Core::Rect & newRect);
 };
 
 class MTLBDCompositionImageRenderTarget : public MTLBDCompositionRenderTarget<BDCompositionImageRenderTarget> {
     id<MTLTexture> target;
     MTLTextureDescriptor *desc;
     Core::Rect rect;
+    bool needsResize;
 public:
+    void clear(Color &clear_color);
     MTLBDCompositionImageRenderTarget(MTLBDCompositionDeviceContext *deviceContext ,Core::Rect & rect,id<MTLTexture> target,MTLTextureDescriptor *desc);
     static Core::SharedPtr<BDCompositionImageRenderTarget> Create(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & rect,id<MTLTexture> target,MTLTextureDescriptor *desc);
     void commit();
+    void resizeBuffers(Core::Rect & newRect);
     Core::SharedPtr<BDCompositionImage> getImg();
+    // ~MTLBDCompositionImageRenderTarget();
 };
 
 };

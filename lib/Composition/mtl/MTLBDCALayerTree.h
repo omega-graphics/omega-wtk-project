@@ -24,6 +24,7 @@ namespace OmegaWTK::Composition {
         struct Visual : public Parent::Visual {
             CAMetalLayer *metalLayer;
             CATransformLayer *transformLayer;
+            BDCompositionImageRenderTarget * imgTarget;
             Core::SharedPtr<BDCompositionImage> img;
             Core::Position pos;
             bool attachTransformLayer;
@@ -31,10 +32,11 @@ namespace OmegaWTK::Composition {
     public:
         MTLBDCALayerTree(MTLBDCompositionDeviceContext *device);
         static Core::SharedPtr<MTLBDCALayerTree> Create(MTLBDCompositionDeviceContext *device);
-        Core::SharedPtr<Parent::Visual> makeVisual(Core::SharedPtr<BDCompositionImage> &img);
+        Core::SharedPtr<Parent::Visual> makeVisual(Core::SharedPtr<BDCompositionImageRenderTarget> & imgTarget,Core::SharedPtr<BDCompositionImage> &img);
+        Core::SharedPtr<Parent::Visual> makeVisual(BDCompositionImageRenderTarget *imgTarget,Core::SharedPtr<BDCompositionImage> &img);
         void setRootVisual(Core::SharedPtr<Parent::Visual> visual);
         void replaceRootVisual(Core::SharedPtr<Parent::Visual> visual);
-        void replaceVisualWithTargetPtr(Core::SharedPtr<BDCompositionImageRenderTarget> &imgTarget, Core::SharedPtr<Parent::Visual> visual);
+        void replaceVisualWithTargetPtr(BDCompositionImageRenderTarget * imgTarget, Core::SharedPtr<Parent::Visual> visual);
         void addVisual(Core::SharedPtr<Parent::Visual> & visual);
         void layout();
     };

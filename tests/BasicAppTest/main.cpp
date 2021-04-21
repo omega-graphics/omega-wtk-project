@@ -11,9 +11,11 @@ public:
         // panel->hide();
     };
     void windowWillResize(Core::Rect &nRect) {
+        std::cout << "NEW RECT: x:" << nRect.pos.x << " y:" << nRect.pos.y << " w:" << nRect.dimen.minWidth << " h:" << nRect.dimen.minHeight << std::endl;
         auto & widgetRect = panel->rect();
         widgetRect.dimen.minHeight = nRect.dimen.minHeight;
         panel->resize(widgetRect);
+        std::cout << "Widget did Resize" << std::endl;
         panel->refresh();
     };
 };

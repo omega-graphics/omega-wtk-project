@@ -157,8 +157,18 @@ void CocoaItem::disable(){
 
 void CocoaItem::resize(Core::Rect &newRect){
     rect = newRect;
+    CGRect r = core_rect_to_cg_rect(newRect);
     if(_ptr != nil){
-        [_ptr setFrame:core_rect_to_cg_rect(newRect)];
+        [_ptr setFrame:r];
+        [_ptr setBoundsOrigin:NSMakePoint(0,0)];
+        [_ptr setBoundsSize:r.size];
+        CALayer *layer = _ptr.layer;
+        layer.frame = r;
+        layer.position = _ptr.frame.origin;
+        layer.bounds = _ptr.bounds;
+    }
+    else {
+        [scrollView setFrame:r];
     }
      
 };

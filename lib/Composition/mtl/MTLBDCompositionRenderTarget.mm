@@ -250,6 +250,15 @@ void MTLBDCompositionViewRenderTarget::commit(){
     NSLog(@"Returning");
 };
 
+void MTLBDCompositionViewRenderTarget::resizeBuffers(Core::Rect &newRect){
+    rect = newRect;
+    CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+    auto rect = Native::Cocoa::core_rect_to_cg_rect(newRect);
+    metalLayer.frame = rect;
+    metalLayer.bounds = CGRectMake(0,0,rect.size.width,rect.size.height);
+    [metalLayer setDrawableSize:CGSizeMake(rect.size.width * scaleFactor,rect.size.height * scaleFactor)];
+};
+
 /// Metal Image Render Target!
 
 MTLBDCompositionImageRenderTarget::MTLBDCompositionImageRenderTarget(MTLBDCompositionDeviceContext * deviceContext,Core::Rect & rect,id<MTLTexture> target,MTLTextureDescriptor *desc):MTLBDCompositionRenderTarget(deviceContext,Color(0,0,0,0),rect),target(target),rect(rect),desc(desc){
@@ -259,6 +268,34 @@ MTLBDCompositionImageRenderTarget::MTLBDCompositionImageRenderTarget(MTLBDCompos
 
 Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionImageRenderTarget::Create(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & rect,id<MTLTexture> texture,MTLTextureDescriptor *desc){
     return std::make_shared<MTLBDCompositionImageRenderTarget>(deviceContext,rect,texture,desc);
+};
+
+void MTLBDCompositionImageRenderTarget::clear(Color &clear_color){
+    CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+    clearColor = clear_color;
+    // if(target != nil && desc != nil){
+    //     if(needsResize){
+    //         [target release];
+    //         desc.width = rect.dimen.minWidth * scaleFactor;
+    //         desc.height = rect.dimen.minHeight * scaleFactor;
+    //         target = [deviceContext->getParentDevice()->metal_device newTextureWithDescriptor:desc];
+    //     };
+    //     Byte *emptyBuffer = new Byte[desc.width * desc.height * 4];
+    //     [target replaceRegion:MTLRegionMake2D(0,0,desc.width,desc.height) mipmapLevel:0 withBytes:emptyBuffer bytesPerRow:desc.width * 4];
+    //     delete [] emptyBuffer;
+    // }
+    // else {
+        desc = [[MTLTextureDescriptor alloc] init];
+        desc.textureType = MTLTextureType2D;
+        desc.width = rect.dimen.minWidth * scaleFactor;
+        desc.height = rect.dimen.minHeight * scaleFactor;
+        desc.usage = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget | MTLTextureUsageShaderWrite;
+        desc.storageMode = MTLStorageModeShared;
+        target = [deviceContext->getParentDevice()->metal_device newTextureWithDescriptor:desc];
+        Byte *emptyBuffer = new Byte[desc.width * desc.height * 4];
+        [target replaceRegion:MTLRegionMake2D(0,0,desc.width,desc.height) mipmapLevel:0 withBytes:emptyBuffer bytesPerRow:desc.width * 4];
+        delete [] emptyBuffer;
+    // }
 };
 
 void MTLBDCompositionImageRenderTarget::commit(){
@@ -276,8 +313,8 @@ void MTLBDCompositionImageRenderTarget::commit(){
         renderPassDesc.colorAttachments[0].storeAction = MTLStoreActionStore;
         renderPassDesc.colorAttachments[0].texture = target;
         renderPassDesc.defaultRasterSampleCount = 1;
-        renderPassDesc.renderTargetWidth = target.width;
-        renderPassDesc.renderTargetHeight = target.height;
+        renderPassDesc.renderTargetWidth = rect.dimen.minWidth * scaleFactor;
+        renderPassDesc.renderTargetHeight = rect.dimen.minHeight * scaleFactor;
         renderPassDesc.renderTargetArrayLength = 1;
         
         MTLRenderPassDescriptor *renderPassDesc2 = [MTLRenderPassDescriptor renderPassDescriptor];
@@ -286,8 +323,8 @@ void MTLBDCompositionImageRenderTarget::commit(){
         renderPassDesc2.colorAttachments[0].storeAction = MTLStoreActionStore;
         renderPassDesc2.colorAttachments[0].texture = target;
         renderPassDesc2.defaultRasterSampleCount = 1;
-        renderPassDesc2.renderTargetWidth = target.width;
-        renderPassDesc2.renderTargetHeight = target.height;
+        renderPassDesc2.renderTargetWidth = rect.dimen.minWidth * scaleFactor;
+        renderPassDesc2.renderTargetHeight = rect.dimen.minHeight * scaleFactor;
         renderPassDesc2.renderTargetArrayLength = 1;
         id<MTLCommandBuffer> finalCommandBuffer = deviceContext->makeNewMTLCommandBuffer();
 //        [finalCommandBuffer encodeWaitForEvent:deviceContext->currentEvent() value:deviceContext->bufferCount];
@@ -319,10 +356,28 @@ void MTLBDCompositionImageRenderTarget::commit(){
         [finalCommandBuffer enqueue];
 //        [finalCommandBuffer waitUntilCompleted];
     }
+    textures.clear();
+    commandBuffers.clear();
+    vertexBuffers.clear();
+    // target = nil;
+    // desc = nil;
+};
+
+void MTLBDCompositionImageRenderTarget::resizeBuffers(Core::Rect &newRect){
+    if(rect.dimen.minWidth < newRect.dimen.minWidth || rect.dimen.minHeight < newRect.dimen.minHeight){
+        needsResize = true;
+    };
+    rect = newRect;
 };
 
 Core::SharedPtr<BDCompositionImage> MTLBDCompositionImageRenderTarget::getImg(){
     return MTLBDCompositionImage::Create(deviceContext,rect,target,desc);
 };
+
+// MTLBDCompositionImageRenderTarget::~MTLBDCompositionImageRenderTarget(){
+//     // textures.clear();
+//     // commandBuffers.clear();
+//     // vertexBuffers.clear();
+// };
 
 };

@@ -397,7 +397,7 @@ Core::UniquePtr<ImgCodec> obtainCodecForImageFormat(BitmapImage::Format &format,
     switch (format) {
         case BitmapImage::PNG:
         {
-            return std::make_unique<PNGCodec>(in,img);
+            // return std::make_unique<PNGCodec>(in,img);
             break;
         }
         case BitmapImage::TIFF:

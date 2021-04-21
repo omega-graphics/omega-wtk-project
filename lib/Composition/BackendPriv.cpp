@@ -103,7 +103,7 @@ namespace OmegaWTK::Composition {
             ++effect_it;
         };
         rootImg->commitEffects();
-        auto visual = visualTree->makeVisual(rootImg);
+        auto visual = visualTree->makeVisual(rootImgTarget,rootImg);
     #endif
         std::cout << "Visual has been Created... Mounting root" << std::endl;
         visualTree->setRootVisual(visual);
@@ -140,7 +140,7 @@ namespace OmegaWTK::Composition {
                      ++effect_it;
                  };
                  img->commitEffects();
-                 auto _visual = visualTree->makeVisual(img);
+                 auto _visual = visualTree->makeVisual(imgTarget,img);
          #endif
                  std::cout << "Visual has been Created... Mounting child" << std::endl;
                  visualTree->addVisual(_visual);
@@ -202,6 +202,8 @@ namespace OmegaWTK::Composition {
             ++effect_it;
         };
         img->commitEffects();
+        auto _root_v = tree->makeVisual(rootTarget,img);
+        tree->replaceRootVisual(_root_v);
     #else
          auto effect_it = rootLayer->style->effects.begin();
         while(effect_it !=rootLayer->style->effects.end()){
@@ -265,15 +267,17 @@ namespace OmegaWTK::Composition {
                      ++effect_it;
                  };
                  img->commitEffects();
-                 auto _visual = visualTree->makeVisual(img);
+                 auto _visual = tree->makeVisual(imgTarget,img);
+                tree->replaceVisualWithTargetPtr(imgTarget,_visual);
          #endif
-                //  std::cout << "Visual has been Created... Mounting child" << std::endl;
+                 std::cout << "Visual has been Created... Mounting child" << std::endl;
                 //  tree->replaceVisualWithTargetPtr(imgTarget,_visual);
                  ++it;
              };
          }
 
         context->renderVisualTreeToView(tree,currentLimb->renderTarget,true);
+        std::cout << "Rendered Visual Tree" << std::endl;
         // MessageBoxA(HWND_DESKTOP,"Will Return","NOTE",MB_OK);
     };
 

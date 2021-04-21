@@ -228,7 +228,7 @@ Core::SharedPtr<BDCompositionVisualTree> MTLBDCompositionDeviceContext::createVi
 
 void MTLBDCompositionDeviceContext::renderVisualTreeToView(Core::SharedPtr<BDCompositionVisualTree> & visualTree,ViewRenderTarget *renderTarget,bool updatePass){
         
-        NSLog(@"Buffer Count:%i",buffers.count);
+        NSLog(@"Buffer Count:%lu",buffers.count);
         for(id<MTLCommandBuffer> buffer in buffers){
             [buffer addCompletedHandler:^(id<MTLCommandBuffer> _buffer){
                 auto idx = [buffers indexOfObject:_buffer];
@@ -251,36 +251,52 @@ void MTLBDCompositionDeviceContext::renderVisualTreeToView(Core::SharedPtr<BDCom
     //        [viewLayer addSublayer:root->transformLayer];
     //    }
     //    else {
-            [viewLayer addSublayer:root->metalLayer];
-            root->metalLayer.anchorPoint = CGPointMake(0.0,0.0);
-            root->metalLayer.position = CGPointMake(root->pos.x,root->pos.y);
-    //        NSLog(@"Opacity Shit:%f",root->metalLayer.opacity);
-            [root->metalLayer setNeedsDisplayOnBoundsChange:YES];
-            [root->metalLayer setNeedsDisplay];
-            [root->metalLayer setNeedsLayout];
-    //    }
-        
-        NSLog(@"View Layer's Pos: {x:%f ,y:%f}",viewLayer.position.x,viewLayer.position.y);
-        NSLog(@"Metal Layer's Pos: {x:%f ,y:%f}",root->metalLayer.position.x,root->metalLayer.position.y);
-        auto visual_it = caLayerTree->body.begin();
-        while(visual_it != caLayerTree->body.end()){
-            auto _v = (MTLBDCALayerTree::Visual *)visual_it->get();
-            [root->metalLayer addSublayer:_v->metalLayer];
-            _v->metalLayer.anchorPoint = CGPointMake(0.0,0.0);
-            _v->metalLayer.position = CGPointMake(_v->pos.x,_v->pos.y);
-            NSLog(@"View Layer's Pos: {x:%f ,y:%f}",root->metalLayer.position.x,root->metalLayer.position.y);
-            NSLog(@"Metal Layer's Pos: {x:%f ,y:%f}",_v->metalLayer.position.x,_v->metalLayer.position.y);
-            NSLog(@"Layer Rect: {x:%f,y:%f,w:%f,h:%f",_v->metalLayer.bounds.origin.x,_v->metalLayer.bounds.origin.y,_v->metalLayer.bounds.size.width,_v->metalLayer.bounds.size.height);
-            ++visual_it;
-            [_v->metalLayer setNeedsDisplay];
-            [_v->metalLayer setNeedsLayout];
-    //        [_v->metalLayer layoutIfNeeded];
-            NSLog(@"SuperLayer: %@",_v->metalLayer.superlayer);
-        };
+        // if(updatePass){
+        //     [viewLayer setSublayers:@[]];
+        // };
+        // if(!updatePass){
+                [viewLayer addSublayer:root->metalLayer];
+        // }
+                root->metalLayer.anchorPoint = CGPointMake(0.0,0.0);
+                root->metalLayer.position = CGPointMake(root->pos.x,root->pos.y);
+        //        NSLog(@"Opacity Shit:%f",root->metalLayer.opacity);
+                [root->metalLayer setNeedsDisplayOnBoundsChange:YES];
+                [root->metalLayer setNeedsDisplay];
+                [root->metalLayer setNeedsLayout];
+        //    }
+            
+            NSLog(@"View Layer's Pos: {x:%f ,y:%f}",viewLayer.position.x,viewLayer.position.y);
+            NSLog(@"Metal Layer's Pos: {x:%f ,y:%f}",root->metalLayer.position.x,root->metalLayer.position.y);
+            auto visual_it = caLayerTree->body.begin();
+            while(visual_it != caLayerTree->body.end()){
+                auto _v = (MTLBDCALayerTree::Visual *)visual_it->get();
+                //  if(!updatePass){
+                    [root->metalLayer addSublayer:_v->metalLayer];
+                //  }
+                //  else {
+                 
+                //  }
+                _v->metalLayer.anchorPoint = CGPointMake(0.0,0.0);
+                _v->metalLayer.position = CGPointMake(_v->pos.x,_v->pos.y);
+                NSLog(@"View Layer's Pos: {x:%f ,y:%f}",root->metalLayer.position.x,root->metalLayer.position.y);
+                NSLog(@"Metal Layer's Pos: {x:%f ,y:%f}",_v->metalLayer.position.x,_v->metalLayer.position.y);
+                NSLog(@"Layer Rect: {x:%f,y:%f,w:%f,h:%f",_v->metalLayer.bounds.origin.x,_v->metalLayer.bounds.origin.y,_v->metalLayer.bounds.size.width,_v->metalLayer.bounds.size.height);
+                ++visual_it;
+                [_v->metalLayer setNeedsDisplay];
+                [_v->metalLayer setNeedsLayout];
+        //        [_v->metalLayer layoutIfNeeded];
+                NSLog(@"SuperLayer: %@",_v->metalLayer.superlayer);
+            };
     //    [viewLayer setNeedsLayout];
     //    [viewLayer setNeedsDisplay];
     //    [viewLayer setContentsScale:[NSScreen mainScreen].backingScaleFactor];
         /// Reset Buffer Count after final Commit
+        // }
+        // else {
+        //     caLayerTree->layout();
+        // };
+
+    [buffers removeAllObjects];
     bufferCount = 0;
 };
 
