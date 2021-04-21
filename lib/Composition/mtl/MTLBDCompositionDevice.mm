@@ -251,9 +251,9 @@ void MTLBDCompositionDeviceContext::renderVisualTreeToView(Core::SharedPtr<BDCom
     //        [viewLayer addSublayer:root->transformLayer];
     //    }
     //    else {
-        // if(updatePass){
-        //     [viewLayer setSublayers:@[]];
-        // };
+        if(updatePass){
+            [viewLayer setSublayers:@[]];
+        };
         // if(!updatePass){
                 [viewLayer addSublayer:root->metalLayer];
         // }

@@ -287,8 +287,8 @@ void MTLBDCompositionImageRenderTarget::clear(Color &clear_color){
     // else {
         desc = [[MTLTextureDescriptor alloc] init];
         desc.textureType = MTLTextureType2D;
-        desc.width = rect.dimen.minWidth * scaleFactor;
-        desc.height = rect.dimen.minHeight * scaleFactor;
+        desc.width = float(rect.dimen.minWidth) * scaleFactor;
+        desc.height = float(rect.dimen.minHeight) * scaleFactor;
         desc.usage = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget | MTLTextureUsageShaderWrite;
         desc.storageMode = MTLStorageModeShared;
         target = [deviceContext->getParentDevice()->metal_device newTextureWithDescriptor:desc];
@@ -364,9 +364,12 @@ void MTLBDCompositionImageRenderTarget::commit(){
 };
 
 void MTLBDCompositionImageRenderTarget::resizeBuffers(Core::Rect &newRect){
-    if(rect.dimen.minWidth < newRect.dimen.minWidth || rect.dimen.minHeight < newRect.dimen.minHeight){
+    CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+    if(rect.dimen.minWidth < (newRect.dimen.minWidth *= scaleFactor) || rect.dimen.minHeight < (newRect.dimen.minHeight *= scaleFactor)){
         needsResize = true;
     };
+    newRect.pos.x *= scaleFactor;
+    newRect.pos.y *= scaleFactor;
     rect = newRect;
 };
 
