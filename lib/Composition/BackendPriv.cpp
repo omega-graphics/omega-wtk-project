@@ -156,10 +156,10 @@ namespace OmegaWTK::Composition {
         deviceContexts.insert(std::make_pair(currentLimb->renderTarget,context));
     };
     void BackendImpl::doUpdate(){
-//         // MessageBoxA(HWND_DESKTOP,"Do Update","NOTE",MB_OK);
+        // MessageBoxA(HWND_DESKTOP,"Do Update","NOTE",MB_OK);
         auto & tree = visualTrees[currentLimb->renderTarget];
         auto & context = deviceContexts[currentLimb->renderTarget];
-        auto rootTarget = std::shared_ptr<BDCompositionImageRenderTarget>(context->layerForRenderTarget(currentLimb->limbRoot));
+        auto rootTarget = context->layerForRenderTarget(currentLimb->limbRoot);
 //         auto & rootLayer = currentLimb->limbRoot;
 
     #if defined(TARGET_WIN32)
@@ -170,7 +170,8 @@ namespace OmegaWTK::Composition {
             }
             else
                 rootTarget->redoSwapChain();
-            auto r_visual = tree->makeVisual(rootTarget);
+            std::shared_ptr<BDCompositionImageRenderTarget> t(rootTarget);
+            auto r_visual = tree->makeVisual(t);
             tree->replaceRootVisual(r_visual);
         }
         else if(rootTarget->needsDeviceContext()){
@@ -188,7 +189,7 @@ namespace OmegaWTK::Composition {
         rootTarget->clear(rootLayer->style->background);
         auto __visual_it = rootLayer->style->visuals.begin();
         while(__visual_it != rootLayer->style->visuals.end()){
-            drawVisual(rootTarget.get(),*__visual_it,true);
+            drawVisual(rootTarget,*__visual_it,true);
             ++__visual_it;
         };
         rootTarget->commit();
@@ -273,6 +274,7 @@ namespace OmegaWTK::Composition {
          }
 
         context->renderVisualTreeToView(tree,currentLimb->renderTarget,true);
+        // MessageBoxA(HWND_DESKTOP,"Will Return","NOTE",MB_OK);
     };
 
     void BackendImpl::redoLayout(){

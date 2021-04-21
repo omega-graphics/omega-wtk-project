@@ -52,8 +52,7 @@ namespace OmegaWTK::Composition {
     void DCVisualTree::replaceVisualWithTargetPtr(Core::SharedPtr<BDCompositionImageRenderTarget> &imgTarget,Core::SharedPtr<Parent::Visual>  visual){
         for(auto & v : body){
             Visual *_v = (Visual *)v.get();
-            if(_v->img.get() == imgTarget.get()){
-                v.reset();
+            if(_v->img == imgTarget){
                 v = visual;
                 break;
             };

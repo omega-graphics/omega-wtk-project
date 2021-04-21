@@ -2,11 +2,11 @@
 #include "NativePrivate/win/HWNDItem.h"
 #include "WinAppWindow.h"
 #include "omegaWTK/Native/NativeApp.h"
-
+#include <sstream>
 #pragma comment(lib,"gdi32.lib")
 
 namespace OmegaWTK::Native::Win {
-
+    
     void updateAllHWNDPos(UINT root_wnd_height,Core::Vector<HWND> * hwnds_to_update){
      RECT rc;
      auto it = hwnds_to_update->begin();
@@ -133,11 +133,18 @@ namespace OmegaWTK::Native::Win {
     HWND HWNDFactory::makeAppWindow(ATOM atom,LPCSTR name,Core::Rect & rect,DWORD base_style,DWORD ext_style,LPVOID custom_params){
         RECT rc;
         GetClientRect(HWND_DESKTOP,&rc);
-        UINT dpi = GetDpiFromDpiAwarenessContext(GetThreadDpiAwarenessContext());
+        UINT dpi = GetDpiForWindow(GetForegroundWindow());
         // MessageBox(HWND_DESKTOP,"Making Window from Atom","NOTE",MB_OK);
         FLOAT scaleFactor = FLOAT(dpi)/96.f;
-        HWND hwnd = CreateWindowA(MAKEINTATOM(atom),name,base_style,CW_USEDEFAULT,CW_USEDEFAULT,int(rect.dimen.minWidth),int(rect.dimen.minHeight),HWND_DESKTOP,NULL,hInst,custom_params);
-        // MessageBox(HWND_DESKTOP,"Created Window!","NOTE",MB_OK);
+        
+        auto y = rc.bottom - ((rect.dimen.minHeight - rect.pos.y) * scaleFactor);
+        HWND hwnd = CreateWindowA(MAKEINTATOM(atom),name,base_style,CW_USEDEFAULT,CW_USEDEFAULT,rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor,HWND_DESKTOP,NULL,hInst,custom_params);
+        std::ostringstream ss;
+        RECT wndRECT;
+        GetClientRect(hwnd,&wndRECT);
+        // SetWindowPos(hwnd,hwnd,rect.pos.x * scaleFactor,y,float(rect.dimen.minWidth) * scaleFactor,float(rect.dimen.minHeight) * scaleFactor,SWP_NOZORDER);
+        // ss << "SCALEFACTOR:" << dpi << " .\nCreated Window!" << "{ H:" << wndRECT.bottom << " W:" << wndRECT.right << " }" << std::endl;
+        // MessageBox(HWND_DESKTOP,ss.str().c_str(),"NOTE",MB_OK);
         return hwnd;
     };
     ATOM HWNDFactory::registerWindow(){

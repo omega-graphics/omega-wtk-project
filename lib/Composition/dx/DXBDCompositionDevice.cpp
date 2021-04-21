@@ -267,13 +267,16 @@ namespace OmegaWTK::Composition {
                        hr = rootV->visual->RemoveVisual(childV->visual);
                        hr = rootV->visual->RemoveVisual(childV->shadowVisual);
 
-                       hr = rootV->visual->AddVisual(shadowVisual,FALSE,NULL);
+                        // MessageBoxA(HWND_DESKTOP,"Removed Visuals. Releasing Shadow Visual","NOTE",MB_OK);
                        Core::SafeRelease(&childV->shadowVisual);
+
+                        // MessageBoxA(HWND_DESKTOP,"Released Shadow Visual","NOTE",MB_OK);
+
+                       hr = rootV->visual->AddVisual(shadowVisual,FALSE,NULL);
 
                        childV->shadowVisual = shadowVisual;
 
                        hr = rootV->visual->AddVisual(childV->visual,TRUE,childV->shadowVisual);
-
 
                    }
                    else {
@@ -341,6 +344,9 @@ namespace OmegaWTK::Composition {
             };
         };
 
-        device->dcomp_device_1->Commit();
+        hr = device->dcomp_device_1->Commit();
+        if(FAILED(hr)){
+             MessageBoxA(HWND_DESKTOP,"Failed to Commit Changes","NOTE",MB_OK);
+        };
     };
 };

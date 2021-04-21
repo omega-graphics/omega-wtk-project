@@ -312,6 +312,8 @@ namespace OmegaWTK::Composition {
     };
 
     void DXBDCompositionImageRenderTarget::redoDeviceContext(){
+       FLOAT scaleFactor = FLOAT(dpi)/96.f;
+
         hr = device->direct2d_device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,&direct2d_device_context);
         if(FAILED(hr)){
             /// Handle Error!
@@ -319,7 +321,18 @@ namespace OmegaWTK::Composition {
         hr = direct2d_device_context->CreateBitmapFromDxgiSurface(dxgi_surface.get(),D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&direct2d_bitmap);
         if(FAILED(hr)){
             /// Handle Error!
+            MessageBoxA(HWND_DESKTOP,"Failed to Create Main Bitmap",NULL, MB_OK);
         };
+
+        // // delete imgData;
+        // // Core::SafeRelease(&first_target);
+
+        // imgData = new unsigned char[rect.dimen.minWidth * 4 * rect.dimen.minHeight * (scaleFactor * scaleFactor)];
+        // hr = direct2d_device_context->CreateBitmap(D2D1::SizeU(rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor),imgData,rect.dimen.minWidth * 4 * scaleFactor,D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET,D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM,D2D1_ALPHA_MODE_PREMULTIPLIED),dpi,dpi),&first_target);
+        // if(FAILED(hr)){
+        //     /// Handle Error!
+        //     MessageBoxA(HWND_DESKTOP,"Failed to Create Bitmap",NULL, MB_OK);
+        // };
 
         direct2d_device_context->SetTarget(direct2d_bitmap.get());
 
@@ -437,13 +450,28 @@ namespace OmegaWTK::Composition {
         dpi = GetDpiForWindow(GetForegroundWindow());
         FLOAT scaleFactor = FLOAT(dpi)/96.f;
         HRESULT hr;
-        hr = dxgi_swap_chain_3->ResizeBuffers(2,rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor, DXGI_FORMAT_UNKNOWN,DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING);
-        if(FAILED(hr)){
-            exit(1);
-        };
 
         Core::SafeRelease(&dxgi_surface);
         Core::SafeRelease(&direct2d_bitmap);
+        Core::SafeRelease(&direct2d_device_context);
+
+        hr = dxgi_swap_chain_3->ResizeBuffers(0,int(rect.dimen.minWidth * scaleFactor),int(rect.dimen.minHeight * scaleFactor), DXGI_FORMAT_UNKNOWN,0);
+        if(FAILED(hr)){
+            std::stringstream ss;
+            ss << std::hex << "ERROR:" << hr;
+
+            MessageBoxA(HWND_DESKTOP,ss.str().c_str(),NULL,MB_OK);
+            exit(1);
+        };
+
+        hr = device->direct2d_device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,&direct2d_device_context);
+        if(FAILED(hr)){
+            /// Handle Error!
+            MessageBoxA(HWND_DESKTOP,"Failed to Create Device Context",NULL, MB_OK);
+        };
+        /// Set Target to Bitmap (to be drawn to Back Buffer)
+        direct2d_device_context->SetTarget(first_target.get());
+
 
         UINT idx = dxgi_swap_chain_3->GetCurrentBackBufferIndex();
         hr = dxgi_swap_chain_3->GetBuffer(idx,IID_PPV_ARGS(&dxgi_surface));
@@ -675,8 +703,9 @@ namespace OmegaWTK::Composition {
         // Core::SafeRelease(&direct2d_bitmap);
         // Core::SafeRelease(&temp1);
         // Core::SafeRelease(&premultiAlpha);
+        // Core::SafeRelease(&first_target);
         // delete imgData;
-            
+        // recreateDeviceContext = true;
 
     };
 

@@ -58,6 +58,7 @@ namespace OmegaWTK::Composition {
         friend class LayerTree;
         friend class WindowLayer;
         void __drawChildLimbs(LayerTree::Limb *limb,LayerTree *layerTree);
+        void __updateChildLimbs(LayerTree::Limb *limb,LayerTree *layerTree);
         /// Updates a Requested layer
         OMEGAWTK_DEPRECATED void updateRequestedLayer(Layer *layer);
         void updateRequestedLayerTreeLimb(LayerTree::Limb *limb);
@@ -65,6 +66,7 @@ namespace OmegaWTK::Composition {
         void layoutLayerTreeLimb(LayerTree::Limb *limb);
         public:
 //        void scheduleCommand(CompositionRenderCommand command);
+        void updateLayerTree(LayerTree * tree);
         void prepareDraw(LayerTree *tree);
         void prepareDrawWindow(WindowLayer *layer);
         void prepareCleanup();

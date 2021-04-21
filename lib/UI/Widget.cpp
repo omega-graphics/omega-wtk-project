@@ -28,6 +28,10 @@ SharedHandle<View> Widget::makeCanvasView(const Core::Rect & rect,View *parent){
 //    return std::make_shared<VideoView>(rect,compositor,parent);
 //};
 
+Core::Rect & Widget::rect(){
+    return rootView->getRect();
+};
+
 void Widget::show(){
     rootView->renderTarget->getNativePtr()->enable();
     WIDGET_NOTIFY_OBSERVERS_SHOW();
@@ -35,6 +39,10 @@ void Widget::show(){
 void Widget::hide(){
     rootView->renderTarget->getNativePtr()->disable();
     WIDGET_NOTIFY_OBSERVERS_HIDE();
+};
+
+void Widget::refresh(){
+    compositor->updateLayerTree(layerTree.get());
 };
 
 void Widget::addObserver(WidgetObserver * observer){

@@ -8,10 +8,13 @@ class MyWindowDelegate : public AppWindowDelegate {
 public:
     MyWindowDelegate(AppInst *app,SharedHandle<Widget> panel):app(app),panel(panel){};
     void windowWillClose(Native::NativeEventPtr event){
-        
+        // panel->hide();
     };
     void windowWillResize(Core::Rect &nRect) {
-        
+        auto & widgetRect = panel->rect();
+        widgetRect.dimen.minHeight = nRect.dimen.minHeight;
+        panel->resize(widgetRect);
+        panel->refresh();
     };
 };
 
@@ -24,7 +27,7 @@ int omegaWTKMain(AppInst *app){
     // f = Composition::FontEngine::instance->CreateFont(fontDesc);
     // std::cout << "Hello World" << std::endl;
     
-    auto panel = make<UI::Panel>(OmegaWTK::Rect(0,0,500,500));
+    auto panel = make<UI::Panel>(OmegaWTK::Rect(0,0,500,1000));
 
     panel->show();
 

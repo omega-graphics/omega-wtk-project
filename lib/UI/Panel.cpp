@@ -15,16 +15,27 @@ namespace OmegaWTK::UI {
         auto shadow = make<Composition::LayerEffect>(LAYER_EFFECT_DROPSHADOW(-5.0,-5.0,20,1.0,1.0,Composition::Color::Black));
         layerStyle->addEffect(shadow);
         visiblelayerStyle = layerStyle;
-        auto layer = makeLayer(OmegaWTK::Rect(0,0,rect.dimen.minWidth,rect.dimen.minHeight));
-        layer->setStyle(layerStyle);
-        rootView->getLayerTreeLimb()->addLayer(layer);
+        visibleLayer = makeLayer(OmegaWTK::Rect(0,0,rect.dimen.minWidth,rect.dimen.minHeight));
+        visibleLayer->setStyle(layerStyle);
+        rootView->getLayerTreeLimb()->addLayer(visibleLayer);
     };
 
     void Panel::resize(Core::Rect &newRect){
+        /// Call if using default style..
         /// 1. Resize Native View.
         rootView->resize(newRect);
         /// 2. Resize Transparent Root Layer.
-        rootView->getLayerTreeLimb()->getRootLayer();
+        rootView->getLayerTreeLimb()->getRootLayer()->resize(newRect);
+        /// 3. Resize Visible Layer.
+        visibleLayer->resize(newRect);
+        /// 4. Resize Visuals in Visible Layer Style.
+        {
+           auto roundedRect = visiblelayerStyle->getVisualAtIndex<Composition::Visual::RoundedRectParams>(0);
+           roundedRect->rect.pos.x = newRect.pos.x + 25;
+           roundedRect->rect.pos.y = newRect.pos.y + 25;
+           roundedRect->rect.dimen.minWidth = newRect.dimen.minWidth - 50;
+           roundedRect->rect.dimen.minHeight = newRect.dimen.minHeight - 50;
+        }
     };
 
     void Panel::setAnimator(SharedHandle<ViewAnimator> &viewAnimator){
@@ -32,9 +43,6 @@ namespace OmegaWTK::UI {
     };
     void Panel::setStyle(SharedHandle<Composition::LayerStyle> &style){
         visiblelayerStyle = style;
-        auto & rect = rootView->getRect();
-        auto layer = makeLayer(OmegaWTK::Rect(0,0,rect.dimen.minWidth,rect.dimen.minHeight));
-        layer->setStyle(style);
-        rootView->getLayerTreeLimb()->addLayer(layer);
+        visibleLayer->setStyle(style);
     };
 }; 

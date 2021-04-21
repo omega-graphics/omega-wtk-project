@@ -59,6 +59,10 @@ private:
     friend class AppWindow;
     friend class AppWindowManager;
 public:
+    /**
+     Get the Widget's root View's rect
+    */
+    Core::Rect & rect();
     void setParentView(View *view);
     /**
      Add a WidgetObserver to be notified.
@@ -83,7 +87,7 @@ public:
     /**
      Redraws the Widget with the current state of its layer tree.
      */
-    void refresh();
+    virtual void refresh();
     Widget(const Core::Rect & rect,SharedHandle<Widget> parent);
 //    Widget(Widget &widget);
     ~Widget();
