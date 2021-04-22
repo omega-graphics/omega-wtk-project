@@ -6,6 +6,8 @@
 #ifndef OMEGAWTK_COMPOSITION_MTL_MTLBDCOMPOSITIONDEVICE_H
 #define OMEGAWTK_COMPOSITION_MTL_MTLBDCOMPOSITIONDEVICE_H
 
+@class CAMetalLayer;
+
 namespace OmegaWTK::Composition {
 
 class MTLBDCompositionViewRenderTarget;
@@ -85,8 +87,14 @@ public:
     void freeEvents();
     MTLBDCompositionDevice * getParentDevice();
     Core::SharedPtr<BDCompositionViewRenderTarget> makeViewRenderTarget(Layer *layer);
-    
+    /**
+     Creates a  CALayer Render Target from a Core::Rect (Creates a CAMetalLayer)
+    */
     Core::SharedPtr<MTLBDCompositionViewRenderTarget> makeCALayerRenderTarget(Core::Rect & rect);
+    /**
+     Creates a  CALayer Render Target from an existing CAMetalLayer (Does NOT create nor own its own layer)
+    */
+    Core::SharedPtr<MTLBDCompositionViewRenderTarget> makeCALayerRenderTarget(CAMetalLayer *layer,Core::Rect & rect);
     
     Core::SharedPtr<BDCompositionImageRenderTarget> makeImageRenderTarget(Core::Rect &size);
     Core::SharedPtr<BDCompositionImageRenderTarget> makeImageRenderTarget(Core::SharedPtr<BDCompositionImage> &img);

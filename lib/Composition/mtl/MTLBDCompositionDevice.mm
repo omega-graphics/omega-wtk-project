@@ -193,6 +193,10 @@ Core::SharedPtr<MTLBDCompositionViewRenderTarget> MTLBDCompositionDeviceContext:
     return MTLBDCompositionViewRenderTarget::Create(this,rect);
 };
 
+Core::SharedPtr<MTLBDCompositionViewRenderTarget> MTLBDCompositionDeviceContext::makeCALayerRenderTarget(CAMetalLayer *layer,Core::Rect & rect){
+    return MTLBDCompositionViewRenderTarget::CreateWithExistingCAMetalLayer(this,layer,rect);
+};
+
 Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionDeviceContext::makeImageRenderTarget(Core::Rect & size){
     float scaleFactor =  [NSScreen mainScreen].backingScaleFactor;
     MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm width:int(size.dimen.minWidth *= scaleFactor) height:int(size.dimen.minHeight *= scaleFactor) mipmapped:NO];
@@ -201,6 +205,7 @@ Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionDeviceContext::m
     size.pos.x *= scaleFactor;
     size.pos.y *= scaleFactor;
     id<MTLTexture> target = [device->metal_device newTextureWithDescriptor:desc];
+    [desc retain];
     return MTLBDCompositionImageRenderTarget::Create(this,size,target,desc);
 };
 
@@ -251,12 +256,11 @@ void MTLBDCompositionDeviceContext::renderVisualTreeToView(Core::SharedPtr<BDCom
     //        [viewLayer addSublayer:root->transformLayer];
     //    }
     //    else {
-        if(updatePass){
-            [viewLayer setSublayers:@[]];
-        };
-        // if(!updatePass){
+        // if(updatePass){
+        //     [viewLayer setSublayers:@[]];
+        // };
+        if(!updatePass){
                 [viewLayer addSublayer:root->metalLayer];
-        // }
                 root->metalLayer.anchorPoint = CGPointMake(0.0,0.0);
                 root->metalLayer.position = CGPointMake(root->pos.x,root->pos.y);
         //        NSLog(@"Opacity Shit:%f",root->metalLayer.opacity);
@@ -272,7 +276,7 @@ void MTLBDCompositionDeviceContext::renderVisualTreeToView(Core::SharedPtr<BDCom
                 auto _v = (MTLBDCALayerTree::Visual *)visual_it->get();
                 //  if(!updatePass){
                     [root->metalLayer addSublayer:_v->metalLayer];
-                //  }
+                 
                 //  else {
                  
                 //  }
@@ -287,14 +291,16 @@ void MTLBDCompositionDeviceContext::renderVisualTreeToView(Core::SharedPtr<BDCom
         //        [_v->metalLayer layoutIfNeeded];
                 NSLog(@"SuperLayer: %@",_v->metalLayer.superlayer);
             };
+        }
+        else {
+            caLayerTree->layout();
+        }
+        
     //    [viewLayer setNeedsLayout];
-    //    [viewLayer setNeedsDisplay];
+       [viewLayer setNeedsDisplay];
     //    [viewLayer setContentsScale:[NSScreen mainScreen].backingScaleFactor];
         /// Reset Buffer Count after final Commit
         // }
-        // else {
-        //     caLayerTree->layout();
-        // };
 
     [buffers removeAllObjects];
     bufferCount = 0;

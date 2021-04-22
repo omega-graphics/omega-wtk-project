@@ -38,7 +38,7 @@ namespace OmegaWTK::Composition {
         };
         Core::Queue<RenderPipeline> renderPasses;
     public:
-        MTLBDCompositionRenderTarget(MTLBDCompositionDeviceContext *deviceContext,Color init_clear_color,Core::Rect &target_frame);
+        MTLBDCompositionRenderTarget(MTLBDCompositionDeviceContext *deviceContext,Color init_clear_color,Core::Rect target_frame);
         virtual void clear(Color &clear_color);
         void frameRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush, unsigned width);
         void frameRoundedRect(Core::RoundedRect &rect, Core::SharedPtr<Brush> &brush, unsigned width);
@@ -56,7 +56,7 @@ id<MTLBuffer> solid_color_2d_mesh_to_mtl_vertex_buffer(MTLBDTriangulator::SolidC
 id<MTLBuffer> textured_mesh_to_mtl_vertex_buffer(MTLBDTriangulator::Textured2DMesh * mesh_ptr,id<MTLDevice> device);
 
 template<class _Ty>
-MTLBDCompositionRenderTarget<_Ty>::MTLBDCompositionRenderTarget(MTLBDCompositionDeviceContext *deviceContext,Color init_clear_color,Core::Rect &target_frame):deviceContext(deviceContext),clearColor(init_clear_color),triangulator(std::make_unique<MTLBDTriangulator>(target_frame)){
+MTLBDCompositionRenderTarget<_Ty>::MTLBDCompositionRenderTarget(MTLBDCompositionDeviceContext *deviceContext,Color init_clear_color,Core::Rect target_frame):deviceContext(deviceContext),clearColor(init_clear_color),triangulator(std::make_unique<MTLBDTriangulator>(target_frame)){
     
 };
 
@@ -372,14 +372,16 @@ class MTLBDCompositionViewRenderTarget : public MTLBDCompositionRenderTarget<BDC
     Native::Cocoa::CocoaItem *native_item;
     id<CAMetalDrawable> currentDrawable = nil;
     friend class MTLBDCALayerTree;
-    Core::Rect & rect;
+    Core::Rect rect;
 #ifdef TARGET_MACOS
 //    CVDisplayLink *displayLink;
 #endif
 public:
     void clear(Color &clear_color);
     MTLBDCompositionViewRenderTarget(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & rect);
+    MTLBDCompositionViewRenderTarget(MTLBDCompositionDeviceContext *deviceContext,CAMetalLayer *layer,Core::Rect & rect);
     static Core::SharedPtr<MTLBDCompositionViewRenderTarget> Create(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & rect);
+    static Core::SharedPtr<MTLBDCompositionViewRenderTarget> CreateWithExistingCAMetalLayer(MTLBDCompositionDeviceContext *deviceContext,CAMetalLayer *layer,Core::Rect & rect);
     void commit();
     void resizeBuffers(Core::Rect & newRect);
 };

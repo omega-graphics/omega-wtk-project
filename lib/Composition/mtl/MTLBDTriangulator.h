@@ -12,7 +12,7 @@ namespace OmegaWTK::Composition {
  NOTE: Rect Position Inputs are NOT scaled to the backingScaleFactor however the Dimenensions are.
  */
 class MTLBDTriangulator {
-    Core::Rect & targetFrame;
+    Core::Rect targetFrame;
     Core::Math::Point2D getRenderTargetCenter();
     CGFloat scaleFactor;
 public:

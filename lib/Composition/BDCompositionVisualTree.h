@@ -18,6 +18,7 @@ namespace OmegaWTK::Composition {
         #ifdef TARGET_MACOS
         virtual Core::SharedPtr<Visual> makeVisual(Core::SharedPtr<BDCompositionImageRenderTarget> & imgTarget,Core::SharedPtr<BDCompositionImage> &img) = 0;
         virtual Core::SharedPtr<Visual> makeVisual(BDCompositionImageRenderTarget *imgTarget,Core::SharedPtr<BDCompositionImage> &img) = 0;
+        virtual void drawNewCompImageToVisual(BDCompositionImageRenderTarget *imgTarget,Core::SharedPtr<BDCompositionImage> &img) = 0;
         #endif
         #ifdef TARGET_WIN32
         virtual Core::SharedPtr<Visual> makeVisual(Core::SharedPtr<BDCompositionImageRenderTarget> & imgRenderTarget) = 0;

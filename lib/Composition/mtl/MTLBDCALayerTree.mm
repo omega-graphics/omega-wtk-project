@@ -108,6 +108,36 @@ void MTLBDCALayerTree::addVisual(Core::SharedPtr<BDCompositionVisualTree::Visual
     body.push_back(visual);
 };
 
+void MTLBDCALayerTree::drawNewCompImageToVisual(BDCompositionImageRenderTarget *imgTarget, Core::SharedPtr<BDCompositionImage> &img){
+    MTLBDCALayerTree::Visual *r_v = (MTLBDCALayerTree::Visual *)root_v.get();
+    if(r_v->imgTarget == imgTarget){
+        r_v->img = img;
+        MTLBDCompositionImage *__img = (MTLBDCompositionImage *)r_v->img.get();
+        r_v->pos = __img->n_rect.pos;
+        auto target = deviceContext->makeCALayerRenderTarget(r_v->metalLayer,__img->n_rect);
+        Color bkgrd {Composition::Color::Black,0x00};
+        target->clear(bkgrd);
+        target->drawImage(img,Core::FPosition({0.f,0.f}));
+        target->commit();
+        return;
+    };
+
+    for(auto & v : body){
+        MTLBDCALayerTree::Visual *_v = (MTLBDCALayerTree::Visual *)v.get();
+        if(_v->imgTarget == imgTarget){
+            _v->img = img;
+            MTLBDCompositionImage *__img = (MTLBDCompositionImage *)_v->img.get();
+            _v->pos = __img->n_rect.pos;
+            auto target = deviceContext->makeCALayerRenderTarget(_v->metalLayer,__img->n_rect);
+            Color bkgrd {Composition::Color::Black,0x00};
+            target->clear(bkgrd);
+            target->drawImage(img,Core::FPosition({0.f,0.f}));
+            target->commit();
+            break;
+        };
+    };
+};
+
 void MTLBDCALayerTree::layout(){
     CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
     Visual *rootV = (Visual *)root_v.get();

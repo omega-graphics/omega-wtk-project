@@ -35,6 +35,7 @@ namespace OmegaWTK::Composition {
         Core::SharedPtr<Parent::Visual> makeVisual(Core::SharedPtr<BDCompositionImageRenderTarget> & imgTarget,Core::SharedPtr<BDCompositionImage> &img);
         Core::SharedPtr<Parent::Visual> makeVisual(BDCompositionImageRenderTarget *imgTarget,Core::SharedPtr<BDCompositionImage> &img);
         void setRootVisual(Core::SharedPtr<Parent::Visual> visual);
+        void drawNewCompImageToVisual(BDCompositionImageRenderTarget *imgTarget, Core::SharedPtr<BDCompositionImage> &img);
         void replaceRootVisual(Core::SharedPtr<Parent::Visual> visual);
         void replaceVisualWithTargetPtr(BDCompositionImageRenderTarget * imgTarget, Core::SharedPtr<Parent::Visual> visual);
         void addVisual(Core::SharedPtr<Parent::Visual> & visual);

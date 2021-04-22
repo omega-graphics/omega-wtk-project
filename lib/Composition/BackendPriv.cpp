@@ -202,8 +202,7 @@ namespace OmegaWTK::Composition {
             ++effect_it;
         };
         img->commitEffects();
-        auto _root_v = tree->makeVisual(rootTarget,img);
-        tree->replaceRootVisual(_root_v);
+        tree->drawNewCompImageToVisual(rootTarget,img);
     #else
          auto effect_it = rootLayer->style->effects.begin();
         while(effect_it !=rootLayer->style->effects.end()){
@@ -267,8 +266,7 @@ namespace OmegaWTK::Composition {
                      ++effect_it;
                  };
                  img->commitEffects();
-                 auto _visual = tree->makeVisual(imgTarget,img);
-                tree->replaceVisualWithTargetPtr(imgTarget,_visual);
+                 tree->drawNewCompImageToVisual(imgTarget,img);
          #endif
                  std::cout << "Visual has been Created... Mounting child" << std::endl;
                 //  tree->replaceVisualWithTargetPtr(imgTarget,_visual);

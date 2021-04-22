@@ -1,4 +1,5 @@
 #import "MTLBDCompositionRenderTarget.h"
+#include "MTLBDCALayerTree.h"
 #include "NativePrivate/macos/CocoaUtils.h"
 #import "MTLBDCompositionImage.h"
 #import "MTLBDCompositionFontFactory.h"
@@ -118,6 +119,10 @@ id<MTLTexture> make_gradient_texture_and_mask(id<MTLTexture> main,
 Core::SharedPtr<MTLBDCompositionViewRenderTarget> MTLBDCompositionViewRenderTarget::Create(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & rect){
     return std::make_shared<MTLBDCompositionViewRenderTarget>(deviceContext,rect);
 };
+
+Core::SharedPtr<MTLBDCompositionViewRenderTarget> MTLBDCompositionViewRenderTarget::CreateWithExistingCAMetalLayer(MTLBDCompositionDeviceContext *deviceContext,CAMetalLayer *layer,Core::Rect & rect){
+    return std::make_shared<MTLBDCompositionViewRenderTarget>(deviceContext,layer,rect);
+};
 /// Metal Composition Render Target!
 
 MTLBDCompositionViewRenderTarget::MTLBDCompositionViewRenderTarget(MTLBDCompositionDeviceContext *deviceContext,Core::Rect & _rect):MTLBDCompositionRenderTarget(deviceContext,Color(0,0,0,0),_rect),rect(_rect){
@@ -141,6 +146,22 @@ MTLBDCompositionViewRenderTarget::MTLBDCompositionViewRenderTarget(MTLBDComposit
 //    metalLayer.contentsCenter = CGRectMake(0,0,1,1);
     metalLayer.framebufferOnly = YES;
 //    metalLayer.allowsNextDrawableTimeout = YES;
+};
+
+MTLBDCompositionViewRenderTarget::MTLBDCompositionViewRenderTarget(MTLBDCompositionDeviceContext *deviceContext,CAMetalLayer *layer,Core::Rect & rect):MTLBDCompositionRenderTarget(deviceContext,Color(0,0,0,0),rect),
+rect(rect),
+metalLayer(layer)
+{
+    auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+    triangulator->setScaleFactor(1);
+    // metalLayer.frame = Native::Cocoa::core_rect_to_cg_rect(rect);
+    NSLog(@"Position: x%f, y%f",metalLayer.frame.origin.x,metalLayer.frame.origin.y);
+    NSLog(@"Size: w%f, h%f",metalLayer.frame.size.width,metalLayer.frame.size.height);
+    metalLayer.opaque = NO;
+    metalLayer.contentsScale = scaleFactor;
+    metalLayer.masksToBounds = NO;
+    metalLayer.framebufferOnly = YES;
+    [metalLayer retain];
 };
 
 void MTLBDCompositionViewRenderTarget::clear(Color & clear_color){
@@ -285,13 +306,6 @@ void MTLBDCompositionImageRenderTarget::clear(Color &clear_color){
     //     delete [] emptyBuffer;
     // }
     // else {
-        desc = [[MTLTextureDescriptor alloc] init];
-        desc.textureType = MTLTextureType2D;
-        desc.width = float(rect.dimen.minWidth) * scaleFactor;
-        desc.height = float(rect.dimen.minHeight) * scaleFactor;
-        desc.usage = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget | MTLTextureUsageShaderWrite;
-        desc.storageMode = MTLStorageModeShared;
-        target = [deviceContext->getParentDevice()->metal_device newTextureWithDescriptor:desc];
         Byte *emptyBuffer = new Byte[desc.width * desc.height * 4];
         [target replaceRegion:MTLRegionMake2D(0,0,desc.width,desc.height) mipmapLevel:0 withBytes:emptyBuffer bytesPerRow:desc.width * 4];
         delete [] emptyBuffer;
@@ -300,7 +314,6 @@ void MTLBDCompositionImageRenderTarget::clear(Color &clear_color){
 
 void MTLBDCompositionImageRenderTarget::commit(){
     float scaleFactor = [NSScreen mainScreen].backingScaleFactor;
-    @autoreleasepool {
 //        for(auto & buffer : commandBuffers){
 //            [buffer waitUntilCompleted];
 //        };
@@ -355,11 +368,9 @@ void MTLBDCompositionImageRenderTarget::commit(){
 //        }];
         [finalCommandBuffer enqueue];
 //        [finalCommandBuffer waitUntilCompleted];
-    }
     textures.clear();
-    commandBuffers.clear();
     vertexBuffers.clear();
-    // target = nil;
+    [target retain];
     // desc = nil;
 };
 
@@ -370,6 +381,12 @@ void MTLBDCompositionImageRenderTarget::resizeBuffers(Core::Rect &newRect){
     };
     newRect.pos.x *= scaleFactor;
     newRect.pos.y *= scaleFactor;
+
+    if(needsResize){
+        desc.width = float(rect.dimen.minWidth) * scaleFactor;
+        desc.height = float(rect.dimen.minHeight) * scaleFactor;
+        target = [deviceContext->getParentDevice()->metal_device newTextureWithDescriptor:desc];
+    };
     rect = newRect;
 };
 
