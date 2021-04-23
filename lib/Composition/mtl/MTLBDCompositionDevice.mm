@@ -198,15 +198,16 @@ Core::SharedPtr<MTLBDCompositionViewRenderTarget> MTLBDCompositionDeviceContext:
 };
 
 Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionDeviceContext::makeImageRenderTarget(Core::Rect & size){
-    float scaleFactor =  [NSScreen mainScreen].backingScaleFactor;
-    MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm width:int(size.dimen.minWidth *= scaleFactor) height:int(size.dimen.minHeight *= scaleFactor) mipmapped:NO];
+    Core::Rect r = size;
+    CGFloat scaleFactor =  [NSScreen mainScreen].backingScaleFactor;
+    MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm width:int(r.dimen.minWidth *= scaleFactor) height:int(r.dimen.minHeight *= scaleFactor) mipmapped:NO];
     desc.usage = MTLTextureUsageRenderTarget | MTLTextureUsagePixelFormatView  | MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
     // desc.storageMode = MTLStorageModeShared;
-    size.pos.x *= scaleFactor;
-    size.pos.y *= scaleFactor;
+    r.pos.x *= scaleFactor;
+    r.pos.y *= scaleFactor;
     id<MTLTexture> target = [device->metal_device newTextureWithDescriptor:desc];
     [desc retain];
-    return MTLBDCompositionImageRenderTarget::Create(this,size,target,desc);
+    return MTLBDCompositionImageRenderTarget::Create(this,r,target,desc);
 };
 
 Core::SharedPtr<BDCompositionImageRenderTarget> MTLBDCompositionDeviceContext::makeImageRenderTarget(Core::SharedPtr<BDCompositionImage> & img){
@@ -235,12 +236,12 @@ void MTLBDCompositionDeviceContext::renderVisualTreeToView(Core::SharedPtr<BDCom
         
         NSLog(@"Buffer Count:%lu",buffers.count);
         for(id<MTLCommandBuffer> buffer in buffers){
-            [buffer addCompletedHandler:^(id<MTLCommandBuffer> _buffer){
-                auto idx = [buffers indexOfObject:_buffer];
-                NSLog(@"Buffer %lu has Finished.",(unsigned long)idx);
-            }];
+            // [buffer addCompletedHandler:^(id<MTLCommandBuffer> _buffer){
+            //     auto idx = [buffers indexOfObject:_buffer];
+            //     NSLog(@"Buffer %lu has Finished.",(unsigned long)idx);
+            // }];
             [buffer commit];
-            [buffer waitUntilScheduled];
+            // [buffer waitUntilScheduled];
         };
     
         

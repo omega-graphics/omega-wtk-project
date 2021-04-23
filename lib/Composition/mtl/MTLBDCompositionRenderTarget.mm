@@ -153,15 +153,16 @@ rect(rect),
 metalLayer(layer)
 {
     auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
-    triangulator->setScaleFactor(1);
+    triangulator->setScaleFactor(1.f);
     // metalLayer.frame = Native::Cocoa::core_rect_to_cg_rect(rect);
+    // metalLayer.bounds = CGRectMake(0.0,0.0,metalLayer.frame.size.width,metalLayer.frame.size.height);
     NSLog(@"Position: x%f, y%f",metalLayer.frame.origin.x,metalLayer.frame.origin.y);
     NSLog(@"Size: w%f, h%f",metalLayer.frame.size.width,metalLayer.frame.size.height);
     metalLayer.opaque = NO;
-    metalLayer.contentsScale = scaleFactor;
+    // metalLayer.backgroundColor = [NSColor redColor].CGColor;
+    // metalLayer.contentsScale = scaleFactor;
     metalLayer.masksToBounds = NO;
     metalLayer.framebufferOnly = YES;
-    [metalLayer retain];
 };
 
 void MTLBDCompositionViewRenderTarget::clear(Color & clear_color){
@@ -277,7 +278,7 @@ void MTLBDCompositionViewRenderTarget::resizeBuffers(Core::Rect &newRect){
     auto rect = Native::Cocoa::core_rect_to_cg_rect(newRect);
     metalLayer.frame = rect;
     metalLayer.bounds = CGRectMake(0,0,rect.size.width,rect.size.height);
-    [metalLayer setDrawableSize:CGSizeMake(rect.size.width * scaleFactor,rect.size.height * scaleFactor)];
+    // [metalLayer setDrawableSize:CGSizeMake(rect.size.width * scaleFactor,rect.size.height * scaleFactor)];
 };
 
 /// Metal Image Render Target!
@@ -306,9 +307,9 @@ void MTLBDCompositionImageRenderTarget::clear(Color &clear_color){
     //     delete [] emptyBuffer;
     // }
     // else {
-        Byte *emptyBuffer = new Byte[desc.width * desc.height * 4];
-        [target replaceRegion:MTLRegionMake2D(0,0,desc.width,desc.height) mipmapLevel:0 withBytes:emptyBuffer bytesPerRow:desc.width * 4];
-        delete [] emptyBuffer;
+        // Byte *emptyBuffer = new Byte[desc.width * desc.height * 4];
+        // [target replaceRegion:MTLRegionMake2D(0,0,desc.width,desc.height) mipmapLevel:0 withBytes:emptyBuffer bytesPerRow:desc.width * 4];
+        // delete [] emptyBuffer;
     // }
 };
 
@@ -326,8 +327,8 @@ void MTLBDCompositionImageRenderTarget::commit(){
         renderPassDesc.colorAttachments[0].storeAction = MTLStoreActionStore;
         renderPassDesc.colorAttachments[0].texture = target;
         renderPassDesc.defaultRasterSampleCount = 1;
-        renderPassDesc.renderTargetWidth = rect.dimen.minWidth * scaleFactor;
-        renderPassDesc.renderTargetHeight = rect.dimen.minHeight * scaleFactor;
+        renderPassDesc.renderTargetWidth = rect.dimen.minWidth;
+        renderPassDesc.renderTargetHeight = rect.dimen.minHeight;
         renderPassDesc.renderTargetArrayLength = 1;
         
         MTLRenderPassDescriptor *renderPassDesc2 = [MTLRenderPassDescriptor renderPassDescriptor];
@@ -336,8 +337,8 @@ void MTLBDCompositionImageRenderTarget::commit(){
         renderPassDesc2.colorAttachments[0].storeAction = MTLStoreActionStore;
         renderPassDesc2.colorAttachments[0].texture = target;
         renderPassDesc2.defaultRasterSampleCount = 1;
-        renderPassDesc2.renderTargetWidth = rect.dimen.minWidth * scaleFactor;
-        renderPassDesc2.renderTargetHeight = rect.dimen.minHeight * scaleFactor;
+        renderPassDesc2.renderTargetWidth = rect.dimen.minWidth;
+        renderPassDesc2.renderTargetHeight = rect.dimen.minHeight;
         renderPassDesc2.renderTargetArrayLength = 1;
         id<MTLCommandBuffer> finalCommandBuffer = deviceContext->makeNewMTLCommandBuffer();
 //        [finalCommandBuffer encodeWaitForEvent:deviceContext->currentEvent() value:deviceContext->bufferCount];
@@ -375,19 +376,20 @@ void MTLBDCompositionImageRenderTarget::commit(){
 };
 
 void MTLBDCompositionImageRenderTarget::resizeBuffers(Core::Rect &newRect){
+    Core::Rect r = newRect;
     CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
-    if(rect.dimen.minWidth < (newRect.dimen.minWidth *= scaleFactor) || rect.dimen.minHeight < (newRect.dimen.minHeight *= scaleFactor)){
+    if(rect.dimen.minWidth < (r.dimen.minWidth *= scaleFactor) || rect.dimen.minHeight < (r.dimen.minHeight *= scaleFactor)){
         needsResize = true;
     };
-    newRect.pos.x *= scaleFactor;
-    newRect.pos.y *= scaleFactor;
+    r.pos.x *= scaleFactor;
+    r.pos.y *= scaleFactor;
 
     if(needsResize){
-        desc.width = float(rect.dimen.minWidth) * scaleFactor;
-        desc.height = float(rect.dimen.minHeight) * scaleFactor;
+        desc.width = r.dimen.minWidth;
+        desc.height = r.dimen.minHeight;
         target = [deviceContext->getParentDevice()->metal_device newTextureWithDescriptor:desc];
     };
-    rect = newRect;
+    rect = r;
 };
 
 Core::SharedPtr<BDCompositionImage> MTLBDCompositionImageRenderTarget::getImg(){

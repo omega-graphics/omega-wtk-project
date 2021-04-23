@@ -23,7 +23,7 @@
         self.layer.anchorPoint = CGPointMake(0.0,0.0);
         self.layer.position = rect.origin;
         self.layer.contentsScale = 1.0f;
-        self.layer.contentsGravity = kCAGravityCenter;
+        // self.layer.contentsGravity = kCAGravityCenter;
         self.layer.magnificationFilter = kCAFilterLinear;
 //        self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawDuringViewResize;
 //        self.layerContentsPlacement = NSViewLayerContentsPlacementCenter;

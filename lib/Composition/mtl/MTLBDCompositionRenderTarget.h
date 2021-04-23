@@ -331,6 +331,7 @@ void MTLBDCompositionRenderTarget<_Ty>::drawImage(Core::SharedPtr<BDCompositionI
     scaledRect.pos = pos;
     auto scaleFactor = [NSScreen mainScreen].backingScaleFactor;
 //    scaledRect.pos.x *= scaleFactor;
+//    scaledRect.pos.y *= scaleFactor;
 //    scaledRect.pos.y *= 1.3f;
 //    scaledRect.dimen.minWidth *= scaleFactor;
 //    scaledRect.dimen.minHeight *= scaleFactor;
