@@ -10,7 +10,7 @@ namespace OmegaWTK::UI {
         auto layerStyle = make<Composition::LayerStyle>();
         auto b = Composition::ColorBrush(0xCCCCCC);
         auto black = Composition::ColorBrush(Composition::Color::Black);
-        layerStyle->setBackgroundColor(Composition::Color::Red);
+        layerStyle->setBackgroundColor(Composition::Color::Transparent);
         layerStyle->add(VISUAL_ROUNDED_RECT_W_FRAME(OmegaWTK::RoundedRect(rect.pos.x + 25,rect.pos.y + 25,rect.dimen.minWidth - 50,rect.dimen.minHeight - 50,25,25),Composition::ColorBrush(Composition::Color::White),Composition::Border(b,2)));
         auto shadow = make<Composition::LayerEffect>(LAYER_EFFECT_DROPSHADOW(-5.0,-5.0,20,1.0,1.0,Composition::Color::Black));
         layerStyle->addEffect(shadow);

@@ -1,4 +1,9 @@
 {
-    "python.pythonPath": "C:\\Users\\alex\\AppData\\Local\\Microsoft\\WindowsApps\\python3.9.exe",
-    "restructuredtext.confPath": ""
+    "python.pythonPath": "C:\\Users\\alex\\AppData\\Local\\Programs\\Python\\Python39\\python.exe",
+    "restructuredtext.confPath": "",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Program Files (x86)\\Android\\android-sdk\\platforms\\android-27\\android.jar",
+        "c:\\Program Files (x86)\\Android\\android-sdk\\platforms\\android-27\\android-stubs-src.jar"
+    ]
 }
