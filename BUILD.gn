@@ -182,11 +182,13 @@ omega_wtk_static_lib("omegaWTKMedia"){
     public_deps = [
         ":omegaWTKCore",
         "//external-libs/zlib",
+        "//external-libs/libjpeg-turbo",
         # "//external-libs/libtiff",
         "//external-libs/libpng"
     ]
     public_configs = [
         "//external-libs/libpng:libpng_config",
+        "//external-libs/libjpeg-turbo:libjpeg-turbo_config",
         # "//external-libs/libtiff:libtiff_config",
         "//external-libs/zlib:zlib_config"
     ]

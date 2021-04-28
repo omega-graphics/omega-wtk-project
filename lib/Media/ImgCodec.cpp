@@ -10,8 +10,8 @@
 //#include <tiff.h>
 // #include <tiffio.hxx>
 
-// #include <jpeglib.h>
-// #include <turbojpeg.h>
+#include <jpeglib.h>
+#include <turbojpeg.h>
 
 #include <iostream>
 #include <fstream>
@@ -380,16 +380,33 @@ public:
 // };
 
 
-// class JPEGCodec : public ImgCodec {
-//     bool load_jpeg_from_file(){
+class JPEGCodec : public ImgCodec {
+    bool load_jpeg_from_file(){
+        auto decomp = tjInitDecompress();
+        in.seekg(0,in.end);
+        size_t len = in.tellg();
+        in.seekg(0,in.beg);
+        typedef unsigned char tjByte;
+        unsigned char dataBuf[len];
+        int w,h;
+        int samp;
+        int colorspace;
+        tjDecompressHeader3(decomp,dataBuf,len,&w,&h,&samp,&colorspace);
+        storage->data = new tjByte[w * h * 4];
+        tjDecompress2(decomp,dataBuf,len,(unsigned char *)storage->data,w,w * 4,h,TJPF_RGBA,TJFLAG_BOTTOMUP | TJFLAG_ACCURATEDCT);
         
-//     };
-// public:
-//     void readToStorage(){
-        
-//     };
-//     JPEGCodec(Core::IStream & stream,BitmapImage *res):ImgCodec(stream,res){};
-// };
+        tjDestroy(decomp);
+    };
+public:
+    void readToStorage(){
+        if(!load_jpeg_from_file()){
+            storage->data = nullptr;
+            storage->header = nullptr;
+            storage->profile = nullptr;
+        };
+    };
+    JPEGCodec(Core::IStream & stream,BitmapImage *res):ImgCodec(stream,res){};
+};
 
 
 
