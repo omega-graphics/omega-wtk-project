@@ -31,12 +31,21 @@ toolchain("llvm") {
     }
 
     tool("asm"){
-        if(is_linux || is_mac){
-            command = "clang {{defines}} -o {{output}}"
+        depfile = "{{output}}.d"
+        if(is_linux){
+            depsformat = "gcc"
+            format = "elf64"
+        }
+        else if(is_mac){
+            depsformat = "gcc"
+            format = "macho64"
         }
         else {
-            command = "clang-cl {{defines}} {{source}} -o {{output}}"
+            depsformat = "msvc"
+            format = "win64"
         }
+        command = "nasm {{include_dirs}} -f$format {{source}} -o {{output}} -MD$depfile {{defines}} {{asmflags}}"
+        
         outputs = [
             "{{source_out_dir}}/{{source_name_part}}.${obj_ext}"
         ]
@@ -138,7 +147,7 @@ toolchain("llvm") {
     }
     tool("alink") {
         if(is_windows){
-            command = "clang-cl $debug_flag  /out:{{output}} /machine:x64 {{inputs}} {{arflags}}"
+            command = "llvm-lib /machine:x64 {{arflags}}  /out:{{output}} {{inputs}}"
         }
         else if(is_mac) {
             command = "$cxx -o {{output}} {{inputs}} {{arflags}}"

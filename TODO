@@ -6,12 +6,13 @@
 - [x]  Hex Color support.
 - [x]  Text
 - [x]  Menus.
-- [x]  Custom Icons and Diagram!
+- [x]  Custom Icons
 - [x]  Images/Bitmaps (Premulitply Alpha Channel for Windows!)
 - [x]  Implement Metal Backend
-- [ ]  JPEG/TIFF Implement
+- [x]  JPEG/TIFF Implement
 - [x]  Layer Styles.
-- [ ]  Resizable Widgets
+- [x]  Resizable Widgets
+- [ ]  SVG Parse Support
 - [ ]  Video Views.
 - [ ]  Scroll Views (Ones with Native Scroll Bars)
 - [x]  Windows
@@ -19,4 +20,4 @@
 - [ ]  Window/Menu Styles
 - [ ]  Camera Capture (For Songalong)
 - [ ]  Animation/Transtions.
-- [ ]  Cross widget messaging.
+- [x]  Cross widget messaging.

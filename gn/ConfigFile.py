@@ -6,6 +6,7 @@ import re
 # import out
 import shutil
 
+at_mode = False
 class ConfigFileProcessor:
     
     code:str
@@ -47,6 +48,8 @@ def main():
         elif arg == "--output" or arg == "-O":
             idx = args.index(arg)
             output = args[idx + 1]
+        elif arg == "--at":
+            at_mode = True
 
     cwd = os.getcwd()
     if input != None and output != None:

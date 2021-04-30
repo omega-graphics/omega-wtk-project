@@ -1,35 +1,64 @@
 import("../../gn/ExternalLibs.gni")
 import("../../gn/ExternalExports.gni")
+import("../../gn/OmegaWTK.gni")
 
-o = "$root_out_dir/externals/zlib/build"
+# o = "$root_out_dir/externals/zlib/build"
 
-if(is_mac || is_linux) {
-    lib_name = "${o}/libz.1.2.11.${shared_lib_suffix}"
+
+configure_file("code/zconf.h.in"){
+    dep_name = "zconf_h"
+    # if(is_windows){
+    #     defines = ["Z_HAVE_UNISTD_H=0"]
+    # }
+    output_name = "${external_lib_path}/zlib/include/zconf.h"
 }
-else if(is_windows){
-    lib_name = "${o}/zlib.${shared_lib_suffix}"
-}
 
-external_lib("zlib"){
-    cmake_other_args = ""
-    conf = rebase_path("./code")
-    outputs = [
-        lib_name,
-        "${o}/zconf.h"  
+external_lib_target("zlib"){
+    public_deps = [
+        ":zconf_h"
+    ]
+    public_headers = ["code/zlib.h"]
+    include_dirs = ["./code","${external_lib_path}/zlib/include"]
+    defines = [
+        # "ASMV",
+        "_CRT_SECURE_NO_DEPRECATE",
+        "_CRT_NONSTDC_NO_DEPRECATE",
     ]
     if(is_windows){
-        outputs += [
-            "${o}/zlib.${static_lib_suffix}"
+    #   defines += ["ASMINF"]
+        defines += ["NO_FSEEKO"]
+    }
+    else if(is_linux || is_mac){
+        # Unix Headers
+        defines += ["HAVE_UNISTD_H","HAVE_SYS_TYPES_H","_LARGEFILE64_SOURCE=1"]
+    }
+    sources = [
+        "code/adler32.c",
+        "code/compress.c",
+        "code/crc32.c",
+        "code/deflate.c",
+        "code/gzclose.c",
+        "code/gzlib.c",
+        "code/gzread.c",
+        "code/gzwrite.c",
+        "code/infback.c",
+        "code/inffast.c",
+        "code/inflate.c",
+        "code/inftrees.c",
+        "code/trees.c",
+        "code/uncompr.c",
+        "code/zutil.c"
+    ]
+    if(is_windows){
+        sources += [
+            # "code/contrib/masmx64/gvmat64.asm",
+            # "code/contrib/masmx64/inffasx64.asm",
+            "code/win32/zlib1.rc"
+            
+        ]
+        defines += [
+            "ZLIB_DLL=1"
         ]
     }
-    public_headers = [
-        rebase_path("./code/zlib.h"),
-        rebase_path("${o}/zconf.h")
-    ]
-    if(is_linux || is_mac){
-        export = rebase_path(lib_name)
-    }
-    else {
-        export = rebase_path("${o}/zlib.${static_lib_suffix}")
-    }
+    output_dir = "${external_lib_path}/zlib"
 }

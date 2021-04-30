@@ -1,28 +1,275 @@
 import("../../gn/ExternalLibs.gni")
+import("../../gn/OmegaWTK.gni")
 
-o = "$root_out_dir/externals/libjpeg-turbo/build"
-external_lib("libjpeg-turbo"){
-    cmake_other_args = "-DZLIB_INCLUDE_DIRS=" + rebase_path("//out/externals/zlib/include") + "-DZLIB_LIBRARIES=" + rebase_path("//out/externals/zlib/build")
-    conf = rebase_path("./code")
-    outputs = [
-        "${o}/${lib_prefix}turbojpeg.${static_lib_suffix}",
-        "${o}/jconfig.h"
+# o = "$root_out_dir/externals/libjpeg-turbo/build"
+# external_lib("libjpeg-turbo"){
+#     cmake_other_args = "-DZLIB_INCLUDE_DIRS=" + rebase_path("//out/externals/zlib/include") + "-DZLIB_LIBRARIES=" + rebase_path("//out/externals/zlib/build")
+#     conf = rebase_path("./code")
+#     outputs = [
+#         "${o}/${lib_prefix}turbojpeg.${static_lib_suffix}",
+#         "${o}/jconfig.h"
+#     ]
+#     if(is_windows){
+#         outputs += [
+#             "${o}/jpeg62.dll",
+#             "${o}/turbojpeg.dll"
+#         ]
+#     }
+#     public_deps = [
+#         "../zlib"
+#     ]
+#     public_headers = [
+#         rebase_path("./code/jpeglib.h"),
+#         rebase_path("./code/jmorecfg.h"),
+#         rebase_path("${o}/jconfig.h"),
+#         rebase_path("./code/jerror.h"),
+#         rebase_path("./code/turbojpeg.h")
+#     ]
+#     export = rebase_path("${o}/${lib_prefix}turbojpeg.${static_lib_suffix}")
+# }
+
+configure_file("jconfig.h.in"){
+    dep_name = "jconfig_h_conf"
+    defines = [
+        "-DJPEG_LIB_VERSION=62",
+        "-DVERSION=2.0.91",
+        "-DLIBJPEG_TURBO_VERSION_NUMBER=2000091",
+        "-DBITS_IN_JSAMPLE=8"
+    ]
+    output_name = "${external_lib_path}/libjpeg-turbo/include/jconfig.h"
+}
+
+configure_file("jconfigint.h.in"){
+    dep_name = "jconfigint_h_conf"
+    defines = [
+        "-DBUILD=0",
+        "-DPACKAGE_NAME=\"libjpeg-turbo\"",
+        "-DSIZE_T=8",
+        "-DINTRIN_H=0",
+        "-DINLINE=__inline"
     ]
     if(is_windows){
-        outputs += [
-            "${o}/jpeg62.dll",
-            "${o}/turbojpeg.dll"
+        defines += [
+            "-DTHREAD_LOCAL=__declspec(thread)"
         ]
     }
+    else {
+        defines += [
+            "-DTHREAD_LOCAL=__thread"
+        ]
+    }
+    output_name = "${external_lib_path}/libjpeg-turbo/priv/jconfigint.h"
+}
+
+source_set("simd"){
     public_deps = [
-        "../zlib"
+        ":jconfig_h_conf",
+        ":jconfigint_h_conf"
     ]
+    defines = [
+        "_CRT_SECURE_NO_DEPRECATE",
+        "_CRT_NONSTDC_NO_DEPRECATE"
+    ]
+    sources = [
+        "code/simd/jsimd.h"
+    ]
+    output_dir = "${external_lib_path}/libjpeg-turbo/"
+    include_dirs = [
+        "code/simd/nasm",
+        "${external_lib_path}/libjpeg-turbo/include",
+        "${external_lib_path}/libjpeg-turbo/priv"
+    ]
+    if(target_cpu == "x64"){
+        defines += [
+            "__x86_64__"
+        ]
+        sources += [
+            "code/simd/x86_64/jsimd.c",
+            "code/simd/x86_64/jsimdcpu.asm",
+            "code/simd/x86_64/jfdctflt-sse.asm",
+            "code/simd/x86_64/jccolor-sse2.asm",
+            "code/simd/x86_64/jcgray-sse2.asm",
+            "code/simd/x86_64/jchuff-sse2.asm",
+            "code/simd/x86_64/jcphuff-sse2.asm",
+            "code/simd/x86_64/jcsample-sse2.asm",
+            "code/simd/x86_64/jdcolor-sse2.asm",
+            "code/simd/x86_64/jdmerge-sse2.asm",
+            "code/simd/x86_64/jdsample-sse2.asm" ,
+            "code/simd/x86_64/jfdctfst-sse2.asm" ,
+            "code/simd/x86_64/jfdctint-sse2.asm" ,
+            "code/simd/x86_64/jidctflt-sse2.asm" ,
+            "code/simd/x86_64/jidctfst-sse2.asm" ,
+            "code/simd/x86_64/jidctint-sse2.asm" ,
+            "code/simd/x86_64/jidctred-sse2.asm" ,
+            "code/simd/x86_64/jquantf-sse2.asm" ,
+            "code/simd/x86_64/jquanti-sse2.asm" ,
+            "code/simd/x86_64/jccolor-avx2.asm" ,
+            "code/simd/x86_64/jcgray-avx2.asm" ,
+            "code/simd/x86_64/jcsample-avx2.asm" ,
+            "code/simd/x86_64/jdcolor-avx2.asm" ,
+            "code/simd/x86_64/jdmerge-avx2.asm" ,
+            "code/simd/x86_64/jdsample-avx2.asm" ,
+            "code/simd/x86_64/jfdctint-avx2.asm",
+            "code/simd/x86_64/jidctint-avx2.asm" ,
+            "code/simd/x86_64/jquanti-avx2.asm" 
+        ]
+        include_dirs += [
+            "code/simd/x86_64"
+        ]
+    }
+    if(is_windows){
+        defines += [
+            "PIC",
+            "WIN64",
+        ]
+    }
+}
+
+external_lib_target("jpeg"){
+    public_deps = [
+        ":jconfig_h_conf",
+        ":jconfigint_h_conf",
+        ":simd"
+    ]
+    is_source_set = true
+    defines = [
+        "DLLDEFINE",
+        "_CRT_SECURE_NO_DEPRECATE",
+        "_CRT_NONSTDC_NO_DEPRECATE"
+    ]
+    if(target_cpu == "x64"){
+        defines += [
+            "SIZEOF_SIZE_T=8"
+        ]
+    }
+    if(is_windows){
+        defines += [
+            "_WIN64",
+            "__x86_64__"
+        ]
+    }
+
+    include_dirs = [
+        "${external_lib_path}/libjpeg-turbo/include",
+        "${external_lib_path}/libjpeg-turbo/priv"
+    ]
+    sources = [
+        "code/jaricom.c",
+        "code/jcapimin.c",
+        "code/jcapistd.c",
+        "code/jcarith.c",
+        "code/jccoefct.c",
+        # "code/jccolext.c",
+        "code/jccolor.c",
+        "code/jcdctmgr.c",
+        "code/jchuff.c",
+        "code/jcicc.c",
+        "code/jcinit.c",
+        "code/jcmainct.c",
+        "code/jcmarker.c",
+        "code/jcmaster.c",
+        "code/jcomapi.c",
+        "code/jcparam.c",
+        "code/jcphuff.c",
+        "code/jcprepct.c",
+        "code/jcsample.c",
+        "code/jctrans.c",
+        "code/jdapimin.c",
+        "code/jdapistd.c",
+        "code/jdarith.c",
+        "code/jdatadst.c",
+        "code/jdatasrc.c",
+        "code/jdcoefct.c",
+        # "code/jdcol565.c",
+        # "code/jdcolext.c",
+        "code/jdcolor.c",
+        "code/jddctmgr.c",
+        "code/jdhuff.c",
+        "code/jdicc.c",
+        "code/jdinput.c",
+        "code/jdmainct.c",
+        "code/jdmarker.c",
+        "code/jdmaster.c",
+        "code/jdmerge.c",
+        # "code/jdmrg565.c",
+        # "code/jdmrgext.c",
+        "code/jdphuff.c",
+        "code/jdpostct.c",
+        "code/jdsample.c",
+        "code/jdtrans.c",
+        "code/jerror.c",
+        "code/jfdctflt.c",
+        "code/jfdctfst.c",
+        "code/jidctflt.c",
+        "code/jidctfst.c",
+        "code/jfdctint.c",
+        "code/jidctint.c",
+        "code/jidctred.c",
+        "code/jmemmgr.c",
+        "code/jmemnobs.c",
+        "code/jquant1.c",
+        "code/jquant2.c",
+        # "code/jsimd_none.c"
+        "code/jutils.c",
+    ]
+    export_config = false
     public_headers = [
-        rebase_path("./code/jpeglib.h"),
-        rebase_path("./code/jmorecfg.h"),
-        rebase_path("${o}/jconfig.h"),
-        rebase_path("./code/jerror.h"),
-        rebase_path("./code/turbojpeg.h")
+        "code/jpeglib.h",
+        "code/jerror.h",
+        "code/jmorecfg.h"
     ]
-    export = rebase_path("${o}/${lib_prefix}turbojpeg.${static_lib_suffix}")
+    output_dir = "${external_lib_path}/libjpeg-turbo"
+}
+
+external_lib_target("turbojpeg"){
+    public_deps = [
+        ":jpeg",
+        ":simd"
+    ]
+    sources = [
+        "code/turbojpeg.c",
+        "code/transupp.c", 
+        "code/jdatadst-tj.c", 
+        "code/jdatasrc-tj.c", 
+        "code/rdbmp.c",
+        "code/rdppm.c",
+        "code/wrbmp.c", 
+        "code/wrppm.c"
+    ]
+    export_config = false
+    defines = [
+        "BMP_SUPPORTED",
+        "PPM_SUPPORTED",
+        "_CRT_SECURE_NO_DEPRECATE",
+        "_CRT_NONSTDC_NO_DEPRECATE"
+    ]
+
+    include_dirs = [
+        "./code",
+        "${external_lib_path}/libjpeg-turbo/include",
+        "${external_lib_path}/libjpeg-turbo/priv"
+    ]
+
+    public_headers = [
+        "code/turbojpeg.h"
+    ]
+
+    output_dir = "${external_lib_path}/libjpeg-turbo"
+
+    if(is_windows){
+        defines += [
+            "DLLDEFINE"
+        ]
+    }
+}
+
+group("libjpeg-turbo"){
+    public_deps = [
+        ":turbojpeg",
+        ":jpeg"
+    ]
+}
+
+config("libjpeg-turbo_config"){
+    include_dirs = ["${external_lib_path}/libjpeg-turbo/include"]
 }

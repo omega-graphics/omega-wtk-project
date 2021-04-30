@@ -604,7 +604,6 @@ template("omega_wtk_test"){
             ]
             sources = [
                 "$root_out_dir/lib/OmegaWTK.dll",
-                zlib_link,
                 libpng_link
             ] # + libjpeg_turbo_link + libtiff_link
             outputs = [

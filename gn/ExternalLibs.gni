@@ -113,3 +113,74 @@ template("external_lib"){
     }
 
 }
+
+template("external_lib_target"){
+    assert(defined(invoker.public_headers))
+
+    copy("${target_name}_headers"){
+        sources = invoker.public_headers
+        # if(built == false){
+            outputs = [
+                "${invoker.output_dir}/include/{{source_file_part}}"
+            ]
+        # }
+    }
+
+    if(defined(invoker.public_deps)){
+        invoker.public_deps += [":${target_name}_headers"]
+    }
+    else {
+        invoker.public_deps = [":${target_name}_headers"]
+    }
+
+    if(defined(invoker.static)){
+        if(invoker.static == true){
+            static_library(target_name){
+                if(is_mac){
+                    output_extension = "a"
+                }
+                else if(is_windows){
+                    output_extension = "lib"
+                }
+                forward_variables_from(invoker,["sources","deps","public_deps","configs","public_configs","include_dirs","output_dir","defines"])
+            }
+        }
+    }
+    else if(defined(invoker.is_source_set)){
+        if(invoker.is_source_set){
+            source_set(target_name){
+                forward_variables_from(invoker,["sources","deps","public_deps","configs","public_configs","include_dirs","output_dir","defines"])
+            }
+        }
+    }
+    else {
+        shared_library(target_name){
+            if(is_mac){
+                output_extension = "dylib"
+            }
+            else if(is_windows){
+                output_extension = "dll"
+            }
+           forward_variables_from(invoker,["sources","deps","public_deps","configs","public_configs","include_dirs","output_dir","defines"]) 
+        }
+    }
+
+    if(!defined(invoker.export_config)){
+
+        config("${target_name}_config"){
+            include_dirs = ["${invoker.output_dir}/include"]
+        }
+
+    }
+    else {
+        if(invoker.export_config){
+
+            config("${target_name}_config"){
+                include_dirs = ["${invoker.output_dir}/include"]
+            }
+            
+        }
+    }
+
+    
+}

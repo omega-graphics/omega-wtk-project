@@ -74,9 +74,6 @@ omega_wtk_static_lib("omegaWTKCore"){
     public_deps = [
         "//external-libs/pcre2"
     ]
-    public_configs = [
-        "//external-libs/pcre2:pcre2_config"
-    ]
     sources = [
         # Headers
         "$omega_wtk_include_dir/Core/Core.h",

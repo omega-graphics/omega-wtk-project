@@ -1,66 +1,103 @@
 import("../../gn/ExternalLibs.gni")
+import("../../gn/OmegaWTK.gni")
 
-o = "$external_lib_path/pcre2/build"
-if(is_mac || is_linux) {
-    lib_name = "${o}/${lib_prefix}pcre2-8.${static_lib_suffix}"
-}
-else {
-    lib_name = "${o}/${lib_prefix}pcre2-8.${static_lib_suffix}"
-}
+# o = "$external_lib_path/pcre2/build"
+# if(is_mac || is_linux) {
+#     lib_name = "${o}/${lib_prefix}pcre2-8.${static_lib_suffix}"
+# }
+# else {
+#     lib_name = "${o}/${lib_prefix}pcre2-8.${static_lib_suffix}"
+# }
 
-external_lib("pcre2"){
-    cmake_other_args = ""
-    conf = rebase_path("./code/pcre2-10.36")
-    outputs = [
-        lib_name,
-        "${o}/pcre2.h",
-        "${o}/pcre2posix.h"
-    ]
-    public_headers = [
-        rebase_path("${o}/pcre2.h"),
-        rebase_path("./code/pcre2-10.36/src/pcre2posix.h")
-    ]
-    export = rebase_path(lib_name)
-}
-
-# pcre_version = "pcre2-10.36"
-
-# external_lib_target("${lib_prefix}pcre2-8"){
-#     sources = [
-#         "code/pcre2-10.36/src/pcre2_auto_possess.c",
-#         "code/pcre2-10.36/src/pcre2_compile.c",
-#         "code/pcre2-10.36/src/pcre2_config.c",
-#         "code/pcre2-10.36/src/pcre2_context.c",
-#         "code/pcre2-10.36/src/pcre2_convert.c",
-#         "code/pcre2-10.36/src/pcre2_dfa_match.c",
-#         "code/pcre2-10.36/src/pcre2_dftables.c",
-#         "code/pcre2-10.36/src/pcre2_error.c",
-#         "code/pcre2-10.36/src/pcre2_extuni.c",
-#         "code/pcre2-10.36/src/pcre2_fuzzsupport.c",
-#         "code/pcre2-10.36/src/pcre2_jit_misc.c",
-#         "code/pcre2-10.36/src/pcre2_jit_compile.c",
-#         "code/pcre2-10.36/src/pcre2_jit_match.c",
-#         "code/pcre2-10.36/src/pcre2_maketables.c",
-#         "code/pcre2-10.36/src/pcre2_match.c",
-#         "code/pcre2-10.36/src/pcre2_match_data.c",
-#         "code/pcre2-10.36/src/pcre2_newline.c",
-#         "code/pcre2-10.36/src/pcre2_ord2utf.c",
-#         "code/pcre2-10.36/src/pcre2_pattern_info.c",
-#         "code/pcre2-10.36/src/pcre2_printint.c",
-#         "code/pcre2-10.36/src/pcre2_script_run.c",
-#         "code/pcre2-10.36/src/pcre2_serialize.c",
-      #   "code/pcre2-10.36/src/pcre2_string_utils.c",
-      #   "code/pcre2-10.36/src/pcre2_study.c",
-      #   "code/pcre2-10.36/src/pcre2_substitute.c",
-      #   "code/pcre2-10.36/src/pcre2_substring.c"
-#         "code/pcre2-10.36/src/pcre2_tables.c",
-#         "code/pcre2-10.36/src/pcre2_ucd.c",
-#         "code/pcre2-10.36/src/pcre2_valid_utf.c",
-#         "code/pcre2-10.36/src/pcre2_xclass.c",
-#         "code/pcre2-10.36/src/pcre2posix.c"
+# external_lib("pcre2"){
+#     cmake_other_args = ""
+#     conf = rebase_path("./code/pcre2-10.36")
+#     outputs = [
+#         lib_name,
+#         "${o}/pcre2.h",
+#         "${o}/pcre2posix.h"
 #     ]
+#     public_headers = [
+#         rebase_path("${o}/pcre2.h"),
+#         rebase_path("./code/pcre2-10.36/src/pcre2posix.h")
+#     ]
+#     export = rebase_path(lib_name)
 # }
 
-# external_dep(){
+configure_file("code/pcre2-10.36/src/pcre2.h.in"){
+    defines = ["-DPCRE2_MAJOR=10","-DPCRE2_MINOR=36","-DPCRE2_PRERELEASE=0","-DPCRE2_DATE=0"]
+    dep_name = "pcre2_h_conf"
+    output_name = "${external_lib_path}/pcre2/include/pcre2.h"
+}
 
-# }
+copy("pcre2_chartables"){
+    sources = [
+        "code/pcre2-10.36/src/pcre2_chartables.c.dist"
+    ]
+    outputs = [
+        "${external_lib_path}/pcre2/pcre2_chartables.c"
+    ]
+}
+
+external_lib_target("pcre2"){
+    public_deps = [
+        ":pcre2_h_conf",
+        ":pcre2_chartables"
+    ]
+    include_dirs = ["code/pcre2-10.36/src","${external_lib_path}/pcre2/include"]
+    public_headers = [
+        "code/pcre2-10.36/src/pcre2posix.h"
+    ]
+    # Default Defines from CMakeLists.txt
+    defines = [
+        "PCRE2_CODE_UNIT_WIDTH=8",
+        "LINK_SIZE=2",
+        "PARENS_NEST_LIMIT=250",
+        "HEAP_LIMIT=20000000",
+        "MATCH_LIMIT=10000000",
+        "MATCH_LIMIT_DEPTH=MATCH_LIMIT",
+        "PCRE2_NEWLINE=LF",
+        "MAX_NAME_SIZE=32",
+        "MAX_NAME_COUNT=10000",
+        "_CRT_SECURE_NO_DEPRECATE",
+        "_CRT_SECURE_NO_WARNINGS",
+        "NEWLINE_DEFAULT=2"
+    ]
+    sources = [
+        "code/pcre2-10.36/src/pcre2_auto_possess.c",
+        "code/pcre2-10.36/src/pcre2_compile.c",
+        "code/pcre2-10.36/src/pcre2_config.c",
+        "code/pcre2-10.36/src/pcre2_context.c",
+        "code/pcre2-10.36/src/pcre2_convert.c",
+        "code/pcre2-10.36/src/pcre2_dfa_match.c",
+        "code/pcre2-10.36/src/pcre2_dftables.c",
+        "code/pcre2-10.36/src/pcre2_error.c",
+        "code/pcre2-10.36/src/pcre2_extuni.c",
+        "${external_lib_path}/pcre2/pcre2_chartables.c",
+        # "code/pcre2-10.36/src/pcre2_fuzzsupport.c",
+        "code/pcre2-10.36/src/pcre2_find_bracket.c",
+        "code/pcre2-10.36/src/pcre2_jit_compile.c",
+        "code/pcre2-10.36/src/pcre2_maketables.c",
+        "code/pcre2-10.36/src/pcre2_match.c",
+        "code/pcre2-10.36/src/pcre2_match_data.c",
+        "code/pcre2-10.36/src/pcre2_newline.c",
+        "code/pcre2-10.36/src/pcre2_ord2utf.c",
+        "code/pcre2-10.36/src/pcre2_pattern_info.c",
+        "code/pcre2-10.36/src/pcre2_script_run.c",
+        "code/pcre2-10.36/src/pcre2_serialize.c",
+        "code/pcre2-10.36/src/pcre2_string_utils.c",
+        "code/pcre2-10.36/src/pcre2_study.c",
+        "code/pcre2-10.36/src/pcre2_substitute.c",
+        "code/pcre2-10.36/src/pcre2_substring.c",
+        "code/pcre2-10.36/src/pcre2_tables.c",
+        "code/pcre2-10.36/src/pcre2_ucd.c",
+        "code/pcre2-10.36/src/pcre2_valid_utf.c",
+        "code/pcre2-10.36/src/pcre2_xclass.c",
+    ]
+    if(is_linux) {
+        sources += [
+            "code/pcre2-10.36/src/pcre2posix.c"
+        ]
+    }
+    output_dir = "${external_lib_path}/pcre2"
+}

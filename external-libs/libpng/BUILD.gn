@@ -1,39 +1,55 @@
 import("../../gn/ExternalLibs.gni")
 
-if(is_mac || is_linux){
-    lib_name = "${external_lib_path}/libpng/build/libpng16.${static_lib_suffix}"
-}
-else {
-    lib_name = "${external_lib_path}/libpng/build/libpng16.${static_lib_suffix}"
-}
 
-if(is_mac || is_linux){
-    zlib_name = "${external_lib_path}/zlib/build/libz.1.2.11.${shared_lib_suffix}"
-}
-else {
-    zlib_name = "${external_lib_path}/zlib/build/zlib.lib"
-}
-
-
-external_lib("libpng"){
-    cmake_other_args = "-DZLIB_INCLUDE_DIR=\"" + rebase_path("//out/externals/zlib/include") + "\"" + " -DZLIB_LIBRARY=\"" + rebase_path(zlib_name) + "\""
-    conf = rebase_path("./code")
+copy("pnglibconf_h"){
+    sources = [
+        "code/scripts/pnglibconf.h.prebuilt"
+    ]
     outputs = [
-       lib_name,
-        "${external_lib_path}/libpng/build/pnglibconf.h"
+        "${external_lib_path}/libpng/include/pnglibconf.h"
+    ]
+}
+
+external_lib_target("libpng"){
+    public_deps = [
+        "../zlib",
+        ":pnglibconf_h"
+    ]
+    include_dirs = [
+        "${external_lib_path}/libpng/include"
+    ]
+    defines = [
+        "_CRT_SECURE_NO_DEPRECATE",
+        "_CRT_NONSTDC_NO_DEPRECATE"
+    ]
+    public_configs = ["../zlib:zlib_config"]
+    sources = [
+        "code/png.c",
+        "code/pngerror.c",
+        "code/pngget.c",
+        "code/pngmem.c",
+        "code/pngpread.c",
+        "code/pngread.c",
+        "code/pngrio.c",
+        "code/pngrtran.c",
+        "code/pngrutil.c",
+        "code/pngset.c",
+        "code/pngtrans.c",
+        "code/pngwio.c",
+        "code/pngwrite.c",
+        "code/pngwtran.c",
+        "code/pngwutil.c"
     ]
     if(is_windows){
-        outputs += [
-            "${external_lib_path}/libpng/build/libpng16.dll"
-        ]
+        defines += ["PNG_USE_DLL=1","PNG_IMPEXP=PNG_DLL_EXPORT"]
     }
-    public_deps = [
-        "../zlib"
-    ]
-    public_headers = [
-        rebase_path("./code/png.h"),
-        rebase_path("./code/pngconf.h"),
-        rebase_path("${external_lib_path}/libpng/build/pnglibconf.h")
-    ]
-    export = rebase_path(lib_name)
+    if(target_cpu == "x64" || target_cpu == "x86"){
+        sources += [
+            "code/intel/filter_sse2_intrinsics.c",
+            "code/intel/intel_init.c"
+        ]
+        defines += ["PNG_INTEL_SSE_OPT=0"]
+    }
+    public_headers = ["code/png.h","code/pngconf.h"]
+    output_dir = "${external_lib_path}/libpng"
 }
