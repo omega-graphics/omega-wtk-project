@@ -5,3 +5,5 @@ pcre2/code
 webrtc/code
 zlib/code
 openssl/code
+icu-69/code 
+libxml2/code
