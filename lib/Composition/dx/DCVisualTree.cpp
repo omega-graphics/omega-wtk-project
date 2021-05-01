@@ -2,6 +2,8 @@
 #include <iostream>
 #include "DXBDCompositionRenderTarget.h"
 
+
+
 namespace OmegaWTK::Composition {
     
     DCVisualTree::DCVisualTree(DXBDCompositionDevice *device):device(device),hwndTarget(nullptr){};
@@ -13,10 +15,6 @@ namespace OmegaWTK::Composition {
     DCVisualTree::Visual::~Visual(){
         visual->RemoveAllVisuals();
         Core::SafeRelease(&visual);
-    };
-
-    Core::SharedPtr<BDCompositionVisualTree> DCVisualTree::Create(DXBDCompositionDevice *device){
-        return std::make_shared<DCVisualTree>(device);
     };
 
     Core::SharedPtr<BDCompositionVisualTree::Visual> DCVisualTree::makeVisual(Core::SharedPtr<BDCompositionImageRenderTarget> &img){
@@ -49,10 +47,20 @@ namespace OmegaWTK::Composition {
         root_v = visual;
     };
 
-    void DCVisualTree::replaceVisualWithTargetPtr(Core::SharedPtr<BDCompositionImageRenderTarget> &imgTarget,Core::SharedPtr<Parent::Visual>  visual){
+    // void DCVisualTree::replaceVisualWithTargetPtr(Core::SharedPtr<BDCompositionImageRenderTarget> &imgTarget,Core::SharedPtr<Parent::Visual>  visual){
+    //     for(auto & v : body){
+    //         Visual *_v = (Visual *)v.get();
+    //         if(_v->img == imgTarget){
+    //             v = visual;
+    //             break;
+    //         };
+    //     };
+    // };
+
+    void DCVisualTree::replaceVisualWithTargetPtr(BDCompositionImageRenderTarget *imgTarget, Core::SharedPtr<Parent::Visual> visual){
         for(auto & v : body){
             Visual *_v = (Visual *)v.get();
-            if(_v->img == imgTarget){
+            if(_v->img.get() == imgTarget){
                 v = visual;
                 break;
             };
@@ -65,6 +73,10 @@ namespace OmegaWTK::Composition {
 
     void DCVisualTree::layout(){
 
+    };
+
+     Core::SharedPtr<BDCompositionVisualTree> DCVisualTree::Create(DXBDCompositionDevice *device){
+        return std::make_shared<DCVisualTree>(device);
     };
 
 };

@@ -142,14 +142,14 @@ template("external_lib_target"){
                 else if(is_windows){
                     output_extension = "lib"
                 }
-                forward_variables_from(invoker,["sources","deps","public_deps","configs","public_configs","include_dirs","output_dir","defines"])
+                forward_variables_from(invoker,["sources","deps","public_deps","configs","public_configs","include_dirs","output_dir","defines","ldflags","cflags_c","cflags_cc"])
             }
         }
     }
     else if(defined(invoker.is_source_set)){
         if(invoker.is_source_set){
             source_set(target_name){
-                forward_variables_from(invoker,["sources","deps","public_deps","configs","public_configs","include_dirs","output_dir","defines"])
+                forward_variables_from(invoker,["sources","deps","public_deps","configs","public_configs","include_dirs","output_dir","defines","ldflags","cflags_c","cflags_cc"])
             }
         }
     }
@@ -161,7 +161,7 @@ template("external_lib_target"){
             else if(is_windows){
                 output_extension = "dll"
             }
-           forward_variables_from(invoker,["sources","deps","public_deps","configs","public_configs","include_dirs","output_dir","defines"]) 
+           forward_variables_from(invoker,["sources","deps","public_deps","configs","public_configs","include_dirs","output_dir","defines","ldflags","cflags_c","cflags_cc"]) 
         }
     }
 

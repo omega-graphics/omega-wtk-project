@@ -1,1 +1,0 @@
-configure_file("${SOURCE}" "${DEST}" @ONLY)

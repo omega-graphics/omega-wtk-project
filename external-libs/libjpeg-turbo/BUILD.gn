@@ -272,4 +272,7 @@ group("libjpeg-turbo"){
 
 config("libjpeg-turbo_config"){
     include_dirs = ["${external_lib_path}/libjpeg-turbo/include"]
+    defines = [
+        "HAVE_BOOLEAN"
+    ]
 }

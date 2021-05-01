@@ -28,7 +28,8 @@ class DCVisualTree : public BDCompositionVisualTree {
     static Core::SharedPtr<BDCompositionVisualTree> Create(DXBDCompositionDevice *device);
     Core::SharedPtr<Parent::Visual> makeVisual(Core::SharedPtr<BDCompositionImageRenderTarget> & imgRenderTarget);
     void replaceRootVisual(Core::SharedPtr<Parent::Visual> visual);
-    void replaceVisualWithTargetPtr(Core::SharedPtr<BDCompositionImageRenderTarget> & imgTarget,Core::SharedPtr<Parent::Visual>  visual);
+    // void replaceVisualWithTargetPtr(Core::SharedPtr<BDCompositionImageRenderTarget> & imgTarget,Core::SharedPtr<Parent::Visual>  visual);
+    void replaceVisualWithTargetPtr(BDCompositionImageRenderTarget *imgTarget, Core::SharedPtr<Parent::Visual> visual);
     void setRootVisual(Core::SharedPtr<Parent::Visual> visual);
     void addVisual(Core::SharedPtr<Parent::Visual> & visual);
     void layout();

@@ -1,45 +1,217 @@
 import("../../gn/ExternalLibs.gni")
 import("../../gn/ExternalExports.gni")
+import("../../gn/OmegaWTK.gni")
 
-o =  "$root_out_dir/externals/libtiff/build"
+# o =  "$root_out_dir/externals/libtiff/build"
 
-if(is_linux || is_mac){
-    lib_names = ["${o}/libtiff/${lib_prefix}tiff.5.${shared_lib_suffix}","${o}/libtiff/${lib_prefix}tiffxx.5.${shared_lib_suffix}"]
-}
-else {
-    lib_names = ["${o}/libtiff/${lib_prefix}tiff.${shared_lib_suffix}","${o}/libtiff/${lib_prefix}tiffxx.${shared_lib_suffix}"]
-}
+# if(is_linux || is_mac){
+#     lib_names = ["${o}/libtiff/${lib_prefix}tiff.5.${shared_lib_suffix}","${o}/libtiff/${lib_prefix}tiffxx.5.${shared_lib_suffix}"]
+# }
+# else {
+#     lib_names = ["${o}/libtiff/${lib_prefix}tiff.${shared_lib_suffix}","${o}/libtiff/${lib_prefix}tiffxx.${shared_lib_suffix}"]
+# }
 
-external_lib("libtiff"){
-    cmake_other_args = 
-    "-DJPEG_INCLUDE_DIRS=" + rebase_path("//out/externals/libjpeg-turbo/include")
-    + " -DJPEG_LIBRARIES=" + rebase_path("//out/externals/libjpeg-turbo/build") 
-    + " -DZLIB_INCLUDE_DIRS=" + rebase_path("//out/externals/zlib/include")
-    + " -DZLIB_LIBRARIES=" + rebase_path("//out/externals/zlib/build")
-    conf = rebase_path("./code")
-    outputs = lib_names + [
-        "${o}/libtiff/tiffconf.h"
+# external_lib("libtiff"){
+#     cmake_other_args = 
+#     "-DJPEG_INCLUDE_DIRS=" + rebase_path("//out/externals/libjpeg-turbo/include")
+#     + " -DJPEG_LIBRARIES=" + rebase_path("//out/externals/libjpeg-turbo/build") 
+#     + " -DZLIB_INCLUDE_DIRS=" + rebase_path("//out/externals/zlib/include")
+#     + " -DZLIB_LIBRARIES=" + rebase_path("//out/externals/zlib/build")
+#     conf = rebase_path("./code")
+#     outputs = lib_names + [
+#         "${o}/libtiff/tiffconf.h"
+#     ]
+#     if(is_windows){
+#         outputs += [
+#             "${o}/libtiff/${lib_prefix}tiffxx.${static_lib_suffix}"
+#         ]
+#     }
+#     public_deps = [
+#         "../zlib",
+#         "../libjpeg-turbo"
+#     ]
+#     public_headers = [
+#         rebase_path("./code/libtiff/tiff.h"),
+#         rebase_path("${o}/libtiff/tiffconf.h"),
+#         rebase_path("./code/libtiff/tiffio.h"),
+#         rebase_path("./code/libtiff/tiffio.hxx"),
+#         rebase_path("./code/libtiff/tiffvers.h")
+#     ]
+#     if(is_linux || is_mac){
+#         export = rebase_path("${o}/libtiff/${lib_prefix}tiffxx.5.${shared_lib_suffix}")
+#     }
+#     else {
+#         export = rebase_path("${o}/libtiff/${lib_prefix}tiffxx.${static_lib_suffix}")
+#     }
+# }
+
+configure_file("./tif_config.h.in"){
+    dep_name = "tif_config_h_conf"
+    defines = [
+        ""
     ]
     if(is_windows){
-        outputs += [
-            "${o}/libtiff/${lib_prefix}tiffxx.${static_lib_suffix}"
+        defines += [
+            "-DPACKAGE_NAME=libtiff",
+            "-DWIN=1",
+            "-DSIZEOF_SIZE_T=8",
+            "-DPACKAGE_STRING=libtiff-4.2.0",
+            "-DLIBJPEG_12_PATH=\"" + rebase_path("${external_lib_path}/libjpeg-turbo/include/jpeglib.h") + "\"",
+            "-DSTRIP_SIZE_DEFAULT=8192"
         ]
     }
+    output_name = "${external_lib_path}/libtiff/priv/tif_config.h"
+}
+
+configure_file("./tiffconf.h.in"){
+    dep_name = "tiffconf_h_conf"
+    defines = [
+        "-DTIFF_INT8_T=int8_t",
+        "-DTIFF_UINT8_T=uint8_t",
+        "-DTIFF_INT16_T=int16_t",
+        "-DTIFF_UINT16_T=uint16_t",
+        "-DTIFF_INT32_T=int32_t",
+        "-DTIFF_UINT32_T=uint32_t",
+        "-DTIFF_INT64_T=int64_t",
+        "-DTIFF_UINT64_T=uint64_t",
+        "-DTIFF_SSIZE_T=int64_t"
+    ]
+    if(target_cpu == "x64"){
+        defines += [
+            "-DHOST_FILLORDER=FILLORDER_LSB2MSB",
+            "-DHOST_BIG_ENDIAN=0"
+        ]
+    }
+
+    output_name = "${external_lib_path}/libtiff/include/tiffconf.h"
+}
+
+external_lib_target("tiff"){
     public_deps = [
+        ":tiffconf_h_conf",
+        ":tif_config_h_conf",
         "../zlib",
         "../libjpeg-turbo"
     ]
-    public_headers = [
-        rebase_path("./code/libtiff/tiff.h"),
-        rebase_path("${o}/libtiff/tiffconf.h"),
-        rebase_path("./code/libtiff/tiffio.h"),
-        rebase_path("./code/libtiff/tiffio.hxx"),
-        rebase_path("./code/libtiff/tiffvers.h")
+    include_dirs = [
+        "${external_lib_path}/libtiff/include",
+        "${external_lib_path}/libtiff/priv"
     ]
-    if(is_linux || is_mac){
-        export = rebase_path("${o}/libtiff/${lib_prefix}tiffxx.5.${shared_lib_suffix}")
+    public_configs = [
+        "../zlib:zlib_config",
+        "../libjpeg-turbo:libjpeg-turbo_config"
+    ]
+    defines = [
+        "TIFF_DISABLE_DEPRECATED",
+        "_CRT_SECURE_NO_DEPRECATE",
+        "_CRT_NONSTDC_NO_DEPRECATE",
+        "HAVE_BOOLEAN"
+    ]
+    sources = [
+        "code/libtiff/libtiff.def",
+        "code/libtiff/tif_aux.c",
+        "code/libtiff/tif_close.c",
+        "code/libtiff/tif_codec.c",
+        "code/libtiff/tif_color.c",
+        "code/libtiff/tif_compress.c",
+        "code/libtiff/tif_dir.c",
+        "code/libtiff/tif_dirinfo.c",
+        "code/libtiff/tif_dirread.c",
+        "code/libtiff/tif_dirwrite.c",
+        "code/libtiff/tif_dumpmode.c",
+        "code/libtiff/tif_error.c",
+        "code/libtiff/tif_extension.c",
+        "code/libtiff/tif_fax3.c",
+        "code/libtiff/tif_fax3sm.c",
+        "code/libtiff/tif_flush.c",
+        "code/libtiff/tif_getimage.c",
+        # "code/libtiff/tif_jbig.c",
+        "code/libtiff/tif_jpeg.c",
+        "code/libtiff/tif_jpeg_12.c",
+        # "code/libtiff/tif_lerc.c",
+        "code/libtiff/tif_luv.c",
+        # "code/libtiff/tif_lzma.c",
+        "code/libtiff/tif_lzw.c",
+        # "code/libtiff/tif_next.c",
+        "code/libtiff/tif_ojpeg.c",
+        "code/libtiff/tif_open.c",
+        # "code/libtiff/tif_packbits.c",
+        "code/libtiff/tif_pixarlog.c",
+        "code/libtiff/tif_predict.c",
+        "code/libtiff/tif_print.c",
+        "code/libtiff/tif_read.c",
+        "code/libtiff/tif_strip.c",
+        "code/libtiff/tif_swab.c",
+        "code/libtiff/tif_thunder.c",
+        "code/libtiff/tif_tile.c",
+        "code/libtiff/tif_version.c",
+        "code/libtiff/tif_warning.c",
+        # "code/libtiff/tif_webp.c",
+        "code/libtiff/tif_write.c",
+        "code/libtiff/tif_zip.c",
+        # "code/libtiff/tif_zstd.c"
+    ]
+    public_headers = [
+        "code/libtiff/tiffvers.h",
+        "code/libtiff/tiff.h",
+        "code/libtiff/tiffio.h"
+    ]
+    if(is_windows){
+        sources += [
+            "code/libtiff/tif_win32.c"
+        ]
     }
-    else {
-        export = rebase_path("${o}/libtiff/${lib_prefix}tiffxx.${static_lib_suffix}")
+    else if(is_linux || is_mac){
+        sources += [
+            "code/libtiff/tif_unix.c"
+        ]
     }
+    output_dir = "${external_lib_path}/libtiff"
+    export_config = false
+}
+
+external_lib_target("tiffxx"){
+    public_deps = [
+        ":tiff"
+    ]
+    static = true
+    public_headers = [
+        "code/libtiff/tiffio.hxx"
+    ]
+    include_dirs = [
+        "${external_lib_path}/libtiff/include",
+        "${external_lib_path}/libtiff/priv"
+    ]
+    defines = [
+        "TIFF_DISABLE_DEPRECATED",
+        "_CRT_SECURE_NO_DEPRECATE",
+        "_CRT_NONSTDC_NO_DEPRECATE",
+        "HAVE_BOOLEAN"
+    ]
+    # if(is_windows){
+    #     # ldflags = [
+    #     #     "/INCREMENTAL",
+    #     #     "/opt:noref",
+    #     #    "/EXPORT:TIFFStreamOpen @1",
+    #     #    "/EXPORT:TIFFStreamOpen @2"
+    #     # ]
+    # }
+    sources = [
+        "code/libtiff/tif_stream.cxx"
+    ]
+    output_dir = "${external_lib_path}/libtiff"
+    export_config = false
+}
+
+group("libtiff"){
+    public_deps = [
+        ":tiff",
+        ":tiffxx"
+    ]
+}
+
+config("libtiff_config"){
+    include_dirs = [
+        "${external_lib_path}/libtiff/include"
+    ]
 }
