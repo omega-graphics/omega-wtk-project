@@ -14,4 +14,4 @@ is_linux = host_os == "linux" && current_os == "linux" && target_os == "linux"
 is_mac = host_os == "mac" && current_os == "mac" && target_os == "mac"
 is_windows = host_os == "win" && current_os == "win" && target_os == "win"
 
-set_default_toolchain("//gn//toolchain:llvm")
+set_default_toolchain("./toolchain:llvm")

@@ -6,6 +6,7 @@ declare_args(){
 }
 
 omegawtk_include_dir = get_path_info("../include","abspath")
+omegawtk_path = get_path_info("../","abspath")
 shaderc = get_path_info("./shaderc.py","abspath")
 
 if(is_mac){
@@ -323,6 +324,7 @@ if(is_windows){
         get_path_info("../target/windows/small.ico","abspath"),
         get_path_info("../target/windows/targetver.h","abspath")
     ]
+    win_app_manifest = get_path_info("../target/windows/app.exe.manifest","abspath")
     win_app_ico = get_path_info("../target/windows/app.ico","abspath")
     win_mmain = get_path_info("../target/windows/mmain.cpp.in","abspath")
     win_res_h = get_path_info("../target/windows/resource.h.in","abspath")
@@ -398,7 +400,7 @@ template("omega_wtk_app_config"){
         }
         configure_file(win_manifest_rc){
             defines = [
-                "-DEMBED=" + rebase_path("//target/windows/app.exe.manifest")
+                "-DEMBED=" + rebase_path(win_app_manifest)
             ]
             dep_name = "resource-rc-config__${app_name}_2"
             output_name = "$out_dir/manifest.rc"
@@ -452,21 +454,21 @@ template("omega_wtk_test"){
     app_name = target_name
     if(is_windows){
         _deps += [
-            ":OmegaWTK",
+            omegawtk_path + ":OmegaWTK",
             ":app_ico${app_name}",
             ":main-cpp-config__${app_name}",
             ":resource-h-config__${app_name}",
             ":resource-rc-config__${app_name}_1",
             ":resource-rc-config__${app_name}_2",
-            ":omegawtk-assetc"
+            omegawtk_path + ":omegawtk-assetc"
         ]
     }
     else if(is_mac){
         t_name = "appdelegate-mm-config__${app_name}"
         _deps += [
-            ":OmegaWTK.framework",
+            omegawtk_path + ":OmegaWTK.framework",
             ":$t_name",
-            ":omegawtk-assetc"
+            omegawtk_path + ":omegawtk-assetc"
         ]
     }
     if(defined(invoker.deps)){
@@ -627,7 +629,7 @@ template("omega_wtk_test"){
             action("${o}__${app_name}"){
                 script = assetc
                 public_deps = [
-                    ":omegawtk-assetc"
+                    omegawtk_path + ":omegawtk-assetc"
                 ]
                 args = [
                     "--assetc",
@@ -742,6 +744,328 @@ template("omega_wtk_test"){
 
             xcode_extra_attributes = {
                 DEBUG_INFORMATION_FORMAT = "dwarf"
+            }
+            deps = [
+                ":${app_name}__framework_copy",
+                ":${app_name}__metal_copy",
+                ":${app_name}__res_copy",
+                ":${app_name}__info_plist",
+                ":$app_name",
+                ":${app_name}_exec"
+            ]
+        }
+    }
+}
+
+template("omega_wtk_app"){
+    assert(defined(invoker.sources))
+    if(!defined(invoker.include_dirs)){
+        invoker.include_dirs = []
+    }
+    if(!defined(invoker.ldflags)){
+        if(is_windows){
+            invoker.ldflags = ["/subsystem:WINDOWS"]
+        }
+        else if(is_mac){
+            # invoker.ldflags = ["-"]
+        }
+    }
+    _deps = [
+            ":other-res$target_name"
+        ]
+    app_name = target_name
+    if(is_windows){
+        _deps += [
+            omegawtk_path + ":OmegaWTK",
+            ":app_ico${app_name}",
+            ":main-cpp-config__${app_name}",
+            ":resource-h-config__${app_name}",
+            ":resource-rc-config__${app_name}_1",
+            ":resource-rc-config__${app_name}_2",
+            omegawtk_path + ":omegawtk-assetc"
+        ]
+    }
+    else if(is_mac){
+        t_name = "appdelegate-mm-config__${app_name}"
+        _deps += [
+            omegawtk_path + ":OmegaWTK.framework",
+            ":$t_name",
+            omegawtk_path + ":omegawtk-assetc"
+        ]
+    }
+    if(defined(invoker.deps)){
+        invoker.public_deps += _deps
+    }
+    else {
+        invoker.public_deps = _deps
+    }
+   
+    out_dir = "$root_out_dir/obj/${target_name}"
+
+    omega_wtk_app_config(target_name){
+        # deps = invoker.deps 
+        out_dir =  out_dir
+        if(is_mac){
+            if(defined(invoker.bundle_id)){
+                bundle_id = invoker.bundle_id
+            }
+        }
+    }
+
+    invoker.include_dirs += [
+        omegawtk_include_dir,
+        "$out_dir"
+    ] 
+    if(is_windows){
+        invoker.sources += [
+            "$out_dir/mmain.cpp",
+            "$out_dir/resource_script.rc",
+            "$out_dir/manifest.rc"
+        ]
+        invoker.ldflags += [
+            # "/MANIFEST:embed",
+            # "/MANIFESTINPUT:" + rebase_path("//target/windows/app.exe.manifest"),
+            # "/MANIFESTINPUT:" + rebase_path("//target/windows/intermediate.manifest")
+        ]
+    }
+    _defines = []
+    if(is_windows) {
+        _defines += [
+            "OMEGAWTK_APP",
+            "TARGET_WIN32",
+            "WINDOWS_PRIVATE"
+        ]
+    }
+    else if(is_mac){
+        invoker.framework_dirs = [
+            "$root_out_dir/Frameworks"
+        ]
+        invoker.frameworks = [
+            "Cocoa.framework",
+            "OmegaWTK.framework"
+        ]
+        _defines += [
+            "TARGET_MACOS"
+        ]
+        invoker.sources += [
+            "$out_dir/AppDelegate.h",
+            "$out_dir/AppDelegate.mm",
+            "$out_dir/main.mm"
+        ]
+        _libs = [
+            "c",
+            "c++"
+        ]
+        if(defined(invoker.libs)) {
+            invoker.libs += _libs
+        }
+        else {
+            invoker.libs = _libs
+        }
+    }
+
+    if(defined(invoker.defines)){
+        invoker.defines += _defines
+    }
+    else {
+        invoker.defines = _defines
+    }
+    
+    app_name = target_name
+
+    executable(target_name){
+        forward_variables_from(invoker,["libs","include_dirs","output_name","sources","defines","deps","public_deps","frameworks","framework_dirs"])
+        if(is_windows) {
+            output_extension = "exe"
+            ldflags = [
+                # "/Od",
+                "User32.lib",
+                # "/link",
+                # "/MANIFEST:embed",
+                # "/MANIFESTINPUT:" + rebase_path("//target/windows/app.exe.manifest"),
+                # "/MANIFESTINPUT:" + rebase_path("//target/windows/intermediate.manifest")
+            ]
+            cflags_cc = [
+               
+            ]
+        }
+        else if(is_mac){
+            ldflags = [
+               "-Xlinker",
+               "-rpath",
+               "-Xlinker",
+               "@loader_path/../Frameworks",
+                "-Xlinker",
+               "-rpath",
+               "-Xlinker",
+               "@loader_path/../Frameworks/OmegaWTK.framework/Libraries"
+            ]
+        }
+
+        if(is_mac){
+            output_dir = "$root_out_dir/obj/${app_name}"
+           
+        }
+        else {
+            output_dir = "$root_out_dir/tests/${app_name}"
+        }
+    }
+
+    if(is_mac){
+        if(defined(invoker.assets_dir)){
+            app_assets_dest = "$root_out_dir/obj/tests/${app_name}"
+        }
+    }
+           
+    if(is_windows){
+        if(defined(invoker.assets_dir)){
+            app_assets_dest = "$root_out_dir/tests/${app_name}"
+        }
+
+        copy("${app_name}__dlls"){
+            public_deps = [
+                ":${app_name}"
+            ]
+            sources = [
+                "$root_out_dir/lib/OmegaWTK.dll",
+                libpng_link
+            ] # + libjpeg_turbo_link + libtiff_link
+            outputs = [
+                "$root_out_dir/tests/${app_name}/{{source_file_part}}"
+            ]
+        }
+        
+    }
+
+    # template("compile_assets"){
+
+    if(defined(invoker.assets_dir)){
+
+        exec_ext = ""
+        if(is_windows){
+            exec_ext = ".exe"
+        }
+
+        o = app_assets_dest + "/assets.omxa"
+
+            action("${o}__${app_name}"){
+                script = assetc
+                public_deps = [
+                    omegawtk_path + ":omegawtk-assetc"
+                ]
+                args = [
+                    "--assetc",
+                    rebase_path("$root_out_dir/tools/omegawtk-assetc${exec_ext}"),
+                    "--output",
+                    rebase_path(o),
+                    "--dir",
+                    rebase_path(invoker.assets_dir),
+                    "--app-id",
+                    invoker.bundle_id
+                ]
+                outputs = [
+                    o
+                ]
+            }
+
+    }
+
+    # }
+
+    if(is_mac){
+
+        # action("compile-nib__${target_name}") {
+        #     script = rebase_path("gn/ibtool.py")
+        #     args = ["-I","../target/macos/English.lproj/MainMenu.xib","-D","$root_out_dir/obj","-O","$root_out_dir/obj/English.lproj/MainMenu.nib"]
+        #     outputs = [
+        #         "$root_out_dir/obj/English.lproj/MainMenu.nib"
+        #     ]
+        # }
+        bundle_data("${target_name}__metal_copy"){
+            public_deps = [
+                "../:omegawtk",
+                # ":compile-nib__${app_name}"
+            ]
+            sources = [
+                "$root_out_dir/lib/omegawtk.metallib",
+            ]
+            outputs = [
+                "{{bundle_resources_dir}}/default.metallib",
+                # "{{bundle_resources_dir}}/MainMenu.nib"
+            ]
+        }
+        bundle_data("${target_name}__res_copy"){
+            if(defined(invoker.assets_dir)){
+                public_deps = [
+                    ":${o}__${app_name}"
+                ]
+            }
+            sources = [
+                mac_app_nib,
+            ]
+            if(defined(invoker.assets_dir)){
+                sources += [
+                    o
+                ]
+            }
+            outputs = [
+                "{{bundle_resources_dir}}/{{source_file_part}}",
+            ]
+        }
+         bundle_data("${target_name}__framework_copy"){
+            public_deps = [
+                ":OmegaWTK.framework"
+            ]
+            sources = [
+                "$root_out_dir/Frameworks/OmegaWTK.framework"
+            ]
+            outputs = [
+                "{{bundle_contents_dir}}/Frameworks/{{source_file_part}}"
+            ]
+        }
+        bundle_data("${target_name}__info_plist"){
+            public_deps = [
+                ":info-plist-config__${app_name}"
+            ]
+            sources = [
+                "$out_dir/Info.plist"
+            ]
+            outputs = [
+                "{{bundle_contents_dir}}/Info.plist"
+            ]
+        }
+        bundle_data("${target_name}_exec"){
+            public_deps = [
+                ":$app_name"
+            ]
+            sources = ["$out_dir/$app_name"]
+            outputs = ["{{bundle_executable_dir}}/$app_name"]
+        }
+        
+        create_bundle("${target_name}.app"){
+
+            bundle_root_dir = "$root_out_dir/tests/$target_name"
+            bundle_contents_dir  = "$bundle_root_dir/Contents"
+            bundle_resources_dir = "$bundle_contents_dir/Resources"
+            bundle_executable_dir = "$bundle_contents_dir/MacOS"
+
+            code_signing_script = codesign
+            code_signing_sources = [
+                "$out_dir/$app_name"
+            ]
+            code_signing_outputs = [
+                # "$bundle_executable_dir/$app_name",
+                "$bundle_contents_dir/_CodeSignature"
+            ]
+            code_signing_args = [
+                "--sig",
+                code_signature,
+                "--code",
+                rebase_path("$root_out_dir/tests/$app_name.app")
+            ]
+
+            xcode_extra_attributes = {
+                # DEBUG_INFORMATION_FORMAT = "dwarf"
             }
             deps = [
                 ":${app_name}__framework_copy",

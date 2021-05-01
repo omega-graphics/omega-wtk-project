@@ -36,12 +36,12 @@ def clean_temp_folder():
     shutil.rmtree("./temp")
 
 
-# dep(url="https://github.com/glennrp/libpng.git",gitClone=True,installName="libpng")
-# dep(url="https://github.com/libjpeg-turbo/libjpeg-turbo.git",gitClone=True,installName="libjpeg-turbo")
-# dep(url="https://gitlab.com/libtiff/libtiff.git",gitClone=True,installName="libtiff")
-# dep(url="https://github.com/madler/zlib.git",gitClone=True,installName="zlib")
-# dep(url="https://ftp.pcre.org/pub/pcre/pcre2-10.36.zip",gitClone=False,installName="pcre2",fileExt=".zip")
-# dep(url="https://gitlab.gnome.org/GNOME/libxml2.git",gitClone=True,installName="libxml2")
+dep(url="https://github.com/glennrp/libpng.git",gitClone=True,installName="libpng")
+dep(url="https://github.com/libjpeg-turbo/libjpeg-turbo.git",gitClone=True,installName="libjpeg-turbo")
+dep(url="https://gitlab.com/libtiff/libtiff.git",gitClone=True,installName="libtiff")
+dep(url="https://github.com/madler/zlib.git",gitClone=True,installName="zlib")
+dep(url="https://ftp.pcre.org/pub/pcre/pcre2-10.36.zip",gitClone=False,installName="pcre2",fileExt=".zip")
+dep(url="https://gitlab.gnome.org/GNOME/libxml2.git",gitClone=True,installName="libxml2")
 dep(url="https://github.com/unicode-org/icu.git",gitClone=True,installName="icu-69",branch="maint/maint-69")
 # dep(url="git://git.openssl.org/openssl.git",gitClone=True,installName="openssl")
 # dep(gitClone=False,installName="webrtc",custom_commands=["fetch --nohooks webrtc","gclient sync"])
