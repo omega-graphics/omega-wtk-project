@@ -45,7 +45,6 @@ configure_file("jconfigint.h.in"){
         "-DBUILD=0",
         "-DPACKAGE_NAME=\"libjpeg-turbo\"",
         "-DSIZE_T=8",
-        "-DINTRIN_H=0",
         "-DINLINE=__inline"
     ]
     if(is_windows){
@@ -119,24 +118,35 @@ source_set("simd"){
     }
     if(is_windows){
         defines += [
-            "PIC",
             "WIN64",
+        ]
+    }
+    else if(is_mac) {
+        defines += [
+            "PIC",
+            "MACHO"
         ]
     }
 }
 
 external_lib_target("jpeg"){
+    if(is_linux || is_mac){
+        output_name = "libjpeg"
+    }
     public_deps = [
         ":jconfig_h_conf",
         ":jconfigint_h_conf",
         ":simd"
     ]
     is_source_set = true
-    defines = [
-        "DLLDEFINE",
-        "_CRT_SECURE_NO_DEPRECATE",
-        "_CRT_NONSTDC_NO_DEPRECATE"
-    ]
+    defines = []
+    if(is_windows){
+        defines += [
+            "DLLDEFINE",
+            "_CRT_SECURE_NO_DEPRECATE",
+            "_CRT_NONSTDC_NO_DEPRECATE"
+        ]
+    }
     if(target_cpu == "x64"){
         defines += [
             "SIZEOF_SIZE_T=8"
@@ -145,8 +155,11 @@ external_lib_target("jpeg"){
     if(is_windows){
         defines += [
             "_WIN64",
-            "__x86_64__"
         ]
+    }
+
+    if(target_cpu == "x64"){
+         defines += ["__x86_64__"]
     }
 
     include_dirs = [
@@ -222,6 +235,15 @@ external_lib_target("jpeg"){
 }
 
 external_lib_target("turbojpeg"){
+    if(is_linux || is_mac){
+        output_name = "libturbojpeg"
+    }
+    if(is_mac){
+        ldflags = [
+            "-install_name",
+            "@rpath/libturbojpeg.dylib"
+        ]
+    }
     public_deps = [
         ":jpeg",
         ":simd"
@@ -240,9 +262,14 @@ external_lib_target("turbojpeg"){
     defines = [
         "BMP_SUPPORTED",
         "PPM_SUPPORTED",
-        "_CRT_SECURE_NO_DEPRECATE",
-        "_CRT_NONSTDC_NO_DEPRECATE"
     ]
+
+    if(is_windows){
+        defines += [
+             "_CRT_SECURE_NO_DEPRECATE",
+            "_CRT_NONSTDC_NO_DEPRECATE"
+        ]
+    }
 
     include_dirs = [
         "./code",
@@ -272,7 +299,9 @@ group("libjpeg-turbo"){
 
 config("libjpeg-turbo_config"){
     include_dirs = ["${external_lib_path}/libjpeg-turbo/include"]
-    defines = [
-        "HAVE_BOOLEAN"
-    ]
+    if(is_windows){
+        defines = [
+            "HAVE_BOOLEAN"
+        ]
+    }
 }

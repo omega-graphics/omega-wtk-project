@@ -18,10 +18,13 @@ external_lib_target("libpng"){
     include_dirs = [
         "${external_lib_path}/libpng/include"
     ]
-    defines = [
-        "_CRT_SECURE_NO_DEPRECATE",
-        "_CRT_NONSTDC_NO_DEPRECATE"
-    ]
+    defines = []
+    if(is_windows){
+        defines += [
+            "_CRT_SECURE_NO_DEPRECATE",
+            "_CRT_NONSTDC_NO_DEPRECATE"
+        ]
+    }
     public_configs = ["../zlib:zlib_config"]
     sources = [
         "code/png.c",
@@ -49,6 +52,12 @@ external_lib_target("libpng"){
             "code/intel/intel_init.c"
         ]
         defines += ["PNG_INTEL_SSE_OPT=0"]
+    }
+    if(is_mac){
+        ldflags = [
+            "-install_name",
+            "@rpath/libpng.dylib"
+        ]
     }
     public_headers = ["code/png.h","code/pngconf.h"]
     output_dir = "${external_lib_path}/libpng"

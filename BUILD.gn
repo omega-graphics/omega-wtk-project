@@ -338,7 +338,10 @@ omega_wtk_shared_lib("OmegaWTK"){
             "MetalPerformanceShaders.framework"
         ]
         embedded_libs = [
-            zlib_link
+            zlib_link,
+            pcre2_link,
+            libjpeg_turbo_link,
+            libpng_link,
         ] + libtiff_link
     }
     if(is_windows) {

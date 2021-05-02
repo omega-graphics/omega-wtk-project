@@ -40,14 +40,23 @@ copy("pcre2_chartables"){
 }
 
 external_lib_target("pcre2"){
+
+    if(is_linux || is_mac){
+        output_name = "libpcre2"
+    }
     public_deps = [
         ":pcre2_h_conf",
         ":pcre2_chartables"
     ]
     include_dirs = ["code/pcre2-10.36/src","${external_lib_path}/pcre2/include"]
-    public_headers = [
-        "code/pcre2-10.36/src/pcre2posix.h"
-    ]
+    if(is_mac || is_linux){
+        public_headers = [
+            "code/pcre2-10.36/src/pcre2posix.h"
+        ]
+    }
+    else {
+        public_headers = []
+    }
     # Default Defines from CMakeLists.txt
     defines = [
         "PCRE2_CODE_UNIT_WIDTH=8",
@@ -59,10 +68,14 @@ external_lib_target("pcre2"){
         "PCRE2_NEWLINE=LF",
         "MAX_NAME_SIZE=32",
         "MAX_NAME_COUNT=10000",
-        "_CRT_SECURE_NO_DEPRECATE",
-        "_CRT_SECURE_NO_WARNINGS",
         "NEWLINE_DEFAULT=2"
     ]
+    if(is_windows){
+        defines += [
+            "_CRT_SECURE_NO_DEPRECATE",
+            "_CRT_SECURE_NO_WARNINGS",
+        ]
+    }
     sources = [
         "code/pcre2-10.36/src/pcre2_auto_possess.c",
         "code/pcre2-10.36/src/pcre2_compile.c",
@@ -94,9 +107,16 @@ external_lib_target("pcre2"){
         "code/pcre2-10.36/src/pcre2_valid_utf.c",
         "code/pcre2-10.36/src/pcre2_xclass.c",
     ]
-    if(is_linux) {
+    if(is_linux || is_mac) {
         sources += [
             "code/pcre2-10.36/src/pcre2posix.c"
+        ]
+    }
+
+    if(is_mac){
+        ldflags = [
+            "-install_name",
+            "@rpath/libpcre2.dylib"
         ]
     }
     output_dir = "${external_lib_path}/pcre2"

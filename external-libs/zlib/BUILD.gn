@@ -13,52 +13,101 @@ configure_file("code/zconf.h.in"){
     output_name = "${external_lib_path}/zlib/include/zconf.h"
 }
 
-external_lib_target("zlib"){
-    public_deps = [
-        ":zconf_h"
-    ]
-    public_headers = ["code/zlib.h"]
-    include_dirs = ["./code","${external_lib_path}/zlib/include"]
-    defines = [
-        # "ASMV",
-        "_CRT_SECURE_NO_DEPRECATE",
-        "_CRT_NONSTDC_NO_DEPRECATE",
-    ]
-    if(is_windows){
-    #   defines += ["ASMINF"]
-        defines += ["NO_FSEEKO"]
-    }
-    else if(is_linux || is_mac){
-        # Unix Headers
-        defines += ["HAVE_UNISTD_H","HAVE_SYS_TYPES_H","_LARGEFILE64_SOURCE=1"]
-    }
-    sources = [
-        "code/adler32.c",
-        "code/compress.c",
-        "code/crc32.c",
-        "code/deflate.c",
-        "code/gzclose.c",
-        "code/gzlib.c",
-        "code/gzread.c",
-        "code/gzwrite.c",
-        "code/infback.c",
-        "code/inffast.c",
-        "code/inflate.c",
-        "code/inftrees.c",
-        "code/trees.c",
-        "code/uncompr.c",
-        "code/zutil.c"
-    ]
-    if(is_windows){
-        sources += [
-            # "code/contrib/masmx64/gvmat64.asm",
-            # "code/contrib/masmx64/inffasx64.asm",
-            "code/win32/zlib1.rc"
-            
+if(is_linux || is_mac){
+    external_lib_target("libz"){
+        public_deps = [
+            ":zconf_h"
         ]
-        defines += [
-            "ZLIB_DLL=1"
+        include_dirs = ["./code","${external_lib_path}/zlib/include"]
+            # Unix Headers
+        defines = ["HAVE_UNISTD_H","HAVE_SYS_TYPES_H","_LARGEFILE64_SOURCE=1"]
+        public_headers = ["code/zlib.h"]
+        sources = [
+            "code/adler32.c",
+            "code/compress.c",
+            "code/crc32.c",
+            "code/deflate.c",
+            "code/gzclose.c",
+            "code/gzlib.c",
+            "code/gzread.c",
+            "code/gzwrite.c",
+            "code/infback.c",
+            "code/inffast.c",
+            "code/inflate.c",
+            "code/inftrees.c",
+            "code/trees.c",
+            "code/uncompr.c",
+            "code/zutil.c"
+        ]
+        output_dir = "${external_lib_path}/zlib"
+        export_config = false
+        if(is_mac){
+            ldflags = [
+                "-install_name",
+                "@rpath/libz.dylib"
+            ]
+        }
+    }
+
+    group("zlib"){
+        public_deps = [
+            ":libz"
         ]
     }
-    output_dir = "${external_lib_path}/zlib"
+
+    config("zlib_config"){
+        include_dirs = [
+            "${external_lib_path}/zlib/include"
+        ]
+    }
+}
+
+else {
+
+    external_lib_target("zlib"){
+        public_deps = [
+            ":zconf_h"
+        ]
+        public_headers = ["code/zlib.h"]
+        include_dirs = ["./code","${external_lib_path}/zlib/include"]
+        defines = [
+            # "ASMV",
+            "_CRT_SECURE_NO_DEPRECATE",
+            "_CRT_NONSTDC_NO_DEPRECATE",
+        ]
+        if(is_windows){
+        #   defines += ["ASMINF"]
+            defines += ["NO_FSEEKO"]
+        }
+        sources = [
+            "code/adler32.c",
+            "code/compress.c",
+            "code/crc32.c",
+            "code/deflate.c",
+            "code/gzclose.c",
+            "code/gzlib.c",
+            "code/gzread.c",
+            "code/gzwrite.c",
+            "code/infback.c",
+            "code/inffast.c",
+            "code/inflate.c",
+            "code/inftrees.c",
+            "code/trees.c",
+            "code/uncompr.c",
+            "code/zutil.c"
+        ]
+        if(is_windows){
+            sources += [
+                # "code/contrib/masmx64/gvmat64.asm",
+                # "code/contrib/masmx64/inffasx64.asm",
+                "code/win32/zlib1.rc"
+                
+            ]
+            defines += [
+                "ZLIB_DLL=1"
+            ]
+        }
+        output_dir = "${external_lib_path}/zlib"
+    }
+
 }

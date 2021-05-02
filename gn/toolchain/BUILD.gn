@@ -168,7 +168,7 @@ toolchain("llvm") {
     tool("solink") {
         outfile = "{{output_dir}}/{{target_output_name}}{{output_extension}}"
         if(is_mac){
-            command = "$cxx -o $outfile -Wl, -Xlinker {{ldflags}} {{inputs}} {{solibs}} {{frameworks}} {{swiftmodules}} {{libs}}"  
+            command = "$cxx -o $outfile -dynamiclib {{ldflags}} {{inputs}} {{solibs}} {{frameworks}} {{swiftmodules}} {{libs}}"  
         }
         # Link MSVC Runtime
         else {

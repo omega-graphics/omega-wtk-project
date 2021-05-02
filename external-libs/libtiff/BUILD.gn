@@ -48,16 +48,21 @@ import("../../gn/OmegaWTK.gni")
 configure_file("./tif_config.h.in"){
     dep_name = "tif_config_h_conf"
     defines = [
-        ""
+        "-DPACKAGE_NAME=libtiff",
+        "-DSIZEOF_SIZE_T=8",
+        "-DPACKAGE_STRING=libtiff-4.2.0",
+        "-DLIBJPEG_12_PATH=\"" + rebase_path("${external_lib_path}/libjpeg-turbo/include/jpeglib.h") + "\"",
+        "-DSTRIP_SIZE_DEFAULT=8192"
     ]
     if(is_windows){
         defines += [
-            "-DPACKAGE_NAME=libtiff",
-            "-DWIN=1",
-            "-DSIZEOF_SIZE_T=8",
-            "-DPACKAGE_STRING=libtiff-4.2.0",
-            "-DLIBJPEG_12_PATH=\"" + rebase_path("${external_lib_path}/libjpeg-turbo/include/jpeglib.h") + "\"",
-            "-DSTRIP_SIZE_DEFAULT=8192"
+            "-DWIN=1"
+        ]
+    }
+    if(is_linux || is_mac){
+        defines += [
+            "-DFSEEKO=1",
+            "-DWIN=0"
         ]
     }
     output_name = "${external_lib_path}/libtiff/priv/tif_config.h"
@@ -76,7 +81,7 @@ configure_file("./tiffconf.h.in"){
         "-DTIFF_UINT64_T=uint64_t",
         "-DTIFF_SSIZE_T=int64_t"
     ]
-    if(target_cpu == "x64"){
+    if(target_cpu == "x64" || target_cpu == "x86"){
         defines += [
             "-DHOST_FILLORDER=FILLORDER_LSB2MSB",
             "-DHOST_BIG_ENDIAN=0"
@@ -87,6 +92,9 @@ configure_file("./tiffconf.h.in"){
 }
 
 external_lib_target("tiff"){
+    if(is_linux || is_mac){
+        output_name = "libtiff"
+    }
     public_deps = [
         ":tiffconf_h_conf",
         ":tif_config_h_conf",
@@ -103,12 +111,15 @@ external_lib_target("tiff"){
     ]
     defines = [
         "TIFF_DISABLE_DEPRECATED",
-        "_CRT_SECURE_NO_DEPRECATE",
-        "_CRT_NONSTDC_NO_DEPRECATE",
-        "HAVE_BOOLEAN"
     ]
+    if(is_windows){
+        defines += [
+            "_CRT_SECURE_NO_DEPRECATE",
+            "_CRT_NONSTDC_NO_DEPRECATE",
+            "HAVE_BOOLEAN"
+        ]
+    }
     sources = [
-        "code/libtiff/libtiff.def",
         "code/libtiff/tif_aux.c",
         "code/libtiff/tif_close.c",
         "code/libtiff/tif_codec.c",
@@ -151,6 +162,9 @@ external_lib_target("tiff"){
         "code/libtiff/tif_zip.c",
         # "code/libtiff/tif_zstd.c"
     ]
+    if(is_windows){
+        sources += ["code/libtiff/libtiff.def"]
+    }
     public_headers = [
         "code/libtiff/tiffvers.h",
         "code/libtiff/tiff.h",
@@ -166,15 +180,23 @@ external_lib_target("tiff"){
             "code/libtiff/tif_unix.c"
         ]
     }
+    if(is_mac){
+        ldflags = [
+            "-install_name",
+            "@rpath/libtiff.dylib"
+        ]
+    }
     output_dir = "${external_lib_path}/libtiff"
     export_config = false
 }
 
 external_lib_target("tiffxx"){
+     if(is_linux || is_mac){
+        output_name = "libtiffxx"
+    }
     public_deps = [
         ":tiff"
     ]
-    static = true
     public_headers = [
         "code/libtiff/tiffio.hxx"
     ]
@@ -184,10 +206,15 @@ external_lib_target("tiffxx"){
     ]
     defines = [
         "TIFF_DISABLE_DEPRECATED",
-        "_CRT_SECURE_NO_DEPRECATE",
-        "_CRT_NONSTDC_NO_DEPRECATE",
-        "HAVE_BOOLEAN"
     ]
+    if(is_windows){
+        static = true
+        defines += [
+            "_CRT_SECURE_NO_DEPRECATE",
+            "_CRT_NONSTDC_NO_DEPRECATE",
+            "HAVE_BOOLEAN"
+        ]
+    }
     # if(is_windows){
     #     # ldflags = [
     #     #     "/INCREMENTAL",
@@ -199,6 +226,12 @@ external_lib_target("tiffxx"){
     sources = [
         "code/libtiff/tif_stream.cxx"
     ]
+    if(is_mac){
+        ldflags = [
+            "-install_name",
+            "@rpath/libtiffxx.dylib"
+        ]
+    }
     output_dir = "${external_lib_path}/libtiff"
     export_config = false
 }
