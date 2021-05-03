@@ -1,6 +1,10 @@
 {
     "commands":[
         {
+            "type":"gnpkg",
+            "command":"utils"
+        },
+        {
             "type":"git_clone",
             "url":"https://github.com/glennrp/libpng.git",
             "dest":"./external-libs/libpng/code",
