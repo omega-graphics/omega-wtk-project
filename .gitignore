@@ -5,7 +5,7 @@ compile_flags.txt
 swift
 sphinxout
 lib/Mobile
-
+gn-utils
 # Prerequisites
 *.d
 

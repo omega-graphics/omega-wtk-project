@@ -1,37 +1,37 @@
 {
     "commands":[
         {
-            "type":"clone",
+            "type":"git_clone",
             "url":"https://github.com/glennrp/libpng.git",
             "dest":"./external-libs/libpng/code",
             "branch":"default"
         },
         {
-            "type":"clone",
+            "type":"git_clone",
             "url":"https://github.com/libjpeg-turbo/libjpeg-turbo.git",
             "dest":"./external-libs/libjpeg-turbo/code",
             "branch":"2.0.x"
         },
         {
-            "type":"clone",
+            "type":"git_clone",
             "url":"https://gitlab.com/libtiff/libtiff.git",
             "dest":"./external-libs/libtiff/code",
             "branch":"default"
         },
         {
-           "type":"clone",
+           "type":"git_clone",
            "url":"https://github.com/madler/zlib.git",
            "dest":"./external-libs/zlib/code",
            "branch":"default"
         },
         {
-            "type":"clone",
+            "type":"git_clone",
             "url":"https://gitlab.gnome.org/GNOME/libxml2.git",
             "dest":"./external-libs/libxml2/code",
             "branch":"default"
         },
         {
-            "type":"clone",
+            "type":"git_clone",
             "url":"https://github.com/unicode-org/icu.git",
             "dest":"./external-libs/icu-69/code",
             "branch":"maint/maint-69"
