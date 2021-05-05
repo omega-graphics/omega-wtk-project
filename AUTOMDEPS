@@ -1,9 +1,11 @@
 {
-    "commands":[
+    "rootCommands":[
         {
             "type":"gnpkg",
             "command":"utils"
-        },
+        }
+    ],
+    "commands":[
         {
             "type":"git_clone",
             "url":"https://github.com/glennrp/libpng.git",
