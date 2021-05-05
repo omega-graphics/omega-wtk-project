@@ -277,6 +277,7 @@ namespace OmegaWTK {
         */
         template<class _Ty>
         class QueueHeap {
+            protected:
             _Ty *_data;
             public:
             using size_type = unsigned;
@@ -290,20 +291,20 @@ namespace OmegaWTK {
             size_type & length(){ return len;};
             reference first(){ return _data[0];};
             reference last(){ return _data[len-1];};
-            private:
+            protected:
             void __push_el(const _Ty & el){
                 memcpy(_data + len,&el,sizeof(_Ty));
                 ++len;
             };
             public:
-            void push(const _Ty & el){
+            virtual void push(const _Ty & el){
                 __push_el(el);
             };
-            void push(_Ty && el){
+            virtual void push(_Ty && el){
                 __push_el(el);
             };
             void pop(){
-                assert(!empty() && "Cannot call pop() on empty StackQueue!");
+                assert(!empty() && "Cannot call pop() on empty QueueHeap!");
                 first().~_Ty();
                 --len;
                 memcpy(_data,_data + 1,sizeof(_Ty) * len);
@@ -323,6 +324,37 @@ namespace OmegaWTK {
                 free(_data);
             };
         };
+
+        template<class _Ty,class Compare_Ty>
+        class PriorityQueueHeap : public QueueHeap<_Ty> {
+            Compare_Ty comp;
+            using super = QueueHeap<_Ty>;
+            void _sort(){
+                std::sort(super::_data,super::_data + this->length(),comp);
+            };
+            public:
+            void push(const _Ty & el) override{
+                super::__push_el(el);
+                _sort();
+            };
+            void push(_Ty && el) override{
+                super::__push_el(el);
+                _sort();
+            };
+            
+            PriorityQueueHeap(typename super::size_type max_size,Compare_Ty comp = Compare_Ty()):QueueHeap<_Ty>(max_size),comp(comp){
+
+            };
+            ~PriorityQueueHeap(){
+                
+            };
+        };
+
+        // auto cmp = [](int l,int r){
+        //     return true;
+        // };
+
+        // static PriorityQueueHeap<int,decltype(cmp)> s(10,cmp);
         
         
         /// A basic reimplementation of the std::string class!

@@ -30,7 +30,7 @@ static void run(){
     {
         std::lock_guard<std::mutex> lk(queue_mutex);
         if(!queue.empty()){
-            std::cout << "Unfinished Jobs:" << queue.length() << std::endl;
+            std::cout << "--> Unfinished Jobs:" << queue.length() << std::endl;
         };
     }
     
@@ -63,12 +63,17 @@ int main(int argc,char *argv[]){
     renderCommand2.thresholdParams.timeStamp = time_stamp_1;
     renderCommand2.thresholdParams.timeStamp = time_stamp_1 + std::chrono::milliseconds(15);
     {
-        std::lock_guard<std::mutex> lk(queue_mutex);
+        std::unique_lock<std::mutex> lk(queue_mutex);
+        lk.lock();
         queue.push(renderCommand2);
-         std::cout << "Command Push" << std::endl;
+        std::cout << "Command Push" << std::endl;
+        lk.unlock();
     }
 
+    // std::this_thread::sleep_for(std::chrono::seconds(2));
+
     {
+        
         std::lock_guard<std::mutex> shutdown_lk(shutdown_mutex);
         shutdown_ = true;
          std::cout << "Shutdown" << std::endl;

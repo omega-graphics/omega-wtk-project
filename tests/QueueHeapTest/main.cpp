@@ -3,15 +3,15 @@
 int main(int argc,char *argv[]){
 
     using namespace OmegaWTK;
-    int num = 0;
+    int _max = 10;
     std::string str = "Test";
 
-    Core::QueueHeap<std::string> test(5);
-
+    Core::PriorityQueueHeap<int,std::greater<int>> test(10);
 
     while(!test.full()){
-        test.push(str + std::to_string(++num));
-        printf("New Element: %s \n",test.last().c_str());
+        auto el = 1 + std::rand() % _max;
+        test.push(el);
+        printf("New Element: %i \n",el);
     };
 
     printf("This Queue Heap is now full with %i number of elements\n",test.length());
@@ -19,7 +19,7 @@ int main(int argc,char *argv[]){
     while(!test.empty()){
         auto ele = test.first();
         test.pop();
-        printf("Element: %s \n",ele.c_str());
+        printf("Element: %i \n",ele);
     };
 
      printf("This Queue Heap is now empty with %i number of elements\n",test.length());
