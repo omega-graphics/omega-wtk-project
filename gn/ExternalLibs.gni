@@ -16,120 +16,121 @@ else {
 
 external_lib_path = "$root_out_dir/externals/"
 external_lib_script = get_path_info("./external_lib.py","abspath")
-template("external_lib"){
-    t_name = target_name
-        if(!defined(invoker.custom_conf)){
-            assert(defined(invoker.cmake_other_args))
-            action(target_name + "__conf"){
-                script = external_lib_script
-                if(invoker.cmake_other_args != "") {
-                    args = ["--conf",invoker.conf,"--build",rebase_path("$root_out_dir/externals/${t_name}/build"),"--check-outputs",invoker.export,"--cmake-args","\"" + invoker.cmake_other_args + "\""]
-                }
-                else {
-                    args = ["--conf",invoker.conf,"--build",rebase_path("$root_out_dir/externals/${t_name}/build"),"--check-outputs",invoker.export,"--cmake-args","\"\""]
-                }
-                outputs = [
-                    "${external_lib_path}/${t_name}/CONF"
-                ]
-                if(defined(invoker.public_deps)){
-                    public_deps = invoker.public_deps
-                }
-            }
-        }
-        # else if(invoker.custom_conf == true) {
-        #     if(!defined(invoker.conf_command)){
-        #         print("Custom configure command not set!\nExiting...")
-        #     }
+# template("external_lib"){
+#     t_name = target_name
+#         if(!defined(invoker.custom_conf)){
+#             assert(defined(invoker.cmake_other_args))
+#             action(target_name + "__conf"){
+#                 script = external_lib_script
+#                 if(invoker.cmake_other_args != "") {
+#                     args = ["--conf",invoker.conf,"--build",rebase_path("$root_out_dir/externals/${t_name}/build"),"--check-outputs",invoker.export,"--cmake-args","\"" + invoker.cmake_other_args + "\""]
+#                 }
+#                 else {
+#                     args = ["--conf",invoker.conf,"--build",rebase_path("$root_out_dir/externals/${t_name}/build"),"--check-outputs",invoker.export,"--cmake-args","\"\""]
+#                 }
+#                 outputs = [
+#                     "${external_lib_path}/${t_name}/CONF"
+#                 ]
+#                 if(defined(invoker.public_deps)){
+#                     public_deps = invoker.public_deps
+#                 }
+#             }
+#         }
+#         # else if(invoker.custom_conf == true) {
+#         #     if(!defined(invoker.conf_command)){
+#         #         print("Custom configure command not set!\nExiting...")
+#         #     }
             
-        #     o = exec_script("//gn/external_lib.py",["--custom-conf",invoker.conf_command,"--build-dir",invoker.conf,"--check-outputs",invoker.export],"string")
-        # }
+#         #     o = exec_script("//gn/external_lib.py",["--custom-conf",invoker.conf_command,"--build-dir",invoker.conf,"--check-outputs",invoker.export],"string")
+#         # }
 
-        if(!defined(invoker.custom_build)){
-            action_name = "__${t_name}"
-        }
-        else if(invoker.custom_build == true) {
-            action_name = t_name
-        }
+#         if(!defined(invoker.custom_build)){
+#             action_name = "__${t_name}"
+#         }
+#         else if(invoker.custom_build == true) {
+#             action_name = t_name
+#         }
 
-        action(action_name){
-            public_deps = [
-                ":${t_name}__conf"
-            ]
-            script = external_lib_script
-            if(defined(invoker.custom_build)){
-                args = [
-                    "--custom-make",
-                    invoker.build_command,
-                    "--copy-headers"] +
-                    invoker.copy_include_inputs + [
-                    "--copy-headers-dest",
-                    invoker.copy_include_dest,
-                    "--copy-libs"] +
-                    invoker.copy_lib_inputs + [
-                    "--copy-libs-dest",
-                    invoker.copy_lib_dest
-                ]
-            }
-            else {
-                args = [
-                    "--make",
-                    rebase_path("$root_out_dir/externals/${t_name}/build")
-                ]
-            }
-            args += [
-                "--check-outputs",
-                invoker.export
-            ]
-            if(defined(invoker.old_install_name)){
-                args += [
-                    "--change-install-name",
-                    "--lib",
-                    rebase_path(invoker.export),
-                    "--old-name",
-                    invoker.old_install_name,
-                    "--new-name",
-                    invoker.new_install_name
-                ]
-            }
-            outputs = invoker.outputs
-        }
-    # }
-    if(!defined(invoker.custom_build)){
+#         action(action_name){
+#             public_deps = [
+#                 ":${t_name}__conf"
+#             ]
+#             script = external_lib_script
+#             if(defined(invoker.custom_build)){
+#                 args = [
+#                     "--custom-make",
+#                     invoker.build_command,
+#                     "--copy-headers"] +
+#                     invoker.copy_include_inputs + [
+#                     "--copy-headers-dest",
+#                     invoker.copy_include_dest,
+#                     "--copy-libs"] +
+#                     invoker.copy_lib_inputs + [
+#                     "--copy-libs-dest",
+#                     invoker.copy_lib_dest
+#                 ]
+#             }
+#             else {
+#                 args = [
+#                     "--make",
+#                     rebase_path("$root_out_dir/externals/${t_name}/build")
+#                 ]
+#             }
+#             args += [
+#                 "--check-outputs",
+#                 invoker.export
+#             ]
+#             if(defined(invoker.old_install_name)){
+#                 args += [
+#                     "--change-install-name",
+#                     "--lib",
+#                     rebase_path(invoker.export),
+#                     "--old-name",
+#                     invoker.old_install_name,
+#                     "--new-name",
+#                     invoker.new_install_name
+#                 ]
+#             }
+#             outputs = invoker.outputs
+#         }
+#     # }
+#     if(!defined(invoker.custom_build)){
 
-        copy(t_name){
+#         copy(t_name){
+#             sources = invoker.public_headers
+#             # if(built == false){
+#                 public_deps = [":__${t_name}"]
+#                 outputs = [
+#                     "$root_out_dir/externals/${target_name}/include/{{source_file_part}}"
+#                 ]
+#             # }
+#         }
+#     }
+
+#     config("${target_name}_config"){
+#         include_dirs = ["$root_out_dir/externals/${target_name}/include"]
+#         libs = [invoker.export]
+#     }
+
+# }
+
+template("external_lib_target"){
+    
+    if(defined(invoker.public_headers)){
+        copy("${target_name}_headers"){
             sources = invoker.public_headers
             # if(built == false){
-                public_deps = [":__${t_name}"]
                 outputs = [
-                    "$root_out_dir/externals/${target_name}/include/{{source_file_part}}"
+                    "${invoker.output_dir}/include/{{source_file_part}}"
                 ]
             # }
         }
     }
 
-    config("${target_name}_config"){
-        include_dirs = ["$root_out_dir/externals/${target_name}/include"]
-        libs = [invoker.export]
-    }
-
-}
-
-template("external_lib_target"){
-    assert(defined(invoker.public_headers))
-
-    copy("${target_name}_headers"){
-        sources = invoker.public_headers
-        # if(built == false){
-            outputs = [
-                "${invoker.output_dir}/include/{{source_file_part}}"
-            ]
-        # }
-    }
-
-    if(defined(invoker.public_deps)){
+    if(defined(invoker.public_deps) && defined(invoker.public_headers)){
         invoker.public_deps += [":${target_name}_headers"]
     }
-    else {
+    else if(defined(invoker.public_headers)) {
         invoker.public_deps = [":${target_name}_headers"]
     }
 

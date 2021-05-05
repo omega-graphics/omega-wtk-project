@@ -10,8 +10,8 @@
 #include <fstream>
 
 /// Regex Lib
-// #define PCRE2_CODE_UNIT_WIDTH 8
-// #include <pcre2.h>
+#define PCRE2_CODE_UNIT_WIDTH 8
+#include <pcre2.h>
 
 #include "OmegaWTKExport.h"
 
@@ -286,11 +286,13 @@ namespace OmegaWTK {
             public:
             using reference = _Ty &;
             bool empty() noexcept {return len == 0;};
+            bool full() noexcept {return len == max_len;};
+            size_type & length(){ return len;};
             reference first(){ return _data[0];};
             reference last(){ return _data[len-1];};
             private:
             void __push_el(const _Ty & el){
-                memcpy(_data + (sizeof(_Ty) * len),&el,sizeof(_Ty));
+                memcpy(_data + len,&el,sizeof(_Ty));
                 ++len;
             };
             public:
@@ -304,7 +306,7 @@ namespace OmegaWTK {
                 assert(!empty() && "Cannot call pop() on empty StackQueue!");
                 first().~_Ty();
                 --len;
-                memcpy(_data,_data + sizeof(_Ty),sizeof(_Ty) * len);
+                memcpy(_data,_data + 1,sizeof(_Ty) * len);
             };
             void resize(size_type new_max_size){
                 assert(max_len < new_max_size && "");
@@ -312,7 +314,7 @@ namespace OmegaWTK {
                 max_len = new_max_size;
             };
 
-            QueueHeap(size_type max_size):_data(malloc(sizeof(_Ty) * max_size)),max_len(max_size){
+            QueueHeap(size_type max_size):_data((_Ty *)malloc(sizeof(_Ty) * max_size)),max_len(max_size){
 
             };
             ~QueueHeap(){
@@ -389,23 +391,23 @@ namespace OmegaWTK {
         };
         #endif
 
-        // class OMEGAWTK_EXPORT RegularExpression {
-        //     pcre2_code *code;
-        // public:
-        //     RegularExpression(String pattern,bool multiLine = true);
+        class OMEGAWTK_EXPORT RegularExpression {
+            pcre2_code *code;
+        public:
+            RegularExpression(String pattern,bool multiLine = true);
             
-        //     struct Match {
-        //         pcre2_match_data *mdata;
-        //     public:
-        //         String main;
-        //         String getSubMatchByNum(unsigned n);
-        //         ~Match();
-        //     };
-        //     Match match(String subject);
-        //     ~RegularExpression();
-        // };
+            struct Match {
+                pcre2_match_data *mdata;
+            public:
+                String main;
+                String getSubMatchByNum(unsigned n);
+                ~Match();
+            };
+            Match match(String subject);
+            ~RegularExpression();
+        };
 
-        // typedef RegularExpression Regex;
+        typedef RegularExpression Regex;
     };
 OMEGAWTK_EXPORT Core::Rect Rect(unsigned x,unsigned y,unsigned width,unsigned height,float angle = 0);
 OMEGAWTK_EXPORT Core::Ellipse Ellipse(unsigned x,unsigned y,unsigned radius_x,unsigned radius_y);
@@ -415,40 +417,45 @@ OMEGAWTK_EXPORT Core::FRect FRect(float x,float y,float w,float h,float angle = 
 OMEGAWTK_EXPORT Core::FEllipse FEllipse(float x,float y,float rad_x,float rad_y);
 OMEGAWTK_EXPORT Core::FRoundedRect FRoundedRect(float x,float y,float w,float h,float rad_x,float rad_y,float angle = 0);
 
+    namespace FS {
 
- class OMEGAWTK_EXPORT  FSPath {
-       Core::String _str;
-        struct Token {
-            typedef enum : OPT_PARAM {
-                ID,
-                Dot,
-                Slash,
-            } Type;
-            Type type;
-            Core::String str;
-        };
-        Core::Vector<Token> tokens;
-        void parse(const Core::String & str);
-    public:
-        const unsigned getTokenCount(){ return tokens.size();};
-        Core::String debugString(){
-            std::ostringstream out;
-            auto it = tokens.begin();
-            while(it != tokens.end()){
-                out << "{Type:" << int(it->type) << ",Content:" << it->str << "}, " << std::flush;
-                ++it;
+        class OMEGAWTK_EXPORT  Path {
+            Core::String _str;
+                struct Token {
+                    typedef enum : OPT_PARAM {
+                        ID,
+                        Dot,
+                        Slash,
+                    } Type;
+                    Type type;
+                    Core::String str;
+                };
+                Core::Vector<Token> tokens;
+                void parse(const Core::String & str);
+            public:
+                const unsigned getTokenCount(){ return tokens.size();};
+                Core::String debugString(){
+                    std::ostringstream out;
+                    auto it = tokens.begin();
+                    while(it != tokens.end()){
+                        out << "{Type:" << int(it->type) << ",Content:" << it->str << "}, " << std::flush;
+                        ++it;
+                    };
+                    return out.str();
+                };
+                Core::String &str();
+                Core::String filename();
+                Core::String & ext();
+                Core::String absPath();
+                bool exists();
+                Path(const char * str);
+                Path(const Core::String & str);
+                ~Path();
             };
-            return out.str();
-        };
-        Core::String &str();
-        Core::String filename();
-        Core::String & ext();
-        Core::String serialize();
-        bool exists();
-        FSPath(const Core::String & str);
-        ~FSPath();
     };
-    void loadAssetFile(FSPath path);
+
+    void loadAssetFile(FS::Path path);
+
 };
 
 template<class _Ty>

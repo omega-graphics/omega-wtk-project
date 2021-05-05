@@ -10,36 +10,38 @@ namespace OmegaWTK::Composition {
 
     class Backend;
 
-//    struct CompositionRenderCommandThreasholdParams {
-//        bool hasThreadshold;
-//        std::chrono::time_point<std::chrono::high_resolution_clock> timeStamp;
-//        std::chrono::time_point<std::chrono::high_resolution_clock> threashold;
-//    };
 
-//    struct CompositionRenderCommand {
-//        typedef enum {
-//            DrawCanvasView,
-//            UpdateCanvasView,
-//            DrawVideoView,
-//            UpdateVideoView,
-//            DrawWindow,
-//            UpdateWindow
-//        }Type;
-//        typedef enum {
-//            Low,
-//            High,
-//        } Priority;
-//        Type type;
-//        Priority priority;
-//        CompositionRenderCommandThreasholdParams threasholdParams;
-//        void *data;
-//        float videoFPS;
-//        Backend *executor;
-//    };
+   struct CompositionRenderCommandThreasholdParams {
+       bool hasThreshold;
+       std::chrono::time_point<std::chrono::high_resolution_clock> timeStamp;
+       std::chrono::time_point<std::chrono::high_resolution_clock> threshold;
+   };
+
+   struct CompositionRenderCommand {
+       typedef enum {
+           DrawCanvasView,
+           UpdateCanvasView,
+           DrawVideoView,
+           UpdateVideoView,
+           DrawWindow,
+           UpdateWindow
+       }Type;
+       typedef enum {
+           Low,
+           High,
+       } Priority;
+       Type type;
+       Priority priority;
+       CompositionRenderCommandThreasholdParams thresholdParams;
+       void *data;
+       float videoFPS;
+       Backend *executor;
+   };
    
    class RenderCommandExecutionScheduler {
    public:
-       static RenderCommandExecutionScheduler* instance;
+        bool shutdown;
+        std::mutex mutex;
        Core::Vector<Backend *> backend_refs;
        std::thread * t;
        void run();
@@ -65,7 +67,7 @@ namespace OmegaWTK::Composition {
         void updateWindowLayer(WindowLayer *layer);
         void layoutLayerTreeLimb(LayerTree::Limb *limb);
         public:
-//        void scheduleCommand(CompositionRenderCommand command);
+       void scheduleCommand(UniqueHandle<CompositionRenderCommand> command);
         void updateLayerTree(LayerTree * tree);
         void prepareDraw(LayerTree *tree);
         void prepareDrawWindow(WindowLayer *layer);

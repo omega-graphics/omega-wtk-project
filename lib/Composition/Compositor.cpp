@@ -3,25 +3,53 @@
 #include "omegaWTK/Composition/Layer.h"
 namespace OmegaWTK::Composition {
 
-// RenderCommandExecutionScheduler::RenderCommandExecutionScheduler(){
-//     instance = this;
-//     run();
-// };
+static Core::QueueHeap<CompositionRenderCommand> globalQueue(50);
 
-// void RenderCommandExecutionScheduler::run(){
-//     t = new std::thread([&](){
-        
-//     });
-// };
+std::mutex queueMutex;
 
-// RenderCommandExecutionScheduler::~RenderCommandExecutionScheduler(){
-//     t->join();
-//     delete t;
-// };
+RenderCommandExecutionScheduler::RenderCommandExecutionScheduler():shutdown(false){
+    run();
+};
+
+void RenderCommandExecutionScheduler::run() {
+    t = new std::thread([&](){
+        while(!shutdown){
+            std::lock_guard<std::mutex> queueLock(queueMutex);
+            if(!globalQueue.empty()){
+                auto timeNow = std::chrono::high_resolution_clock::now();
+                auto first = globalQueue.first();
+                globalQueue.pop();
+                
+            }
+            else if (globalQueue.full()){
+                std::cerr << "ERROR: GLOBAL QUEUE IS FULL" << std::endl << "BACKEND THREAD CLOSING!" << std::endl;
+                break;
+            };
+
+            std::lock_guard<std::mutex> lk(mutex);
+        }
+    });
+};
+
+RenderCommandExecutionScheduler::~RenderCommandExecutionScheduler(){
+    std::lock_guard<std::mutex> lk(mutex); 
+    {
+        shutdown = true;
+    }
+    t->join();
+    delete t;
+};
 
 
 Compositor::Compositor():backend(make_backend()){
     
+};
+
+void Compositor::scheduleCommand(UniqueHandle<CompositionRenderCommand> command){
+    command->executor = backend.get();
+    const std::lock_guard<std::mutex> lk(queueMutex);
+    auto ptr = command.release();
+    globalQueue.push(*ptr);
 };
 
 void Compositor::__drawChildLimbs(LayerTree::Limb *limb,LayerTree *layerTree){

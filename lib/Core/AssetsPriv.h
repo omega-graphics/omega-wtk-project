@@ -9,6 +9,6 @@ namespace OmegaWTK {
             void *data;
         };
         static Core::Map<Core::String,AssetBuffer> assets_res;
-        static void loadAssetFile(FSPath & path);
+        static void loadAssetFile(FS::Path & path);
     };
 };

@@ -33,9 +33,29 @@ class AppWindowManager;
         void _add_widget(SharedHandle<Widget> * widget);
         void drawWidgets();
     public:
+#if TARGET_WIN32
+        struct SystemButton {
+            Core::Rect rect;
+            Composition::Color bkgrd;
+            SharedImageHandle img;
+            Composition::LayerAnimationController animController;
+        };
+        void setUseStandardSystemButtons(bool use);
+        void setCloseButton(SharedHandle<SystemButton> & button);
+        void setMaxmizeButton(SharedHandle<SystemButton> & button);
+        void setMinimizeButton(SharedHandle<SystemButton> & button);
+
+        void setMenuStyle(SharedHandle<Composition::MenuStyle> & style);
+#endif
+
+#if TARGET_MACOS
+        void setCloseButtonPos(Core::Position pos); 
+        void setMaximizeButtonPos(Core::Position pos); 
+        void setMinimizeButtonPos(Core::Position pos); 
+#endif
+        
         void setMenu(SharedHandle<Menu> & menu);
         void setLayerStyle(SharedHandle<Composition::WindowStyle> & style);
-        void setMenuStyle(SharedHandle<Composition::MenuStyle> & style);
         void close();
         SharedHandle<Native::NativeFSDialog> openFSDialog(const Native::NativeFSDialog::Descriptor & desc);
         SharedHandle<Native::NativeNoteDialog> openNoteDialog(const Native::NativeNoteDialog::Descriptor & desc);

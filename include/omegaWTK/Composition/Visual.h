@@ -3,6 +3,7 @@
 #include "FontEngine.h"
 #include "Brush.h"
 #include "omegaWTK/Media/ImgCodec.h"
+#include "LayerAnimation.h"
 
 #include <algorithm>
 
@@ -195,11 +196,15 @@ namespace OmegaWTK {
     };
     
     class OMEGAWTK_EXPORT  WindowStyle {
-        Core::Vector<Visual *> visuals;
+        Color bkgrd;
+        unsigned frameWidth;
+        unsigned frameHeight;
+        Core::String title;
     public:
         ~WindowStyle();
     };
     
+   
     class OMEGAWTK_EXPORT  MenuStyle {
         
     };

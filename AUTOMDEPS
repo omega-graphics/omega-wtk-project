@@ -2,7 +2,7 @@
     "rootCommands":[
         {
             "type":"gnpkg",
-            "command":"utils"
+            "command":"utils --get"
         }
     ],
     "commands":[

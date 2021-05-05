@@ -148,7 +148,6 @@ int omegaWTKMain(AppInst *app)
 //    vectorPath.append({250,175});
 //    std::cout << vectorPath.toStr();
     
-    
 //     std::cout << path.serialize() << std::endl;
     
    SharedImageHandle img = IMPORT_IMG("vortex-rtde.png");

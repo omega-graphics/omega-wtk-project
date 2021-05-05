@@ -54,9 +54,6 @@ external_lib_target("pcre2"){
             "code/pcre2-10.36/src/pcre2posix.h"
         ]
     }
-    else {
-        public_headers = []
-    }
     # Default Defines from CMakeLists.txt
     defines = [
         "PCRE2_CODE_UNIT_WIDTH=8",

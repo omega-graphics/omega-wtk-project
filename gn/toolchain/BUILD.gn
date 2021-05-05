@@ -190,7 +190,7 @@ toolchain("llvm") {
         }
         # Link MSVC Runtime
         else {
-            command = "clang-cl $debug_flag  /MT /Fe$outfile -Wl {{ldflags}} {{solibs}} {{inputs}} {{libs}}"
+            command = "clang-cl $debug_flag  /Fe$outfile -Wl {{ldflags}} {{solibs}} {{inputs}} {{libs}}"
         }
         outputs = [outfile]
         description = "Linking executable $outfile"

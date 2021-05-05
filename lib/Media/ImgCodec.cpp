@@ -414,7 +414,7 @@ Core::UniquePtr<ImgCodec> obtainCodecForImageFormat(BitmapImage::Format &format,
     switch (format) {
         case BitmapImage::PNG:
         {
-            // return std::make_unique<PNGCodec>(in,img);
+            return std::make_unique<PNGCodec>(in,img);
             break;
         }
         case BitmapImage::TIFF:
@@ -442,7 +442,7 @@ struct ImgBuffer : public std::streambuf {
     };
 };
 
-    Core::SharedPtr<BitmapImage> loadImageFromAssets(FSPath path){
+    Core::SharedPtr<BitmapImage> loadImageFromAssets(FS::Path path){
         BitmapImage img;
         auto ext = path.ext();
         BitmapImage::Format f;
@@ -457,11 +457,11 @@ struct ImgBuffer : public std::streambuf {
         return std::make_shared<BitmapImage>(std::move(img));
     };
     
-    Core::SharedPtr<BitmapImage> loadImageFromFile(FSPath path) {
+    Core::SharedPtr<BitmapImage> loadImageFromFile(FS::Path path) {
         BitmapImage img;
         auto ext = path.ext();
         BitmapImage::Format f;
-        auto os_corrected_path = path.serialize();
+        auto os_corrected_path = path.absPath();
         if(ext == "png"){
             f = BitmapImage::PNG;
         };

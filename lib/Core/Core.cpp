@@ -4,6 +4,7 @@
 #include <sstream>
 #include <cctype>
 #include <iostream>
+#include <regex>
 
 #include "assetc.h"
 #include "AssetsPriv.h"
@@ -90,50 +91,50 @@ bool Ellipse::compare(Ellipse & other){
     //     len = _len;
     // };
 
-    // RegularExpression::RegularExpression(Core::String pattern,bool multiLine){
-    //     int errc;
-    //     size_t err_offset;
-    //     uint32_t extra;
-    //     if(multiLine)
-    //         extra =  PCRE2_MULTILINE;
-    //     else 
-    //         extra = 0;
-    //     code = pcre2_compile(PCRE2_SPTR(pattern.c_str()),pattern.size(),PCRE2_UTF | extra,&errc,&err_offset,NULL);
-    //     if(errc >= 0){
-    //         std::cout << "Regex Successfuly Compiled" << std::endl;
-    //     }
-    //     else {
-    //         std::cerr << "Failed to Compile Regex" << std::endl;
-    //     };
-    // };
+    RegularExpression::RegularExpression(Core::String pattern,bool multiLine){
+        int errc;
+        size_t err_offset;
+        uint32_t extra;
+        if(multiLine)
+            extra =  PCRE2_MULTILINE;
+        else 
+            extra = 0;
+        code = pcre2_compile(PCRE2_SPTR(pattern.c_str()),pattern.size(),PCRE2_UTF | PCRE2_DOTALL | extra,&errc,&err_offset,NULL);
+        if(errc >= 0){
+            std::cout << "Regex Successfuly Compiled" << std::endl;
+        }
+        else {
+            std::cerr << "Failed to Compile Regex" << std::endl;
+        };
+    };
 
-    // RegularExpression::Match RegularExpression::match(Core::String subject){
-    //     pcre2_match_data *data = pcre2_match_data_create_from_pattern(code,NULL);
-    //     auto errc = pcre2_match_8(code,PCRE2_SPTR(subject.c_str()),subject.size(),0,PCRE2_COPY_MATCHED_SUBJECT,data,NULL);
-    //     String rc;
-    //     Match m;
-    //     rc.reserve(pcre2_get_ovector_count(data));
-    //     memcpy(rc.data(),pcre2_get_ovector_pointer(data),pcre2_get_match_data_size(data));
-    //     m.mdata = data;
-    //     m.main = std::move(rc);
-    //     return m;
-    // };
+    RegularExpression::Match RegularExpression::match(Core::String subject){
+        pcre2_match_data *data = pcre2_match_data_create_from_pattern(code,NULL);
+        auto errc = pcre2_match_8(code,PCRE2_SPTR(subject.c_str()),subject.size(),0,PCRE2_COPY_MATCHED_SUBJECT,data,NULL);
+        String rc;
+        Match m;
+        rc.reserve(pcre2_get_ovector_count(data));
+        memcpy(rc.data(),pcre2_get_ovector_pointer(data),pcre2_get_match_data_size(data));
+        m.mdata = data;
+        m.main = std::move(rc);
+        return m;
+    };
 
-    // String RegularExpression::Match::getSubMatchByNum(unsigned int n){
-    //     PCRE2_UCHAR8 *buffer;
+    String RegularExpression::Match::getSubMatchByNum(unsigned int n){
+        PCRE2_UCHAR8 *buffer;
         
-    //     size_t size;
-    //     pcre2_substring_get_bynumber(mdata,n,&buffer,&size);
-    //     return String((const char *)buffer,size);
-    // };
+        size_t size;
+        pcre2_substring_get_bynumber(mdata,n,&buffer,&size);
+        return String((const char *)buffer,size);
+    };
 
-    // RegularExpression::Match::~Match(){
-    //     pcre2_match_data_free(mdata);
-    // };
+    RegularExpression::Match::~Match(){
+        pcre2_match_data_free(mdata);
+    };
 
-    // RegularExpression::~RegularExpression(){
-    //     pcre2_code_free(code);
-    // };
+    RegularExpression::~RegularExpression(){
+        pcre2_code_free(code);
+    };
 
 }
 
@@ -144,8 +145,8 @@ typedef unsigned char Byte;
 Core::Map<Core::String,AssetFileLoader::AssetBuffer>  AssetFileLoader::assets_res;
 
 
-void AssetFileLoader::loadAssetFile(FSPath & path){
-        auto str = path.serialize();
+void AssetFileLoader::loadAssetFile(FS::Path & path){
+        auto str = path.absPath();
         std::ifstream in(str,std::ios::binary | std::ios::in);
         assetc::AssetsFileHeader header;
         in.read((char *)&header,sizeof(assetc::AssetsFileHeader));
@@ -174,7 +175,7 @@ void AssetFileLoader::loadAssetFile(FSPath & path){
         in.close();
     };
 
-void loadAssetFile(FSPath path){
+void loadAssetFile(FS::Path path){
     AssetFileLoader::loadAssetFile(path);
 };
 
@@ -203,7 +204,10 @@ Core::FRoundedRect FRoundedRect(float x,float y,float w,float h,float rad_x,floa
 };
 
 
-void FSPath::parse(const Core::String & str){
+void FS::Path::parse(const Core::String & str){
+
+    // Core::Regex regex(R"(([\w|_|\/|\.]*)\/(\w+)(?:\.(\w+))?$)");
+
     unsigned idx = 0;
     
     char buffer[200];
@@ -276,14 +280,14 @@ void FSPath::parse(const Core::String & str){
     
 };
 
-Core::String & FSPath::ext(){
+Core::String & FS::Path::ext(){
     // if(tokens.back().type == Token::ID && tokens[tokens.size() - 2].type == Token::Dot){
     //     return tokens.back().str;
     // }
     return tokens.back().str;
 };
 
-Core::String FSPath::filename(){
+Core::String FS::Path::filename(){
     Core::String res = "";
     auto it = tokens.begin();
     while(it != tokens.end()){
@@ -311,20 +315,20 @@ Core::String FSPath::filename(){
     return "";
 };
 
-Core::String & FSPath::str(){
+Core::String & FS::Path::str(){
     return _str;
 };
 
-bool FSPath::exists(){
+bool FS::Path::exists(){
 #ifdef TARGET_WIN32
-    return PathFileExistsA(serialize().c_str()) == TRUE;
+    return PathFileExistsA(absPath().c_str()) == TRUE;
 #endif
     #ifdef TARGET_MACOS
         return file_exists(serialize().c_str());
     #endif
 };
 
-Core::String FSPath::serialize(){
+Core::String FS::Path::absPath(){
 #ifdef TARGET_WIN32
     #define PATH_LIMIT 200
 #endif
@@ -365,12 +369,19 @@ Core::String FSPath::serialize(){
     return out.str();
 };
 
-FSPath::FSPath(const Core::String & str){
+
+
+FS::Path::Path(const Core::String & str){
     _str = str;
     parse(str);
 };
 
-FSPath::~FSPath(){
+FS::Path::Path(const char * str){
+    _str = str;
+    parse(str);
+};
+
+FS::Path::~Path(){
     
 };
 

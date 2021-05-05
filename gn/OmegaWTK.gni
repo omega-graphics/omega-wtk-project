@@ -9,6 +9,18 @@ omegawtk_include_dir = get_path_info("../include","abspath")
 omegawtk_path = get_path_info("../","abspath")
 shaderc = get_path_info("./shaderc.py","abspath")
 
+template("test"){
+    executable(target_name){
+        forward_variables_from(invoker,"*")
+        if(is_windows){
+            output_extension = "exe"
+        }
+        else {
+            output_extension = ""
+        }
+    }
+}
+
 if(is_mac){
     template("metal_library"){
         assert(defined(target_name))
@@ -606,8 +618,10 @@ template("omega_wtk_test"){
             ]
             sources = [
                 "$root_out_dir/lib/OmegaWTK.dll",
-                libpng_link
-            ] # + libjpeg_turbo_link + libtiff_link
+                libpng_link,
+                zlib_link,
+                pcre2_link,
+            ] + libjpeg_turbo_link
             outputs = [
                 "$root_out_dir/tests/${app_name}/{{source_file_part}}"
             ]

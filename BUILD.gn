@@ -16,12 +16,12 @@ pcre2_config = get_path_info("./external-libs/pcre2:pcre2_config","abspath")
 
 external_media_libs = [
     get_path_info("./external-libs/zlib","abspath"),
-    get_path_info("./external-libs/libtiff","abspath"),
+    get_path_info("./external-libs/libjpeg-turbo","abspath"),
     get_path_info("./external-libs/libpng","abspath")
 ]
 external_media_libs_conf = [
     get_path_info("./external-libs/libpng:libpng_config","abspath"),
-    get_path_info("./external-libs/libtiff:libtiff_config","abspath"),
+    get_path_info("./external-libs/libjpeg-turbo:libjpeg-turbo_config","abspath"),
     get_path_info("./external-libs/zlib:zlib_config","abspath")
 ]
 
@@ -401,6 +401,53 @@ if(!is_external_project){
             bundle_id = "org.omegagraphics.OmegaWTKVideoViewTest"
         }
     }
+
+    test("QueueHeapTest"){
+        if(is_windows){
+            defines = [
+                "TARGET_WIN32"
+            ]
+        }
+        else if(is_mac){
+            defines = [
+                "TARGET_MACOS"
+            ]
+        }
+        public_deps = [
+            ":OmegaWTK"
+        ]
+        include_dirs = [
+            omega_wtk_include_dir
+        ]
+        sources = [
+            "./tests/QueueHeapTest/main.cpp"
+        ]
+        output_dir = "$root_out_dir/tests/other"
+    }
+
+    test("SchedulerTest"){
+        if(is_windows){
+            defines = [
+                "TARGET_WIN32"
+            ]
+        }
+        else if(is_mac){
+            defines = [
+                "TARGET_MACOS"
+            ]
+        }
+        public_deps = [
+            ":OmegaWTK"
+        ]
+        include_dirs = [
+            omega_wtk_include_dir
+        ]
+        sources = [
+            "./tests/SchedulerTest/main.cpp"
+        ]
+        output_dir = "$root_out_dir/tests/other"
+    }
+
 
 }
 

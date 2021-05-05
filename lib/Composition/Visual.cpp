@@ -95,11 +95,11 @@ LayerStyle::~LayerStyle(){
 };
 
 WindowStyle::~WindowStyle(){
-    auto visual_it = visuals.begin();
-    while(visual_it != visuals.end()){
-        delete *visual_it;
-        ++visual_it;
-    };
+    // auto visual_it = visuals.begin();
+    // while(visual_it != visuals.end()){
+    //     delete *visual_it;
+    //     ++visual_it;
+    // };
 };
 
 }

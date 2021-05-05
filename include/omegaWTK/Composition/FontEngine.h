@@ -119,7 +119,7 @@ public:
      @returns SharedPtr<Font>
     */
     Core::SharedPtr<Font> CreateFont(FontDescriptor & desc);
-    Core::SharedPtr<Font> CreateFontFromFile(FSPath path,FontDescriptor & desc);
+    Core::SharedPtr<Font> CreateFontFromFile(FS::Path path,FontDescriptor & desc);
     static FontEngine * instance;
     /// @name Duplication Prevention Method Rules
     /// @{
