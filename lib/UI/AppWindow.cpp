@@ -24,9 +24,9 @@ void AppWindow::setLayerStyle(SharedHandle<Composition::WindowStyle> & style){
     layer->setWindowStyle(style);
 };
 
-void AppWindow::setMenuStyle(SharedHandle<Composition::MenuStyle> & style){
-    menuStyle = style;
-};
+// void AppWindow::setMenuStyle(SharedHandle<Composition::MenuStyle> & style){
+//     menuStyle = style;
+// };
 
 void AppWindow::_add_widget(SharedHandle<Widget> * handle){
 //    (*handle)->compositor->prepareDraw((*handle)->layerTree.get());

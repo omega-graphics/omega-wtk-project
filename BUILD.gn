@@ -342,7 +342,7 @@ omega_wtk_shared_lib("OmegaWTK"){
             pcre2_link,
             libjpeg_turbo_link,
             libpng_link,
-        ] + libtiff_link
+        ]
     }
     if(is_windows) {
         # arflags = [
@@ -402,6 +402,19 @@ if(!is_external_project){
         }
     }
 
+    config("omegaWTK-rpath-config"){
+        ldflags = [
+              "-Xlinker",
+              "-rpath",
+              "-Xlinker",
+              "@loader_path",
+               "-Xlinker",
+              "-rpath",
+              "-Xlinker",
+              "@loader_path/OmegaWTK.framework/Libraries"
+        ]
+    }
+
     test("QueueHeapTest"){
         if(is_windows){
             defines = [
@@ -411,6 +424,9 @@ if(!is_external_project){
         else if(is_mac){
             defines = [
                 "TARGET_MACOS"
+            ]
+            public_configs = [
+                ":omegaWTK-rpath-config"
             ]
         }
         public_deps = [
@@ -434,6 +450,9 @@ if(!is_external_project){
         else if(is_mac){
             defines = [
                 "TARGET_MACOS"
+            ]
+            public_configs = [
+                ":omegaWTK-rpath-config"
             ]
         }
         public_deps = [

@@ -6,6 +6,7 @@ swift
 sphinxout
 lib/Mobile
 gn-utils
+third_party
 # Prerequisites
 *.d
 

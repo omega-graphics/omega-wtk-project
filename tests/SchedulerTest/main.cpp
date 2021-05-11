@@ -1,4 +1,6 @@
 #include <OmegaWTK.h>
+#include <chrono>
+#include <thread>
 
 using namespace OmegaWTK;
 
@@ -41,6 +43,8 @@ int main(int argc,char *argv[]){
     std::cout << "Start" << std::endl;
     shutdown_ = false;
     std::thread t1(&run);
+
+    std::this_thread::sleep_for(std::chrono::seconds(2));
     
     Composition::CompositionRenderCommand renderCommand;
     renderCommand.priority = OmegaWTK::Composition::CompositionRenderCommand::High;
@@ -61,17 +65,15 @@ int main(int argc,char *argv[]){
     renderCommand2.thresholdParams.hasThreshold = true;
     auto time_stamp_1 = std::chrono::high_resolution_clock::now();
     renderCommand2.thresholdParams.timeStamp = time_stamp_1;
-    renderCommand2.thresholdParams.timeStamp = time_stamp_1 + std::chrono::milliseconds(15);
+    renderCommand2.thresholdParams.threshold = time_stamp_1 + std::chrono::milliseconds(15);
     {
-        std::unique_lock<std::mutex> lk(queue_mutex);
-        lk.lock();
+        std::lock_guard<std::mutex> lk(queue_mutex);
         queue.push(renderCommand2);
         std::cout << "Command Push" << std::endl;
-        lk.unlock();
     }
-
-    // std::this_thread::sleep_for(std::chrono::seconds(2));
-
+    
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    
     {
         
         std::lock_guard<std::mutex> shutdown_lk(shutdown_mutex);

@@ -190,7 +190,7 @@ Core::SharedPtr<Font> FontEngine::CreateFont(FontDescriptor & desc){
     return std::make_shared<CoreTextFont>(desc,_font_final);
 };
 
-Core::SharedPtr<Font> FontEngine::CreateFontFromFile(FSPath path, FontDescriptor &desc){
+Core::SharedPtr<Font> FontEngine::CreateFontFromFile(FS::Path path, FontDescriptor &desc){
     CTFontSymbolicTraits fontTraits;
     
     switch (desc.style) {
@@ -210,7 +210,7 @@ Core::SharedPtr<Font> FontEngine::CreateFontFromFile(FSPath path, FontDescriptor
             break;
     }
 
-    NSURL *url = [NSURL fileURLWithPath:Native::Cocoa::core_string_to_ns_string(path.serialize()) isDirectory:NO];
+    NSURL *url = [NSURL fileURLWithPath:Native::Cocoa::core_string_to_ns_string(path.absPath()) isDirectory:NO];
     CFArrayRef fontDescriptors = CTFontManagerCreateFontDescriptorsFromURL((__bridge CFURLRef)url);
     CTFontDescriptorRef idealFont;
     for(unsigned i = 0;i < CFArrayGetCount(fontDescriptors);i++){

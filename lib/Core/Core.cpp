@@ -324,7 +324,7 @@ bool FS::Path::exists(){
     return PathFileExistsA(absPath().c_str()) == TRUE;
 #endif
     #ifdef TARGET_MACOS
-        return file_exists(serialize().c_str());
+        return file_exists(absPath().c_str());
     #endif
 };
 

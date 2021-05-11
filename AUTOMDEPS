@@ -1,4 +1,9 @@
 {
+    "variables":{
+        "third_party_dest":"./external-libs",
+        "gclient_repo":"https://chromium.googlesource.com/chromium/tools/depot_tools",
+        "gclient_dest":"./gclient"
+    },
     "rootCommands":[
         {
             "type":"gnpkg",
@@ -9,37 +14,37 @@
         {
             "type":"git_clone",
             "url":"https://github.com/glennrp/libpng.git",
-            "dest":"./external-libs/libpng/code",
+            "dest":"$(third_party_dest)/libpng/code",
             "branch":"default"
         },
         {
             "type":"git_clone",
             "url":"https://github.com/libjpeg-turbo/libjpeg-turbo.git",
-            "dest":"./external-libs/libjpeg-turbo/code",
+            "dest":"$(third_party_dest)/libjpeg-turbo/code",
             "branch":"2.0.x"
         },
         {
             "type":"git_clone",
             "url":"https://gitlab.com/libtiff/libtiff.git",
-            "dest":"./external-libs/libtiff/code",
+            "dest":"$(third_party_dest)/libtiff/code",
             "branch":"default"
         },
         {
            "type":"git_clone",
            "url":"https://github.com/madler/zlib.git",
-           "dest":"./external-libs/zlib/code",
+           "dest":"$(third_party_dest)/zlib/code",
            "branch":"default"
         },
         {
             "type":"git_clone",
             "url":"https://gitlab.gnome.org/GNOME/libxml2.git",
-            "dest":"./external-libs/libxml2/code",
+            "dest":"$(third_party_dest)/libxml2/code",
             "branch":"default"
         },
         {
             "type":"git_clone",
             "url":"https://github.com/unicode-org/icu.git",
-            "dest":"./external-libs/icu-69/code",
+            "dest":"$(third_party_dest)/icu-69/code",
             "branch":"maint/maint-69"
         },
         {
@@ -50,7 +55,29 @@
         {
             "type":"unzip",
             "zipfile":"./temp/pcre2.zip",
-            "dest":"./external-libs/pcre2/code"
+            "dest":"$(third_party_dest)/pcre2/code"
+        },
+        {
+            "type":"chdir",
+            "dir":"./external-libs/webrtc"
+        },
+        {
+            "type":"system",
+            "path":"gclient sync --gclientfile=webrtc.gclient"
+        },
+        {
+            "type":"chdir",
+            "dir":"../../"
+        },
+        {
+            "type":"gnpkg",
+            "command":"utils --getchrome"
+        },
+        {
+            "type":"git_clone",
+            "url":"https://chromium.googlesource.com/chromium/src/third_party",
+            "dest":"./third_party",
+            "branch":"default"
         }
     ]
 }
