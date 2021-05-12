@@ -1,9 +1,9 @@
+import("//gn-utils/Utils.gni")
 import("./ExternalExports.gni")
 
-declare_args(){
-    python_path = ""
-    code_signature = ""
-}
+# declare_args(){
+#     python_path = ""
+# }
 
 omegawtk_include_dir = get_path_info("../include","abspath")
 omegawtk_path = get_path_info("../","abspath")
@@ -12,12 +12,6 @@ shaderc = get_path_info("./shaderc.py","abspath")
 template("test"){
     executable(target_name){
         forward_variables_from(invoker,"*")
-        if(is_windows){
-            output_extension = "exe"
-        }
-        else {
-            output_extension = ""
-        }
     }
 }
 
@@ -42,27 +36,6 @@ if(is_mac){
 
 config_file = get_path_info("./ConfigFile.py","abspath")
 
-template("configure_file"){
-    assert(defined(target_name))
-    assert(defined(invoker.output_name))
-    assert(defined(invoker.dep_name))
-    _args = ["-I",rebase_path(target_name),"-O",rebase_path(invoker.output_name),""]
-    if(defined(invoker.defines)){
-        action(invoker.dep_name){
-            script = config_file
-            args = invoker.defines + _args
-            outputs = [invoker.output_name]
-        }
-    }
-    else{
-        action(invoker.dep_name){
-            script = config_file
-            args = _args
-            outputs = [invoker.output_name]
-        }
-    }
-    
-}
 
 template("omega_wtk_static_lib"){
     assert(defined(invoker.sources))
@@ -109,8 +82,6 @@ template("omega_wtk_static_lib"){
     }
 }
 
-codesign = get_path_info("codesign.py","abspath")
-
 template("omega_wtk_shared_lib"){
     assert(defined(invoker.sources))
      
@@ -144,170 +115,29 @@ template("omega_wtk_shared_lib"){
         ]
     }
 
-    if(defined(invoker.framework) && invoker.framework == true){
-        assert(defined(invoker.framework_version))
-        assert(defined(invoker.framework_info_plist))
-        # assert(defined(invoker.framework_version_plist))
-        assert(is_mac)
-        framework_name = target_name
-
-        bundle_data("${framework_name}_plists"){
-            sources = [
-                rebase_path(invoker.framework_info_plist),
-                # rebase_path(invoker.framework_version_plist)
-            ]
-            outputs = [
-                "{{bundle_resources_dir}}/{{source_file_part}}"
-            ]
-        }
-
-        #    lib_name = target_name
-
-        #      symlinks_exist = exec_script("//gn/AppleFramework.py",[
-        #         "--framework",
-        #        rebase_path("$root_out_dir/Frameworks/${framework_name}.framework"),
-        #        "--name",
-        #        "${framework_name}",
-        #        "--current_version",
-        #        "${invoker.framework_version}",
-        #        "--check_links"],"string")
-
-        _libs = [
-                "c",
-                "c++"
-        ]
-        
-        invoker.libs = _libs
-
-        shared_library(framework_name){
-           ldflags = [
-               "-dylib",
-               "-Xlinker",
-               "-install_name",
-               "-Xlinker",
-               "@rpath/${framework_name}.framework/Versions/${invoker.framework_version}/${framework_name}",
-               "-Xlinker",
-               "-rpath",
-               "-Xlinker",
-               "@loader_path/Libraries"
-            #    "-force_load",
-            #    rebase_path("$out_dir/omegaWTKCore.a"),
-            #    "-force_load",
-            #     rebase_path("$out_dir/omegaWTKNative.a"),
-            #    "-force_load",
-            #     rebase_path("$out_dir/omegaWTKMedia.a"),
-            #    "-force_load",
-            #     rebase_path("$out_dir/omegaWTKComposition.a"),
-            #    "-force_load",
-            #     rebase_path("$out_dir/omegaWTKUI.a"),
-           ]
-            output_extension = ""
-            output_dir = "$root_out_dir/in"
+   if(is_mac && defined(invoker.framework)){
+       if(invoker.framework){
+        mac_framework_bundle(target_name){
             forward_variables_from(invoker,["deps","public_deps","sources","include_dirs","defines","libs","frameworks","public_configs"])
+            output_dir = "$root_out_dir/Frameworks"
+            version = invoker.framework_version 
+            embedded_libs = invoker.embedded_libs
+            embedded_frameworks = invoker.embedded_frameworks
         }
-
-        bundle_data("${framework_name}_exec"){
-            sources = [
-                "$root_out_dir/in/${framework_name}"
-            ]
-            public_deps = [
-                ":${framework_name}"
-            ]
-            outputs = [
-                "{{bundle_executable_dir}}/{{source_file_part}}"
-            ]
-        }
-
-        if(defined(invoker.embedded_libs)) {
-
-            bundle_data("${framework_name}__external_libs"){
-                sources = invoker.embedded_libs
-                public_deps = [
-                    ":${framework_name}"
-                ]
-                outputs = [
-                    "{{bundle_executable_dir}}/Libraries/{{source_file_part}}"
-                ]
-            }
-        }
-
-       create_bundle("${framework_name}.framework"){
-          bundle_root_dir = "$root_out_dir/Frameworks/$target_name"  
-          bundle_executable_dir = "$bundle_root_dir/Versions/${invoker.framework_version}"
-          bundle_resources_dir = "$bundle_root_dir/Versions/${invoker.framework_version}/Resources"
-
-          code_signing_sources = [
-              "$root_out_dir/in/${framework_name}"
-          ]
-          code_signing_script = codesign
-          code_signing_args = [
-              "--sig",
-              code_signature,
-              "--code",
-              rebase_path("$root_out_dir/Frameworks/$target_name/Versions/${invoker.framework_version}"),
-              "--framework",
-              "-F",
-              rebase_path("$root_out_dir/Frameworks/${framework_name}.framework"),
-              "--name",
-              "${framework_name}",
-              "--current_version",
-              "${invoker.framework_version}"
-          ]
-          if(defined(invoker.embedded_libs)){
-              code_signing_args += [
-                  "--symlink-other-dirs",
-                  "Libraries"
-              ]
-          }
-          code_signing_outputs = [
-              "$bundle_executable_dir/_CodeSignature",
-              "$bundle_root_dir/$framework_name"
-          ]
-          public_deps = [
-              ":${framework_name}_exec",
-              ":${framework_name}_plists"
-          ]
-        #   if(symlinks_exist == "False"){
-        #       public_deps += [
-        #           ":${framework_name}_Sym"
-        #       ]
-        #   }
-        #   else {
-            if(defined(invoker.embedded_libs)) {
-              public_deps += [
-                  ":${framework_name}__external_libs",
-              ]
-            }
-        #   }
        }
-    #    out_dir = "$root_out_dir/lib"
-        
-
-     
-    }
-    else {
-        out_dir = "$root_out_dir/lib"
-        shared_library(target_name){
-            if(is_mac){
-                output_extension = "dylib"
-            }
-            else if(is_windows){
-                cflags_cc = [
-                    # "/MD","/Zi","/Ob0","/Od","/RTC1"
-                ]
-                output_extension = "dll"
-                ldflags = [
-                   "/INCREMENTAL",
-                   "/opt:noref"
-                ]
-            }
-            else {
-                output_extension = "so"
-            }
-            output_dir = "$out_dir"
-            forward_variables_from(invoker,["deps","public_deps","sources","include_dirs","defines","libs","frameworks","public_configs"])
-        }
-    }
+   }
+   else {
+       shared_library(target_name){
+           forward_variables_from(invoker,["deps","public_deps","sources","include_dirs","defines","libs","frameworks","public_configs"])
+           output_dir = "$root_out_dir/lib"
+           if(is_windows){
+            ldflags = [
+                "/opt:noref",
+                "/INCREMENTAL"
+            ]
+           }
+       }
+   }
 }
 
 template("omega_wtk_tool"){
@@ -395,26 +225,26 @@ template("omega_wtk_app_config"){
             ]
         }
 
-        configure_file(win_mmain){
+        configure_file("main-cpp-config__${app_name}"){
+            file = win_mmain
             defines = config_defines
-            dep_name = "main-cpp-config__${app_name}"
             output_name = "$out_dir/mmain.cpp"
         }
-        configure_file(win_res_h){
+        configure_file("resource-h-config__${app_name}"){
+            file = win_res_h
             defines = config_defines
-            dep_name = "resource-h-config__${app_name}"
             output_name  = "$out_dir/resource.h"
         }
-        configure_file(win_res_rc){
+        configure_file("resource-rc-config__${app_name}_1"){
+            file = win_res_rc
             defines = config_defines
-            dep_name = "resource-rc-config__${app_name}_1"
             output_name = "$out_dir/resource_script.rc"
         }
-        configure_file(win_manifest_rc){
+        configure_file("resource-rc-config__${app_name}_2"){
+            file = win_manifest_rc
             defines = [
-                "-DEMBED=" + rebase_path(win_app_manifest)
+                "-DEMBED=\"" + rebase_path(win_app_manifest) + "\""
             ]
-            dep_name = "resource-rc-config__${app_name}_2"
             output_name = "$out_dir/manifest.rc"
         }
         # invoker.deps += [
@@ -432,14 +262,14 @@ template("omega_wtk_app_config"){
             ]
         }
 
-        configure_file(mac_app_delegate){
+        configure_file(t_name){
+            file = mac_app_delegate
             defines = config_defines
-            dep_name = t_name
             output_name = "$out_dir/AppDelegate.mm"
         }
-        configure_file(mac_info_plist){
+        configure_file(t_name_2){
+            file = mac_info_plist
             defines = config_defines
-            dep_name = t_name_2
             output_name = "$out_dir/Info.plist"
         }
     }
@@ -566,7 +396,6 @@ template("omega_wtk_test"){
     executable(target_name){
         forward_variables_from(invoker,["libs","include_dirs","output_name","sources","defines","deps","public_deps","frameworks","framework_dirs"])
         if(is_windows) {
-            output_extension = "exe"
             ldflags = [
                 # "/Od",
                 "User32.lib",
@@ -890,7 +719,6 @@ template("omega_wtk_app"){
     executable(target_name){
         forward_variables_from(invoker,["libs","include_dirs","output_name","sources","defines","deps","public_deps","frameworks","framework_dirs"])
         if(is_windows) {
-            output_extension = "exe"
             ldflags = [
                 # "/Od",
                 "User32.lib",
@@ -942,8 +770,10 @@ template("omega_wtk_app"){
             ]
             sources = [
                 "$root_out_dir/lib/OmegaWTK.dll",
-                libpng_link
-            ] # + libjpeg_turbo_link + libtiff_link
+                libpng_link,
+                zlib_link,
+                pcre2_link,
+            ] + libjpeg_turbo_link
             outputs = [
                 "$root_out_dir/tests/${app_name}/{{source_file_part}}"
             ]
@@ -1058,7 +888,7 @@ template("omega_wtk_app"){
         
         create_bundle("${target_name}.app"){
 
-            bundle_root_dir = "$root_out_dir/tests/$target_name"
+            bundle_root_dir = "$root_out_dir/apps/$target_name"
             bundle_contents_dir  = "$bundle_root_dir/Contents"
             bundle_resources_dir = "$bundle_contents_dir/Resources"
             bundle_executable_dir = "$bundle_contents_dir/MacOS"

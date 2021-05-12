@@ -5,8 +5,9 @@ import("../../gn/OmegaWTK.gni")
 # o = "$root_out_dir/externals/zlib/build"
 
 
-configure_file("code/zconf.h.in"){
-    dep_name = "zconf_h"
+configure_file("zconf_h"){
+    file = "./code/zconf.h.in"
+    defines = []
     # if(is_windows){
     #     defines = ["Z_HAVE_UNISTD_H=0"]
     # }

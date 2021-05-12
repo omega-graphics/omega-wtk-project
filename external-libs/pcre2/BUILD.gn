@@ -24,9 +24,9 @@ import("../../gn/OmegaWTK.gni")
 #     export = rebase_path(lib_name)
 # }
 
-configure_file("code/pcre2-10.36/src/pcre2.h.in"){
+configure_file("pcre2_h_conf"){
+    file = "./code/pcre2-10.36/src/pcre2.h.in"
     defines = ["-DPCRE2_MAJOR=10","-DPCRE2_MINOR=36","-DPCRE2_PRERELEASE=0","-DPCRE2_DATE=0"]
-    dep_name = "pcre2_h_conf"
     output_name = "${external_lib_path}/pcre2/include/pcre2.h"
 }
 

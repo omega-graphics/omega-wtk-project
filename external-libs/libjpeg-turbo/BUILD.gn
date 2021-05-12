@@ -28,8 +28,8 @@ import("../../gn/OmegaWTK.gni")
 #     export = rebase_path("${o}/${lib_prefix}turbojpeg.${static_lib_suffix}")
 # }
 
-configure_file("jconfig.h.in"){
-    dep_name = "jconfig_h_conf"
+configure_file("jconfig_h_conf"){
+    file = "./jconfig.h.in"
     defines = [
         "-DJPEG_LIB_VERSION=62",
         "-DVERSION=2.0.91",
@@ -39,8 +39,8 @@ configure_file("jconfig.h.in"){
     output_name = "${external_lib_path}/libjpeg-turbo/include/jconfig.h"
 }
 
-configure_file("jconfigint.h.in"){
-    dep_name = "jconfigint_h_conf"
+configure_file("jconfigint_h_conf"){
+    file = "./jconfigint.h.in"
     defines = [
         "-DBUILD=0",
         "-DPACKAGE_NAME=\"libjpeg-turbo\"",
