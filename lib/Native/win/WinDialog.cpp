@@ -53,11 +53,11 @@ namespace OmegaWTK::Native::Win {
     LPWORD lpwAlign(LPWORD lpIn)
     {
         ULONG ul;
-
+        
         ul = (ULONG)lpIn;
         ul ++;
-        ul >>=1;
-        ul <<=1;
+        ul >>=2;
+        ul <<=2;
         return (LPWORD)ul;
     }
 
@@ -77,10 +77,10 @@ namespace OmegaWTK::Native::Win {
                 };
                 break;
             }
-            // default: {
-            //     DefDlgProcA(hDlg,msg,wParam,lParam);
-            //     break;
-            // }
+            default: {
+                return DefDlgProcA(hDlg,msg,wParam,lParam);
+                break;
+            }
         }
         return res;
     };
@@ -100,7 +100,7 @@ namespace OmegaWTK::Native::Win {
             MessageBoxA(GetForegroundWindow(),"Failed to Allocate Mem For Template",NULL,MB_OK);
             exit(1);
         }
-
+        MessageBoxA(GetForegroundWindow(),"Locking HGLOBAL",NULL,MB_OK);
         lpdt = (LPDLGTEMPLATE)GlobalLock(hgbl);
         lpdt->style = WS_POPUP | WS_BORDER | WS_SYSMENU | DS_MODALFRAME | WS_CAPTION;
         lpdt->cdit = 2;
@@ -109,28 +109,41 @@ namespace OmegaWTK::Native::Win {
         lpw = (LPWORD)(lpdt + 1);
         *lpw++ = 0;             // No menu
         *lpw++ = 0; 
+
+
         wstr = (LPWSTR)lpw;
         nchar = 1 + MultiByteToWideChar(CP_ACP, 0,desc.title.c_str(), -1,wstr,50);
         lpw += nchar;
 
+
+         MessageBoxA(GetForegroundWindow(),"Created Dialog Frame",NULL,MB_OK);
         /**
          Define an OK button.
         */
         lpw = lpwAlign(lpw);    // Align DLGITEMTEMPLATE on DWORD boundary
+        MessageBoxA(GetForegroundWindow(),"Aligned DWORD ",NULL,MB_OK);
         lpdtItem = (LPDLGITEMTEMPLATE)lpw;
-        lpdtItem->x  = 10; lpdtItem->y  = 70;
+        lpdtItem->x  = 10; 
+        MessageBoxA(GetForegroundWindow(),"Getting DLG Item Template and Setting First Vals ",NULL,MB_OK);
+        lpdtItem->y  = 10;
         lpdtItem->cx = 80; lpdtItem->cy = 20;
         lpdtItem->id = IDOK;       // OK button identifier
         lpdtItem->style = WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON;
+
+        MessageBoxA(GetForegroundWindow(),"Setting DLG Item Template ",NULL,MB_OK);
 
         lpw = (LPWORD)(lpdtItem + 1);
         *lpw++ = 0xFFFF;
         *lpw++ = 0x0080;        // Button class
 
+         MessageBoxA(GetForegroundWindow(),"Created Button Without Text",NULL,MB_OK);
+
         wstr = (LPWSTR)lpw;
         nchar = 1 + MultiByteToWideChar(CP_ACP, 0, "OK", -1, wstr, 50);
         lpw += nchar;
         *lpw++ = 0;  
+
+        MessageBoxA(GetForegroundWindow(),"Created OK Button",NULL,MB_OK);
 
         lpw = lpwAlign(lpw);    // Align DLGITEMTEMPLATE on DWORD boundary
         lpdtItem = (LPDLGITEMTEMPLATE)lpw;
@@ -149,7 +162,10 @@ namespace OmegaWTK::Native::Win {
         lpw = (LPWORD)wstr;
         *lpw++ = 0;     
 
+        MessageBoxA(GetForegroundWindow(),"Created Description Text",NULL,MB_OK);
+
         GlobalUnlock(hgbl); 
+        MessageBoxA(GetForegroundWindow(),"Unlocked HGLOBAL",NULL,MB_OK);
     };
 
     WinNoteDialog::~WinNoteDialog(){
@@ -158,10 +174,11 @@ namespace OmegaWTK::Native::Win {
 
     SharedHandle<NativeNoteDialog> WinNoteDialog::Create(const Descriptor &desc, NWH nativeWindow){
         return std::make_shared<WinNoteDialog>(desc,nativeWindow);
+        
     };
 
     void WinNoteDialog::show(){
-        DialogBoxIndirectA(HWNDFactory::appFactoryInst->hInst,(LPDLGTEMPLATEA)hgbl,((WinAppWindow *)parentWindow)->hwnd,WinNoteDialog::DlgProc);
+        DialogBoxIndirectA(HWNDFactory::appFactoryInst->hInst,(LPDLGTEMPLATE)hgbl,((WinAppWindow *)parentWindow)->hwnd,WinNoteDialog::DlgProc);
     };
 
     void WinNoteDialog::close(){

@@ -19,7 +19,8 @@ void ViewAnimator::addTrigger(const TriggerDescriptor & desc){
 void ViewAnimator::activateTrigger(unsigned identifier){
     AnimationContext context;
     context.anim = this;
-    triggers[identifier](std::move(context));
+    auto action = triggers[identifier];
+    action((std::move(context)));
 };
 
 void ViewAnimator::assignController(int id,SharedHandle<Composition::LayerAnimationController> & controller){

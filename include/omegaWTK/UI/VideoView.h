@@ -24,6 +24,7 @@ public:
 */
 class OMEGAWTK_EXPORT VideoViewController {
     VideoView *view;
+    bool hasAssignment;
 public:
     void seek();
     void play();
