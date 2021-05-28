@@ -1,4 +1,5 @@
 #include "omegaWTK/Core/Core.h"
+#include "omegaWTK/Core/FS.h"
 
 #ifdef TARGET_WIN32
 #include <dwrite.h>

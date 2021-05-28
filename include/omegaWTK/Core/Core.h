@@ -24,6 +24,12 @@
 #define OMEGAWTK_CORE_CORE_H
 
 namespace OmegaWTK {
+
+    typedef enum : int {
+        CodeOk,
+        CodeFailed
+    } StatusCode;
+
     namespace Core {
          typedef unsigned char Option;
     };
@@ -450,40 +456,7 @@ OMEGAWTK_EXPORT Core::FEllipse FEllipse(float x,float y,float rad_x,float rad_y)
 OMEGAWTK_EXPORT Core::FRoundedRect FRoundedRect(float x,float y,float w,float h,float rad_x,float rad_y,float angle = 0);
 
     namespace FS {
-
-        class OMEGAWTK_EXPORT  Path {
-            Core::String _str;
-                struct Token {
-                    typedef enum : OPT_PARAM {
-                        ID,
-                        Dot,
-                        Slash,
-                    } Type;
-                    Type type;
-                    Core::String str;
-                };
-                Core::Vector<Token> tokens;
-                void parse(const Core::String & str);
-            public:
-                const unsigned getTokenCount(){ return tokens.size();};
-                Core::String debugString(){
-                    std::ostringstream out;
-                    auto it = tokens.begin();
-                    while(it != tokens.end()){
-                        out << "{Type:" << int(it->type) << ",Content:" << it->str << "}, " << std::flush;
-                        ++it;
-                    };
-                    return out.str();
-                };
-                Core::String &str();
-                Core::String filename();
-                Core::String & ext();
-                Core::String absPath();
-                bool exists();
-                Path(const char * str);
-                Path(const Core::String & str);
-                ~Path();
-            };
+        class Path;
     };
 
     void loadAssetFile(FS::Path path);

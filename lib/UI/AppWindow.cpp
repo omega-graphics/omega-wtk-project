@@ -40,6 +40,14 @@ void AppWindow::_add_widget(SharedHandle<Widget> * handle){
     }
 };
 
+void AppWindow::addLayout(SharedHandle<Layout> layout){
+    for(auto & widget : *layout)
+    {
+        std::shared_ptr<Widget> ptr(&widget);
+        _add_widget(&ptr);
+    };
+};
+
 SharedHandle<Native::NativeFSDialog> AppWindow::openFSDialog(const Native::NativeFSDialog::Descriptor & desc){
     return Native::NativeFSDialog::Create(desc,layer->native_window_ptr);
 };

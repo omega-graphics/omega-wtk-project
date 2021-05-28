@@ -122,7 +122,10 @@ template("omega_wtk_shared_lib"){
             output_dir = "$root_out_dir/Frameworks"
             version = invoker.framework_version 
             embedded_libs = invoker.embedded_libs
-            embedded_frameworks = invoker.embedded_frameworks
+            if(defined(invoker.embedded_frameworks)){
+                embedded_frameworks = invoker.embedded_frameworks
+            }
+            resources = [invoker.framework_info_plist]
         }
        }
    }

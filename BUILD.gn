@@ -48,13 +48,16 @@ omega_wtk_static_lib("omegaWTKCore"){
         "$omega_wtk_include_dir/Core/Core.h",
         "$omega_wtk_include_dir/Core/Math.h",
         "$omega_wtk_include_dir/Core/MultiThreading.h",
+        "$omega_wtk_include_dir/Core/FS.h",
         # Sources
         "${omegawtk_src_dir}/Core/Core.cpp",
-        "${omegawtk_src_dir}/Core/MultiThreading.cpp"
+        "${omegawtk_src_dir}/Core/MultiThreading.cpp",
+        "${omegawtk_src_dir}/Core/FS.cpp"
     ]
     if(is_mac){
         sources += [
-            "${omegawtk_src_dir}/Core/FSCocoa.mm"
+            "${omegawtk_src_dir}/Core/FSCocoa.mm",
+            "${omegawtk_src_dir}/Core/FSCocoa.h"
         ]
     }
 }

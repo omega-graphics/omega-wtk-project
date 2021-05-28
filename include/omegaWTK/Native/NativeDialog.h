@@ -10,7 +10,6 @@ namespace OmegaWTK::Native {
          NativeDialog(NWH parentWindow);
         NWH parentWindow;
         public:
-        virtual void show() = 0;
         virtual void close() = 0;
     };
 
@@ -26,8 +25,8 @@ namespace OmegaWTK::Native {
             Type type;
         };
         static SharedHandle<NativeFSDialog> Create(const Descriptor & desc,NWH nativeWindow);
-        virtual void show() = 0;
-        virtual void close() = 0;
+        virtual Core::String show() = 0;
+        virtual void close()  = 0 ;
     };
 
     class NativeNoteDialog : public NativeDialog {

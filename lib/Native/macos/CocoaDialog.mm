@@ -6,8 +6,48 @@
 
 namespace OmegaWTK::Native::Cocoa {
     class CocoaFSDialog : public NativeFSDialog {
-        void show();
-        void close();
+        NSOpenPanel *openPanel;
+        NSSavePanel *savePanel;
+    public:
+        Core::String show(){
+            NSWindow *parentWindow = ((CocoaAppWindow *)this->parentWindow)->window;
+            if(!openPanel){
+                /// If is Save Panel
+                __block NSURL *url = nil;
+                [savePanel beginSheetModalForWindow:parentWindow completionHandler:^(NSModalResponse response){
+                    if(response == NSModalResponseOK){
+                        url = [savePanel URL];
+                    };
+                }];
+
+                return [url fileSystemRepresentation];
+
+            }
+            else if(!savePanel){
+                 /// If is Save Panel
+                __block NSURL *url = nil;
+                [openPanel beginSheetModalForWindow:parentWindow completionHandler:^(NSModalResponse response){
+                    if(response == NSModalResponseOK){
+                        url = [[openPanel URLs] firstObject];
+                    };
+                }];
+
+                return [url fileSystemRepresentation];
+            };
+        };
+        void close(){
+
+        };
+        CocoaFSDialog(const Descriptor &desc,NWH nativeWindow):NativeFSDialog(nativeWindow){
+           if(desc.type == Read){
+               openPanel = [NSOpenPanel openPanel];
+               savePanel = nil;
+           }
+           else {
+               savePanel = [NSSavePanel savePanel];
+               openPanel = nil;
+           };
+        };
     };
 
     class CocoaNoteDialog : public NativeNoteDialog {

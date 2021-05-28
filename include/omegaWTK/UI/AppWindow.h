@@ -4,6 +4,7 @@
 #include "omegaWTK/Composition/Layer.h"
 #include "omegaWTK/Composition/Visual.h"
 #include "omegaWTK/Native/NativeDialog.h"
+#include "Layout.h"
 
 #ifndef OMEGAWTK_UI_APPWINDOW_H
 #define OMEGAWTK_UI_APPWINDOW_H
@@ -63,6 +64,7 @@ class AppWindowManager;
         void addWidget(SharedHandle<_Ty> & widget){
             _add_widget((SharedHandle<Widget> *)&widget);
         };
+        void addLayout(SharedHandle<Layout> layout);
         AppWindow(Core::Rect rect,AppWindowDelegate * delegate = nullptr);
     };
 /**

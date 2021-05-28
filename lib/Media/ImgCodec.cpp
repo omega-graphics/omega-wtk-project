@@ -1,4 +1,5 @@
 #include "omegaWTK/Media/ImgCodec.h"
+#include "omegaWTK/Core/FS.h"
 
 #include "AssetsPriv.h"
 
