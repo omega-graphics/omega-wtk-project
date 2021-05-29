@@ -8,7 +8,7 @@ using namespace OmegaWTK;
 struct CompareRenderCommands {
     auto operator()(Composition::CompositionRenderCommand & lhs,Composition::CompositionRenderCommand & rhs){
         bool cond1,cond2;
-        cond1 = lhs.thresholdParams.timeStamp > rhs.thresholdParams.timeStamp;
+        cond1 = lhs.thresholdParams.timeStamp < rhs.thresholdParams.timeStamp;
         cond2 = lhs.thresholdParams.hasThreshold? (rhs.thresholdParams.hasThreshold? (lhs.thresholdParams.threshold < rhs.thresholdParams.threshold) : true) : rhs.thresholdParams.hasThreshold? (lhs.thresholdParams.hasThreshold? (rhs.thresholdParams.threshold < lhs.thresholdParams.threshold) : false)  : true;
         // printf("Sort Cond:%i\n",((cond1 == true) && (cond2 == true)));
         return (cond1 == true) && (cond2 == true);
@@ -28,8 +28,18 @@ void processCommand(Composition::CompositionRenderCommand & command ){
         if(command.thresholdParams.threshold >= _now){
             auto command = queue.first();
             queue.pop();
+            
+            auto diff = command.thresholdParams.threshold - command.thresholdParams.timeStamp;
+            std::this_thread::sleep_for(diff);
+
             std::string *s = (std::string *)command.data;
             std::cout << *s << std::endl;
+            delete s;
+        }
+        else {
+            // Frame will Skip!
+            std::string *s = (std::string *)command.data;
+            std::cout << "DELAYED" << *s << std::endl;
             delete s;
         };
     }

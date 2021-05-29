@@ -1,5 +1,8 @@
 #include "omegaWTK/Core/XML.h"
 
-namespace OmegaWTK::Core {
-    
+
+namespace OmegaWTK {
+    void XMLParser::_parseFromStreamPriv(Core::IStream & is,XMLSerializable &obj){
+        
+    };
 };

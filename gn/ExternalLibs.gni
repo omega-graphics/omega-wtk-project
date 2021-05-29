@@ -120,9 +120,16 @@ template("external_lib_target"){
         copy("${target_name}_headers"){
             sources = invoker.public_headers
             # if(built == false){
+            if(!defined(invoker.public_header_output_dir)){
                 outputs = [
                     "${invoker.output_dir}/include/{{source_file_part}}"
                 ]
+            }
+            else {
+                outputs = [
+                    invoker.public_header_output_dir
+                ]
+            }
             # }
         }
     }
@@ -155,6 +162,18 @@ template("external_lib_target"){
         }
     }
     else {
+         if(is_windows){  
+                flags = [
+                    "/opt:noref",
+                    "/INCREMENTAL"
+                ]
+                if(defined(invoker.ldflags)){
+                    invoker.ldflags += flags
+                }
+                else {
+                    invoker.ldflags = flags
+                }
+           }
         shared_library(target_name){
             if(is_mac){
                 output_extension = "dylib"
@@ -162,12 +181,7 @@ template("external_lib_target"){
             else if(is_windows){
                 output_extension = "dll"
             }
-            if(is_windows){
-                ldflags = [
-                    "/opt:noref",
-                    "/INCREMENTAL"
-                ]
-           }
+           
            forward_variables_from(invoker,["sources","deps","public_deps","configs","public_configs","include_dirs","output_dir","defines","ldflags","cflags_c","cflags_cc","output_name"]) 
         }
     }

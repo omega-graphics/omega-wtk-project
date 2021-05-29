@@ -24,11 +24,9 @@ namespace OmegaWTK {
         };
        
         void parseFromBuffer(void *data,size_t size,XMLSerializable & output){
-            std::filebuf buff;
-            buff.pubsetbuf((char *)data,size);
             std::ifstream is;
             is.flags(std::ios::in | std::ios::binary);
-            is.set_rdbuf(&buff);
+            is.rdbuf()->pubsetbuf((char *)data,size);
             _parseFromStreamPriv(is,output);
         };
     };
