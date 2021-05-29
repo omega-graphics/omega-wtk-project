@@ -5,7 +5,6 @@
 import os
 import sys
 import argparse
-import PyUtils
 
 parser = argparse.ArgumentParser(description="A python script used for compiling shader files")
 

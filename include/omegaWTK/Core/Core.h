@@ -25,6 +25,10 @@
 
 namespace OmegaWTK {
 
+    typedef unsigned short UniChar16;
+    typedef uint32_t UniChar32;
+    typedef UniChar16 UniChar;
+    
     typedef enum : int {
         CodeOk,
         CodeFailed

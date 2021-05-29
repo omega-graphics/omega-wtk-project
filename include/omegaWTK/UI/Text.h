@@ -21,9 +21,19 @@ namespace OmegaWTK::UI {
         Core::String textStr;
         Core::String placeholder;
         SharedHandle<Composition::TextRect> textRect;
+
+        SharedHandle<ViewDelegate> delegate;
+
+        SharedHandle<WidgetState<bool>> canRecieveInput;
+
+        SharedHandle<Composition::Font> currentfont;
+
+        void pushChar(UniChar16 c);
+        friend class UserInputDelegate;
     public:
         Core::String & string();
         void resize(Core::Rect &newRect);
+        void setFont(SharedHandle<Composition::Font> & font);
         TextInput(const Core::Rect & rect,Core::String placeholder = "Input Text Here...",SharedHandle<Widget> parent = nullptr);
     };
 };

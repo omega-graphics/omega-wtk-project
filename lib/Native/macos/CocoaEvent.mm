@@ -8,6 +8,20 @@ namespace OmegaWTK::Native::Cocoa {
 #define SET_NATIVE_EVENT_PARAMS(var,value) var = reinterpret_cast<NativeEventParams>(value)
         NativeEvent::EventType type;
         NativeEventParams params;
+        #define KEY_CASE(ch,och) case ch: \
+                                        omegaKC = och;\
+                                        break;
+
+        // #define EVAL_KEYS() KeyCode omegaKC; \
+        //                         \
+        //                         switch(kc){\
+        //                             KEY_CASE('a',a)\
+        //                             KEY_CASE('b',b)\
+        //                             KEY_CASE('c',c)\
+        //                             KEY_CASE('d',d)\
+        //                             KEY_CASE('e',e)\
+        //                             KEY_CASE('f',f)\
+        //                         };
         switch(event.type){
             NS_EVENT_TYPE_CASE(NSEventTypeMouseEntered,
                                type = NativeEvent::EventType::CursorEnter;
@@ -28,6 +42,20 @@ namespace OmegaWTK::Native::Cocoa {
                                SET_NATIVE_EVENT_PARAMS(params,new LMouseUpParams());
                                
                                )
+            NS_EVENT_TYPE_CASE(NSEventTypeKeyDown,
+                                type = NativeEvent::EventType::KeyDown;
+                                auto kc = event.keyCode;
+                                OmegaWTK::UniChar omegaKC = kc;
+                                // EVAL_KEYS()
+                               SET_NATIVE_EVENT_PARAMS(params,new KeyDownParams({omegaKC}));
+                                )
+            NS_EVENT_TYPE_CASE(NSEventTypeKeyUp,
+                                type = NativeEvent::EventType::KeyUp;
+                                auto kc = event.keyCode;
+                                OmegaWTK::UniChar omegaKC = kc;
+                                // EVAL_KEYS()
+                               SET_NATIVE_EVENT_PARAMS(params,new KeyUpParams({omegaKC}));
+                                )
             default: {
                 break;
             };

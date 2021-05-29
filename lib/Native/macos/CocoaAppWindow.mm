@@ -85,6 +85,7 @@ void CocoaAppWindow::close(){
 -(void)windowWillClose:(NSNotification *)notification {
     OmegaWTK::Native::NativeEventPtr event = new OmegaWTK::Native::NativeEvent(OmegaWTK::Native::NativeEvent::WindowWillClose,nullptr);
     [self emitIfPossible:event];
+    
 };
 -(void)windowDidResize:(NSNotification *)notification 
 {
