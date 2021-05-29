@@ -830,7 +830,7 @@ template("omega_wtk_app"){
         # }
         bundle_data("${target_name}__metal_copy"){
             public_deps = [
-                "../:omegawtk",
+                omegawtk_path + ":omegawtk"
                 # ":compile-nib__${app_name}"
             ]
             sources = [
@@ -861,7 +861,7 @@ template("omega_wtk_app"){
         }
          bundle_data("${target_name}__framework_copy"){
             public_deps = [
-                ":OmegaWTK.framework"
+                omegawtk_path + ":OmegaWTK.framework"
             ]
             sources = [
                 "$root_out_dir/Frameworks/OmegaWTK.framework"
