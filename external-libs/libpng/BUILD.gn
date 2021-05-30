@@ -62,3 +62,8 @@ external_lib_target("libpng"){
     public_headers = ["code/png.h","code/pngconf.h"]
     output_dir = "${external_lib_path}/libpng"
 }
+
+external_lib_export("libpng"){
+    targets = ["libpng"]
+    output_dir = "${external_lib_path}/libpng"
+}

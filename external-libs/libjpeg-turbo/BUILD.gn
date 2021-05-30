@@ -297,6 +297,7 @@ group("libjpeg-turbo"){
     ]
 }
 
+
 config("libjpeg-turbo_config"){
     include_dirs = ["${external_lib_path}/libjpeg-turbo/include"]
     if(is_windows){
@@ -304,4 +305,9 @@ config("libjpeg-turbo_config"){
             "HAVE_BOOLEAN"
         ]
     }
+}
+
+external_lib_export("libjpeg-turbo"){
+    targets = ["turbojpeg"]
+    output_dir = "${external_lib_path}/libjpeg-turbo"
 }

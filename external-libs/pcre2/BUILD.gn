@@ -118,3 +118,14 @@ external_lib_target("pcre2"){
     }
     output_dir = "${external_lib_path}/pcre2"
 }
+
+external_lib_export("pcre2"){
+    if(is_windows){
+         targets = ["pcre2"]
+    }
+    else {
+         targets = ["libpcre2"]
+    }
+   
+    output_dir = "${external_lib_path}/pcre2"
+}

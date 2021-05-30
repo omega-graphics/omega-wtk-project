@@ -202,6 +202,24 @@ template("external_lib_target"){
             
         }
     }
-
     
+}
+
+
+
+
+import("../gn-utils/Utils.gni")
+
+third_party_file = rebase_path("./THIRD_PARTY.json")
+
+template("external_lib_export"){
+    assert(defined(invoker.output_dir))
+    assert(defined(invoker.targets))
+    t = target_name
+    
+    export(third_party_file){
+        output_dir = invoker.output_dir
+        group_name = t
+        targets = invoker.targets
+    }
 }

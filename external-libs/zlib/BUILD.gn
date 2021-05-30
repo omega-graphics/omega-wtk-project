@@ -112,3 +112,14 @@ else {
     }
 
 }
+
+external_lib_export("zlib"){
+    if(is_windows){
+         targets = ["zlib"]
+    }
+    else {
+         targets = ["libz"]
+    }
+   
+    output_dir = "${external_lib_path}/zlib"
+}

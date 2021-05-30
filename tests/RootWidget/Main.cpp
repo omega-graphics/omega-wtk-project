@@ -117,8 +117,8 @@ int omegaWTKMain(AppInst *app)
 {
     aboutDesc.title = "About RootWidgetTest";
     aboutDesc.str = "Copyright 2021 OmegaGraphics";
-//    auto f_desc = Composition::FontDescriptor("Arial",20);
-//    global_font = Composition::FontEngine::instance->CreateFont(f_desc);
+   auto f_desc = Composition::FontDescriptor("Arial",20);
+   global_font = Composition::FontEngine::instance->CreateFont(f_desc);
 #ifdef TARGET_MACOS
     auto appMenu = CategoricalMenu("RootWidgetTest",{
         ButtonMenuItem("Here"),
@@ -153,6 +153,7 @@ int omegaWTKMain(AppInst *app)
    SharedImageHandle img = IMPORT_IMG("vortex-rtde.png");
     // auto img2 = IMPORT_IMG("test-1.png");
     auto widget = make<UI::TextInput>(UI::TextInput({{0,0},{200,100}}));
+    widget->setFont(global_font);
 
     //   auto widget = make<UI::PushButton>(UI::PushButton({{0,0},{400,400}},nullptr));
 

@@ -243,6 +243,17 @@ group("libtiff"){
     ]
 }
 
+external_lib_export("libtiff"){
+    if(is_windows){
+         targets = ["tiff","tiffxx"]
+    }
+    else {
+         targets = ["libtiff","libtiffxx"]
+    }
+   
+    output_dir = "${external_lib_path}/libtiff"
+}
+
 config("libtiff_config"){
     include_dirs = [
         "${external_lib_path}/libtiff/include"

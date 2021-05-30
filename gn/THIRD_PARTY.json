@@ -1,0 +1,18 @@
+{
+  "icu-69": [
+    "//out/externals//icu-69/icu-common.dylib",
+    "//out/externals//icu-69/icu-i18n.dylib"
+  ],
+  "libjpeg-turbo": [
+    "//out/externals//libjpeg-turbo/turbojpeg.dylib"
+  ],
+  "libpng": [
+    "//out/externals//libpng/libpng.dylib"
+  ],
+  "pcre2": [
+    "//out/externals//pcre2/libpcre2.dylib"
+  ],
+  "zlib": [
+    "//out/externals//zlib/libz.dylib"
+  ]
+}
