@@ -24,11 +24,13 @@ namespace OmegaWTK::Native::Cocoa {
         //                         };
         switch(event.type){
             NS_EVENT_TYPE_CASE(NSEventTypeMouseEntered,
+                                NSLog(@"Mouse Enter NSEvent %@",event);
                                type = NativeEvent::EventType::CursorEnter;
                                SET_NATIVE_EVENT_PARAMS(params,new CursorEnterParams());
                                
                                )
             NS_EVENT_TYPE_CASE(NSEventTypeMouseExited,
+                                NSLog(@"Mouse Exit NSEvent %@",event);
                                type = NativeEvent::EventType::CursorExit;
                                SET_NATIVE_EVENT_PARAMS(params,new CursorExitParams());
                                

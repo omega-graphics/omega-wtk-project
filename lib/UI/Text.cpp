@@ -34,7 +34,7 @@ namespace OmegaWTK::UI {
     };
 
     
-    TextInput::TextInput(const Core::Rect & rect,Core::String placeholder,SharedHandle<Widget> parent):Widget(rect,parent),textStr(""),placeholder(placeholder){
+    TextInput::TextInput(const Core::Rect & rect,SharedHandle<Composition::Font> currentfont,Core::String placeholder,SharedHandle<Widget> parent):Widget(rect,parent),textStr(""),placeholder(placeholder),currentfont(currentfont){
         canRecieveInput = WidgetState<bool>::Create(false);
         textRect = Composition::TextRect::Create(textStr,currentfont,rect);
         /// Assume default style.

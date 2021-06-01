@@ -60,6 +60,7 @@ class View;
             /// Draws on to its target!
             /// @{
             void setStyle(SharedHandle<LayerStyle> & style);
+            SharedHandle<LayerStyle> & getStyle();
             /// @}
             
             

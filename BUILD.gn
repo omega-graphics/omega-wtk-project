@@ -12,7 +12,7 @@ omegawtk_src_dir = get_path_info("./lib","abspath")
 
 assetc_dir = get_path_info("./tools/assetc","abspath")
 
-icu_69_lib = get_path_info("./external-libs/icu-69","abspath")
+# icu_69_lib = get_path_info("./external-libs/icu-69","abspath")
 
 pcre2_lib = get_path_info("./external-libs/pcre2","abspath")
 pcre2_config = get_path_info("./external-libs/pcre2:pcre2_config","abspath")
@@ -42,7 +42,7 @@ omega_wtk_static_lib("omegaWTKCore"){
     ]
     public_deps = [
         pcre2_lib,
-        icu_69_lib
+        # icu_69_lib
     ]
     public_configs = [
         pcre2_config

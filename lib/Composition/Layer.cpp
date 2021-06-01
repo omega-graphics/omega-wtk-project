@@ -39,6 +39,10 @@ void Layer::setStyle(SharedHandle<LayerStyle> & style){
     this->style = style;
 };
 
+SharedHandle<LayerStyle> & Layer::getStyle(){
+    return style;
+};
+
 void Layer::resize(Core::Rect &newRect){
     surface_rect = newRect;
     needsNativeResize = true;

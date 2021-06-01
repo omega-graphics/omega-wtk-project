@@ -6,6 +6,7 @@
 
 @interface OmegaWTKCocoaView ()
 @property (nonatomic) OmegaWTK::Native::Cocoa::CocoaItem *delegate;
+@property(nonatomic,retain) NSTrackingArea *trackingArea;
 @end
 
 
@@ -29,6 +30,8 @@
 //        self.layerContentsPlacement = NSViewLayerContentsPlacementCenter;
         NSLog(@"New Origin: { x:%f, y:%f}",self.layer.anchorPoint.x,self.layer.anchorPoint.y);
         _delegate = delegate;
+        _trackingArea = [[NSTrackingArea alloc] initWithRect:rect options:NSTrackingMouseEnteredAndExited | NSTrackingCursorUpdate | NSTrackingActiveInKeyWindow owner:self userInfo:nil];
+        [self addTrackingArea:_trackingArea];
     };
     return self;
 };
@@ -50,6 +53,9 @@
     [self emitEventIfPossible:event];
     [super mouseUp:event];
 };
+-(BOOL)acceptsFirstMouse:(NSEvent *)event {
+    return YES;
+}
 - (void)mouseEntered:(NSEvent *)event{
     [self emitEventIfPossible:event];
     [super mouseEntered:event];
