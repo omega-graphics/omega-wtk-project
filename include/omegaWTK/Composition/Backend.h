@@ -24,7 +24,7 @@ public:
     virtual void doUpdate() = 0;
     virtual void redoLayout() = 0;
     Backend();
-    ~Backend();
+    virtual ~Backend() = default;
 };
 
 Core::UniquePtr<Backend> make_backend();

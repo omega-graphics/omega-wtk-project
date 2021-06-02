@@ -1,5 +1,4 @@
-import sphinx
-import sphinx.theming
+
 import pygments.styles
 
 project = "OmegaWTK"

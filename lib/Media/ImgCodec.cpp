@@ -443,7 +443,7 @@ struct ImgBuffer : public std::streambuf {
     };
 };
 
-    Core::SharedPtr<BitmapImage> loadImageFromAssets(FS::Path path){
+    StatusWithObj<BitmapImage> loadImageFromAssets(FS::Path path){
         BitmapImage img;
         auto ext = path.ext();
         BitmapImage::Format f;
@@ -455,10 +455,10 @@ struct ImgBuffer : public std::streambuf {
         std::istream in(&buffer);
         Core::UniquePtr<ImgCodec> codec = obtainCodecForImageFormat(f,in,&img);
         codec->readToStorage();
-        return std::make_shared<BitmapImage>(std::move(img));
+        return std::move(img);
     };
     
-    Core::SharedPtr<BitmapImage> loadImageFromFile(FS::Path path) {
+    StatusWithObj<BitmapImage>loadImageFromFile(FS::Path path) {
         BitmapImage img;
         auto ext = path.ext();
         BitmapImage::Format f;
@@ -470,20 +470,22 @@ struct ImgBuffer : public std::streambuf {
         if(in.is_open()){
             Core::UniquePtr<ImgCodec> codec = obtainCodecForImageFormat(f,in,&img);
             codec->readToStorage();
-            // in.close();
-            // MessageBox(GetForegroundWindow(),"Img has Been Read","NOTE",MB_OK);
-            return std::make_shared<BitmapImage>(std::move(img));
+            if(!img.data)
+                return {"Failed to Load Image from File"};
+            return std::move(img);
         }
         else
-            return std::make_shared<BitmapImage>(BitmapImage({nullptr,nullptr,nullptr}));
+            return {"Failed to Load Image from File"};
     };
 
-    Core::SharedPtr<BitmapImage> loadImageFromBuffer(void *bufferData,size_t bufferSize,BitmapImage::Format f){
+    StatusWithObj<BitmapImage> loadImageFromBuffer(void *bufferData,size_t bufferSize,BitmapImage::Format f){
         BitmapImage img;
         std::istringstream in(std::string((char *)bufferData,bufferSize),std::ios::binary);
         Core::UniquePtr<ImgCodec> codec = obtainCodecForImageFormat(f,in,&img);
         codec->readToStorage();
-        return std::make_shared<BitmapImage>(std::move(img));
+        if(!img.data)
+            return {"Failed to Load Image from File"};
+        return std::move(img);
     };
 };
 

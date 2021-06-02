@@ -47,11 +47,10 @@ namespace OmegaWTK {
             BitmapImage::AlphaFormat alpha_format;
             size_t stride;
         };
-        OMEGAWTK_EXPORT Core::SharedPtr<BitmapImage> loadImageFromFile(FS::Path path);
-        OMEGAWTK_EXPORT Core::SharedPtr<BitmapImage> loadImageFromAssets(FS::Path path);
+        OMEGAWTK_EXPORT StatusWithObj<BitmapImage> loadImageFromFile(FS::Path path);
+        OMEGAWTK_EXPORT StatusWithObj<BitmapImage> loadImageFromAssets(FS::Path path);
     #define IMPORT_IMG(img) ::OmegaWTK::Media::loadImageFromAssets(::OmegaWTK::Core::String(img))
     };
-typedef Core::SharedPtr<Media::BitmapImage> SharedImageHandle;
 };
 
 #endif

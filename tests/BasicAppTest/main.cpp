@@ -28,13 +28,16 @@ int omegaWTKMain(AppInst *app){
     // Composition::FontDescriptor fontDesc("Arial",20);
     // f = Composition::FontEngine::instance->CreateFont(fontDesc);
     // std::cout << "Hello World" << std::endl;
-    
-    auto panel = make<UI::Panel>(OmegaWTK::Rect(0,0,500,1000));
+    auto widgetTreeHost = WidgetTreeHost::Create();
+
+    auto panel = widgetTreeHost->makeWidget<UI::Panel>(OmegaWTK::Rect(0,0,500,1000));
 
     panel->show();
 
     auto appWindow = make<AppWindow>(OmegaWTK::Rect(0,0,1000,1000),new MyWindowDelegate(app,panel));
-    appWindow->addWidget(panel);
+    
+    widgetTreeHost->attachToWindow(appWindow);
+
     app->windowManager->setRootWindow(appWindow);
     app->windowManager->displayRootWindow();
 

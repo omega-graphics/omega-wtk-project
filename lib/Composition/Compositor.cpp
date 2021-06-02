@@ -7,11 +7,11 @@ static Core::QueueHeap<CompositionRenderCommand> globalQueue(50);
 
 std::mutex queueMutex;
 
-RenderCommandExecutionScheduler::RenderCommandExecutionScheduler():shutdown(false){
+Scheduler::Scheduler():shutdown(false){
     run();
 };
 
-void RenderCommandExecutionScheduler::run() {
+void Scheduler::run() {
     t = new std::thread([&](){
         while(!shutdown){
             std::lock_guard<std::mutex> queueLock(queueMutex);
@@ -31,7 +31,7 @@ void RenderCommandExecutionScheduler::run() {
     });
 };
 
-RenderCommandExecutionScheduler::~RenderCommandExecutionScheduler(){
+Scheduler::~Scheduler(){
     std::lock_guard<std::mutex> lk(mutex); 
     {
         shutdown = true;

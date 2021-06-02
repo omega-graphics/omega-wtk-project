@@ -1,12 +1,15 @@
 #include "omegaWTK/UI/Widget.h"
 #include "omegaWTK/Composition/ViewRenderTarget.h"
 #include "omegaWTK/UI/VideoView.h"
+#include "omegaWTK/UI/WidgetTreeHost.h"
 
 namespace OmegaWTK {
 
-Widget::Widget(const Core::Rect & rect,SharedHandle<Widget> parent):parent(parent),compositor(new Composition::Compositor()){
+
+Widget::Widget(const Core::Rect & rect,SharedHandle<Widget> parent,WidgetTreeHost *parentHost,Composition::Compositor *compositor):parent(parent),treeHost(parentHost),compositor(compositor){
     layerTree = std::make_shared<Composition::LayerTree>(compositor);
     rootView = std::make_shared<CanvasView>(rect,layerTree.get(),nullptr);
+    // std::cout << "Constructing View for Widget" << std::endl;
     if(parent)
         parent->rootView->addSubView(this->rootView.get());
 //    std::cout << "RenderTargetPtr:" << rootView->renderTarget.get() << std::endl;

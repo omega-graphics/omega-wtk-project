@@ -16,10 +16,6 @@ Backend::Backend():currentLimb(nullptr){
 //    occupied_condition.notify_one();
 };
 
-Backend::~Backend(){
-    
-};
-
 void Backend::setCurrentJob(LayerTree::Limb *limb){
     currentLimb = limb;
 };

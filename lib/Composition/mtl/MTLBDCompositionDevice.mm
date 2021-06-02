@@ -2,7 +2,6 @@
 #import "MTLBDCompositionDevice.h"
 #import "MTLBackend.h"
 #import "MTLBDCompositionRenderTarget.h"
-#import "MTLBDCompositionFontFactory.h"
 #import "MTLBDCompositionImage.h"
 #import "MTLBDCALayerTree.h"
 
@@ -117,6 +116,7 @@ id<MTLRenderPipelineState> MTLBDCompositionDevice::makeMultiSampledPipelineState
     }
     else {
         NSLog(@"Failed to Create Mutli Sampled Render Pipeline State:%@",error);
+        return nil;
     };
 };
 

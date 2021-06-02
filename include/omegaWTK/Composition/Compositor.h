@@ -38,15 +38,15 @@ namespace OmegaWTK::Composition {
        Backend *executor;
    };
    
-   class RenderCommandExecutionScheduler {
+   class Scheduler {
    public:
         bool shutdown;
         std::mutex mutex;
        Core::Vector<Backend *> backend_refs;
        std::thread * t;
        void run();
-       RenderCommandExecutionScheduler();
-       ~RenderCommandExecutionScheduler();
+       Scheduler();
+       ~Scheduler();
    };
 
    
@@ -76,7 +76,6 @@ namespace OmegaWTK::Composition {
         Compositor();
         ~Compositor();
     };
-
 }
 
 #endif

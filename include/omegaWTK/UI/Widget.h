@@ -11,10 +11,11 @@ class AppWindow;
 class AppWindowManager;
 class VideoView;
 class WidgetObserver;
+class WidgetTreeHost;
 
 /**
  @brief A moduler UI component. 
- Can be attached either directly to an AppWindow or as a child of another Widget.
+ Can be attached to a WidgetTreeHost or another Widget as a child.
  @paragraph
 
  @see AppWindow
@@ -28,6 +29,10 @@ protected:
      Constructs a Layer with Widget's Compositor Pointer and Core::Rect
      */
     SharedHandle<Composition::Layer> makeLayer(Core::Rect rect);
+    /**
+     The WidgetTreeHost that hosts this widget.
+    */
+    WidgetTreeHost *treeHost;
     Composition::Compositor * compositor;
         /**
      Makes a Canvas View attached to this widget and returns it.
@@ -58,6 +63,7 @@ protected:
 private:
     friend class AppWindow;
     friend class AppWindowManager;
+    friend class WidgetTreeHost;
 public:
     /**
      Get the Widget's root View's rect
@@ -88,10 +94,15 @@ public:
      Redraws the Widget with the current state of its layer tree.
      */
     virtual void refresh();
-    Widget(const Core::Rect & rect,SharedHandle<Widget> parent);
-//    Widget(Widget &widget);
-    ~Widget();
+protected:
+    Widget(const Core::Rect & rect,SharedHandle<Widget> parent,WidgetTreeHost *parentHost,Composition::Compositor *compositor);
+public:
+    virtual ~Widget();
 };
+
+#define WIDGET_CONSTRUCTOR_DEFAULT(class_name) class_name(const Core::Rect & rect,SharedHandle<Widget> parent,WidgetTreeHost *parentHost,Composition::Compositor *hostCompositor)
+#define WIDGET_CONSTRUCTOR(class_name,params...) class_name(const Core::Rect & rect,SharedHandle<Widget> parent,WidgetTreeHost *parentHost,Composition::Compositor *hostCompositor,params)
+#define WIDGET_CONSTRUCT_SUPER() Widget(rect,parent,parentHost,hostCompositor)
 
 #define WIDGET_NOTIFY_OBSERVERS_SHOW() notifyObservers(Widget::Show,nullptr)
 #define WIDGET_NOTIFY_OBSERVERS_HIDE() notifyObservers(Widget::Hide,nullptr)

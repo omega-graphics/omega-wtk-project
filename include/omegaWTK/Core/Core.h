@@ -28,11 +28,14 @@ namespace OmegaWTK {
     typedef unsigned short UniChar16;
     typedef uint32_t UniChar32;
     typedef UniChar16 UniChar;
+    typedef char *CString;
     
     typedef enum : int {
         CodeOk,
         CodeFailed
     } StatusCode;
+
+
 
     namespace Core {
          typedef unsigned char Option;
@@ -464,6 +467,52 @@ OMEGAWTK_EXPORT Core::FRoundedRect FRoundedRect(float x,float y,float w,float h,
     };
 
     void loadAssetFile(FS::Path path);
+
+     template<class _Ty>
+    class StatusWithObj {
+        StatusCode code;
+        _Ty * data;
+        CString message;
+        void _construct(const _Ty & obj){
+            code = CodeOk;
+            data = ::new _Ty;
+            memmove(data,&obj,sizeof(_Ty));
+        };
+
+    public:
+        operator bool(){
+            return code == CodeOk;
+        };
+        StatusCode getCode(){ return code;};
+        CString getError(){ return message;};
+        Core::SharedPtr<_Ty> getValue(){
+            auto transfer = data;
+            data = nullptr;
+            return std::make_shared<_Ty>(std::move(*transfer));
+        };
+        StatusWithObj(const _Ty & obj):message(nullptr){
+            _construct(obj);
+        };
+
+        StatusWithObj(_Ty && obj):message(nullptr){
+            _construct(obj);
+        };
+
+        StatusWithObj(std::string_view message):data(nullptr){
+            this->message = new char[message.size()];
+            std::move(message.begin(),message.end(),this->message);
+            code = CodeFailed;
+        };
+        ~StatusWithObj(){
+            // if(data != nullptr){
+            //     data->~_Ty();
+            //     delete data;
+            // }
+            if(message != nullptr) {
+                delete message;
+            };
+        };
+    };
 
 };
 

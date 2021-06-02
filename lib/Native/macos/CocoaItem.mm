@@ -103,7 +103,7 @@
 };
 
 - (void)viewDidLoad{
-    NSLog(@"View Has Loaded.. Emitting Event!");
+    NSLog(@"View Delegate is Ready!");
     _delegate->isReady = true;
 };
 

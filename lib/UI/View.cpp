@@ -30,7 +30,7 @@ namespace OmegaWTK {
         setReciever(delegate);
     };
     void View::addSubView(View * view){
-        subviews.push_back(SharedHandle<View>(view));
+        subviews.emplace_back(view);
         renderTarget->getNativePtr()->addChildNativeItem(view->renderTarget->getNativePtr());
     };
     void View::removeSubView(View *view){

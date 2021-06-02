@@ -2,7 +2,6 @@
 #include "MTLBDCALayerTree.h"
 #include "NativePrivate/macos/CocoaUtils.h"
 #import "MTLBDCompositionImage.h"
-#import "MTLBDCompositionFontFactory.h"
 
 #include <iostream>
 

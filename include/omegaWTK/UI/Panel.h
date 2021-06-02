@@ -12,7 +12,7 @@ namespace OmegaWTK::UI {
     public:
         void setAnimator(SharedHandle<ViewAnimator> & viewAnimator);
         void setStyle(SharedHandle<Composition::LayerStyle> & style);
-        Panel(const Core::Rect & rect,SharedHandle<Widget> parent = nullptr);
+        WIDGET_CONSTRUCTOR_DEFAULT(Panel);
         void resize(Core::Rect &newRect);
     };
 

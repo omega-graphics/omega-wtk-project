@@ -1,7 +1,6 @@
 #include "../BDCompositionRenderTarget.h"
 #include "MTLBDCompositionDevice.h"
 #include "MTLBDTriangulator.h"
-#include "MTLBDCompositionFontFactory.h"
 #include "MTLBDCompositionImage.h"
 #include "omegaWTK/Composition/FontEngine.h"
 

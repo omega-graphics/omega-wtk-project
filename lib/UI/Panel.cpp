@@ -1,7 +1,7 @@
 #include "omegaWTK/UI/Panel.h"
 
 namespace OmegaWTK::UI {
-    Panel::Panel(const Core::Rect & rect,SharedHandle<Widget> parent):Widget(rect,parent){
+    Panel::WIDGET_CONSTRUCTOR_DEFAULT(Panel):WIDGET_CONSTRUCT_SUPER(){
         auto style = make<Composition::LayerStyle>();
         style->setBackgroundColor(Composition::Color::Transparent);
         rootView->getLayerTreeLimb()->getRootLayer()->setStyle(style);

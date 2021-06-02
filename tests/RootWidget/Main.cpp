@@ -51,7 +51,8 @@ class MyWidget : public Widget {
     };
     MyRootDelegate *delegate;
 public:
-    MyWidget(const Core::Rect & rect,SharedHandle<Media::BitmapImage> & img):Widget(rect,nullptr),delegate(new MyRootDelegate(&selected)){
+    WIDGET_CONSTRUCTOR_DEFAULT(MyWidget):WIDGET_CONSTRUCT_SUPER(),delegate(new MyRootDelegate(&selected)){
+
         rootView->setDelegate(delegate);
         auto black = Composition::ColorBrush(Composition::Color::Black);
         auto rootLayer = rootView->getLayerTreeLimb()->getRootLayer();
@@ -163,18 +164,22 @@ int omegaWTKMain(AppInst *app)
     
 //     std::cout << path.serialize() << std::endl;
     
-   SharedImageHandle img = IMPORT_IMG("vortex-rtde.png");
-    // auto img2 = IMPORT_IMG("test-1.png");
-    // auto widget = make<UI::TextInput>(UI::TextInput({{0,0},{200,100}},global_font));
-    // widget->setFont(global_font);
-
-   auto widget = make<MyWidget>(MyWidget({{0,0},{400,400}},img));
+//    auto img = IMPORT_IMG("vortex-rtde.png");
+//    if(!img){
+//        std::cout << img.getError() << std::endl;
+//    }
+//     // auto img2 = IMPORT_IMG("test-1.png");
+//     // auto widget = make<UI::TextInput>(UI::TextInput({{0,0},{200,100}},global_font));
+//     // widget->setFont(global_font);
+//     auto safe_img = img.getValue();
+    auto widgetTreeHost = WidgetTreeHost::Create();
+    auto widget = widgetTreeHost->makeWidget<MyWidget>(OmegaWTK::Rect(0,0,200,200));
     widget->show();
 //    widget2->show();
- 
+    widgetTreeHost->setRoot(widget);
     auto mainWindow = make<AppWindow>(OmegaWTK::Rect(0,0,1000,1000),new MyWindowDelegate(app));
     // 
-    mainWindow->addWidget(widget);
+    widgetTreeHost->attachToWindow(mainWindow);
    
 //    mainWindow->addWidget(widget2);
     mainWindow->setMenu(menu);

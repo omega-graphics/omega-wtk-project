@@ -14,24 +14,40 @@ namespace OmegaWTK {
 
 class AppWindow;
 class AppWindowManager;
+class WidgetTreeHost;
 
-    class AppWindowDelegate;
-    /**
-     @brief A standard application window for attaching and displaying widgets. Similar to a Widget, it can be styled.
-     @paragraph
-
-    */
+class AppWindowDelegate;
+/**
+    @brief A standard application window for attaching and displaying widgets. Similar to a Widget, it can be styled.
+    @paragraph
+    In order to display any widgets on this window a WidgetTreeHost (@see WidgetTreeHost) must be created, 
+    than attached to an instance of this class.
+*/
  class OMEGAWTK_EXPORT AppWindow : public Native::NativeEventEmitter {
+        /// A pointer to its compositor.
+        Composition::Compositor *comp;
+        /// Its Window Layer
         UniqueHandle<Composition::WindowLayer> layer;
-        Composition::Compositor * compositor;
+
         SharedHandle<AppWindowDelegate> delegate;
+        /// A list of all attached widget tree hosts. 
+        /// (Only needed to week widget tree hosts alive during application)
+        Core::List<SharedHandle<WidgetTreeHost>> widgetTreeHosts;
+
         Core::Rect rect;
+
         Core::Vector<SharedHandle<Widget>> rootWidgets;
+
         SharedHandle<Menu> menu;
+
         SharedHandle<Composition::MenuStyle> menuStyle;
+
         friend class AppWindowDelegate;
         friend class AppWindowManager;
+        friend class WidgetTreeHost;
         void _add_widget(SharedHandle<Widget> * widget);
+
+
         void drawWidgets();
     public:
 #if TARGET_WIN32
@@ -60,11 +76,7 @@ class AppWindowManager;
         void close();
         SharedHandle<Native::NativeFSDialog> openFSDialog(const Native::NativeFSDialog::Descriptor & desc);
         SharedHandle<Native::NativeNoteDialog> openNoteDialog(const Native::NativeNoteDialog::Descriptor & desc);
-        template<class _Ty,std::enable_if_t<std::is_base_of_v<Widget,_Ty>,int> = 0>
-        void addWidget(SharedHandle<_Ty> & widget){
-            _add_widget((SharedHandle<Widget> *)&widget);
-        };
-        void addLayout(SharedHandle<Layout> layout);
+        
         AppWindow(Core::Rect rect,AppWindowDelegate * delegate = nullptr);
     };
 /**

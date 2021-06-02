@@ -7,7 +7,7 @@
 
 namespace OmegaWTK {
 
-    AppWindow::AppWindow(Core::Rect rect,AppWindowDelegate *delegate):layer(std::make_unique<Composition::WindowLayer>(rect,Native::make_native_window(rect,this))),compositor(new Composition::Compositor()),delegate(delegate),rect(rect){
+    AppWindow::AppWindow(Core::Rect rect,AppWindowDelegate *delegate):layer(std::make_unique<Composition::WindowLayer>(rect,Native::make_native_window(rect,this))),comp(nullptr),delegate(delegate),rect(rect){
         // MessageBoxA(HWND_DESKTOP,"Create Window Layer!","NOTE",MB_OK);
         if(delegate) {
             setReciever(delegate);
@@ -40,13 +40,13 @@ void AppWindow::_add_widget(SharedHandle<Widget> * handle){
     }
 };
 
-void AppWindow::addLayout(SharedHandle<Layout> layout){
-    for(auto & widget : *layout)
-    {
-        std::shared_ptr<Widget> ptr(&widget);
-        _add_widget(&ptr);
-    };
-};
+// void AppWindow::addLayout(SharedHandle<Layout> layout){
+//     for(auto & widget : *layout)
+//     {
+//         std::shared_ptr<Widget> ptr(&widget);
+//         _add_widget(&ptr);
+//     };
+// };
 
 SharedHandle<Native::NativeFSDialog> AppWindow::openFSDialog(const Native::NativeFSDialog::Descriptor & desc){
     return Native::NativeFSDialog::Create(desc,layer->native_window_ptr);
