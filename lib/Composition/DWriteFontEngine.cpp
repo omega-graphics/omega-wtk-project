@@ -79,8 +79,10 @@ namespace OmegaWTK::Composition {
             hr = fontFamily->GetMatchingFonts(dwrite_font->textFormat->GetFontWeight(),dwrite_font->textFormat->GetFontStretch(),dwrite_font->textFormat->GetFontStyle(),&fontList);\
             IDWriteFont *f;
             hr = fontList->GetFont(0,&f);
-            DWRITE_FONT_METRICS f_metrics;
-            f->GetMetrics(&f_metrics);
+            // IDWriteFontFace *face;
+            // hr = f->CreateFontFace(&face);
+            
+            // face->GetGlyphIndicesA(const UINT32 *codePoints, UINT32 codePointCount, UINT16 *glyphIndices)
             
         };
     };
