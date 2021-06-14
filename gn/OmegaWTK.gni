@@ -56,6 +56,16 @@ template("omega_wtk_static_lib"){
             "TARGET_MACOS"
         ]
     }
+    else if(is_ios){
+        _defines += [
+            "TARGET_IOS"
+        ]
+    }
+    else if(is_linux){
+        _defines += [
+            "TARGET_GTK"
+        ]
+    }
 
     if(defined(invoker.defines)){
         invoker.defines += _defines

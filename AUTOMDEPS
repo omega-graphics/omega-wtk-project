@@ -12,6 +12,12 @@
     ],
     "commands":[
         {
+            "type":"clone",
+            "url":"https://github.com/omega-graphics/common.git",
+            "dest":"./omega-common",
+            "branch":"default"
+        },
+        {
             "type":"git_clone",
             "url":"https://github.com/glennrp/libpng.git",
             "dest":"$(third_party_dest)/libpng/code",
@@ -56,28 +62,6 @@
             "type":"unzip",
             "zipfile":"./temp/pcre2.zip",
             "dest":"$(third_party_dest)/pcre2/code"
-        },
-        {
-            "type":"chdir",
-            "dir":"./external-libs/webrtc"
-        },
-        {
-            "type":"system",
-            "path":"gclient sync --gclientfile=webrtc.gclient"
-        },
-        {
-            "type":"chdir",
-            "dir":"../../"
-        },
-        {
-            "type":"gnpkg",
-            "command":"utils --getchrome"
-        },
-        {
-            "type":"git_clone",
-            "url":"https://chromium.googlesource.com/chromium/src/third_party",
-            "dest":"./third_party",
-            "branch":"default"
         }
     ]
 }

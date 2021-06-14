@@ -4,11 +4,11 @@ compile_commands.json
 compile_flags.txt
 swift
 sphinxout
-lib/Mobile
 gn-utils
 third_party
 # Prerequisites
 *.d
+omega-common
 
 # Compiled Object files
 *.slo

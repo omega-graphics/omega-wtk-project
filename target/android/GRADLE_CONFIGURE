@@ -1,0 +1,7 @@
+#! /usr/bin/env python3
+
+import os 
+
+
+# SYMLINK SRCS
+os.symlink(os.path.abspath("../../src/Mobile/Native/android"),"./omegaWTKNative/java/org/omegagraphics/OmegaWTKMNative")

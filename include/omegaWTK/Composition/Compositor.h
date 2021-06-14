@@ -42,7 +42,6 @@ namespace OmegaWTK::Composition {
    public:
         bool shutdown;
         std::mutex mutex;
-       Core::Vector<Backend *> backend_refs;
        std::thread * t;
        void run();
        Scheduler();
@@ -54,20 +53,27 @@ namespace OmegaWTK::Composition {
      OmegaWTK's Composition Engine Frontend Interface
      */
     class OMEGAWTK_EXPORT Compositor {
+
         Core::UniquePtr<Backend> backend;
+
+        Core::UniquePtr<Scheduler> scheduler;
+
         bool allowUpdates = false;
+
         friend class Layer;
         friend class LayerTree;
         friend class WindowLayer;
+
         void __drawChildLimbs(LayerTree::Limb *limb,LayerTree *layerTree);
         void __updateChildLimbs(LayerTree::Limb *limb,LayerTree *layerTree);
         /// Updates a Requested layer
+
         OMEGAWTK_DEPRECATED void updateRequestedLayer(Layer *layer);
         void updateRequestedLayerTreeLimb(LayerTree::Limb *limb);
         void updateWindowLayer(WindowLayer *layer);
         void layoutLayerTreeLimb(LayerTree::Limb *limb);
-        public:
-       void scheduleCommand(UniqueHandle<CompositionRenderCommand> command);
+    public:
+        void scheduleCommand(UniqueHandle<CompositionRenderCommand> command);
         void updateLayerTree(LayerTree * tree);
         void prepareDraw(LayerTree *tree);
         void prepareDrawWindow(WindowLayer *layer);

@@ -1,8 +1,4 @@
 {
-  "icu-69": [
-    "//out/externals//icu-69/icu-common.dylib",
-    "//out/externals//icu-69/icu-i18n.dylib"
-  ],
   "libjpeg-turbo": [
     "//out/externals//libjpeg-turbo/turbojpeg.dylib"
   ],

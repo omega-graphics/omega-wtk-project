@@ -1,0 +1,22 @@
+{
+    "type":"chdir",
+    "dir":"./external-libs/webrtc"
+},
+{
+    "type":"system",
+    "path":"gclient sync --gclientfile=webrtc.gclient"
+},
+{
+    "type":"chdir",
+    "dir":"../../"
+},
+{
+    "type":"gnpkg",
+    "command":"utils --getchrome"
+},
+{
+    "type":"git_clone",
+    "url":"https://chromium.googlesource.com/chromium/src/third_party",
+    "dest":"./third_party",
+    "branch":"default"
+}
