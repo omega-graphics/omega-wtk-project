@@ -7,7 +7,7 @@
 #include "omegaWTK/Core/Core.h"
 #include "omegaWTK/Native/NativeItem.h"
 #include "omegaWTK/Native/NativeWindow.h"
-#include "Visual.h"
+#include "Canvas.h"
 #include <functional>
 
 #ifndef OMEGAWTK_COMPOSITION_LAYER_H
@@ -19,55 +19,56 @@ class AppWindow;
 class AppWindowManager;
 class View;
 
-    namespace Composition {
+namespace Composition {
     
     class ViewRenderTarget;
     class Compositor;
         /**
             A mutlifeatured surface for composing visuals on.
          */
-        class OMEGAWTK_EXPORT Layer {
-            unsigned id_gen = 0;
-            SharedHandle<LayerStyle> style;
-            Core::Vector<SharedHandle<Layer>> children;
-            Layer * parent_ptr;
-            Core::Rect surface_rect;
-            bool enabled;
-            bool needsNativeResize;
-            Compositor *ownerCompositor;
-            friend class Compositor;
-            friend class BackendImpl;
-            friend class LayerTree;
-            void addSubLayer(SharedHandle<Layer> & layer);
-            void removeSubLayer(SharedHandle<Layer> & layer);
-        public:
-            /// @name Base Functions
-            /// @{
+    class OMEGAWTK_EXPORT Layer {
+        unsigned id_gen = 0;
+        SharedHandle<Canvas> canvas;
+        Core::Vector<SharedHandle<Layer>> children;
+        Layer * parent_ptr;
+        Core::Rect surface_rect;
+        bool enabled;
+        bool needsNativeResize;
+        Compositor *ownerCompositor;
+        friend class Compositor;
+        friend class BackendImpl;
+        friend class LayerTree;
+        void addSubLayer(SharedHandle<Layer> & layer);
+        void removeSubLayer(SharedHandle<Layer> & layer);
+    public:
+        /// @name Base Functions
+        /// @{
 //            Native::NativeItemPtr getTargetNativePtr(){return compTarget->native;};
 //            void setStyle(Style & style){
 //                compTarget->style.reset(new Style(std::move(style)));
 //            };
 //            auto & getStyle(){return *compTarget->style;};
 
-            /// Resize the Layer with the new rect
-            void resize(Core::Rect & newRect);
-            Core::Rect & getLayerRect(){return surface_rect;};
-            void setEnabled(bool state){enabled = state;};
-            bool isChildLayer(){return parent_ptr != nullptr;}
-            /// @}
-            
-            /// @name Composing Functions!
-            /// Draws on to its target!
-            /// @{
-            void setStyle(SharedHandle<LayerStyle> & style);
-            SharedHandle<LayerStyle> & getStyle();
-            /// @}
-            
-            
-            Layer(const Core::Rect & rect,Compositor *compPtr);
+        /// Resize the Layer with the new rect
+        void resize(Core::Rect & newRect);
+        Core::Rect & getLayerRect(){return surface_rect;};
+        void setEnabled(bool state){enabled = state;};
+        bool isChildLayer(){return parent_ptr != nullptr;}
+        /// @}
+        
+        /// @name Composing Functions!
+        /// Draws on to its target!
+        /// @{
+        SharedHandle<Canvas> & getCanvas();
+        /// @}
+        
+        
+        Layer(const Core::Rect & rect,Compositor *compPtr);
 //            Layer(Layer &layer);
-            ~Layer();
-        };
+        ~Layer();
+    };
+
+        typedef Layer CanvasLayer;
     
 //    typedef std::function<bool(Layer *)> LayerTreeTraversalCallback;
     /**
@@ -130,19 +131,19 @@ class View;
     class OMEGAWTK_EXPORT  WindowLayer {
         Native::NWH native_window_ptr;
         Core::Rect & rect;
-        SharedHandle<WindowStyle> style;
-        SharedHandle<MenuStyle> menuStyle;
+        SharedHandle<Canvas> windowCanvas;
+        // SharedHandle<MenuStyle> menuStyle;
         friend class OmegaWTK::AppWindow;
         friend class OmegaWTK::AppWindowManager;
         friend class Compositor;
         void redraw();
-        void setWindowStyle(SharedHandle<WindowStyle> & style);
-        void setMenuStyle(SharedHandle<MenuStyle> & style);
+        // void setWindowStyle(SharedHandle<WindowStyle> & style);
+        // void setMenuStyle(SharedHandle<MenuStyle> & style);
     public:
         WindowLayer(Core::Rect & rect,Native::NWH native_window_ptr);
     };
     
-    };
+};
 
 
 };

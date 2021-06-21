@@ -1,4 +1,5 @@
-#include "omegaWTK/Composition/Visual.h"
+#include "omegaWTK/Composition/Canvas.h"
+#include "omegaWTK/Composition/CompositorClient.h"
 
 namespace OmegaWTK::Composition {
 // #define VISUAL_SET_PARAMS(arg)                                                 \
@@ -45,61 +46,67 @@ namespace OmegaWTK::Composition {
 // VPVR Visual::getFont(){
 
 // };
-LayerStyle::LayerStyle(){
+
+
+// LayerStyle::LayerStyle(){
     
+// };
+
+void Canvas::submitCommandToClient(Visual * visual){
+    client->queueVisual(visual);
 };
 
-void LayerStyle::add(Visual::RectParams params){
-    _construct_visual(Visual::Rect,params);
-};
+// void LayerStyle::add(Visual::RectParams params){
+//     _construct_visual(Visual::Rect,params);
+// };
 
-void LayerStyle::add(Visual::RoundedRectParams params){
-    _construct_visual(Visual::RoundedRect,params);
-};
+// void LayerStyle::add(Visual::RoundedRectParams params){
+//     _construct_visual(Visual::RoundedRect,params);
+// };
 
-void LayerStyle::add(Visual::EllipseParams params){
-    _construct_visual(Visual::Ellipse,params);
-};
+// void LayerStyle::add(Visual::EllipseParams params){
+//     _construct_visual(Visual::Ellipse,params);
+// };
 
-void LayerStyle::add(Visual::BitmapParams params){
-    _construct_visual(Visual::Bitmap,params);
-};
+// void LayerStyle::add(Visual::BitmapParams params){
+//     _construct_visual(Visual::Bitmap,params);
+// };
 
-void LayerStyle::add(Visual::TextParams params){
-    _construct_visual(Visual::Text,params);
-};
+// void LayerStyle::add(Visual::TextParams params){
+//     _construct_visual(Visual::Text,params);
+// };
 
-void LayerStyle::setBrush(unsigned id,const Core::SharedPtr<Brush> & new_brush){
-    auto visual = visuals[id];
-    switch (visual->type) {
-        case Visual::Rect :{
-            Visual::RectParams *params = (Visual::RectParams *)visual->params;
-            params->brush.reset(new Brush(*new_brush));
-            break;
-        }
-        default:
-            break;
-    }
-};
+// void LayerStyle::setBrush(unsigned id,const Core::SharedPtr<Brush> & new_brush){
+//     auto visual = visuals[id];
+//     switch (visual->type) {
+//         case Visual::Rect :{
+//             Visual::RectParams *params = (Visual::RectParams *)visual->params;
+//             params->brush.reset(new Brush(*new_brush));
+//             break;
+//         }
+//         default:
+//             break;
+//     }
+// };
 
-void LayerStyle::addEffect(SharedHandle<LayerEffect> & effect){
-    effects.push_back(effect);
-};
+// void LayerStyle::addEffect(SharedHandle<LayerEffect> & effect){
+//     effects.push_back(effect);
+// };
 
-LayerStyle::~LayerStyle(){
-    auto visual_it = visuals.begin();
-    while(visual_it != visuals.end()){
-        delete *visual_it;
-        ++visual_it;
-    };
-};
+// LayerStyle::~LayerStyle(){
+//     auto visual_it = visuals.begin();
+//     while(visual_it != visuals.end()){
+//         delete *visual_it;
+//         ++visual_it;
+//     };
+// };
 
-WindowStyle::~WindowStyle(){
-    // auto visual_it = visuals.begin();
-    // while(visual_it != visuals.end()){
-    //     delete *visual_it;
-    //     ++visual_it;
-    // };
-};
+// WindowStyle::~WindowStyle(){
+//     // auto visual_it = visuals.begin();
+//     // while(visual_it != visuals.end()){
+//     //     delete *visual_it;
+//     //     ++visual_it;
+//     // };
+// };
 
 }

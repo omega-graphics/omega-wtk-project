@@ -4,6 +4,7 @@
  */
 
 #include "omegaWTK/Composition/Layer.h"
+#include "omegaWTK/Composition/CompositorClient.h"
 #include "omegaWTK/Composition/LayerAnimation.h"
 #include "omegaWTK/Native/NativeItem.h"
 #include "omegaWTK/Native/NativeEvent.h"
@@ -23,7 +24,7 @@ namespace OmegaWTK {
         Sometimes referred to as the CanvasView.
         @relates Widget
      */ 
-    class OMEGAWTK_EXPORT View : public Native::NativeEventEmitter {
+    class OMEGAWTK_EXPORT View : public Native::NativeEventEmitter, Composition::CompositorClient {
         Core::Vector<SharedHandle<View>> subviews;
     protected:
         SharedHandle<Composition::ViewRenderTarget> renderTarget;

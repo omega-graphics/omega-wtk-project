@@ -1,5 +1,6 @@
 #include "omegaWTK/Core/Core.h"
 #include "Layer.h"
+#include "CompositorClient.h"
 #include <chrono>
 #include <thread>
 
@@ -19,23 +20,14 @@ namespace OmegaWTK::Composition {
 
    struct CompositionRenderCommand {
        typedef enum {
-           DrawCanvasView,
-           UpdateCanvasView,
-           DrawVideoView,
-           UpdateVideoView,
-           DrawWindow,
-           UpdateWindow
-       }Type;
-       typedef enum {
            Low,
            High,
        } Priority;
-       Type type;
        Priority priority;
        CompositionRenderCommandThreasholdParams thresholdParams;
-       void *data;
-       float videoFPS;
-       Backend *executor;
+       CompositionRenderTarget *renderTarget;
+       VisualCommand *_visuals;
+       unsigned visual_count;
    };
    
    class Scheduler {
@@ -53,7 +45,7 @@ namespace OmegaWTK::Composition {
      OmegaWTK's Composition Engine Frontend Interface
      */
     class OMEGAWTK_EXPORT Compositor {
-
+        friend class CompositorClient;
         Core::UniquePtr<Backend> backend;
 
         Core::UniquePtr<Scheduler> scheduler;

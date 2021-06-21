@@ -13,8 +13,8 @@
     "commands":[
         {
             "type":"clone",
-            "url":"https://github.com/omega-graphics/common.git",
-            "dest":"./omega-common",
+            "url":"https://github.com/omega-graphics/omega-gte-project.git",
+            "dest":"./gte",
             "branch":"default"
         },
         {
@@ -40,12 +40,6 @@
            "url":"https://github.com/madler/zlib.git",
            "dest":"$(third_party_dest)/zlib/code",
            "branch":"default"
-        },
-        {
-            "type":"git_clone",
-            "url":"https://gitlab.gnome.org/GNOME/libxml2.git",
-            "dest":"$(third_party_dest)/libxml2/code",
-            "branch":"default"
         },
         {
             "type":"git_clone",

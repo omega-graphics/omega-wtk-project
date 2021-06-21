@@ -1,7 +1,8 @@
 #include "omegaWTK/Native/NativeItem.h"
+#include "omegaWTK/Composition/Canvas.h"
 
-#ifndef OMEGAWTK_COMPOSITION_VIEWRENDERTARGET_H
-#define OMEGAWTK_COMPOSITION_VIEWRENDERTARGET_H
+#ifndef OMEGAWTK_COMPOSITION_COMPOSITORCLIENT_H
+#define OMEGAWTK_COMPOSITION_COMPOSITORCLIENT_H
 
 namespace OmegaWTK::Composition {
     class ViewRenderTarget;
@@ -24,16 +25,41 @@ namespace OmegaWTK::Composition {
 //        void scheduleFrame(float timeDelta);
 //        static Core::UniquePtr<ViewRenderTargetFrameScheduler> Create(Core::UniquePtr<ViewRenderTarget> & renderTarget,Compositor *compositor);
 //    };
+
+    class OMEGAWTK_EXPORT CompositionRenderTarget {
+        
+    };
+
+    /** @brief Compositor Client class for interaction with a Compositor
+        @paragraph Interaction includes submitting render commands to a Compositor,
+        and verifying successful frame completion. 
+    */
+    
+    class OMEGAWTK_EXPORT CompositorClient {
+        friend class Canvas;
+
+        Compositor *frontend;
+
+        Core::Vector<VisualCommand> drawQueue;
+
+        void queueVisualCommand(VisualCommand *v);
+        void submit(CompositionRenderTarget *renderTarget);
+    };
+
+    
+
     /**
      The Compositor's interface for composing to a widget's view.
      */
-    class OMEGAWTK_EXPORT ViewRenderTarget {
+    class OMEGAWTK_EXPORT ViewRenderTarget : public CompositionRenderTarget {
         Native::NativeItemPtr native;
     public:
         Native::NativeItemPtr getNativePtr();
         ViewRenderTarget(Native::NativeItemPtr _native);
         ~ViewRenderTarget();
     };
+
+    
 };
 
 
