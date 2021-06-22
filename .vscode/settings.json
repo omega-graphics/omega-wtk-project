@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "/usr/local/bin/python3",
+    "python.pythonPath": "C:\\Users\\alex\\AppData\\Local\\Programs\\Python\\Python39\\python.exe",
     "restructuredtext.confPath": "",
     "java.project.referencedLibraries": [
         "lib/**/*.jar",

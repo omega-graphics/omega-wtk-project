@@ -1,4 +1,8 @@
 {
+  "icu-69": [
+    "//out/externals//icu-69\\icu-common.dll",
+    "//out/externals//icu-69\\icu-i18n.dll"
+  ],
   "libjpeg-turbo": [
     "//out/externals//libjpeg-turbo/turbojpeg.dylib"
   ],

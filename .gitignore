@@ -9,6 +9,7 @@ third_party
 # Prerequisites
 *.d
 omega-common
+gte
 
 # Compiled Object files
 *.slo

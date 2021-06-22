@@ -41,7 +41,6 @@ namespace OmegaWTK {
         SharedHandle<Composition::LayerTree::Limb> layerTreeLimb;
         friend class ViewAnimator;
         friend class ScrollView;
-        Composition::Compositor *getWidgetCompositor();
     protected:
         /**
             Constructs a View using a Rect param; (With NO Layers!!)
@@ -137,6 +136,13 @@ namespace OmegaWTK {
         ViewDelegate();
         ~ViewDelegate();
     };
+
+    class ViewTreeChildObserver {
+        SharedHandle<View> view;
+    public:
+        
+    };
+
     
     class ScrollViewDelegate;
 

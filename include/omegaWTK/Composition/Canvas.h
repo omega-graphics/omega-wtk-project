@@ -59,6 +59,10 @@ namespace OmegaWTK {
     
 // #define LAYER_EFFECT_GAUSSIANBLUR(radius) __LAYER_EFFECT ({__LAYER_EFFECT::GaussianBlur,new __LAYER_EFFECT::GaussianBlurParams({radius})})
 // #define LAYER_EFFECT_DIRECTIONALBLUR(radius,angle) __LAYER_EFFECT ({__LAYER_EFFECT::DirectionalBlur,new __LAYER_EFFECT::DirectionalBlurParams({radius,angle})})
+
+///   
+
+
     class Canvas;
     /// An object drawn by a Compositor.
     struct  OMEGAWTK_EXPORT VisualCommand {
@@ -106,7 +110,9 @@ namespace OmegaWTK {
     };
 
     class CompositorClient;
-
+    /**
+     
+    */
     class OMEGAWTK_EXPORT Canvas {
         
         CompositorClient *client;

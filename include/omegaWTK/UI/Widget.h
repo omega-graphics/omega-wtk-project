@@ -50,7 +50,6 @@ protected:
 //    SharedHandle<VideoView> makeVideoView(const Core::Rect & rect,View *parent);
     
 private:
-    bool resizeable;
     /// Observers
     Core::Vector<WidgetObserver *> observers;
 protected:
@@ -78,9 +77,9 @@ public:
      Remove a WidgetObserver from the list of observers currently listening.
     */
     void removeObserver(WidgetObserver *observerPtr);
-    bool & isResizable();
-    virtual void resize(Core::Rect & newRect){
-        std::cout << "THIS WIDGET IS NOT RESIZABLE" << std::endl;
+    // bool & isResizable();
+    void resize(Core::Rect & newRect){
+        // std::cout << "THIS WIDGET IS NOT RESIZABLE" << std::endl;
     };
     /**
      Show the Widget if hidden.

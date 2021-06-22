@@ -15,14 +15,18 @@ icu_io_headers = exec_script(glob_py,[rebase_path("./code/icu4c/source/io/*.h")]
 
 # $(TOOLS_TS): "$(ICUTOOLS)\genrb\$(CFGTOOLS)\genrb.exe" "$(ICUTOOLS)\gencnval\$(CFGTOOLS)\gencnval.exe" "$(ICUTOOLS)\gencfu\$(CFGTOOLS)\gencfu.exe" "$(ICUTOOLS)\icupkg\$(CFGTOOLS)\icupkg.exe" "$(ICUTOOLS)\makeconv\$(CFGTOOLS)\makeconv.exe" "$(ICUPBIN)\pkgdata.exe"
 
-# icu_tools_out_dir = "${icu_out_dir}/icu-tools"
+icu_tools_out_dir = "${icu_out_dir}/icu-tools"
 icu_common_dir = "./code/icu4c/source/common"
-# icu_i18n_dir = "./code/icu4c/source/i18n"
+icu_i18n_dir = "./code/icu4c/source/i18n"
 
 shared_library("icudt"){
     include_dirs = [icu_common_dir]
+    defines = [
+        "STUBDATA_BUILD"
+    ]
     sources = [
-        "./code/icu4c/source/stubdata/stubdata.cpp"
+        "./code/icu4c/source/stubdata/stubdata.cpp",
+        "./code/icu4c/source/data/misc/icudata.rc"
     ]
     output_dir = icu_out_dir
 }
@@ -32,10 +36,11 @@ config("icu_lib_config"){
         "${icu_out_dir}/include"
     ]
     defines = [
-        "U_DEFINE_FALSE_AND_TRUE=1"
+        "U_DEFINE_FALSE_AND_TRUE=1",
     ]
     if(is_windows){
         defines += [
+            "U_PLATFORM_USES_ONLY_WIN32_API",
             "_CRT_SECURE_NO_DEPRECATE",
             "_CRT_NONSTDC_NO_DEPRECATE"
         ]
@@ -54,6 +59,7 @@ external_lib_target("icu-common"){
     ]
     defines = [
         "U_COMMON_IMPLEMENTATION",
+        # "UDATA_DEBUG"
     ]
     if(is_windows){
         ldflags = [
@@ -80,7 +86,8 @@ external_lib_target("icu-i18n"){
          "./code/icu4c/source/i18n"
     ]
     defines = [
-        "U_I18N_IMPLEMENTATION"
+        "U_I18N_IMPLEMENTATION",
+        # "UDATA_DEBUG"
     ]
     public_headers = icu_i18n_headers
     public_deps = [
@@ -106,7 +113,8 @@ external_lib_target("icu-io"){
          "./code/icu4c/source/io"
     ]
     defines = [
-        "U_IO_IMPLEMENTATION"
+        "U_IO_IMPLEMENTATION",
+        # "UDATA_DEBUG"
     ]
     public_headers = icu_io_headers
     public_deps = [
@@ -123,164 +131,178 @@ external_lib_target("icu-io"){
     public_header_output_dir = "${icu_out_dir}/include/unicode/{{source_file_part}}"
 }
 
-# icu_tool_util_srcs = exec_script(glob_py,[rebase_path("./code/icu4c/source/tools/toolutil/*.cpp")],"value")
+icu_tool_util_srcs = exec_script(glob_py,[rebase_path("./code/icu4c/source/tools/toolutil/*.cpp")],"value")
 
-# shared_library("toolutil"){
-#     sources = icu_tool_util_srcs
-#     include_dirs = [
-#         icu_common_dir,
-#         icu_i18n_dir,
-#     ]
-#     public_deps = [
-#         ":icu-common",
-#         ":icu-i18n"
-#     ]
-#     defines = [
-#         "U_TOOLUTIL_IMPLEMENTATION",
-#         "U_DEFINE_FALSE_AND_TRUE=1"
-#     ]
-#     output_dir = icu_tools_out_dir
-#     if(is_windows){
-#         defines += [
-#             "_CRT_SECURE_NO_DEPRECATE",
-#             "_CRT_NONSTDC_NO_DEPRECATE"
-#         ]
-#     }
-# }
+shared_library("toolutil"){
+    sources = icu_tool_util_srcs
+    include_dirs = [
+        icu_common_dir,
+        icu_i18n_dir,
+    ]
+    public_deps = [
+        ":icu-common",
+        ":icu-i18n"
+    ]
+    defines = [
+        "U_TOOLUTIL_IMPLEMENTATION",
+        "U_DEFINE_FALSE_AND_TRUE=1",
+        # "UDATA_DEBUG"
+    ]
+    output_dir = icu_tools_out_dir
+    if(is_windows){
+        defines += [
+            "_CRT_SECURE_NO_DEPRECATE",
+            "_CRT_NONSTDC_NO_DEPRECATE"
+        ]
+    }
+}
 
-# template("icu_tool"){
-#     t_name = target_name
-#     copy("toolutil_copy__${t_name}"){
-#         public_deps = [
-#             ":toolutil",
-#             ":icu-io"
-#         ]
-#         sources = [
-#             "${icu_out_dir}/icudt.${shared_lib_suffix}",
-#             "${icu_out_dir}/icu-common.${shared_lib_suffix}",
-#             "${icu_out_dir}/icu-i18n.${shared_lib_suffix}",
-#             "${icu_out_dir}/icu-io.${shared_lib_suffix}",
-#             "${icu_tools_out_dir}/toolutil.${shared_lib_suffix}"
-#         ]
-#         outputs = [
-#             "${icu_tools_out_dir}/${t_name}/Rel/{{source_file_part}}"
-#         ]
-#     }
-#     executable(target_name){
-#         public_deps = [
-#             ":toolutil",
-#             ":icu-io",
-#             ":toolutil_copy__${t_name}"
-#         ]
-#         forward_variables_from(invoker,["sources"])
-#         include_dirs = [
-#             icu_common_dir,
-#             icu_i18n_dir,
-#             "./code/icu4c/source/io",
-#             "./code/icu4c/source/tools/toolutil"
-#         ]
-#         output_dir = "${icu_tools_out_dir}/${target_name}/Rel"
-#     }
+template("icu_tool"){
+    t_name = target_name
+    copy("toolutil_copy__${t_name}"){
+        public_deps = [
+            ":toolutil",
+            ":icu-io"
+        ]
+        sources = [
+            "${icu_out_dir}/icudt.${shared_lib_suffix}",
+            "${icu_out_dir}/icu-common.${shared_lib_suffix}",
+            "${icu_out_dir}/icu-i18n.${shared_lib_suffix}",
+            "${icu_out_dir}/icu-io.${shared_lib_suffix}",
+            "${icu_tools_out_dir}/toolutil.${shared_lib_suffix}"
+        ]
+        outputs = [
+            "${icu_tools_out_dir}/${t_name}/Rel/{{source_file_part}}"
+        ]
+    }
+    executable(target_name){
+        public_deps = [
+            ":toolutil",
+            ":icu-io",
+            ":toolutil_copy__${t_name}"
+        ]
+        defines = [
+            # "UDATA_DEBUG"
+        ]
+        forward_variables_from(invoker,["sources"])
+        include_dirs = [
+            icu_common_dir,
+            icu_i18n_dir,
+            "./code/icu4c/source/io",
+            "./code/icu4c/source/tools/toolutil"
+        ]
+        output_dir = "${icu_tools_out_dir}/${target_name}/Rel"
+    }
     
     
-# }
+}
 
 
 
-# # # errmsg.c
-# icu_tool("genrb"){
-#     sources = [
-#         "./code/icu4c/source/tools/genrb/errmsg.c",
-#         "./code/icu4c/source/tools/genrb/genrb.cpp",
-#         "./code/icu4c/source/tools/genrb/filterrb.cpp",
-#         "./code/icu4c/source/tools/genrb/parse.cpp",
-#         "./code/icu4c/source/tools/genrb/prscmnts.cpp",
-#         "./code/icu4c/source/tools/genrb/rbutil.c",
-#         "./code/icu4c/source/tools/genrb/read.c",
-#         "./code/icu4c/source/tools/genrb/reslist.cpp",
-#         "./code/icu4c/source/tools/genrb/rle.c",
-#         "./code/icu4c/source/tools/genrb/ustr.c",
-#         "./code/icu4c/source/tools/genrb/wrtjava.cpp",
-#         "./code/icu4c/source/tools/genrb/wrtxml.cpp",
-#     ]
-# }
+# # errmsg.c
+icu_tool("genrb"){
+    sources = [
+        "./code/icu4c/source/tools/genrb/errmsg.c",
+        "./code/icu4c/source/tools/genrb/genrb.cpp",
+        "./code/icu4c/source/tools/genrb/filterrb.cpp",
+        "./code/icu4c/source/tools/genrb/parse.cpp",
+        "./code/icu4c/source/tools/genrb/prscmnts.cpp",
+        "./code/icu4c/source/tools/genrb/rbutil.c",
+        "./code/icu4c/source/tools/genrb/read.c",
+        "./code/icu4c/source/tools/genrb/reslist.cpp",
+        "./code/icu4c/source/tools/genrb/rle.c",
+        "./code/icu4c/source/tools/genrb/ustr.c",
+        "./code/icu4c/source/tools/genrb/wrtjava.cpp",
+        "./code/icu4c/source/tools/genrb/wrtxml.cpp",
+    ]
+}
 
-# icu_tool("derb"){
-#     sources = [
-#         "./code/icu4c/source/tools/genrb/derb.cpp",
-#     ]
-# }
+icu_tool("derb"){
+    sources = [
+        "./code/icu4c/source/tools/genrb/derb.cpp",
+    ]
+}
 
-# icu_tool("gencnval"){
-#     sources = [
-#         "./code/icu4c/source/tools/gencnval/gencnval.c"
-#     ]
-# }
+icu_tool("gencnval"){
+    sources = [
+        "./code/icu4c/source/tools/gencnval/gencnval.c"
+    ]
+}
 
-# icu_tool("gencfu"){
-#     sources = [
-#         "./code/icu4c/source/tools/gencfu/gencfu.cpp"
-#     ]
-# }
+icu_tool("gencfu"){
+    sources = [
+        "./code/icu4c/source/tools/gencfu/gencfu.cpp"
+    ]
+}
 
-# icu_tool("icupkg"){
-#     sources = [
-#         "./code/icu4c/source/tools/icupkg/icupkg.cpp"
-#     ]
-# }
+icu_tool("icupkg"){
+    sources = [
+        "./code/icu4c/source/tools/icupkg/icupkg.cpp"
+    ]
+}
 
-# icu_tool("makeconv"){
-#     sources = [
-#         "./code/icu4c/source/tools/makeconv/gencnvex.c",
-#         "./code/icu4c/source/tools/makeconv/genmbcs.cpp",
-#         "./code/icu4c/source/tools/makeconv/makeconv.cpp",
-#         "./code/icu4c/source/tools/makeconv/ucnvstat.c"
-#     ]
-# }
+icu_tool("makeconv"){
+    sources = [
+        "./code/icu4c/source/tools/makeconv/gencnvex.c",
+        "./code/icu4c/source/tools/makeconv/genmbcs.cpp",
+        "./code/icu4c/source/tools/makeconv/makeconv.cpp",
+        "./code/icu4c/source/tools/makeconv/ucnvstat.c"
+    ]
+}
 
-# icu_tool("pkgdata"){
-#     sources = [
-#         "./code/icu4c/source/tools/pkgdata/pkgdata.cpp",
-#         "./code/icu4c/source/tools/pkgdata/pkgtypes.c",
-#     ]
-# }
+icu_tool("pkgdata"){
+    sources = [
+        "./code/icu4c/source/tools/pkgdata/pkgdata.cpp",
+        "./code/icu4c/source/tools/pkgdata/pkgtypes.c",
+    ]
+}
 
-# group("icu-data-tools"){
-#     public_deps = [
-#         ":genrb",
-#         ":gencnval",
-#         ":gencfu",
-#         ":icupkg",
-#         ":makeconv",
-#         ":pkgdata",
-#         ":derb"
-#     ]
-# }
+icu_tool("uconv"){
+    sources = [
+        "./code/icu4c/source/extra/uconv/uconv.cpp",
+        "./code/icu4c/source/extra/uconv/uwmsg.c"
+    ]
+}
 
-# action("icudt_build"){
-#     public_deps = [
-#         ":icu-data-tools"
-#     ]
-#     script = "./icudt.py"
-#     args = [
-#         "--src-dir",
-#         rebase_path("./code/icu4c/source"),
-#         "--output-dir",
-#         rebase_path(icu_out_dir),
-#         "--temp-dir",
-#         rebase_path("${icu_out_dir}/tmp")
-#     ]
-#     outputs = [
-#         "${icu_out_dir}/icu69dt.icu"
-#     ]
-# }
+group("icu-data-tools"){
+    public_deps = [
+        ":genrb",
+        ":gencnval",
+        ":gencfu",
+        ":icupkg",
+        ":makeconv",
+        ":pkgdata",
+        ":derb",
+        ":uconv"
+    ]
+}
+
+action("icudt_build"){
+    public_deps = [
+        ":icu-data-tools"
+    ]
+    script = "./icudt.py"
+    args = [
+        "--src-dir",
+        rebase_path("./code/icu4c/source"),
+        "--tool-dir",
+        rebase_path("${icu_out_dir}"),
+        "--output-dir",
+        rebase_path("${icu_out_dir}/data"),
+        "--temp-dir",
+        rebase_path("${icu_out_dir}/data/tmp")
+    ]
+    outputs = [
+        "${icu_out_dir}/data/icudt69l.dat"
+    ]
+}
 
 
 group("icu-69"){
     public_deps = [
         ":icu-common",
         ":icu-i18n",
-        # ":icudt_build"
+        ":icudt_build"
     ]
 }
 

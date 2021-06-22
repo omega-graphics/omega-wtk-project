@@ -52,8 +52,8 @@ namespace OmegaWTK::Composition {
     
 // };
 
-void Canvas::submitCommandToClient(Visual * visual){
-    client->queueVisual(visual);
+void Canvas::submitCommandToClient(VisualCommand * visual){
+    client->queueVisualCommand(visual);
 };
 
 // void LayerStyle::add(Visual::RectParams params){
