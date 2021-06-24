@@ -11,11 +11,13 @@ class VideoViewController;
 /**
  @brief 
 */
-class OMEGAWTK_EXPORT VideoView : public View, public Media::VideoCaptureSessionPreviewOutput {
+class OMEGAWTK_EXPORT VideoView :  public View, 
+                                   public Media::VideoCaptureSessionPreviewOutput, 
+                                   public Composition::CompositorVideoClient {
     VideoViewController *controller;
     Media::VideoIStream *currentStream;
 public:
-    void setVideoInput(Media::VideoIStream &videoIn);
+    void setVideoInput(Media::VideoIStream *videoIn);
    void setController(VideoViewController *controller);
    VideoView(const Core::Rect & rect,Composition::Compositor * comp,View *parent = nullptr);
 };

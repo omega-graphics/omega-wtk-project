@@ -56,20 +56,21 @@ namespace OmegaWTK::Composition {
         friend class LayerTree;
         friend class WindowLayer;
 
-        void __drawChildLimbs(LayerTree::Limb *limb,LayerTree *layerTree);
-        void __updateChildLimbs(LayerTree::Limb *limb,LayerTree *layerTree);
-        /// Updates a Requested layer
+        // void __drawChildLimbs(LayerTree::Limb *limb,LayerTree *layerTree);
+        // void __updateChildLimbs(LayerTree::Limb *limb,LayerTree *layerTree);
+        // /// Updates a Requested layer
 
-        OMEGAWTK_DEPRECATED void updateRequestedLayer(Layer *layer);
-        void updateRequestedLayerTreeLimb(LayerTree::Limb *limb);
-        void updateWindowLayer(WindowLayer *layer);
-        void layoutLayerTreeLimb(LayerTree::Limb *limb);
+        // OMEGAWTK_DEPRECATED void updateRequestedLayer(Layer *layer);
+        // void updateRequestedLayerTreeLimb(LayerTree::Limb *limb);
+        // void updateWindowLayer(WindowLayer *layer);
+        // void layoutLayerTreeLimb(LayerTree::Limb *limb);
     public:
         void scheduleCommand(UniqueHandle<CompositionRenderCommand> command);
-        void updateLayerTree(LayerTree * tree);
-        void prepareDraw(LayerTree *tree);
-        void prepareDrawWindow(WindowLayer *layer);
-        void prepareCleanup();
+        
+        // void updateLayerTree(LayerTree * tree);
+        // void prepareDraw(LayerTree *tree);
+        // void prepareDrawWindow(WindowLayer *layer);
+        // void prepareCleanup();
         
         Compositor();
         ~Compositor();

@@ -1,5 +1,5 @@
 #include "omegaWTK/UI/View.h"
-#include "omegaWTK/Composition/ViewRenderTarget.h"
+#include "omegaWTK/Composition/CompositorClient.h"
 
 namespace OmegaWTK {
 
@@ -60,10 +60,14 @@ View::View(const Core::Rect & rect,Native::NativeItemPtr nativeItem,View *parent
 View::~View(){
     std::cout << "View will destruct" << std::endl;
 };
-    
-Composition::Compositor * View::getWidgetCompositor(){
-    return widgetLayerTree->widgetCompositor;
+
+void View::commitRender(){
+    submit(renderTarget.get());
 };
+    
+// Composition::Compositor * View::getWidgetCompositor(){
+//     return widgetLayerTree->widgetCompositor;
+// };
 
 ViewDelegate::ViewDelegate(){};
 

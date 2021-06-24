@@ -69,6 +69,7 @@ namespace OmegaWTK {
         bool isRootView(){return parent_ptr == nullptr;};
         virtual void setDelegate(ViewDelegate *_delegate);
         virtual void resize(Core::Rect newRect);
+        void commitRender();
         /**
             Constructs a View using a Rect param and constructs a LayerTree::Limb to be used on the layerTree;
             @param rect The Rect to use

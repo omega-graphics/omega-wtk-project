@@ -43,7 +43,26 @@ namespace OmegaWTK::Composition {
         Core::Vector<VisualCommand> drawQueue;
 
         void queueVisualCommand(VisualCommand *v);
+    protected:
         void submit(CompositionRenderTarget *renderTarget);
+    public:
+        virtual void commitRender() = 0;
+    };
+
+    /** @brief A CompositorClient that only allows for video frame submission/verification.
+        @paragraph Interaction includes submitting render commands to a Compositor,
+        and verifying successful frame completion. 
+    */
+    
+    class OMEGAWTK_EXPORT CompositorVideoClient {
+        Compositor *frontend;
+
+        Core::Vector<VisualCommand> drawQueue;
+    protected:
+        void queueFrame(Core::SharedPtr<Media::BitmapImage> & img);
+        void submit(CompositionRenderTarget *renderTarget);
+    public:
+        virtual void commitCurrentFrame() = 0;
     };
 
     

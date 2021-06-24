@@ -1,5 +1,5 @@
 #include "omegaWTK/UI/VideoView.h"
-#include "omegaWTK/Composition/ViewRenderTarget.h"
+#include "omegaWTK/Composition/CompositorClient.h"
 
 namespace OmegaWTK {
 
