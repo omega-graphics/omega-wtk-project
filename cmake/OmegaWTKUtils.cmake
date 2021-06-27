@@ -1,5 +1,6 @@
 
 include(CMakeParseArguments)
+include(${CMAKE_CURRENT_LIST_DIR}/../gn-utils/Utils.cmake)
 
 if(WIN32)
     add_compile_definitions("TARGET_WIN32")
@@ -7,12 +8,15 @@ if(WIN32)
 endif()
 
 if(CMAKE_HOST_APPLE)
-    if(NOT XCODE)
-        set(FATAL_ERROR "Xcode Generator is Needed to Build an OmegaWTK App For Mac!")
-    endif()
+    # if(NOT XCODE)
+    #     set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_IDENTITY ${CODE_SIGNATURE})
+    # endif()
 
-    set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED "NO")
-    set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "")
+    if(NOT CODE_SIGNATURE)
+        message(FATAL_ERROR "Code Signature must be defined in order to Build an OmegaWTK App on Mac")
+    endif()
+   
+    
 
     add_compile_definitions("TARGET_MACOS")
     set(TARGET_MACOS TRUE)
@@ -33,7 +37,16 @@ elseif(CMAKE_HOST_UNIX)
 endif()
 
 function(add_omega_wtk_app)
-    cmake_parse_arguments("_ARG" "" "NAME;MAC_BUNDLE_ID;WIN_ICO;MAC_ICON" "SOURCES;LINK_LIBS;INCLUDE_DIRS" ${ARGN})
+    cmake_parse_arguments("_ARG" "" 
+    "NAME;
+    MAC_BUNDLE_ID;
+    WIN_ICO;
+    MAC_ICON" 
+
+    "SOURCES;
+    LINK_LIBS;
+    INCLUDE_DIRS" 
+    ${ARGN})
 
     if(TARGET_WIN32)
         add_executable(${_ARG_NAME} WIN32 ${_ARG_SOURCES})
@@ -43,10 +56,21 @@ function(add_omega_wtk_app)
         set(OMEGAWTK_WINDOWS_UTILS_DIR  ${OMEGAWTK_TARGET_UTILS_DIR}/windows)
         set(WINDOWS_UTIL_FILES "${CMAKE_CURRENT_BINARY_DIR}/${_ARG_NAME}.rc" "${CMAKE_CURRENT_BINARY_DIR}/targetver.h" "${CMAKE_CURRENT_BINARY_DIR}/resource.h" "${CMAKE_CURRENT_BINARY_DIR}/mmain.cpp" "${CMAKE_CURRENT_BINARY_DIR}/${_ARG_NAME}.exe.manifest")
         set(APPNAME ${_ARG_NAME})
-        configure_file("${OMEGAWTK_WINDOWS_UTILS_DIR}/mmain.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/mmain.cpp")
-        configure_file("${OMEGAWTK_WINDOWS_UTILS_DIR}/resource_script.rc.in" "${CMAKE_CURRENT_BINARY_DIR}/${_ARG_NAME}.rc" @ONLY)
-        configure_file("${OMEGAWTK_WINDOWS_UTILS_DIR}/resource.h.in" "${CMAKE_CURRENT_BINARY_DIR}/resource.h" @ONLY)
-        configure_file("${OMEGAWTK_WINDOWS_UTILS_DIR}/targetver.h" "${CMAKE_CURRENT_BINARY_DIR}/targetver.h" @ONLY)
+        configure_file(
+            "${OMEGAWTK_WINDOWS_UTILS_DIR}/mmain.cpp.in" 
+            "${CMAKE_CURRENT_BINARY_DIR}/mmain.cpp")
+        configure_file(
+            "${OMEGAWTK_WINDOWS_UTILS_DIR}/resource_script.rc.in" 
+            "${CMAKE_CURRENT_BINARY_DIR}/${_ARG_NAME}.rc" 
+            @ONLY)
+        configure_file(
+            "${OMEGAWTK_WINDOWS_UTILS_DIR}/resource.h.in" 
+            "${CMAKE_CURRENT_BINARY_DIR}/resource.h" 
+            @ONLY)
+        configure_file(
+            "${OMEGAWTK_WINDOWS_UTILS_DIR}/targetver.h" 
+            "${CMAKE_CURRENT_BINARY_DIR}/targetver.h" 
+            @ONLY)
         configure_file("${OMEGAWTK_WINDOWS_UTILS_DIR}/app.ico" "${CMAKE_CURRENT_BINARY_DIR}/${_ARG_NAME}.ico" COPYONLY)
         configure_file("${OMEGAWTK_WINDOWS_UTILS_DIR}/app.exe.manifest" "${CMAKE_CURRENT_BINARY_DIR}/${_ARG_NAME}.exe.manifest")
         file(COPY "${OMEGAWTK_WINDOWS_UTILS_DIR}/small.ico" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -55,7 +79,7 @@ function(add_omega_wtk_app)
     endif()
 
     if(TARGET_MACOS)
-        add_executable(${_ARG_NAME} MACOSX_BUNDLE ${_ARG_SOURCES} "Assets.xcassets")
+        
         set(OMEGAWTK_MACOS_UTILS_DIR ${OMEGAWTK_TARGET_UTILS_DIR}/macos)
         set(MACOS_UTIL_FILES "AppDelegate.h" "AppDelegate.mm" "English.lproj/MainMenu.xib" "main.mm" )
         list(TRANSFORM MACOS_UTIL_FILES PREPEND "${OMEGAWTK_MACOS_UTILS_DIR}/")
@@ -63,27 +87,28 @@ function(add_omega_wtk_app)
             file(COPY ${_F} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
         endforeach()
         set(APPNAME ${_ARG_NAME})
-        configure_file( "${OMEGAWTK_MACOS_UTILS_DIR}/AppDelegate.mm" "${CMAKE_CURRENT_BINARY_DIR}/AppDelegate.mm" @ONLY)
-		set(MAC_ICON ${_ARG_MAC_ICON})
-		message("MAC ICON:${MAC_ICON}")
+        configure_file( 
+            "${OMEGAWTK_MACOS_UTILS_DIR}/AppDelegate.mm" 
+            "${CMAKE_CURRENT_BINARY_DIR}/AppDelegate.mm" 
+            @ONLY)
 		
-		configure_file("${OMEGAWTK_MACOS_UTILS_DIR}/Info.plist.in" "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" @ONLY)
+		configure_file(
+            "${OMEGAWTK_MACOS_UTILS_DIR}/Info.plist.in" 
+            "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" 
+            @ONLY)
 		
-        set(MACOS_UTILS "AppDelegate.mm" "AppDelegate.h" "MainMenu.xib" "main.mm")
+        set(MACOS_UTILS "AppDelegate.mm" "AppDelegate.h" "main.mm")
         list(TRANSFORM MACOS_UTILS PREPEND "${CMAKE_CURRENT_BINARY_DIR}/")
+        add_app_bundle(
+            ${_ARG_NAME} 
+            SOURCES ${_ARG_SOURCES} 
+            INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" 
+            RESOURCES "${CMAKE_CURRENT_BINARY_DIR}/MainMenu.xib;"
+            LIBRARIES "${_ARG_LINK_LIBS};${Cocoa_LIB}"
+            FRAMEWORKS "OmegaWTK"
+            EMBEDDED_FRAMEWORKS "OmegaWTK")
         target_sources(${_ARG_NAME} PRIVATE ${MACOS_UTILS})
         # set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/${MAC_ICON}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-        set_target_properties(${_ARG_NAME} PROPERTIES
-            MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist"
-            RESOURCE "${CMAKE_CURRENT_BINARY_DIR}/MainMenu.xib;Assets.xcassets"
-            MACOSX_FRAMEWORK_IDENTIFIER ${_ARG_MAC_BUNDLE_ID}
-            XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER ${_ARG_MAC_BUNDLE_ID}
-			XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME ${MAC_ICON}
-        )
-        set(_ARG_LINK_LIBS ${_ARG_LINK_LIBS} ${Cocoa_LIB})
-        add_custom_command(
-            TARGET ${_ARG_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy ${METAL_LIB} $<TARGET_BUNDLE_DIR:$<TARGET_NAME_IF_EXISTS:${_ARG_NAME}>>/Contents/Resources/default.metallib)
         
     endif()
 
@@ -92,7 +117,9 @@ function(add_omega_wtk_app)
     endif()
 
     target_include_directories(${_ARG_NAME} PUBLIC ${_ARG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
-    target_link_libraries(${_ARG_NAME} PRIVATE ${_ARG_LINK_LIBS} "omegaWTKNative;omegaWTKCore;omegaWTKComposition;omegaWTKUI")
+    if(NOT TARGET_MACOS)
+        target_link_libraries(${_ARG_NAME} PRIVATE ${_ARG_LINK_LIBS} "OmegaWTK")
+    endif()
 
 endfunction()
 

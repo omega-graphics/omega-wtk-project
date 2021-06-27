@@ -1,0 +1,26 @@
+#! /usr/bin/env python3
+
+include("./autom/OmegaWTK.autom")
+
+Project("OmegaWTK","0.6")
+
+
+
+omega_wtk_include_dir = abspath("./include")
+
+
+standard_defines = []
+if is_mac:
+    standard_defines += ["TARGET_MACOS"]
+elif is_win:
+    standard_defines =+ ["TARGET_WIN32"]
+
+
+Config("OmegaWTK_Config",[omega_wtk_include_dir],standard_defines)
+
+
+def OmegaWTKModule(name:str,sources:str,deps:"list[str]"):
+    
+
+
+

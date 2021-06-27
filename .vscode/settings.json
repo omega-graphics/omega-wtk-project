@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "C:\\Users\\alex\\AppData\\Local\\Programs\\Python\\Python39\\python.exe",
+    "python.pythonPath": "/opt/homebrew/bin/python3",
     "restructuredtext.confPath": "",
     "java.project.referencedLibraries": [
         "lib/**/*.jar",

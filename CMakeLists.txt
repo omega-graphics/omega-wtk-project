@@ -1,7 +1,11 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.20)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
+
+cmake_policy(SET CMP0077 NEW)
+
+set(BUILD_TESTING OFF)
 
 # set(BUILD_AS_CPP20MODULE)
 
@@ -13,42 +17,58 @@ if(BUILD_AS_CPP20MODULE)
     add_compile_definitions(OMEGAWTK_BUILD_MODULE)
 endif()
 
+# Include Dependencies
+
+add_subdirectory("gte")
+
 project("OmegaWTK" C CXX)
-set(OMEGAWTK_VERSION "0.1")
+set(OMEGAWTK_VERSION "0.4")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_CXX_FLAGS "-gdwarf")
 endif()
 
-find_package(ZLIB REQUIRED)
+include(GNUInstallDirs)
+
+# 3rd Party Libraries
+
+find_package(ZLIB)
 if(ZLIB_FOUND)
-    message("Found zlib - Version:${ZLIB_VERSION_STRING}")
-endif()
-
-find_package(PNG REQUIRED)
-if(PNG_FOUND)
-    message("Found libpng - Version:${PNG_VERSION_STRING}")
+    message("Found zlib:${ZLIB_VERSION_STRING}")
 else()
-    message(FATAL_ERROR "libpng not found! libpng is required to build OmegaWTK")
+    add_subdirectory("external-libs/zlib/code")
 endif()
 
-find_package(JPEG REQUIRED)
+find_package(PNG)
+if(PNG_FOUND)
+    message("Found libpng:${PNG_VERSION_STRING}")
+else()
+    set(PNG_TESTS OFF)
+    add_subdirectory("external-libs/libpng/code")
+    # message(FATAL_ERROR "libpng not found! libpng is required to build OmegaWTK")
+endif()
+
+find_package(JPEG)
 if(JPEG_FOUND)
     message("Found libjpeg-turbo:${JPEG_VERSION_STRING}")
+else()
+    add_subdirectory("external-libs/libjpeg-turbo/code")
 endif()
 
-find_package(TIFF REQUIRED)
+find_package(TIFF)
 if(TIFF_FOUND)
     message("Found libtiff")
+else()
+    add_subdirectory("external-libs/libtiff/code")
 endif()
 
-find_package(OpenSSL REQUIRED)
-if(OpenSSL_FOUND)
-
-endif()
+# find_package(OpenSSL REQUIRED)
+# if(OpenSSL_FOUND)
+#     message("Found OpenSSL")
+# else()
+#     add_subdirectory("external-libs/openssl/code")
+# endif()
     
-endif()
-
 include_directories("include")
 include(ExternalProject)
 
@@ -70,14 +90,16 @@ include(OmegaWTKUtils)
 #     message("Found FFMPEG")
 # endif()
 
+set(OMEGAWTK_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
 function(add_omega_wtk_lib)
     cmake_parse_arguments("_ARG" "STATIC;SHARED;OBJECT" "NAME" "SOURCES;HEADERS;LINK_LIBS" ${ARGN})
 
     string(PREPEND _ARG_NAME "omegaWTK")
 
     if(_ARG_HEADERS)
-        file(RELATIVE_PATH HEADER_DIR "${CMAKE_SOURCE_DIR}/lib" ${CMAKE_CURRENT_SOURCE_DIR})
-        list(TRANSFORM _ARG_HEADERS PREPEND "${CMAKE_SOURCE_DIR}/include/omegaWTK/${HEADER_DIR}/")
+        file(RELATIVE_PATH HEADER_DIR "${OMEGAWTK_ROOT_DIR}/src" ${CMAKE_CURRENT_SOURCE_DIR})
+        list(TRANSFORM _ARG_HEADERS PREPEND "${OMEGAWTK_ROOT_DIR}/include/omegaWTK/${HEADER_DIR}/")
     endif()
 
     if(_ARG_STATIC)
@@ -142,7 +164,7 @@ if(TARGET_GTK)
     endif()
 endif()
 
-add_subdirectory("lib")
+add_subdirectory("src")
 
 set(OMEGAWTK_TARGET_UTILS_DIR ${CMAKE_SOURCE_DIR}/target)
 
@@ -168,17 +190,14 @@ if(TARGET_MACOS)
 endif()
 
 export(TARGETS ${OmegaWTKLibs} 
-    FILE "${CMAKE_BINARY_DIR}/cmake/OmegaWTKTargets.cmake"
+    FILE "${CMAKE_BINARY_DIR}/lib/cmake/OmegaWTKTargets.cmake"
     NAMESPACE OmegaWTK::
 )
 
 install(EXPORT OmegaWTKTargets
     NAMESPACE OmegaWTK:: 
-    DESTINATION "${CMAKE_BINARY_DIR}/cmake")
+    DESTINATION "${CMAKE_BINARY_DIR}/lib/cmake")
 
-configure_file(cmake/OmegaWTKConfig.cmake.in "${CMAKE_BINARY_DIR}/cmake/OmegaWTKConfig.cmake" @ONLY)
-configure_file(cmake/OmegaWTKUtils.cmake "${CMAKE_BINARY_DIR}/cmake/OmegaWTKUtils.cmake" COPYONLY)
+configure_file(cmake/OmegaWTKConfig.cmake.in "${CMAKE_BINARY_DIR}/lib/cmake/OmegaWTKConfig.cmake" @ONLY)
+configure_file(cmake/OmegaWTKUtils.cmake "${CMAKE_BINARY_DIR}/lib/cmake/OmegaWTKUtils.cmake" COPYONLY)
 
-if(SWIFT_BUILD)
-    add_subdirectory("swift")
-endif()
