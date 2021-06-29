@@ -55,7 +55,6 @@ public:
     void resize(Core::Rect &newRect);
     CALayer *getLayer(){ return [_ptr getCALayer];};
     void setNeedsDisplay();
-    void layoutLayerTreeLimb();
     void * getBinding();
     CocoaItem(const Core::Rect & rect,Type _type,CocoaItem *parent);
     ~CocoaItem();

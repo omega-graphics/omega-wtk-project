@@ -52,7 +52,7 @@ namespace OmegaWTK::Composition {
     
 // };
 
-void Canvas::submitCommandToClient(VisualCommand * visual){
+void CanvasSurface::submitCommandToClient(VisualCommand * visual){
     client->queueVisualCommand(visual);
 };
 

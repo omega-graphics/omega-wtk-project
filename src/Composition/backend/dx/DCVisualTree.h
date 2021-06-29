@@ -10,7 +10,7 @@ namespace OmegaWTK::Composition {
 /**
      DirectX Backend Impl of the BDCompositionVisualTree using IDCompositionVisuals
 */
-class DCVisualTree : public BDCompositionVisualTree {
+class DCVisualTree : public BDVisualTree {
     DXBDCompositionDevice *device;
     Core::UniqueComPtr<IDCompositionTarget> hwndTarget;
     typedef BDCompositionVisualTree Parent;

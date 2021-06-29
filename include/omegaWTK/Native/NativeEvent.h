@@ -117,11 +117,11 @@ typedef struct {
 
 typedef struct {
     // KeyCode kc;
-     UniChar key;
+     OmegaWTK::Unicode32Char key;
 } KeyDownParams;
 
 typedef struct {
-    UniChar key;
+    OmegaWTK::Unicode32Char key;
 } KeyUpParams;
 
 

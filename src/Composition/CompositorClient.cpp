@@ -1,5 +1,5 @@
 #include "omegaWTK/Composition/CompositorClient.h"
-#include "omegaWTK/Composition/Compositor.h"
+#include "Compositor.h"
 
 //#ifdef TARGET_MACOS
 //#include "CocoaRenderTargetFrameScheduler.h"
@@ -16,6 +16,10 @@ namespace OmegaWTK::Composition {
     // };
     void CompositorClient::queueVisualCommand(VisualCommand *v){
         drawQueue.push_back(*v);
+    };
+
+    void CompositorClient::setFrontendPtr(Compositor *frontend){
+        this->frontend = frontend;
     };
 
     void CompositorClient::submit(CompositionRenderTarget *renderTarget){

@@ -1,5 +1,4 @@
 #include "omegaWTK/Core/Core.h"
-#include "omegaWTK/Core/FS.h"
 
 #ifdef TARGET_WIN32
 #include <dwrite.h>
@@ -30,15 +29,15 @@ class Font;
 */
 class OMEGAWTK_EXPORT  TextRect {
 protected:
-    Core::String text_val;
+    OmegaCommon::String text_val;
     Core::SharedPtr<Font> font;
     virtual void _updateStrInternal() = 0;
 public:
     Core::Rect rect;
     virtual void *getNative() = 0;
     virtual void getGlyphBoundingBoxes(Core::Rect ** rects,unsigned * count) = 0;
-    Core::String & getString() noexcept{ return text_val;};
-    void setString(const Core::String & str){
+    OmegaCommon::String & getString() noexcept{ return text_val;};
+    void setString(const OmegaCommon::String & str){
         text_val = std::move(str);
         _updateStrInternal();
     };
@@ -49,9 +48,9 @@ public:
      @param rect[in] The Rect to draw the text in.
      @returns SharedPtr<TextRect>
     */
-    static Core::SharedPtr<TextRect> Create(Core::String & _val,Core::SharedPtr<Font> & font,Core::Rect rect);
+    static Core::SharedPtr<TextRect> Create(OmegaCommon::String & _val,Core::SharedPtr<Font> & font,Core::Rect rect);
 protected:
-    TextRect(Core::String & _val,Core::SharedPtr<Font> & font,Core::Rect & rect):text_val(_val),rect(rect),font(font){};
+    TextRect(OmegaCommon::String & _val,Core::SharedPtr<Font> & font,Core::Rect & rect):text_val(_val),rect(rect),font(font){};
 };
 /**
  @brief A struct that describes a Font that can be created by the FontEngine.
@@ -79,12 +78,12 @@ struct OMEGAWTK_EXPORT  FontDescriptor {
         WrapByWord,
         WrapByCharacter
     } Wrapping;
-    Core::String family;
+    OmegaCommon::String family;
     FontStyle style;
     Alignment textAlignment;
     Wrapping wrapping;
     unsigned size;
-    FontDescriptor(Core::String _family,unsigned size,FontStyle _style = Regular,Alignment textAlignment = LeftUpper,Wrapping wrapping = WrapByWord):family(_family),style(_style),textAlignment(textAlignment),wrapping(wrapping),size(size){};
+    FontDescriptor(OmegaCommon::String _family,unsigned size,FontStyle _style = Regular,Alignment textAlignment = LeftUpper,Wrapping wrapping = WrapByWord):family(_family),style(_style),textAlignment(textAlignment),wrapping(wrapping),size(size){};
     ~FontDescriptor(){};
 };
 
@@ -120,7 +119,7 @@ public:
      @returns SharedPtr<Font>
     */
     Core::SharedPtr<Font> CreateFont(FontDescriptor & desc);
-    Core::SharedPtr<Font> CreateFontFromFile(FS::Path path,FontDescriptor & desc);
+    Core::SharedPtr<Font> CreateFontFromFile(OmegaCommon::FS::Path path,FontDescriptor & desc);
     static FontEngine * instance;
     /// @name Duplication Prevention Method Rules
     /// @{

@@ -1,5 +1,4 @@
 #include "omegaWTK/Core/Core.h"
-#include "omegaWTK/Composition/Compositor.h"
 #include "View.h"
 
 #ifndef OMEGAWTK_UI_WIDGET_H
@@ -26,14 +25,9 @@ protected:
     SharedHandle<Widget> parent;
     SharedHandle<Composition::LayerTree> layerTree;
     /**
-     Constructs a Layer with Widget's Compositor Pointer and Core::Rect
-     */
-    SharedHandle<Composition::Layer> makeLayer(Core::Rect rect);
-    /**
      The WidgetTreeHost that hosts this widget.
     */
     WidgetTreeHost *treeHost;
-    Composition::Compositor * compositor;
         /**
      Makes a Canvas View attached to this widget and returns it.
      @param rect The Rectangle to use
@@ -51,7 +45,7 @@ protected:
     
 private:
     /// Observers
-    Core::Vector<WidgetObserver *> observers;
+    OmegaCommon::Vector<WidgetObserver *> observers;
 protected:
     typedef enum : OPT_PARAM {
         Resize,
@@ -94,14 +88,14 @@ public:
      */
     virtual void refresh();
 protected:
-    Widget(const Core::Rect & rect,SharedHandle<Widget> parent,WidgetTreeHost *parentHost,Composition::Compositor *compositor);
+    Widget(const Core::Rect & rect,WidgetTreeHost *treeHost,SharedHandle<Widget> parent);
 public:
     virtual ~Widget();
 };
 
-#define WIDGET_CONSTRUCTOR_DEFAULT(class_name) class_name(const Core::Rect & rect,SharedHandle<Widget> parent,WidgetTreeHost *parentHost,Composition::Compositor *hostCompositor)
-#define WIDGET_CONSTRUCTOR(class_name,params...) class_name(const Core::Rect & rect,SharedHandle<Widget> parent,WidgetTreeHost *parentHost,Composition::Compositor *hostCompositor,params)
-#define WIDGET_CONSTRUCT_SUPER() Widget(rect,parent,parentHost,hostCompositor)
+#define WIDGET_CONSTRUCTOR_DEFAULT(class_name) class_name(const Core::Rect & rect,WidgetTreeHost *parentHost,SharedHandle<Widget> parent)
+#define WIDGET_CONSTRUCTOR(class_name,params...) class_name(const Core::Rect & rect,WidgetTreeHost *parentHost,SharedHandle<Widget> parent,params)
+#define WIDGET_CONSTRUCT_SUPER() Widget(rect,parentHost,parent)
 
 #define WIDGET_NOTIFY_OBSERVERS_SHOW() notifyObservers(Widget::Show,nullptr)
 #define WIDGET_NOTIFY_OBSERVERS_HIDE() notifyObservers(Widget::Hide,nullptr)
@@ -147,7 +141,7 @@ protected:
 template<class _Ty>
 class WidgetState {
     Core::Optional<_Ty> val;
-    Core::Vector<WidgetStateObserver<WidgetState<_Ty>> *> observers;
+    OmegaCommon::Vector<WidgetStateObserver<WidgetState<_Ty>> *> observers;
 public: 
     void setValue(_Ty newVal){
         val = newVal;

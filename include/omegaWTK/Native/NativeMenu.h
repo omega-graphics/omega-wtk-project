@@ -29,14 +29,14 @@ public:
 typedef NativeMenu *NM;
 
 
-class NativeMenuDelegate {
+DELEGATE NativeMenuDelegate {
 public:
-    virtual void onSelectItem(unsigned itemIndex) = 0;
+    DELEGATE_METHOD(void,onSelectItem,unsigned itemIndex)
 };
 
-NMI make_native_menu_item(const Core::String & str,NM parent,bool hasSubMenu,NM subMenu);
+NMI make_native_menu_item(const OmegaCommon::String & str,NM parent,bool hasSubMenu,NM subMenu);
 NMI make_native_menu_seperator();
-NM make_native_menu(const Core::String & name);
+NM make_native_menu(const OmegaCommon::String & name);
 
 };
 };

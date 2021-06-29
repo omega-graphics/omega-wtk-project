@@ -23,10 +23,16 @@ namespace OmegaWTK::Native {
         } Type;
         struct Descriptor {
             Type type;
+            OmegaCommon::FS::Path openLocation;
         };
         static SharedHandle<NativeFSDialog> Create(const Descriptor & desc,NWH nativeWindow);
-        virtual Core::String show() = 0;
+        virtual void show() = 0;
         virtual void close()  = 0 ;
+    };
+
+    class NativeFSDialogDelegate {
+    protected:
+        
     };
 
     class NativeNoteDialog : public NativeDialog {
@@ -34,8 +40,8 @@ namespace OmegaWTK::Native {
         NativeNoteDialog(NWH parentWindow);
     public:
         struct Descriptor {
-            Core::String title;
-            Core::String str;
+            OmegaCommon::String title;
+            OmegaCommon::String str;
         };
         static SharedHandle<NativeNoteDialog> Create(const Descriptor & desc,NWH nativeWindow);
          virtual void show() = 0;

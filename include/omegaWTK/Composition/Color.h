@@ -63,7 +63,7 @@ namespace OmegaWTK {
                 float pos;
                 Color color;
             };
-            Core::Vector<GradientStop> stops;
+            OmegaCommon::Vector<GradientStop> stops;
             static GradientStop CreateStop(float pos,Color color);
             static Gradient CreateLinear(std::initializer_list<GradientStop> stops);
             static Gradient CreateRadial(std::initializer_list<GradientStop> stops);

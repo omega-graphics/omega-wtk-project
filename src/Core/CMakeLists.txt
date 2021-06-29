@@ -1,17 +1,19 @@
 add_omega_wtk_lib(
-    STATIC
+    OBJECT 
     NAME 
     "Core"
     SOURCES 
     "Core.cpp"
     "MultiThreading.cpp"
+    "AssetsPriv.h"
+    "Unicode.cpp"
     HEADERS
     "Core.h"
-    "Math.h"
     "MultiThreading.h"
+    "Unicode.h"
 )
 
-if(TARGET_MACOS)
-    target_sources("omegaWTKCore" PRIVATE "FSCocoa.h" "FSCocoa.mm")
-    target_link_libraries("omegaWTKCore" PRIVATE ${Cocoa_LIB})
-endif()
+# All Third Party Libraries must be built and installed before building the first module.
+add_dependencies("omegaWTKCore" "ICU")
+
+target_include_directories("omegaWTKCore" PRIVATE "../../tools/assetc")

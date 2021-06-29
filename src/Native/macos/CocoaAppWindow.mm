@@ -89,11 +89,11 @@ void CocoaAppWindow::close(){
 };
 -(void)windowDidResize:(NSNotification *)notification 
 {
-    CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
-    NSLog(@"Window FRAME: {x:%f,y:%f,w:%f,h:%f}",_cppBinding->window.contentView.frame.origin.x,_cppBinding->window.contentView.frame.origin.y,_cppBinding->window.contentView.frame.size.width,_cppBinding->window.contentView.frame.size.height);
-    OmegaWTK::Native::WindowWillResize *params = new OmegaWTK::Native::WindowWillResize(OmegaWTK::Rect(_cppBinding->window.contentView.frame.origin.x,_cppBinding->window.contentView.frame.origin.y,_cppBinding->window.contentView.frame.size.width,_cppBinding->window.contentView.frame.size.height));
-    OmegaWTK::Native::NativeEventPtr event = new OmegaWTK::Native::NativeEvent(OmegaWTK::Native::NativeEvent::WindowWillResize,params);
-    [self emitIfPossible:event];
+    // CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+    // NSLog(@"Window FRAME: {x:%f,y:%f,w:%f,h:%f}",_cppBinding->window.contentView.frame.origin.x,_cppBinding->window.contentView.frame.origin.y,_cppBinding->window.contentView.frame.size.width,_cppBinding->window.contentView.frame.size.height);
+    // OmegaWTK::Native::WindowWillResize *params = new OmegaWTK::Native::WindowWillResize(OmegaWTK::Rect(_cppBinding->window.contentView.frame.origin.x,_cppBinding->window.contentView.frame.origin.y,_cppBinding->window.contentView.frame.size.width,_cppBinding->window.contentView.frame.size.height));
+    // OmegaWTK::Native::NativeEventPtr event = new OmegaWTK::Native::NativeEvent(OmegaWTK::Native::NativeEvent::WindowWillResize,params);
+    // [self emitIfPossible:event];
 };
 
 @end

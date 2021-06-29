@@ -1,19 +1,13 @@
-#include <string>
-#include <vector>
-#include <map>
-#include <memory>
-#include <queue>
-#include <cassert>
-#include <list>
-#include <optional>
-#include <sstream>
-#include <fstream>
+#include <omega-common/common.h>
+
+#include <OmegaGTE.h>
 
 /// Regex Lib
-#define PCRE2_CODE_UNIT_WIDTH 8
-#include <pcre2.h>
+// #define PCRE2_CODE_UNIT_WIDTH 8
+// #include <pcre2.h>
 
 #include "OmegaWTKExport.h"
+#include "Unicode.h"
 
 #ifdef TARGET_WIN32
 #include <wrl.h>
@@ -25,10 +19,13 @@
 
 namespace OmegaWTK {
 
-    typedef unsigned short UniChar16;
-    typedef uint32_t UniChar32;
-    typedef UniChar16 UniChar;
-    typedef char *CString;
+    #define INTERFACE class
+
+    #define INTERFACE_METHOD(type,name,args...) virtual type name(args) = 0;
+
+    #define DELEGATE INTERFACE
+    
+    #define DELEGATE_METHOD(type,name,args...) INTERFACE_METHOD(type,name,args)
     
     typedef enum : int {
         CodeOk,
@@ -45,20 +42,6 @@ namespace OmegaWTK {
 #define OPT_PARAM Core::Option
 
     namespace Core {
-    
-         typedef std::string String;
-    
-        template<class _Ty>
-        using  Vector = std::vector<_Ty>;
-
-        template<class _Ty>
-        using List = std::list<_Ty>;
-
-        template<class _Ty>
-        using Queue = std::queue<_Ty>;
-
-        template<class _Key,class _Val>
-        using Map = std::map<_Key,_Val>;
 
         template<class _Ty>
         using UniquePtr = std::unique_ptr<_Ty>;
@@ -112,78 +95,11 @@ namespace OmegaWTK {
                 return begin()[idx];
             };
             ArrayRef() = delete;
-            ArrayRef(Core::Vector<_Ty> & ref):_data(ref.data()),_size(ref.size()){};
+            ArrayRef(OmegaCommon::Vector<_Ty> & ref):_data(ref.data()),_size(ref.size()){};
         };
 
-        struct OMEGAWTK_EXPORT Position {
-            unsigned x;
-            unsigned y;
-        };
-        struct OMEGAWTK_EXPORT Dimensions {
-            unsigned minWidth;
-            unsigned minHeight;
-        };
-        struct OMEGAWTK_EXPORT  Rect {
-            Position pos;
-            Dimensions dimen;
-            bool compare(Rect & other);
-            float angle;
-            Rect(Position _pos,Dimensions _dimen,float angle = 0):pos(_pos),dimen(_dimen),angle(angle){};
-            Rect(const Rect & other):pos(other.pos),dimen(other.dimen),angle(other.angle){};
-            Rect(Rect && other):pos(other.pos),dimen(other.dimen),angle(other.angle){};
-            inline Rect & operator=(Rect & other){
-                pos = other.pos;
-                dimen = other.dimen;
-                angle = other.angle;
-                return *this;
-            };
-            inline Rect & operator=(Rect && other){
-                pos = other.pos;
-                dimen = other.dimen;
-                angle = other.angle;
-                return *this;
-            };
-        };
 
-        #define RECT_COMPONENTS(rect) rect.pos.x,rect.pos.y,rect.dimen.minWidth,rect.dimen.minHeight
-    
-        struct OMEGAWTK_EXPORT  RoundedRect : public Rect {
-            unsigned radius_x;
-            unsigned radius_y;
-            bool compare(RoundedRect & other);
-            RoundedRect(const Rect &rect,unsigned rad_x,unsigned rad_y):Rect(rect),radius_x(rad_x),radius_y(rad_y){};
-        };
-    
-        struct OMEGAWTK_EXPORT Ellipse {
-            Position pos;
-            unsigned radius_x;
-            unsigned radius_y;
-            bool compare(Ellipse & other);
-        };
-        struct OMEGAWTK_EXPORT  FPosition {
-            float x;
-            float y;
-        };
-        struct OMEGAWTK_EXPORT  FDimensions {
-            float minWidth;
-            float minHeight;
-        };
-        struct OMEGAWTK_EXPORT  FRect {
-            FPosition pos;
-            FDimensions dimen;
-            float angle;
-            FRect(FPosition pos,FDimensions dimen,float angle = 0):pos(pos),dimen(dimen),angle(angle){};
-        };
-        struct OMEGAWTK_EXPORT  FRoundedRect : public FRect {
-            float radius_x;
-            float radius_y;
-            FRoundedRect(const FRect & rect,float radius_x,float radius_y):FRect(rect),radius_x(radius_x),radius_y(radius_y){};
-        };
-        struct OMEGAWTK_EXPORT  FEllipse {
-            FPosition pos;
-            float radius_x;
-            float radius_y;
-        };
+      
         /// A vector that acts like a queue (first in , first out), but has control over every element and its order in the container.
         template<class _Ty>
         class OMEGAWTK_EXPORT   QueueVector
@@ -363,48 +279,30 @@ namespace OmegaWTK {
             };
         };
 
-        // auto cmp = [](int l,int r){
-        //     return true;
-        // };
+        typedef OmegaGTE::GRect Rect;
 
-        // static PriorityQueueHeap<int,decltype(cmp)> s(10,cmp);
-        
-        
-        /// A basic reimplementation of the std::string class!
-        // CORE_CLASS(String) {
-        //     char * data;
-        //     unsigned len;
-        //     bool compare(OWTKString & other);
-        //     void _realloc_data(size_t new_size);
-        //     public:
-        //     using iterator = char *;
-        //     using const_iterator = const char *;
-        //     using reference = char &;
-        //     iterator begin(){
-        //         return iterator(data);
-        //     };
-        //     iterator end(){
-        //         return iterator(data) + len;
-        //     };
-        //     reference operator[](unsigned idx){
-        //         return begin()[idx];
-        //     };
-        //     bool operator==(OWTKString & str){
-        //         return compare(str);
-        //     };
-        //     bool operator!=(OWTKString & str){
-        //         return !compare(str);
-        //     };
-        //     OWTKString & append(const char * __c_str);
-        //     OWTKString & append(OWTKString & str);
-        //     const unsigned & size(){
-        //       return len;  
-        //     };
-        //     OWTKString() = default;
-        //     OWTKString(const char * c_str);
-        //     OWTKString(char * data,unsigned _len);
-        //     ~OWTKString();
-        // };
+        typedef OmegaGTE::GPoint2D Position;
+
+        typedef OmegaGTE::GRoundedRect RoundedRect;
+
+        struct OMEGAWTK_EXPORT Ellipse : OmegaGTE::GEllipsoid {
+            float & x;
+            float & y;
+            float & rad_x;
+            float & rad_y;
+
+            Ellipse(float x,float y,float rad_x,float rad_y):
+            GEllipsoid({x,y,0,rad_x,rad_y,0}),
+            x(OmegaGTE::GEllipsoid::x),
+            y(OmegaGTE::GEllipsoid::y),
+            rad_x(OmegaGTE::GEllipsoid::rad_x),
+            rad_y(OmegaGTE::GEllipsoid::rad_y){
+            };
+        };
+
+
+
+
         #ifdef TARGET_WIN32
         template <class T> void SafeRelease(T **ppT)
         {
@@ -436,43 +334,32 @@ namespace OmegaWTK {
         };
         #endif
 
-        class OMEGAWTK_EXPORT RegularExpression {
-            pcre2_code *code;
-        public:
-            RegularExpression(String pattern,bool multiLine = true);
+        // class OMEGAWTK_EXPORT RegularExpression {
+        //     pcre2_code *code;
+        // public:
+        //     RegularExpression(String pattern,bool multiLine = true);
             
-            struct Match {
-                pcre2_match_data *mdata;
-            public:
-                String main;
-                String getSubMatchByNum(unsigned n);
-                ~Match();
-            };
-            Match match(String subject);
-            ~RegularExpression();
-        };
+        //     struct Match {
+        //         pcre2_match_data *mdata;
+        //     public:
+        //         String main;
+        //         String getSubMatchByNum(unsigned n);
+        //         ~Match();
+        //     };
+        //     Match match(String subject);
+        //     ~RegularExpression();
+        // };
 
-        typedef RegularExpression Regex;
-    };
-OMEGAWTK_EXPORT Core::Rect Rect(unsigned x,unsigned y,unsigned width,unsigned height,float angle = 0);
-OMEGAWTK_EXPORT Core::Ellipse Ellipse(unsigned x,unsigned y,unsigned radius_x,unsigned radius_y);
-OMEGAWTK_EXPORT Core::RoundedRect RoundedRect(unsigned x,unsigned y,unsigned width,unsigned height,unsigned radius_x,unsigned radius_y,float angle = 0);
-     
-OMEGAWTK_EXPORT Core::FRect FRect(float x,float y,float w,float h,float angle = 0);
-OMEGAWTK_EXPORT Core::FEllipse FEllipse(float x,float y,float rad_x,float rad_y);
-OMEGAWTK_EXPORT Core::FRoundedRect FRoundedRect(float x,float y,float w,float h,float rad_x,float rad_y,float angle = 0);
-
-    namespace FS {
-        class Path;
+        // typedef RegularExpression Regex;
     };
 
-    void loadAssetFile(FS::Path path);
+    void loadAssetFile(OmegaCommon::FS::Path path);
 
      template<class _Ty>
     class StatusWithObj {
         StatusCode code;
         _Ty * data;
-        CString message;
+        const char * message;
         void _construct(const _Ty & obj){
             code = CodeOk;
             data = ::new _Ty;
@@ -484,7 +371,7 @@ OMEGAWTK_EXPORT Core::FRoundedRect FRoundedRect(float x,float y,float w,float h,
             return code == CodeOk;
         };
         StatusCode getCode(){ return code;};
-        CString getError(){ return message;};
+        const char * getError(){ return message;};
         Core::SharedPtr<_Ty> getValue(){
             auto transfer = data;
             data = nullptr;
@@ -498,9 +385,10 @@ OMEGAWTK_EXPORT Core::FRoundedRect FRoundedRect(float x,float y,float w,float h,
             _construct(obj);
         };
 
-        StatusWithObj(std::string_view message):data(nullptr){
-            this->message = new char[message.size()];
-            std::move(message.begin(),message.end(),this->message);
+        StatusWithObj(const char * message):data(nullptr){
+            auto len = strlen(message);
+            this->message = new char[len];
+            std::move((char *)message,(char *)message + len,this->message);
             code = CodeFailed;
         };
         ~StatusWithObj(){

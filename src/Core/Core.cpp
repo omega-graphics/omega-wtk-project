@@ -1,5 +1,4 @@
 #include "omegaWTK/Core/Core.h"
-#include "omegaWTK/Core/FS.h"
 #include <cstring>
 #include <algorithm>
 #include <sstream>
@@ -17,25 +16,21 @@
 #include <Shlwapi.h>
 #endif
 
-#ifdef TARGET_MACOS
-#include <unistd.h>
-#include "FSCocoa.h"
-#endif
 
 namespace OmegaWTK::Core {
 
 
-bool Rect::compare(Rect & other){
-    return (pos.x == other.pos.x) && (pos.y == other.pos.y) && (dimen.minWidth == other.dimen.minWidth) && (dimen.minHeight == other.dimen.minHeight);
-};
+// bool Rect::compare(Rect & other){
+//     return (pos.x == other.pos.x) && (pos.y == other.pos.y) && (dimen.minWidth == other.dimen.minWidth) && (dimen.minHeight == other.dimen.minHeight);
+// };
 
-bool RoundedRect::compare(RoundedRect & other){
-    return Rect::compare(other) && (radius_x == other.radius_x) && (radius_y == other.radius_y);
-};
+// bool RoundedRect::compare(RoundedRect & other){
+//     return Rect::compare(other) && (radius_x == other.radius_x) && (radius_y == other.radius_y);
+// };
 
-bool Ellipse::compare(Ellipse & other){
-    return (pos.x == other.pos.x) && (pos.y == other.pos.y) && (radius_x == other.radius_x) && (radius_y == other.radius_y);
-};
+// bool Ellipse::compare(Ellipse & other){
+//     return (pos.x == other.pos.x) && (pos.y == other.pos.y) && (radius_x == other.radius_x) && (radius_y == other.radius_y);
+// };
 
 
     // OWTKString::~OWTKString(){
@@ -92,50 +87,50 @@ bool Ellipse::compare(Ellipse & other){
     //     len = _len;
     // };
 
-    RegularExpression::RegularExpression(Core::String pattern,bool multiLine){
-        int errc;
-        size_t err_offset;
-        uint32_t extra;
-        if(multiLine)
-            extra =  PCRE2_MULTILINE;
-        else 
-            extra = 0;
-        code = pcre2_compile(PCRE2_SPTR(pattern.c_str()),pattern.size(),PCRE2_UTF | PCRE2_DOTALL | extra,&errc,&err_offset,NULL);
-        if(errc >= 0){
-            std::cout << "Regex Successfuly Compiled" << std::endl;
-        }
-        else {
-            std::cerr << "Failed to Compile Regex" << std::endl;
-        };
-    };
+    // RegularExpression::RegularExpression(Core::String pattern,bool multiLine){
+    //     int errc;
+    //     size_t err_offset;
+    //     uint32_t extra;
+    //     if(multiLine)
+    //         extra =  PCRE2_MULTILINE;
+    //     else 
+    //         extra = 0;
+    //     code = pcre2_compile(PCRE2_SPTR(pattern.c_str()),pattern.size(),PCRE2_UTF | PCRE2_DOTALL | extra,&errc,&err_offset,NULL);
+    //     if(errc >= 0){
+    //         std::cout << "Regex Successfuly Compiled" << std::endl;
+    //     }
+    //     else {
+    //         std::cerr << "Failed to Compile Regex" << std::endl;
+    //     };
+    // };
 
-    RegularExpression::Match RegularExpression::match(Core::String subject){
-        pcre2_match_data *data = pcre2_match_data_create_from_pattern(code,NULL);
-        auto errc = pcre2_match_8(code,PCRE2_SPTR(subject.c_str()),subject.size(),0,PCRE2_COPY_MATCHED_SUBJECT,data,NULL);
-        String rc;
-        Match m;
-        rc.reserve(pcre2_get_ovector_count(data));
-        memcpy(rc.data(),pcre2_get_ovector_pointer(data),pcre2_get_match_data_size(data));
-        m.mdata = data;
-        m.main = std::move(rc);
-        return m;
-    };
+    // RegularExpression::Match RegularExpression::match(Core::String subject){
+    //     pcre2_match_data *data = pcre2_match_data_create_from_pattern(code,NULL);
+    //     auto errc = pcre2_match_8(code,PCRE2_SPTR(subject.c_str()),subject.size(),0,PCRE2_COPY_MATCHED_SUBJECT,data,NULL);
+    //     String rc;
+    //     Match m;
+    //     rc.reserve(pcre2_get_ovector_count(data));
+    //     memcpy(rc.data(),pcre2_get_ovector_pointer(data),pcre2_get_match_data_size(data));
+    //     m.mdata = data;
+    //     m.main = std::move(rc);
+    //     return m;
+    // };
 
-    String RegularExpression::Match::getSubMatchByNum(unsigned int n){
-        PCRE2_UCHAR8 *buffer;
+    // String RegularExpression::Match::getSubMatchByNum(unsigned int n){
+    //     PCRE2_UCHAR8 *buffer;
         
-        size_t size;
-        pcre2_substring_get_bynumber(mdata,n,&buffer,&size);
-        return String((const char *)buffer,size);
-    };
+    //     size_t size;
+    //     pcre2_substring_get_bynumber(mdata,n,&buffer,&size);
+    //     return String((const char *)buffer,size);
+    // };
 
-    RegularExpression::Match::~Match(){
-        pcre2_match_data_free(mdata);
-    };
+    // RegularExpression::Match::~Match(){
+    //     pcre2_match_data_free(mdata);
+    // };
 
-    RegularExpression::~RegularExpression(){
-        pcre2_code_free(code);
-    };
+    // RegularExpression::~RegularExpression(){
+    //     pcre2_code_free(code);
+    // };
 
 }
 
@@ -143,10 +138,10 @@ namespace OmegaWTK {
 
 typedef unsigned char Byte;
 
-Core::Map<Core::String,AssetFileLoader::AssetBuffer>  AssetFileLoader::assets_res;
+OmegaCommon::Map<OmegaCommon::String,AssetFileLoader::AssetBuffer>  AssetFileLoader::assets_res;
 
 
-void AssetFileLoader::loadAssetFile(FS::Path & path){
+void AssetFileLoader::loadAssetFile(OmegaCommon::FS::Path & path){
         auto str = path.absPath();
         std::ifstream in(str,std::ios::binary | std::ios::in);
         assetc::AssetsFileHeader header;
@@ -176,33 +171,19 @@ void AssetFileLoader::loadAssetFile(FS::Path & path){
         in.close();
     };
 
-void loadAssetFile(FS::Path path){
+void loadAssetFile(OmegaCommon::FS::Path path){
     AssetFileLoader::loadAssetFile(path);
 };
 
 
-Core::Rect Rect(unsigned x,unsigned y,unsigned width,unsigned height,float angle){
-    return {{x,y},{width,height},angle};
-};
-Core::Ellipse Ellipse(unsigned x,unsigned y,unsigned radius_x,unsigned radius_y){
-    return {{x,y},radius_x,radius_y};
+Core::Rect Rect(float x,float y,float w,float h){
+    return {{x,y},w,h};
 };
 
-Core::RoundedRect RoundedRect(unsigned x,unsigned y,unsigned width,unsigned height,unsigned radius_x,unsigned radius_y,float angle) {
-    return {Rect(x,y,width,height,angle),radius_x,radius_y};
+Core::RoundedRect RoundedRect(float x,float y,float w,float h,float radius_x,float radius_y) {
+    return {{x,y},radius_x,radius_y};
 }
 
-Core::FRect FRect(float x,float y,float w,float h,float angle){
-    return {{x,y},{w,h},angle};
-};
-
-Core::FEllipse FEllipse(float x,float y,float rad_x,float rad_y){
-    return {{x,y},rad_x,rad_y};
-};
-
-Core::FRoundedRect FRoundedRect(float x,float y,float w,float h,float rad_x,float rad_y,float angle){
-    return {FRect(x,y,w,h,angle),rad_x,rad_y};
-};
 
 
 

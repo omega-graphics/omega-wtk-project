@@ -22,7 +22,7 @@ endif()
 add_subdirectory("gte")
 
 project("OmegaWTK" C CXX)
-set(OMEGAWTK_VERSION "0.4")
+set(OMEGAWTK_VERSION "0.3")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_CXX_FLAGS "-gdwarf")
@@ -30,37 +30,127 @@ endif()
 
 include(GNUInstallDirs)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+include(OmegaWTKUtils)
+
 # 3rd Party Libraries
 
-find_package(ZLIB)
-if(ZLIB_FOUND)
-    message("Found zlib:${ZLIB_VERSION_STRING}")
-else()
-    add_subdirectory("external-libs/zlib/code")
-endif()
 
-find_package(PNG)
-if(PNG_FOUND)
-    message("Found libpng:${PNG_VERSION_STRING}")
-else()
-    set(PNG_TESTS OFF)
-    add_subdirectory("external-libs/libpng/code")
-    # message(FATAL_ERROR "libpng not found! libpng is required to build OmegaWTK")
-endif()
+add_third_party(
+    NAME 
+    "ZLIB"
+    SOURCE_DIR 
+    "${CMAKE_CURRENT_SOURCE_DIR}/external-libs/zlib/code"
+    BINARY_DIR 
+    "${CMAKE_CURRENT_BINARY_DIR}/third_party/temp/zlib"
+    INSTALL_DIR 
+    "${CMAKE_CURRENT_BINARY_DIR}/third_party/zlib"
+)
 
-find_package(JPEG)
-if(JPEG_FOUND)
-    message("Found libjpeg-turbo:${JPEG_VERSION_STRING}")
-else()
-    add_subdirectory("external-libs/libjpeg-turbo/code")
-endif()
+set(ZLIB_LIB "${CMAKE_CURRENT_BINARY_DIR}/third_party/zlib/libz${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
-find_package(TIFF)
-if(TIFF_FOUND)
-    message("Found libtiff")
-else()
-    add_subdirectory("external-libs/libtiff/code")
-endif()
+add_third_party(
+    NAME 
+    "PNG"
+    SOURCE_DIR 
+    "${CMAKE_CURRENT_SOURCE_DIR}/external-libs/libpng/code"
+    BINARY_DIR 
+    "${CMAKE_CURRENT_BINARY_DIR}/third_party/temp/libpng"
+    INSTALL_DIR 
+    "${CMAKE_CURRENT_BINARY_DIR}/third_party/libpng"
+    CMAKE_BUILD_ARGS 
+    "-DPNG_ARM_NEON=off"
+    DEPS 
+    ZLIB
+)
+
+set(PNG_LIB "${CMAKE_CURRENT_BINARY_DIR}/third_party/libpng/libpng${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+add_third_party(
+    NAME 
+    "JPEG"
+    SOURCE_DIR 
+    "${CMAKE_CURRENT_SOURCE_DIR}/external-libs/libjpeg-turbo/code"
+    BINARY_DIR 
+    "${CMAKE_CURRENT_BINARY_DIR}/third_party/temp/libjpeg-turbo"
+    INSTALL_DIR 
+    "${CMAKE_CURRENT_BINARY_DIR}/third_party/libjpeg-turbo"
+    DEPS 
+    ZLIB
+)
+
+set(JPEG_LIB "${CMAKE_CURRENT_BINARY_DIR}/third_party/libjpeg-turbo/libturbojpeg${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+add_third_party(
+    NAME 
+    "TIFF" 
+    SOURCE_DIR 
+    "${CMAKE_CURRENT_SOURCE_DIR}/external-libs/libtiff/code"
+    BINARY_DIR 
+    "${CMAKE_CURRENT_BINARY_DIR}/third_party/temp/libtiff"
+    INSTALL_DIR 
+    "${CMAKE_CURRENT_BINARY_DIR}/third_party/libtiff"
+    DEPS 
+    ZLIB
+    JPEG
+)
+
+set(TIFF_LIB "${CMAKE_CURRENT_BINARY_DIR}/third_party/libtiff/libtiff${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+set(TIFFXX_LIB "${CMAKE_CURRENT_BINARY_DIR}/third_party/libtiff/libtiffxx${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+set(TIFF_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/third_party/libtiff/include")
+
+set(_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/third_party/icu-69)
+
+add_third_party(
+    CUSTOM_PROJECT
+    NAME 
+    "ICU"
+    SOURCE_DIR 
+    "${CMAKE_CURRENT_SOURCE_DIR}/external-libs/icu-69/code"
+    BINARY_DIR 
+    "${CMAKE_CURRENT_SOURCE_DIR}/external-libs/icu-69/code/icu4c/source"
+    INSTALL_DIR
+    "${CMAKE_CURRENT_BINARY_DIR}/third_party/icu-69"
+    CONF 
+    ${CMAKE_CURRENT_SOURCE_DIR}/external-libs/icu-69/code/icu4c/source/configure --prefix=${_INSTALL_PREFIX}
+    BUILD
+    make all 
+    INSTALL 
+    make install
+)
+
+set(ICU_COMMON_LIB "${CMAKE_CURRENT_BINARY_DIR}/third_party/icu-69/lib/libicuuc${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set(ICU_I18N_LIB   "${CMAKE_CURRENT_BINARY_DIR}/third_party/icu-69/lib/libicui18n${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+set(_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/third_party/openssl)
+
+add_third_party(
+    CUSTOM_PROJECT
+    NAME 
+    "OpenSSL"
+    SOURCE_DIR 
+    "${CMAKE_CURRENT_SOURCE_DIR}/external-libs/openssl/code"
+    BINARY_DIR 
+    "${CMAKE_CURRENT_SOURCE_DIR}/external-libs/openssl/code"
+    INSTALL_DIR
+    "${CMAKE_CURRENT_BINARY_DIR}/third_party/openssl"
+    CONF 
+    perl ./Configure --prefix=${_INSTALL_PREFIX}
+    BUILD
+    make all 
+    INSTALL 
+    make install
+)
+
+set(OpenSSL_CRYPTO_LIB"${CMAKE_CURRENT_BINARY_DIR}/third_party/openssl/lib/libcrypto${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set(OpenSSL_SSL_LIB   "${CMAKE_CURRENT_BINARY_DIR}/third_party/openssl/lib/libssl${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+add_custom_target("third_party")
+add_dependencies("third_party" "ZLIB" "PNG" "JPEG" "TIFF" "ICU" "OpenSSL")
+
 
 # find_package(OpenSSL REQUIRED)
 # if(OpenSSL_FOUND)
@@ -69,10 +159,18 @@ endif()
 #     add_subdirectory("external-libs/openssl/code")
 # endif()
     
-include_directories("include")
-include(ExternalProject)
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/gte/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/gte/common/include")
 
+# Third Party Include
 
+include_directories("${CMAKE_CURRENT_BINARY_DIR}/third_party/openssl/include")
+include_directories("${CMAKE_CURRENT_BINARY_DIR}/third_party/zlib/include")
+include_directories("${CMAKE_CURRENT_BINARY_DIR}/third_party/libpng/include")
+include_directories("${CMAKE_CURRENT_BINARY_DIR}/third_party/libjpeg-turbo/include")
+include_directories("${CMAKE_CURRENT_BINARY_DIR}/third_party/libtiff/include")
+include_directories("${CMAKE_CURRENT_BINARY_DIR}/third_party/icu-69/include")
 
 set(OmegaWTKLibs "" CACHE INTERNAL "OmegaWTK Libs")
 
@@ -80,9 +178,6 @@ if(XCODE OR MSVC_IDE)
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 endif()
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-include(OmegaWTKUtils)
 # include(FindFFMPEG)
 
 # find_package(FFMPEG)
@@ -135,7 +230,7 @@ if(WIN32)
 endif()
 
 if(CMAKE_HOST_APPLE)
-    enable_language(OBJCXX Swift)
+    enable_language(OBJCXX)
     message("Targeting macOS")
 
     find_macos_framework("Cocoa")
@@ -168,7 +263,7 @@ add_subdirectory("src")
 
 set(OMEGAWTK_TARGET_UTILS_DIR ${CMAKE_SOURCE_DIR}/target)
 
-add_subdirectory("tests")
+# add_subdirectory("tests")
 
 if(TARGET_WIN32 OR TARGET_GTK)
     install(TARGETS ${OmegaWTKLibs} EXPORT OmegaWTKTargets

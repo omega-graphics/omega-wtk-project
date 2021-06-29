@@ -7,9 +7,9 @@
 	<key>BuildVersion</key>
 	<string>1</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.5</string>
+	<string>@OMEGAWTK_VERSION@</string>
 	<key>CFBundleVersion</key>
-	<string>0.5</string>
+	<string>@OMEGAWTK_VERSION@</string>
 	<key>ProjectName</key>
 	<string>OmegaWTK</string>
 </dict>

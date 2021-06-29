@@ -1,4 +1,4 @@
-#include "omegaWTK/Core/Math.h"
+#include "omegaWTK/Core/Core.h"
 #include "omegaWTK/Core/MultiThreading.h"
 
 #ifndef OMEGAWTK_COMPOSITION_LAYERANIMATION_H
@@ -111,7 +111,7 @@ namespace OmegaWTK::Composition {
     template<typename _Val_Ty,typename _Time_Ty>
     class OMEGAWTK_EXPORT  LayerAnimation_Impl : public LayerAnimation_Base<_Val_Ty,_Time_Ty> {
         typedef LayerAnimation_Base<_Val_Ty,_Time_Ty> PARENT;
-        Core::Vector<typename PARENT::Segment> segments;
+        OmegaCommon::Vector<typename PARENT::Segment> segments;
     public:
         typename PARENT::Segment::Pt & getFirstPoint(){
             return *(segments.front().start);
@@ -178,7 +178,7 @@ namespace OmegaWTK::Composition {
      @see LayerAnimationController
     */
     class OMEGAWTK_EXPORT  LayerAnimationGroupController : public LayerAnimationController {
-        Core::Vector<Core::SharedPtr<LayerAnimationTy>> anims;
+        OmegaCommon::Vector<Core::SharedPtr<LayerAnimationTy>> anims;
     public:
         /**
          @unimplemented

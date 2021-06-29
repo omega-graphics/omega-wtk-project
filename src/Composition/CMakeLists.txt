@@ -1,11 +1,8 @@
 add_omega_wtk_lib(
-    STATIC
+    OBJECT
     NAME 
     "Composition"
     SOURCES 
-    "BackendPriv.h"
-    "BackendPriv.cpp"
-    "Backend.cpp"
     "Compositor.cpp"
     "Color.cpp"
     "Layer.cpp"
@@ -14,18 +11,9 @@ add_omega_wtk_lib(
     "GeometricGraphicsPath.cpp"
     "LayerAnimation.cpp"
     "CompositorClient.cpp"
-    # BD Prefix --> For Backend!
-    "BDCompositionDevice.h"
-    "BDCompositionDevice.cpp"
-    "BDCompositionImage.h"
-    "BDCompositionImage.cpp"
-    "BDCompositionRenderTarget.h"
-    "BDCompositionRenderTarget.cpp"
-    "BDCompositionVisualTree.h"
-    "BDCompositionVisualTree.cpp"
-    HEADERS 
-    "Backend.h"
     "Compositor.h"
+    # BD Prefix --> For Backend!
+    HEADERS 
     "Color.h"
     "Layer.h"
     "Canvas.h"
@@ -52,12 +40,6 @@ if(TARGET_WIN32)
     endif()
     # set(COMPOSITION_WIN_SOURCES "DirectXBackend.h" "DirectXBackend.cpp" "DCVisualTree.h" "DCVisualTree.cpp")
     set(COMPOSITION_WIN_SOURCES 
-    "DXBDCompositionDevice.h" 
-    "DXBDCompositionDevice.cpp" 
-    "DXBDCompositionRenderTarget.h" 
-    "DXBDCompositionRenderTarget.cpp" 
-    "DXBDCompositionImage.h" 
-    "DXBDCompositionImage.cpp" 
     "DCVisualTree.h"
     "DCVisualTree.cpp")
     list(TRANSFORM COMPOSITION_WIN_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/dx/")
@@ -67,21 +49,10 @@ endif()
 if(TARGET_MACOS)
     # set(COMPOSITION_MAC_SOURCES "QuartzBackend.h" "QuartzBackend.mm" "MetalBackend.h" "MetalBackend.mm" "MetalBridgeHeader.h" "OmegaWTKShaders.metal")
     set(COMPOSITION_MAC_SOURCES 
-    "MTLBackend.h" 
-    "MTLBDCompositionDevice.h" 
-    "MTLBDCompositionDevice.mm" 
-    "MTLBDCompositionRenderTarget.h"
-    "MTLBDCompositionRenderTarget.mm"
-    "MTLBDTriangulator.h"
-    "MTLBDTriangulator.mm"
-    "MTLBDCompositionImage.h"
-    "MTLBDCompositionImage.mm"
     "MTLBDCALayerTree.h"
-    "MTLBDCALayerTree.mm"
-    "MetalBridgeHeader.h" 
-    "OmegaWTKShaders.metal")
+    "MTLBDCALayerTree.mm")
     list(TRANSFORM COMPOSITION_MAC_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/mtl/")
-    set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/mtl/OmegaWTKShaders.metal" PROPERTIES LANGUAGE METAL)
+    # set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/mtl/OmegaWTKShaders.metal" PROPERTIES LANGUAGE METAL)
     target_link_libraries("omegaWTKComposition" PRIVATE ${Metal_LIB} ${MetalPerformanceShaders_LIB})
 
     target_sources("omegaWTKComposition" PRIVATE ${COMPOSITION_MAC_SOURCES} "CTFontEngine.mm")

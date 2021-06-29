@@ -36,7 +36,7 @@ namespace OmegaWTK {
         */
         template<class T,class ...Args,std::enable_if_t<std::is_base_of_v<Widget,T>,int> = 0>
         SharedHandle<T> makeWidget(const Core::Rect & rect,SharedHandle<Widget> parent = nullptr,Args && ...args){
-            return make<T>(rect,parent,this,compositor.get(),args...);
+            return make<T>(rect,this,parent,args...);
         };
 
         /**

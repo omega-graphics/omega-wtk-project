@@ -1,15 +1,14 @@
 #include "omegaWTK/Composition/Layer.h"
-#include "omegaWTK/Composition/Compositor.h"
-#include "omegaWTK/Composition/ViewRenderTarget.h"
+#include "omegaWTK/Composition/CompositorClient.h"
 #include <iostream>
 
 namespace OmegaWTK::Composition {
 
 
 Layer::Layer(const Core::Rect &rect,
-             Compositor *compPtr)
+             CompositorClient *compClient)
     : surface_rect(rect),
-      ownerCompositor(compPtr),parent_ptr(nullptr),needsNativeResize(false) {
+      parent_ptr(nullptr),needsNativeResize(false) {
   
 };
 
@@ -35,12 +34,12 @@ void Layer::removeSubLayer(SharedHandle<Layer> &layer) {
   std::cout << "Error! Could not Remove Sublayer!" << std::endl;
 };
 
-void Layer::setStyle(SharedHandle<LayerStyle> & style){
-    this->style = style;
-};
+// void Layer::setStyle(SharedHandle<LayerStyle> & style){
+//     this->style = style;
+// };
 
-SharedHandle<LayerStyle> & Layer::getStyle(){
-    return style;
+SharedHandle<CanvasSurface> & Layer::getSurface(){
+    return surface;
 };
 
 void Layer::resize(Core::Rect &newRect){
@@ -53,7 +52,7 @@ void Layer::resize(Core::Rect &newRect){
 Layer::~Layer() { };
 
 
-LayerTree::LayerTree(Compositor *compPtr):widgetCompositor(compPtr),rootLimb(nullptr){};
+LayerTree::LayerTree():rootLimb(nullptr){};
 
 void LayerTree::addChildLimb(SharedHandle<LayerTree::Limb> & limb,Limb *parent){
     if(!parent)
@@ -62,7 +61,7 @@ void LayerTree::addChildLimb(SharedHandle<LayerTree::Limb> & limb,Limb *parent){
     auto it = body.find(parent);
     if(it == body.end()){
         /// If Limb has never been a parent.
-        body.insert(std::make_pair(parent,Core::Vector<SharedHandle<Limb>>({limb})));
+        body.insert(std::make_pair(parent,OmegaCommon::Vector<SharedHandle<Limb>>({limb})));
     }
     else {
         /// If the limb is currently a parent of other limbs.
@@ -74,7 +73,7 @@ void LayerTree::setRootLimb(SharedHandle<Limb> & limb){
     rootLimb = limb;
 };
 
-LayerTree::Limb::Limb(const Core::Rect &rect,Compositor *compPtr,ViewRenderTarget *renderTarget):limbRoot(new Layer(rect,compPtr)),enabled(true),renderTarget(renderTarget){
+LayerTree::Limb::Limb(const Core::Rect &rect,CompositorClient *compClient,ViewRenderTarget *renderTarget):limbRoot(new Layer(rect,compClient)),enabled(true),renderTarget(renderTarget){
     renderTarget->getNativePtr()->setLayerTreeLimb(this);
 };
 
@@ -82,13 +81,13 @@ void LayerTree::Limb::addLayer(SharedHandle<Layer> layer){
     limbRoot->addSubLayer(layer);
 };
 
-void LayerTree::Limb::redraw(){
-    limbRoot->ownerCompositor->updateRequestedLayerTreeLimb(this);
-};
+// void LayerTree::Limb::redraw(){
+//     limbRoot->ownerCompositor->updateRequestedLayerTreeLimb(this);
+// };
 
-void LayerTree::Limb::layout(){
-    limbRoot->ownerCompositor->layoutLayerTreeLimb(this);
-};
+// void LayerTree::Limb::layout(){
+//     limbRoot->ownerCompositor->layoutLayerTreeLimb(this);
+// };
 
 LayerTree::Limb::iterator LayerTree::Limb::begin(){
     return limbRoot->children.begin();
@@ -128,8 +127,8 @@ LayerTree::~LayerTree(){
     
 };
 
-SharedHandle<LayerTree::Limb> LayerTree::createLimb(const Core::Rect & rect,ViewRenderTarget *renderTarget){
-    return std::make_shared<LayerTree::Limb>(rect,widgetCompositor,renderTarget);
+SharedHandle<LayerTree::Limb> LayerTree::createLimb(const Core::Rect & rect,CompositorClient *compClient,ViewRenderTarget *renderTarget){
+    return std::make_shared<LayerTree::Limb>(rect,compClient,renderTarget);
 };
 
 
@@ -138,9 +137,9 @@ WindowLayer::WindowLayer(Core::Rect & rect,Native::NWH native_window_ptr):native
 //    native_window_ptr->setNativeLayer(this);
 };
 
-void WindowLayer::setWindowStyle(SharedHandle<WindowStyle> & style){
-    this->style = style;
-};
+// void WindowLayer::setWindowStyle(SharedHandle<WindowStyle> & style){
+//     this->style = style;
+// };
 
 void WindowLayer::redraw(){
     

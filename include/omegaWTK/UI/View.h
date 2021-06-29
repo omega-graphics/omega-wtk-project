@@ -24,8 +24,8 @@ namespace OmegaWTK {
         Sometimes referred to as the CanvasView.
         @relates Widget
      */ 
-    class OMEGAWTK_EXPORT View : public Native::NativeEventEmitter, Composition::CompositorClient {
-        Core::Vector<SharedHandle<View>> subviews;
+    class OMEGAWTK_EXPORT View : public Native::NativeEventEmitter, public Composition::CompositorClient {
+        OmegaCommon::Vector<SharedHandle<View>> subviews;
     protected:
         SharedHandle<Composition::ViewRenderTarget> renderTarget;
         friend class Widget;
@@ -64,6 +64,9 @@ namespace OmegaWTK {
          */
         View(const Core::Rect & rect,Native::NativeItemPtr nativeItem,View *parent);
     public:
+
+        SharedHandle<Composition::Layer> makeLayer(Core::Rect rect);
+
         Core::Rect & getRect(){ return rect;};
         Composition::LayerTree::Limb * getLayerTreeLimb(){ return layerTreeLimb.get();};
         bool isRootView(){return parent_ptr == nullptr;};
@@ -86,7 +89,7 @@ namespace OmegaWTK {
     /**
         @brief The Root View delegate class!
      */
-    class OMEGAWTK_EXPORT ViewDelegate : public Native::NativeEventProcessor {
+    DELEGATE OMEGAWTK_EXPORT ViewDelegate : public Native::NativeEventProcessor {
         void onRecieveEvent(Native::NativeEventPtr event);
         friend class View;
         protected:

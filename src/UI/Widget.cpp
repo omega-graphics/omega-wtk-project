@@ -1,22 +1,18 @@
 #include "omegaWTK/UI/Widget.h"
-#include "omegaWTK/Composition/ViewRenderTarget.h"
+#include "omegaWTK/Composition/CompositorClient.h"
 #include "omegaWTK/UI/VideoView.h"
 #include "omegaWTK/UI/WidgetTreeHost.h"
 
 namespace OmegaWTK {
 
 
-Widget::Widget(const Core::Rect & rect,SharedHandle<Widget> parent,WidgetTreeHost *parentHost,Composition::Compositor *compositor):parent(parent),treeHost(parentHost),compositor(compositor){
-    layerTree = std::make_shared<Composition::LayerTree>(compositor);
+Widget::Widget(const Core::Rect & rect,WidgetTreeHost *parentHost,SharedHandle<Widget> parent):parent(parent),treeHost(parentHost){
+    layerTree = std::make_shared<Composition::LayerTree>(parentHost);
     rootView = std::make_shared<CanvasView>(rect,layerTree.get(),nullptr);
     // std::cout << "Constructing View for Widget" << std::endl;
     if(parent)
         parent->rootView->addSubView(this->rootView.get());
 //    std::cout << "RenderTargetPtr:" << rootView->renderTarget.get() << std::endl;
-};
-
-SharedHandle<Composition::Layer> Widget::makeLayer(Core::Rect rect){
-    return std::make_shared<Composition::Layer>(rect,compositor);
 };
 
 //Widget::Widget(Widget & widget):parent(std::move(widget.parent)),compositor(std::move(widget.compositor)),rootView(std::move(widget.rootView)){
@@ -45,7 +41,8 @@ void Widget::hide(){
 };
 
 void Widget::refresh(){
-    compositor->updateLayerTree(layerTree.get());
+    rootView->commitRender();
+    // compositor->updateLayerTree(layerTree.get());
 };
 
 void Widget::addObserver(WidgetObserver * observer){

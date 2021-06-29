@@ -1,7 +1,7 @@
 #include "omegaWTK/Media/ImgCodec.h"
-#include "omegaWTK/Core/FS.h"
+#include "omegaWTK/Core/Core.h"
 
-#include "AssetsPriv.h"
+#include "../Core/AssetsPriv.h"
 
 #include <sstream>
 #include <zlib.h>
@@ -11,7 +11,6 @@
 //#include <tiff.h>
 // #include <tiffio.hxx>
 
-#include <jpeglib.h>
 #include <turbojpeg.h>
 
 #include <iostream>
@@ -397,6 +396,7 @@ class JPEGCodec : public ImgCodec {
         tjDecompress2(decomp,dataBuf,len,(unsigned char *)storage->data,w,w * 4,h,TJPF_RGBA,TJFLAG_BOTTOMUP | TJFLAG_ACCURATEDCT);
         
         tjDestroy(decomp);
+        return true;
     };
 public:
     void readToStorage(){
@@ -434,6 +434,7 @@ Core::UniquePtr<ImgCodec> obtainCodecForImageFormat(BitmapImage::Format &format,
             return nullptr;
             break;
     }
+    
    
 };
 
@@ -443,7 +444,7 @@ struct ImgBuffer : public std::streambuf {
     };
 };
 
-    StatusWithObj<BitmapImage> loadImageFromAssets(FS::Path path){
+    StatusWithObj<BitmapImage> loadImageFromAssets(OmegaCommon::FS::Path path){
         BitmapImage img;
         auto ext = path.ext();
         BitmapImage::Format f;
@@ -458,7 +459,7 @@ struct ImgBuffer : public std::streambuf {
         return std::move(img);
     };
     
-    StatusWithObj<BitmapImage>loadImageFromFile(FS::Path path) {
+    StatusWithObj<BitmapImage>loadImageFromFile(OmegaCommon::FS::Path path) {
         BitmapImage img;
         auto ext = path.ext();
         BitmapImage::Format f;

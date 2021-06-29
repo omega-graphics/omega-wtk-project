@@ -63,11 +63,11 @@ namespace OmegaWTK {
 ///   
 
 
-    class Canvas;
+    class CanvasSurface;
     /// An object drawn by a Compositor.
     struct  OMEGAWTK_EXPORT VisualCommand {
 
-        Canvas *targetCanvas;
+        CanvasSurface *targetSurface;
 
         typedef enum : OPT_PARAM {
             Rect,
@@ -113,7 +113,7 @@ namespace OmegaWTK {
     /**
      
     */
-    class OMEGAWTK_EXPORT Canvas {
+    class OMEGAWTK_EXPORT CanvasSurface {
         
         CompositorClient *client;
 
@@ -123,7 +123,7 @@ namespace OmegaWTK {
 
     public:
 
-        Canvas(Core::Rect & rect,CompositorClient *client);
+        CanvasSurface(Core::Rect & rect,CompositorClient *client);
 
         void drawRect(Core::Rect & rect,Core::SharedPtr<Brush> & brush);
 

@@ -12,7 +12,7 @@ namespace OmegaWTK::Media {
         virtual UniqueHandle<VideoCaptureSession> createCaptureSession() = 0;
     };
 
-    Core::Vector<VideoDevice *> enumerateVideoDevices();
+    OmegaCommon::Vector<VideoDevice *> enumerateVideoDevices();
     class VideoCaptureSessionPreviewOutput {
 
     };

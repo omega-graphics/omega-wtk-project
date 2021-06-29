@@ -48,6 +48,12 @@
             "branch":"maint/maint-69"
         },
         {
+           "type":"git_clone",
+           "url":"git://git.openssl.org/openssl.git",
+           "dest":"$(third_party_dest)/openssl/code",
+           "branch":"default"
+        },
+        {
             "type":"download",
             "url":"https://ftp.pcre.org/pub/pcre/pcre2-10.36.zip",
             "dest":"./temp/pcre2.zip"

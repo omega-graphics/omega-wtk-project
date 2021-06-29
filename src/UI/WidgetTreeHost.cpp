@@ -1,4 +1,5 @@
 #include "omegaWTK/UI/WidgetTreeHost.h"
+#include "../Composition/Compositor.h"
 
 namespace OmegaWTK {
     WidgetTreeHost::WidgetTreeHost():

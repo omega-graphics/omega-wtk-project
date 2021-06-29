@@ -1,5 +1,6 @@
 #import "NativePrivate/macos/CocoaEvent.h"
 #import "NativePrivate/macos/CocoaItem.h"
+#include "omegaWTK/Core/Unicode.h"
 
 namespace OmegaWTK::Native::Cocoa {
 
@@ -47,14 +48,14 @@ namespace OmegaWTK::Native::Cocoa {
             NS_EVENT_TYPE_CASE(NSEventTypeKeyDown,
                                 type = NativeEvent::EventType::KeyDown;
                                 auto kc = event.keyCode;
-                                OmegaWTK::UniChar omegaKC = kc;
+                                OmegaWTK::Unicode32Char omegaKC = kc;
                                 // EVAL_KEYS()
                                SET_NATIVE_EVENT_PARAMS(params,new KeyDownParams({omegaKC}));
                                 )
             NS_EVENT_TYPE_CASE(NSEventTypeKeyUp,
                                 type = NativeEvent::EventType::KeyUp;
                                 auto kc = event.keyCode;
-                                OmegaWTK::UniChar omegaKC = kc;
+                                OmegaWTK::Unicode32Char omegaKC = kc;
                                 // EVAL_KEYS()
                                SET_NATIVE_EVENT_PARAMS(params,new KeyUpParams({omegaKC}));
                                 )

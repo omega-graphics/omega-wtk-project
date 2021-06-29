@@ -19,7 +19,8 @@
         self.layer.masksToBounds = NO;
         self.layer.frame = rect;
         self.layer.bounds = CGRectMake(0.0,0.0,rect.size.width,rect.size.height);
-        self.layer.autoresizingMask = kCALayerHeightSizable | kCALayerWidthSizable;
+        self.autoresizesSubviews = NO;
+        // self.layer.autoresizingMask = kCALayerHeightSizable | kCALayerWidthSizable;
         NSLog(@"Old Origin: { x:%f, y:%f}",self.layer.anchorPoint.x,self.layer.anchorPoint.y);
         self.layer.anchorPoint = CGPointMake(0.0,0.0);
         self.layer.position = rect.origin;
@@ -107,14 +108,14 @@
     _delegate->isReady = true;
 };
 
-- (void)viewDidLayout{
-    [self.view setFrame:OmegaWTK::Native::Cocoa::core_rect_to_cg_rect(_delegate->rect)];
-    [self.view setBounds:CGRectMake(0.0,0.0,_delegate->rect.dimen.minWidth,_delegate->rect.dimen.minHeight)];
-    self.view.layer.position = self.view.frame.origin;
-    self.view.layer.frame = self.view.frame;
-    self.view.layer.bounds = self.view.bounds;
-    _delegate->layoutLayerTreeLimb();
-};
+// - (void)viewDidLayout{
+//     [self.view setFrame:OmegaWTK::Native::Cocoa::core_rect_to_cg_rect(_delegate->rect)];
+//     [self.view setBounds:CGRectMake(0.0,0.0,_delegate->rect.dimen.minWidth,_delegate->rect.dimen.minHeight)];
+//     self.view.layer.position = self.view.frame.origin;
+//     self.view.layer.frame = self.view.frame;
+//     self.view.layer.bounds = self.view.bounds;
+//     _delegate->layoutLayerTreeLimb();
+// };
 
 @end
 
@@ -143,9 +144,9 @@ CocoaItem::CocoaItem(const Core::Rect & rect,CocoaItem::Type _type,CocoaItem *pa
     };
 };
 
-void CocoaItem::layoutLayerTreeLimb(){
-    layerTreelimb->layout();
-};
+// void CocoaItem::layoutLayerTreeLimb(){
+//     layerTreelimb->layout();
+// };
 
 void * CocoaItem::getBinding(){
     return reinterpret_cast<void *>(this->cont);

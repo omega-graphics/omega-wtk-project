@@ -15,7 +15,7 @@ void NativeMenu::setDelegate(NativeMenuDelegate *delegate){
     this->hasDelegate = true;
 };
 
-NMI make_native_menu_item(const Core::String & str,NM parent,bool hasSubMenu,NM subMenu){
+NMI make_native_menu_item(const OmegaCommon::String & str,NM parent,bool hasSubMenu,NM subMenu){
     
 #ifdef TARGET_MACOS
     return Cocoa::make_cocoa_menu_item(str,parent,hasSubMenu,subMenu);
@@ -36,7 +36,7 @@ NMI make_native_menu_seperator(){
 #endif
 };
 
-NM make_native_menu(const Core::String & name){
+NM make_native_menu(const OmegaCommon::String & name){
 #ifdef TARGET_MACOS
     return Cocoa::make_cocoa_menu(name);
 #endif

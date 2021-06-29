@@ -36,16 +36,17 @@ namespace OmegaWTK::Composition {
     */
     
     class OMEGAWTK_EXPORT CompositorClient {
-        friend class Canvas;
+        friend class CanvasSurface;
 
         Compositor *frontend;
 
-        Core::Vector<VisualCommand> drawQueue;
+        OmegaCommon::Vector<VisualCommand> drawQueue;
 
         void queueVisualCommand(VisualCommand *v);
     protected:
         void submit(CompositionRenderTarget *renderTarget);
     public:
+        void setFrontendPtr(Compositor *frontend);
         virtual void commitRender() = 0;
     };
 
@@ -53,15 +54,15 @@ namespace OmegaWTK::Composition {
         @paragraph Interaction includes submitting render commands to a Compositor,
         and verifying successful frame completion. 
     */
-    
     class OMEGAWTK_EXPORT CompositorVideoClient {
         Compositor *frontend;
 
-        Core::Vector<VisualCommand> drawQueue;
+        OmegaCommon::Vector<VisualCommand> drawQueue;
     protected:
         void queueFrame(Core::SharedPtr<Media::BitmapImage> & img);
         void submit(CompositionRenderTarget *renderTarget);
     public:
+        void setFrontendPtr(Compositor *frontend);
         virtual void commitCurrentFrame() = 0;
     };
 

@@ -1,5 +1,5 @@
 add_omega_wtk_lib(
-    STATIC 
+    OBJECT 
     NAME 
     "Media"
     SOURCES 
@@ -13,6 +13,6 @@ add_omega_wtk_lib(
 )
 
 message("libpng_include_dir:${PNG_INCLUDE_DIR}")
+add_dependencies("omegaWTKMedia" ZLIB PNG JPEG TIFF)
 target_include_directories("omegaWTKMedia" PRIVATE "${PNG_INCLUDE_DIR};${TIFF_INCLUDE_DIR};${TIFF_INCLUDE_DIRS};${FFMPEG_INCLUDE_DIRS}")
-target_link_libraries("omegaWTKMedia" PRIVATE "PNG::PNG;TIFF::TIFF;${FFMPEG_LIBRARIES}") #${JPEG_INCLUDE_DIR} ${JPEG_LIBRARIES}
-target_compile_definitions("omegaWTKMedia" PRIVATE "${PNG_DEFINTIONS}")
+target_link_libraries("omegaWTKMedia" PRIVATE PNG_LIB TIFFXX_LIB) #${JPEG_INCLUDE_DIR} ${JPEG_LIBRARIES}

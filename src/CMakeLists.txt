@@ -5,40 +5,37 @@ add_subdirectory("Composition")
 add_subdirectory("UI")
 
 # Generate Shared Library/Export
-set(EXPORT_HEADER "${CMAKE_SOURCE_DIR}/include/OmegaWTK.h")
-set(OMEGA_TARGET_SOURCES "")
-foreach(LIB ${OmegaWTKLibs})
-    string(APPEND OMEGA_TARGET_SOURCES "  $<TARGET_OBJECTS:${LIB}>")
-endforeach()
-message("OBJECTS:${OMEGA_TARGET_SOURCES}")
-add_library("OmegaWTK" SHARED ${EXPORT_HEADER} "${CMAKE_SOURCE_DIR}/include/omegaWTK/Main.h" "${CMAKE_SOURCE_DIR}/include/OmegaWTK-C.h" "OmegaWTK.cpp" "OmegaWTK-C.cpp" $<TARGET_OBJECTS:omegaWTKCore> $<TARGET_OBJECTS:omegaWTKNative> $<TARGET_OBJECTS:omegaWTKMedia> $<TARGET_OBJECTS:omegaWTKComposition> $<TARGET_OBJECTS:omegaWTKUI>)
-if(TARGET_WIN32)
-    set(WINDOWS_LINK_F "/WHOLEARCHIVE")
-    # set(OMEGALIBS ${OmegaWTKLibs})
-    # list(TRANSFORM OMEGALIBS PREPEND "lib/")
-    # list(TRANSFORM OMEGALIBS APPEND ".lib")
-    # string(JOIN "  " OMEGA_OUT ${OMEGALIBS})
-    # set(WINDOWS_LINK_F "${WINDOWS_LINK_F}${OMEGA_OUT}")
-    # message("WindowsLIBS:${WINDOWS_LINK_F}")
+set(EXPORT_HEADER ${CMAKE_SOURCE_DIR}/include/OmegaWTK.h)
 
-    set_target_properties("OmegaWTK" PROPERTIES 
-    VERSION ${OMEGAWTK_VERSION}
-    INTERFACE_${_ARG_NAME}_MAJOR_VERSION ${OMEGAWTK_VERSION})
-endif()
-if(TARGET_MACOS)
-    set_target_properties("OmegaWTK" PROPERTIES 
-    VERSION ${OMEGAWTK_VERSION}
-     INTERFACE_${_ARG_NAME}_MAJOR_VERSION ${OMEGAWTK_VERSION}
-        LINK_FLAGS "-Wl,-all_load")
-endif()
-# target_link_libraries("OmegaWTK" PUBLIC ${OmegaWTKLibs})
-set(OmegaWTKLibs ${OmegaWTKLibs} "OmegaWTK" CACHE INTERNAL "OmegaWTK Libs")
+configure_file("./Info.plist.in" "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" @ONLY)
+configure_file("./version.plist.in" "${CMAKE_CURRENT_BINARY_DIR}/version.plist" @ONLY)
 
-set(OmegaWTKMain $<TARGET_FILE_DIR:OmegaWTK>/$<TARGET_FILE_NAME:OmegaWTK>)
-set(OMEGAWTK_MAIN_LIB ${OmegaWTKMain} CACHE INTERNAL "OmegaWTK Shared lib")
-target_include_directories("OmegaWTK" PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
-target_link_libraries("OmegaWTK" PRIVATE "PNG::PNG;TIFF::TIFF;${FFMPEG_LIBRARIES}")
-if(TARGET_MACOS)
-    set(METAL_LIB "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}/default.metallib" CACHE INTERNAL "Metal Library")
-endif()
+
+
+add_framework_bundle(
+    "OmegaWTK"
+    VERSION 
+    ${OMEGAWTK_VERSION}
+    INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist"
+    RESOURCES "${CMAKE_CURRENT_BINARY_DIR}/version.plist"
+    DEPS 
+    "omegaWTKCore"
+    "omegaWTKMedia"
+    "omegaWTKNative"
+    "omegaWTKComposition"
+    "omegaWTKUI"
+    LIBS
+    FRAMEWORKS
+    "OmegaGTE"
+    EMBEDDED_FRAMEWORKS
+    "OmegaGTE"
+    SOURCES 
+    OmegaWTK.cpp
+    ${EXPORT_HEADER}
+    $<TARGET_OBJECTS:omegaWTKCore>
+    $<TARGET_OBJECTS:omegaWTKMedia>
+    $<TARGET_OBJECTS:omegaWTKNative>
+    $<TARGET_OBJECTS:omegaWTKComposition>
+    $<TARGET_OBJECTS:omegaWTKUI>
+)
 

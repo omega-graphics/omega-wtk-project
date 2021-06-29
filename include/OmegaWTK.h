@@ -1,7 +1,6 @@
 
 // Core Exports
 #include "omegaWTK/Core/Core.h"
-#include "omegaWTK/Core/Math.h"
 // Native Exports
 #include "omegaWTK/Native/NativeApp.h"
 
@@ -12,7 +11,7 @@
 #include "omegaWTK/Media/AudioCapture.h"
 
 // Composition Exports
-#include "omegaWTK/Composition/Compositor.h"
+#include "omegaWTK/Composition/CompositorClient.h"
 #include "omegaWTK/Composition/Layer.h"
 #include "omegaWTK/Composition/LayerAnimation.h"
 #include "omegaWTK/Composition/Brush.h"

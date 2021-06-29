@@ -9,7 +9,7 @@ namespace OmegaWTK::Native::Cocoa {
         NSOpenPanel *openPanel;
         NSSavePanel *savePanel;
     public:
-        Core::String show(){
+        void show(){
             NSWindow *parentWindow = ((CocoaAppWindow *)this->parentWindow)->window;
             if(!openPanel){
                 /// If is Save Panel
@@ -20,7 +20,7 @@ namespace OmegaWTK::Native::Cocoa {
                     };
                 }];
 
-                return [url fileSystemRepresentation];
+                // return [url fileSystemRepresentation];
 
             }
             else if(!savePanel){
@@ -32,7 +32,7 @@ namespace OmegaWTK::Native::Cocoa {
                     };
                 }];
 
-                return [url fileSystemRepresentation];
+                // return [url fileSystemRepresentation];
             };
         };
         void close(){
@@ -43,7 +43,7 @@ namespace OmegaWTK::Native::Cocoa {
                openPanel = [NSOpenPanel openPanel];
                savePanel = nil;
            }
-           else {
+           else if(desc.type == Write) {
                savePanel = [NSSavePanel savePanel];
                openPanel = nil;
            };
@@ -67,13 +67,14 @@ namespace OmegaWTK::Native::Cocoa {
             dialog = [[NSAlert alloc] init];
             dialog.showsHelp = NO;
             dialog.alertStyle = NSAlertStyleInformational;
-            dialog.messageText = Cocoa::core_string_to_ns_string(desc.title);
-            dialog.informativeText = Cocoa::core_string_to_ns_string(desc.str);
+            dialog.messageText = Cocoa::common_string_to_ns_string(desc.title);
+            dialog.informativeText = Cocoa::common_string_to_ns_string(desc.str);
         };
     };
 
     SharedHandle<NativeFSDialog> make_cocoa_fs_dialog(const NativeFSDialog::Descriptor &desc,NWH nativeWindow){
 //        return std::make_shared<CocoaFSDialog>();
+          return std::make_shared<CocoaFSDialog>(desc,nativeWindow);
     };
 
     SharedHandle<NativeNoteDialog> make_cocoa_note_dialog(const NativeNoteDialog::Descriptor &desc,NWH nativeWindow){

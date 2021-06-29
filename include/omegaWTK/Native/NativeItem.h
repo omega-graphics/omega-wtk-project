@@ -8,27 +8,31 @@ namespace OmegaWTK {
         class NativeEventEmitter;
         class NativeEvent;
 
-        class NativeLayerTreeLimb {
+        INTERFACE NativeLayerTreeLimb {
             public:
-            virtual void redraw() = 0;
-            virtual void layout() = 0;
+            INTERFACE_METHOD(void,commit)
         };
         /// Null Object Placeholder for native object!
-        class NativeItem {
+        INTERFACE NativeItem {
             friend void set_native_item_event_emitter(NativeItem * ptr,NativeEventEmitter * emitter);
             protected:
             NativeLayerTreeLimb *layerTreelimb;
              NativeEventEmitter *event_emitter;
             public:
-            virtual void addChildNativeItem(NativeItem *nativeItem) = 0;
-            virtual void removeChildNativeItem(NativeItem *nativeItem) = 0;
+            INTERFACE_METHOD(void,addChildNativeItem,NativeItem *nativeItem)
+
+            INTERFACE_METHOD(void,removeChildNativeItem,NativeItem *nativeItem)
+
             void sendEventToEmitter(NativeEvent *ptr);
             bool hasEventEmitter();
             void setLayerTreeLimb(NativeLayerTreeLimb *limb){ layerTreelimb = limb;};
-            virtual void resize(Core::Rect & newRect) = 0;
-            virtual void *getBinding() = 0;
-            virtual void enable() = 0;
-            virtual void disable() = 0;
+
+            INTERFACE_METHOD(void,resize,Core::Rect & newRect)
+            INTERFACE_METHOD(void *,getBinding)
+
+            INTERFACE_METHOD(void,enable)
+            INTERFACE_METHOD(void,disable)
+            
             /// @name ScrollItem Methods
             ///@{
             virtual void toggleHorizontalScrollBar(bool & state) = 0;

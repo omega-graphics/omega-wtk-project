@@ -11,7 +11,7 @@ namespace OmegaWTK::Media {
         virtual UniqueHandle<AudioCaptureSession> createCaptureSession() = 0;
     };
 
-    Core::Vector<AudioDevice *> enumerateAudioDevices();
+    OmegaCommon::Vector<AudioDevice *> enumerateAudioDevices();
 
     class AudioCaptureSession {
     public:

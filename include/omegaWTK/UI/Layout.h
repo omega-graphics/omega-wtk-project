@@ -30,7 +30,7 @@ namespace OmegaWTK {
     
     class OMEGAWTK_EXPORT Layout {
         Core::Rect layoutRect;
-        Core::Vector<WidgetLayoutDescriptor> widgetLayouts;
+        OmegaCommon::Vector<WidgetLayoutDescriptor> widgetLayouts;
     public:
         struct Iterator {
             Widget *widgetPtr;

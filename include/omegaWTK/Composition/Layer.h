@@ -28,13 +28,14 @@ namespace Composition {
          */
     class OMEGAWTK_EXPORT Layer {
         unsigned id_gen = 0;
-        SharedHandle<Canvas> canvas;
-        Core::Vector<SharedHandle<Layer>> children;
+        SharedHandle<CanvasSurface> surface;
+        OmegaCommon::Vector<SharedHandle<Layer>> children;
+
         Layer * parent_ptr;
         Core::Rect surface_rect;
         bool enabled;
         bool needsNativeResize;
-        Compositor *ownerCompositor;
+        
         friend class Compositor;
         friend class BackendImpl;
         friend class LayerTree;
@@ -59,11 +60,11 @@ namespace Composition {
         /// @name Composing Functions!
         /// Draws on to its target!
         /// @{
-        SharedHandle<Canvas> & getCanvas();
+        SharedHandle<CanvasSurface> & getSurface();
         /// @}
         
         
-        Layer(const Core::Rect & rect,Compositor *compPtr);
+        Layer(const Core::Rect & rect,CompositorClient *compClient);
 //            Layer(Layer &layer);
         ~Layer();
     };
@@ -75,7 +76,6 @@ namespace Composition {
      An entire widget's layer construct
      */
     class OMEGAWTK_EXPORT LayerTree {
-        Compositor *widgetCompositor;
         friend class ::OmegaWTK::View;
     public:
         class OMEGAWTK_EXPORT Limb : public Native::NativeLayerTreeLimb {
@@ -84,26 +84,26 @@ namespace Composition {
             ViewRenderTarget *renderTarget;
             friend class BackendImpl;
         public:
-            using iterator = Core::Vector<SharedHandle<Layer>>::iterator;
+            using iterator = OmegaCommon::Vector<SharedHandle<Layer>>::iterator;
             Layer *getRootLayer();
             void addLayer(SharedHandle<Layer> layer);
             /**
              Constructs a LayerTree::Limb
              @param rect The Root Layer's Rect
-             @param compPtr A Pointer to the Widget's Compositor.
+             @param compClient A Pointer to the parent CompositorClient.
              @returns A Limb
              */
-            Limb(const Core::Rect & rect,Compositor *compPtr,ViewRenderTarget *renderTarget);
+            Limb(const Core::Rect & rect,CompositorClient *compClient,ViewRenderTarget *renderTarget);
             iterator begin();
             iterator end();
             void disable();
             void enable();
-            void redraw();
-            void layout();
+            void commit();
+            // void layout();
         };
     private:
         SharedHandle<Limb> rootLimb;
-        Core::Map<Limb *,Core::Vector<SharedHandle<Limb>>> body;
+        OmegaCommon::Map<Limb *,OmegaCommon::Vector<SharedHandle<Limb>>> body;
     public:
         Limb *getTreeRoot();
         unsigned getParentLimbChildCount(Limb *parent);
@@ -111,7 +111,7 @@ namespace Composition {
         /**
          Creates a Limb for the Layer Tree
          */
-        SharedHandle<Limb> createLimb(const Core::Rect &rect_for_root_layer,ViewRenderTarget *renderTarget);
+        SharedHandle<Limb> createLimb(const Core::Rect &rect_for_root_layer,CompositorClient *compClient,ViewRenderTarget *renderTarget);
         /**
          Adds a Limb to the Layer Tree.
          @param limb
@@ -122,7 +122,7 @@ namespace Composition {
          NOTE: Only Call this function once!!
          */
         void setRootLimb(SharedHandle<Limb> & limb);
-        LayerTree(Compositor *compPtr);
+        LayerTree();
         ~LayerTree();
     };
     /**
@@ -131,7 +131,7 @@ namespace Composition {
     class OMEGAWTK_EXPORT  WindowLayer {
         Native::NWH native_window_ptr;
         Core::Rect & rect;
-        SharedHandle<Canvas> windowCanvas;
+        SharedHandle<CanvasSurface> windowSurface;
         // SharedHandle<MenuStyle> menuStyle;
         friend class OmegaWTK::AppWindow;
         friend class OmegaWTK::AppWindowManager;

@@ -10,7 +10,7 @@ namespace OmegaWTK {
 class Menu;
 
 class OMEGAWTK_EXPORT  MenuItem {
-    Core::String name;
+    OmegaCommon::String name;
     Native::NMI native;
     Menu * subMenu;
     bool hasSubMenu;
@@ -24,7 +24,7 @@ public:
     /**
      Constructs a Normal Menu Item!
      */
-    MenuItem(const Core::String & name,bool hasSubMenu,Menu *subMenu);
+    MenuItem(const OmegaCommon::String & name,bool hasSubMenu,Menu *subMenu);
     /**
      Constructs a Seperator Menu Item!
      */
@@ -35,8 +35,8 @@ public:
 class MenuDelegate;
  
  class OMEGAWTK_EXPORT  Menu {
-    Core::String name;
-    Core::Vector<MenuItem *> menuItems;
+    OmegaCommon::String name;
+    OmegaCommon::Vector<MenuItem *> menuItems;
     Native::NM native;
     MenuDelegate *delegate;
     bool hasDelegate;
@@ -44,28 +44,28 @@ class MenuDelegate;
 public:
     Native::NM getNativeMenu(){ return native;};
     MenuItem *getItemByIdx(unsigned idx){ return menuItems[idx];};
-    Menu(Core::String name,std::initializer_list<MenuItem *> menu_items,MenuDelegate *delegate = nullptr);
+    Menu(OmegaCommon::String name,std::initializer_list<MenuItem *> menu_items,MenuDelegate *delegate = nullptr);
 //    ~Menu();
 };
 
-class OMEGAWTK_EXPORT   MenuDelegate : public Native::NativeMenuDelegate {
+DELEGATE OMEGAWTK_EXPORT MenuDelegate : public Native::NativeMenuDelegate {
 protected:
     Menu *menu;
     friend class Menu;
 public:
     MenuDelegate();
-    virtual void onSelectItem(unsigned itemIndex) = 0;
+    DELEGATE_METHOD(void,onSelectItem,unsigned itemIndex)
 };
 /**
  Creates a Category Menu
  */
-OMEGAWTK_EXPORT MenuItem *CategoricalMenu(const Core::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate = nullptr);
+OMEGAWTK_EXPORT MenuItem *CategoricalMenu(const OmegaCommon::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate = nullptr);
 /**
  Creates a SubMenu under a Categorical Menu
  */
-OMEGAWTK_EXPORT MenuItem *SubMenu(const Core::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate = nullptr);
+OMEGAWTK_EXPORT MenuItem *SubMenu(const OmegaCommon::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate = nullptr);
 
-OMEGAWTK_EXPORT MenuItem *ButtonMenuItem(const Core::String & name);
+OMEGAWTK_EXPORT MenuItem *ButtonMenuItem(const OmegaCommon::String & name);
 /**
  Creates a Menu Seperator Item!
 */

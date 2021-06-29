@@ -6,7 +6,7 @@
 namespace OmegaWTK {
     namespace Media {
         struct ImgProfile {
-            Core::String name;
+            OmegaCommon::String name;
             int compression_type;
         };
         struct ImgHeader;
@@ -47,9 +47,9 @@ namespace OmegaWTK {
             BitmapImage::AlphaFormat alpha_format;
             size_t stride;
         };
-        OMEGAWTK_EXPORT StatusWithObj<BitmapImage> loadImageFromFile(FS::Path path);
-        OMEGAWTK_EXPORT StatusWithObj<BitmapImage> loadImageFromAssets(FS::Path path);
-    #define IMPORT_IMG(img) ::OmegaWTK::Media::loadImageFromAssets(::OmegaWTK::Core::String(img))
+        OMEGAWTK_EXPORT StatusWithObj<BitmapImage> loadImageFromFile(OmegaCommon::FS::Path path);
+        OMEGAWTK_EXPORT StatusWithObj<BitmapImage> loadImageFromAssets(OmegaCommon::FS::Path path);
+    #define IMPORT_IMG(img) ::OmegaWTK::Media::loadImageFromAssets(img)
     };
 };
 

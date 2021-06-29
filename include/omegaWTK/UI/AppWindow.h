@@ -2,7 +2,7 @@
 #include "View.h"
 #include "Menu.h"
 #include "omegaWTK/Composition/Layer.h"
-#include "omegaWTK/Composition/Visual.h"
+#include "omegaWTK/Composition/Canvas.h"
 #include "omegaWTK/Native/NativeDialog.h"
 #include "Layout.h"
 
@@ -32,15 +32,15 @@ class AppWindowDelegate;
         SharedHandle<AppWindowDelegate> delegate;
         /// A list of all attached widget tree hosts. 
         /// (Only needed to week widget tree hosts alive during application)
-        Core::List<SharedHandle<WidgetTreeHost>> widgetTreeHosts;
+        OmegaCommon::Vector<SharedHandle<WidgetTreeHost>> widgetTreeHosts;
 
         Core::Rect rect;
 
-        Core::Vector<SharedHandle<Widget>> rootWidgets;
+        OmegaCommon::Vector<SharedHandle<Widget>> rootWidgets;
 
         SharedHandle<Menu> menu;
 
-        SharedHandle<Composition::MenuStyle> menuStyle;
+        // SharedHandle<Composition::MenuStyle> menuStyle;
 
         friend class AppWindowDelegate;
         friend class AppWindowManager;
@@ -72,7 +72,7 @@ class AppWindowDelegate;
 #endif
         
         void setMenu(SharedHandle<Menu> & menu);
-        void setLayerStyle(SharedHandle<Composition::WindowStyle> & style);
+        SharedHandle<Composition::WindowLayer> & getLayer();
         void close();
         SharedHandle<Native::NativeFSDialog> openFSDialog(const Native::NativeFSDialog::Descriptor & desc);
         SharedHandle<Native::NativeNoteDialog> openNoteDialog(const Native::NativeNoteDialog::Descriptor & desc);

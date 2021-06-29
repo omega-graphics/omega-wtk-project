@@ -10,7 +10,7 @@ namespace OmegaWTK::Native {
     class NativeWindow {
         friend class AppWindow;
     protected:
-        Core::Vector<NativeItemPtr> windowWidgetRootViews;
+        OmegaCommon::Vector<NativeItemPtr> windowWidgetRootViews;
         NM menu = nullptr;
 //        NativeLayerTreeLimb *window_native_layer = nullptr;
     public:

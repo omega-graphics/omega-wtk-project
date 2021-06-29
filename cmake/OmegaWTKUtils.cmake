@@ -40,8 +40,7 @@ function(add_omega_wtk_app)
     cmake_parse_arguments("_ARG" "" 
     "NAME;
     MAC_BUNDLE_ID;
-    WIN_ICO;
-    MAC_ICON" 
+    WIN_ICO;"
 
     "SOURCES;
     LINK_LIBS;
@@ -87,6 +86,7 @@ function(add_omega_wtk_app)
             file(COPY ${_F} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
         endforeach()
         set(APPNAME ${_ARG_NAME})
+        set(BUNDLE_ID ${_ARG_MAC_BUNDLE_ID})
         configure_file( 
             "${OMEGAWTK_MACOS_UTILS_DIR}/AppDelegate.mm" 
             "${CMAKE_CURRENT_BINARY_DIR}/AppDelegate.mm" 

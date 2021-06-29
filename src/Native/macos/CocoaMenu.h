@@ -7,9 +7,9 @@ namespace OmegaWTK::Native {
 
 namespace Cocoa {
 
-NMI make_cocoa_menu_item(const Core::String & str,NM parent,bool hasSubMenu,NM subMenu);
+NMI make_cocoa_menu_item(const OmegaCommon::String & str,NM parent,bool hasSubMenu,NM subMenu);
 NMI make_cocoa_menu_seperator();
-NM make_cocoa_menu(const Core::String & name);
+NM make_cocoa_menu(const OmegaCommon::String & name);
 
 };
 };

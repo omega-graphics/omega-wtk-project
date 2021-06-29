@@ -37,7 +37,7 @@ public:
     /**
      Constructs a Menu Item!
      */
-    CocoaMenuItem(const Core::String & str,CocoaMenu *parent,bool hasSubMenu,CocoaMenu *subMenu);
+    CocoaMenuItem(const OmegaCommon::String & str,CocoaMenu *parent,bool hasSubMenu,CocoaMenu *subMenu);
     /**
      Consructs a Seperator Menu Item!
      */
@@ -49,7 +49,7 @@ public:
 
 class CocoaMenu : public NativeMenu {
     NSMenu *menu;
-    Core::Vector<CocoaMenuItem *> items;
+    OmegaCommon::Vector<CocoaMenuItem *> items;
     void menuItemSelected(unsigned idx){
         if(hasDelegate)
             delegate->onSelectItem(idx);
@@ -77,8 +77,8 @@ public:
     /**
      Constructs a Menu!
      */
-    CocoaMenu(const Core::String & name ){
-        menu = [[NSMenu alloc] initWithTitle:core_string_to_ns_string(name)];
+    CocoaMenu(const OmegaCommon::String & name ){
+        menu = [[NSMenu alloc] initWithTitle:common_string_to_ns_string(name)];
         [menu setAutoenablesItems:NO];
     };
     ~CocoaMenu(){
@@ -86,7 +86,7 @@ public:
     };
 };
 
-CocoaMenuItem::CocoaMenuItem(const Core::String & str,CocoaMenu *parent,bool hasSubMenu,CocoaMenu *subMenu):item([[NSMenuItem alloc] initWithTitle:core_string_to_ns_string(str) action:nil keyEquivalent:@""]),delegate([[CocoaMenuItemDelegate alloc] initWithCppBinding:this]),parent_menu(parent),hasSubMenu(hasSubMenu),sub_menu(subMenu),isSeperator(false){
+CocoaMenuItem::CocoaMenuItem(const OmegaCommon::String & str,CocoaMenu *parent,bool hasSubMenu,CocoaMenu *subMenu):item([[NSMenuItem alloc] initWithTitle:common_string_to_ns_string(str) action:nil keyEquivalent:@""]),delegate([[CocoaMenuItemDelegate alloc] initWithCppBinding:this]),parent_menu(parent),hasSubMenu(hasSubMenu),sub_menu(subMenu),isSeperator(false){
     [delegate hasMenu];
     if(hasSubMenu){
         [item setSubmenu:sub_menu->menu];
@@ -108,7 +108,7 @@ void CocoaMenuItem::setState(bool state) {
 };
 
 
-NMI make_cocoa_menu_item(const Core::String & str,NM parent,bool hasSubMenu,NM subMenu){
+NMI make_cocoa_menu_item(const OmegaCommon::String & str,NM parent,bool hasSubMenu,NM subMenu){
     return new CocoaMenuItem(str,(CocoaMenu *)parent,hasSubMenu,(CocoaMenu *)subMenu);
 };
 
@@ -116,7 +116,7 @@ NMI make_cocoa_menu_seperator(){
     return new CocoaMenuItem();
 };
 
-NM make_cocoa_menu(const Core::String & name){
+NM make_cocoa_menu(const OmegaCommon::String & name){
     return new CocoaMenu(name);
 };
 
