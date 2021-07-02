@@ -25,22 +25,21 @@ class Font;
  @paragraph Description
  When creating an instance of this class, invoke the static method `Create` method, 
  which will return an instance of the appropriate platform specific subclass implementing the platform specific 
- features and bindings.   
+ features and bindings.
+ NOTE: This class references a OmegaWTK::UniString stored in some Widget.
 */
+
 class OMEGAWTK_EXPORT  TextRect {
 protected:
-    OmegaCommon::String text_val;
+    OmegaWTK::UniString & text_val;
     Core::SharedPtr<Font> font;
     virtual void _updateStrInternal() = 0;
 public:
     Core::Rect rect;
     virtual void *getNative() = 0;
     virtual void getGlyphBoundingBoxes(Core::Rect ** rects,unsigned * count) = 0;
-    OmegaCommon::String & getString() noexcept{ return text_val;};
-    void setString(const OmegaCommon::String & str){
-        text_val = std::move(str);
-        _updateStrInternal();
-    };
+    // OmegaWTK::UniString & getString() noexcept{ return text_val;};
+    virtual void reload() = 0;
     /**
      @brief Creates a TextRect from a String, Font, Rect
      @param _val[in] The text's string.
@@ -48,9 +47,9 @@ public:
      @param rect[in] The Rect to draw the text in.
      @returns SharedPtr<TextRect>
     */
-    static Core::SharedPtr<TextRect> Create(OmegaCommon::String & _val,Core::SharedPtr<Font> & font,Core::Rect rect);
+    static Core::SharedPtr<TextRect> Create(OmegaWTK::UniString & _val,Core::SharedPtr<Font> & font,Core::Rect rect);
 protected:
-    TextRect(OmegaCommon::String & _val,Core::SharedPtr<Font> & font,Core::Rect & rect):text_val(_val),rect(rect),font(font){};
+    TextRect(OmegaWTK::UniString & _val,Core::SharedPtr<Font> & font,Core::Rect & rect):text_val(_val),rect(rect),font(font){};
 };
 /**
  @brief A struct that describes a Font that can be created by the FontEngine.

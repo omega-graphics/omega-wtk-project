@@ -18,7 +18,7 @@ namespace OmegaWTK {
             window->_add_widget(&root);
             window->widgetTreeHosts.emplace_back(this);
             if(window->rootWidgets.size() == 1)
-                window->comp = compositor.get();
+                window->setFrontendPtr(compositor.get());
         }
     };
 

@@ -5,11 +5,13 @@ compile_flags.txt
 swift
 sphinxout
 gn-utils
+conf_out
 third_party
 # Prerequisites
 *.d
 omega-common
 gte
+*.gn
 
 # Compiled Object files
 *.slo

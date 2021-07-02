@@ -2,11 +2,11 @@
 
 namespace OmegaWTK::Native::Cocoa {
 
-void ns_string_to_core_string(NSString *str,OmegaCommon::String & res){
+void ns_string_to_common_string(NSString *str,OmegaCommon::String & res){
     res.assign(str.UTF8String);
 };
 
-NSString * core_string_to_ns_string(const OmegaCommon::String & str){
+NSString * common_string_to_ns_string(const OmegaCommon::String & str){
     return [[NSString alloc] initWithData:[[NSData alloc] initWithBytes:str.data() length:str.size()] encoding:NSUTF8StringEncoding];
 };
 

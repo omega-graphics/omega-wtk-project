@@ -359,7 +359,7 @@ namespace OmegaWTK {
     class StatusWithObj {
         StatusCode code;
         _Ty * data;
-        const char * message;
+        char * message;
         void _construct(const _Ty & obj){
             code = CodeOk;
             data = ::new _Ty;

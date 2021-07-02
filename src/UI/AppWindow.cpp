@@ -2,12 +2,14 @@
 #include "omegaWTK/UI/Widget.h"
 #include "omegaWTK/Native/NativeWindow.h"
 #include "omegaWTK/Native/NativeDialog.h"
-#include "omegaWTK/Composition/Compositor.h"
-#include "omegaWTK/Composition/ViewRenderTarget.h"
+#include "omegaWTK/Composition/CompositorClient.h"
 
 namespace OmegaWTK {
 
-    AppWindow::AppWindow(Core::Rect rect,AppWindowDelegate *delegate):layer(std::make_unique<Composition::WindowLayer>(rect,Native::make_native_window(rect,this))),comp(nullptr),delegate(delegate),rect(rect){
+    AppWindow::AppWindow(Core::Rect rect,AppWindowDelegate *delegate):
+    layer(std::make_unique<Composition::WindowLayer>(rect,Native::make_native_window(rect,this))),
+    delegate(delegate),
+    rect(rect){
         // MessageBoxA(HWND_DESKTOP,"Create Window Layer!","NOTE",MB_OK);
         if(delegate) {
             setReciever(delegate);
@@ -20,9 +22,9 @@ void AppWindow::setMenu(SharedHandle<Menu> & menu){
     layer->native_window_ptr->setMenu(this->menu->getNativeMenu());
 };
 
-void AppWindow::setLayerStyle(SharedHandle<Composition::WindowStyle> & style){
-    layer->setWindowStyle(style);
-};
+// void AppWindow::setLayerStyle(SharedHandle<Composition::WindowStyle> & style){
+//     layer->setWindowStyle(style);
+// };
 
 // void AppWindow::setMenuStyle(SharedHandle<Composition::MenuStyle> & style){
 //     menuStyle = style;
@@ -56,16 +58,20 @@ SharedHandle<Native::NativeNoteDialog> AppWindow::openNoteDialog(const Native::N
     return Native::NativeNoteDialog::Create(desc,layer->native_window_ptr);
 };
 
-void AppWindow::drawWidgets(){
-    auto widget_it = rootWidgets.begin();
-    while(widget_it != rootWidgets.end()){
-        (*widget_it)->compositor->prepareDraw(widget_it->get()->layerTree.get());
-        ++widget_it;
-    };
-};
+// void AppWindow::drawWidgets(){
+//     auto widget_it = rootWidgets.begin();
+//     while(widget_it != rootWidgets.end()){
+//         (*widget_it)->compositor->prepareDraw(widget_it->get()->layerTree.get());
+//         ++widget_it;
+//     };
+// };
 
 void AppWindow::close(){
     layer->native_window_ptr->close();
+};
+
+void AppWindow::commitRender(){
+    
 };
 
 AppWindowManager::AppWindowManager():rootWindow(nullptr){};
@@ -80,7 +86,7 @@ SharedHandle<AppWindow> AppWindowManager::getRootWindow(){
 
 void AppWindowManager::displayRootWindow(){
     rootWindow->layer->native_window_ptr->attachWidgets();
-    rootWindow->drawWidgets();
+    // rootWindow->drawWidgets();
     rootWindow->layer->native_window_ptr->initialDisplay();
 };
 

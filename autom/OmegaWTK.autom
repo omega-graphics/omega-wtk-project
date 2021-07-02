@@ -1,0 +1,16 @@
+#! /usr/bin/env python3
+
+
+third_party_script = abspath("./third_party.py")
+
+def ThirdParty(name:str,deps:"list[str]",exports:"list[str]",source_dir:str,binary_dir:str,install_dir:str,config:str,build:str,install:str):
+   Script(name,[],deps,third_party_script,
+   ["--src-dir",abspath(source_dir),
+   "--tmp-dir",abspath(binary_dir),
+   "--out-dir",install_dir,
+   "--config",config,
+   "--build",build,
+   "--install",install],exports) 
+   
+   Config(f"{name}__conf",[],[f"{install_dir}/include"],[])
+   set_property(f"{name}__conf","libs",exports)

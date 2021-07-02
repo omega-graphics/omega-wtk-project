@@ -1,9 +1,106 @@
 #! /usr/bin/env python3
 
+
 include("./autom/OmegaWTK.autom")
 
-Project("OmegaWTK","0.6")
+OMEGAWTK_VERSION = "0.6"
 
+Project("OmegaWTK",OMEGAWTK_VERSION)
+
+subdir("./gte")
+
+third_party_dir = f"{root_out_dir}/third_party"
+gen_third_party_dir = f"{gen_root_out_dir}/third_party"
+
+assert(program_exists("cmake"))
+
+zlib_export = f"{gen_third_party_dir}/zlib/lib/libz.dylib"
+
+ThirdParty(
+    name="zlib",
+    deps=[],
+    exports=[zlib_export],
+    source_dir="./external-libs/zlib/code",
+    binary_dir=f"{third_party_dir}/temp/zlib",
+    install_dir=f"{third_party_dir}/zlib",
+    config=f"cmake -S . -B {third_party_dir}/temp/zlib -G\"Ninja\" -DCMAKE_INSTALL_PREFIX=\"{third_party_dir}/zlib\"",
+    build="cmake --build .",
+    install="cmake --build . --target install"
+)
+
+libpng_export = f"{gen_third_party_dir}/libpng/lib/libpng.dylib"
+
+ThirdParty(
+    name="libpng",
+    deps=["zlib"],
+    exports=[libpng_export],
+    source_dir="./external-libs/libpng/code",
+    binary_dir=f"{third_party_dir}/temp/libpng",
+    install_dir=f"{third_party_dir}/libpng",
+    config=f"cmake -S . -B {third_party_dir}/temp/libpng -G\"Ninja\" -DPNG_ARM_NEON=off  -DZLIB_DIR=\"{third_party_dir}/zlib\" -DCMAKE_INSTALL_PREFIX=\"{third_party_dir}/libpng\"",
+    build="cmake --build .",
+    install="cmake --build . --target install"
+)
+
+libjpeg_turbo_export = f"{gen_third_party_dir}/libjpeg-turbo/lib/libturbojpeg.dylib"
+
+ThirdParty(
+    name="libjpeg-turbo",
+    deps=["zlib"],
+    exports=[libjpeg_turbo_export],
+    source_dir="./external-libs/libjpeg-turbo/code",
+    binary_dir=f"{third_party_dir}/temp/libjpeg-turbo",
+    install_dir=f"{third_party_dir}/libjpeg-turbo",
+    config=f"cmake -S . -B {third_party_dir}/temp/libjpeg-turbo -G\"Ninja\" -DZLIB_DIR=\"{third_party_dir}/zlib\" -DCMAKE_INSTALL_PREFIX=\"{third_party_dir}/libjpeg-turbo\"",
+    build="cmake --build .",
+    install="cmake --build . --target install"
+)
+
+libtiff_export = f"{gen_third_party_dir}/libtiff/lib/libtiff.dylib"
+
+ThirdParty(
+    name="libtiff",
+    deps=["zlib","libjpeg-turbo"],
+    exports=[libtiff_export],
+    source_dir="./external-libs/libtiff/code",
+    binary_dir=f"{third_party_dir}/temp/libtiff",
+    install_dir=f"{third_party_dir}/libtiff",
+    config=f"cmake -S . -B {third_party_dir}/temp/libtiff -G\"Ninja\" -DZLIB_DIR=\"{third_party_dir}/zlib\"  -DJPEG_DIR=\"{third_party_dir}/libjpeg-turbo\" -DCMAKE_INSTALL_PREFIX=\"{third_party_dir}/libtiff\"",
+    build="cmake --build .",
+    install="cmake --build . --target install"
+)
+
+icu_lib_exports = [f"{gen_third_party_dir}/icu/lib/libicuuc.dylib",
+              f"{gen_third_party_dir}/icu/lib/libicui18n.dylib"]
+
+ThirdParty(
+    name="icu",
+    deps=[],
+    exports=[f"{gen_third_party_dir}/icu/lib/libicuuc.dylib",
+             f"{gen_third_party_dir}/icu/lib/libicudata.dylib",
+             f"{gen_third_party_dir}/icu/lib/libicui18n.dylib"],
+    source_dir="./external-libs/icu-69/code/icu4c/source",
+    binary_dir="./external-libs/icu-69/code/icu4c/source",
+    install_dir=f"{third_party_dir}/icu",
+    config=f"./configure --prefix={third_party_dir}/icu",
+    build="make all",
+    install="make install"
+)
+
+assert(program_exists("perl"))
+
+ThirdParty(
+    name="openssl",
+    deps=[],
+    exports=[f"{gen_third_party_dir}/openssl/lib/libcrypto.dylib",
+             f"{gen_third_party_dir}/openssl/lib/libssl.dylib"],
+    source_dir="./external-libs/openssl/code",
+    binary_dir=f"./external-libs/openssl/code",
+    install_dir=f"{third_party_dir}/openssl",
+    config=f"perl ./Configure --prefix={third_party_dir}/openssl",
+    build="make all",
+    install="make install"
+)
 
 
 omega_wtk_include_dir = abspath("./include")
@@ -13,14 +110,69 @@ standard_defines = []
 if is_mac:
     standard_defines += ["TARGET_MACOS"]
 elif is_win:
-    standard_defines =+ ["TARGET_WIN32"]
+    standard_defines += ["TARGET_WIN32"]
 
 
-Config("OmegaWTK_Config",[omega_wtk_include_dir],standard_defines)
+Config("OmegaWTK_Config",[],[omega_wtk_include_dir],standard_defines)
 
 
-def OmegaWTKModule(name:str,sources:str,deps:"list[str]"):
-    
+def OmegaWTKModule(name:str,sources:str,deps:"list[str]",configs:"list[str]"):
+    SourceSet(f"OmegaWTK{name}",sources,deps)
+    set_property(f"OmegaWTK{name}","configs",["OmegaWTK_Config","OmegaGTE_conf","omega-common_conf"] + configs)
+
+
+core_srcs = glob("./src/Core/*.cpp")
+
+core_configs = ["icu__conf"]
+
+OmegaWTKModule(name="Core",sources=core_srcs,deps=["icu","openssl"],configs=core_configs)
+append_property("OmegaWTKCore","include_dirs",["./tools/assetc"])
+
+native_srcs = glob("./src/Native/*.cpp")
+
+if is_mac:
+    other_srcs = glob("./src/Native/macos/*.mm")
+else:
+    other_srcs = []
+
+OmegaWTKModule(name="Native",sources=native_srcs + other_srcs,deps=["OmegaWTKCore"],configs=core_configs)
+append_property("OmegaWTKNative","include_dirs",["./src/Native/private_include"])
+
+media_srcs = glob("./src/Media/*.cpp")
+
+OmegaWTKModule(name="Media",sources=media_srcs,deps=["OmegaWTKCore","libpng","libjpeg-turbo","libtiff"],configs=["libpng__conf","libjpeg-turbo__conf","libtiff__conf"] + core_configs)
+
+composition_srcs = glob("./src/Composition/*.cpp")
+if is_mac:
+    composition_srcs += ["./src/Composition/backend/mtl/CTFontEngine.mm"]
+
+OmegaWTKModule(name="Composition",sources=composition_srcs,deps=["OmegaWTKCore","OmegaWTKNative","OmegaWTKMedia"],configs=core_configs)
+append_property("OmegaWTKComposition","include_dirs",["./src/Native/private_include"])
+ui_srcs = glob("./src/UI/*.cpp")
+
+OmegaWTKModule(name="UI",sources=ui_srcs,deps=["OmegaWTKCore","OmegaWTKComposition","OmegaWTKNative","OmegaWTKMedia"],configs=core_configs)
+
+conf_out = f"./conf_out"
+
+configure("./src/Info.plist.in",f"{conf_out}/OmegaWTK_res/Info.plist")
+configure("./src/version.plist.in",f"{conf_out}/OmegaWTK_res/version.plist")
+
+if is_mac:
+    FrameworkBundle("OmegaWTK",
+    ["./src/OmegaWTK.cpp"],
+    ["OmegaWTKCore",
+    "OmegaWTKComposition",
+    "OmegaWTKNative",
+    "OmegaWTKMedia",
+    "OmegaWTKUI"],
+    "Frameworks",OMEGAWTK_VERSION)
+    confgs = ["OmegaWTK_Config","OmegaGTE_conf","omega-common_conf"] + core_configs + ["libpng__conf","libjpeg-turbo__conf","libtiff__conf"]
+    set_property("OmegaWTK","configs",confgs)
+    set_property("OmegaWTK","resources",[f"{conf_out}/OmegaWTK_res/Info.plist",f"{conf_out}/OmegaWTK_res/version.plist"])
+    set_property("OmegaWTK","frameworks",["Cocoa.framework","QuartzCore.framework","OmegaGTE.framework"])
+    set_property("OmegaWTK","embedded_frameworks",["OmegaGTE.framework"])
+
+
 
 
 

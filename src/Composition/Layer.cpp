@@ -81,6 +81,10 @@ void LayerTree::Limb::addLayer(SharedHandle<Layer> layer){
     limbRoot->addSubLayer(layer);
 };
 
+void LayerTree::Limb::commit(){
+    
+};
+
 // void LayerTree::Limb::redraw(){
 //     limbRoot->ownerCompositor->updateRequestedLayerTreeLimb(this);
 // };

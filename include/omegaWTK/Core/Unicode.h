@@ -9,6 +9,7 @@
 #include <unicode/dtfmtsym.h>
 #include <unicode/uchar.h>
 #include <unicode/gender.h>
+#include <unicode/ucnv.h>
 
 
 #ifndef OMEGAWTK_CORE_UNICODE_H
@@ -20,6 +21,9 @@ namespace OmegaWTK {
     namespace Unicode = icu;
     typedef UChar UnicodeChar;
     typedef UChar32 Unicode32Char;
+    typedef Unicode::UnicodeString UniString;
+
+    
 }
 
 #endif

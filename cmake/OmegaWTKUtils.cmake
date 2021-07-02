@@ -99,15 +99,23 @@ function(add_omega_wtk_app)
 		
         set(MACOS_UTILS "AppDelegate.mm" "AppDelegate.h" "main.mm")
         list(TRANSFORM MACOS_UTILS PREPEND "${CMAKE_CURRENT_BINARY_DIR}/")
-        add_app_bundle(
-            ${_ARG_NAME} 
-            SOURCES ${_ARG_SOURCES} 
-            INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" 
-            RESOURCES "${CMAKE_CURRENT_BINARY_DIR}/MainMenu.xib;"
-            LIBRARIES "${_ARG_LINK_LIBS};${Cocoa_LIB}"
-            FRAMEWORKS "OmegaWTK"
-            EMBEDDED_FRAMEWORKS "OmegaWTK")
-        target_sources(${_ARG_NAME} PRIVATE ${MACOS_UTILS})
+        add_app_bundle(NAME ${_ARG_NAME}  
+            INFO_PLIST 
+            ${CMAKE_CURRENT_BINARY_DIR}/Info.plist
+            RESOURCES 
+            ${CMAKE_CURRENT_BINARY_DIR}/MainMenu.xib
+            DEPS 
+            ${_ARG_LINK_LIBS} 
+            "OmegaWTK"
+            LIBS 
+            ${_ARG_LINK_LIBS} 
+            ${Cocoa_LIB}
+            EMBEDDED_FRAMEWORKS 
+            "OmegaWTK"
+            SOURCES 
+            ${_ARG_SOURCES}
+            ${MACOS_UTILS})
+        # target_sources(${_ARG_NAME} PRIVATE )
         # set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/${MAC_ICON}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
         
     endif()

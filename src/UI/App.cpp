@@ -13,7 +13,7 @@ AppInst * AppInst::instance;
 AppInst::AppInst():ptr(Native::make_native_app()),windowManager(std::make_unique<AppWindowManager>()){
     instance = this;
     Composition::FontEngine::Create();
-    FS::Path assets_path = "./assets.omxa";
+    OmegaCommon::FS::Path assets_path("./assets.omxa");
     if(assets_path.exists())
         loadAssetFile("./assets.omxa");
 };

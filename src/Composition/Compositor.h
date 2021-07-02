@@ -88,11 +88,11 @@ namespace OmegaWTK::Composition {
         
         
         Compositor();
-        ~Compositor();
+        // ~Compositor();
     };
 
     struct BackendExecutionContext {
-        
+
     };
 }
 

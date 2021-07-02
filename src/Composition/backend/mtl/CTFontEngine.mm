@@ -1,13 +1,15 @@
 #include "omegaWTK/Composition/FontEngine.h"
 #include "NativePrivate/macos/CocoaUtils.h"
 
+#include "omegaWTK/Core/Unicode.h"
+
 #import <CoreText/CoreText.h>
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
 namespace OmegaWTK::Composition {
 
-CFStringRef core_string_to_cf_string_ref(Core::String & str){
+CFStringRef core_string_to_cf_string_ref(OmegaCommon::String & str){
     return CFStringCreateWithCString(kCFAllocatorDefault,str.c_str(),CFStringGetSystemEncoding());
 };
 
@@ -43,7 +45,7 @@ class CTTextRect : public TextRect {
         
     };
 public:
-    CTTextRect(Core::String & _val,Core::SharedPtr<Font> & font,Core::Rect & rect):TextRect(_val,font,rect){
+    CTTextRect(OmegaWTK::UniString & _val,Core::SharedPtr<Font> & font,Core::Rect & rect):TextRect(_val,font,rect){
         NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
         
         /// Initalize Text with Settings!
@@ -124,12 +126,18 @@ public:
         };
         
         float scaleFactor = [NSScreen mainScreen].backingScaleFactor;
-        auto ftextRect = FRect(float(rect.pos.x) * scaleFactor,float(rect.pos.y) * scaleFactor,float(rect.dimen.minWidth) * scaleFactor,float(rect.dimen.minHeight) * scaleFactor);
+        auto ftextRect = OmegaWTK::Core::Rect {float(rect.pos.x) * scaleFactor,float(rect.pos.y) * scaleFactor,float(rect.w) * scaleFactor,float(rect.h) * scaleFactor};
         CoreTextFont *fontRef = (CoreTextFont *)font.get();
-        strData = [[NSAttributedString alloc] initWithString:Native::Cocoa::core_string_to_ns_string(text_val) attributes:@{NSParagraphStyleAttributeName:paragraphStyle,NSFontAttributeName:(__bridge id)fontRef->native}];
+        
+        OmegaCommon::String converted_str;
+        text_val.toUTF8String(converted_str);
+
+        
+        
+        strData = [[NSAttributedString alloc] initWithString:Native::Cocoa::common_string_to_ns_string(converted_str) attributes:@{NSParagraphStyleAttributeName:paragraphStyle,NSFontAttributeName:(__bridge id)fontRef->native}];
         // Draw Text to CGBitmap!
         framesetterRef = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)strData);
-        frame = CTFramesetterCreateFrame(framesetterRef,CFRangeMake(0,0),CGPathCreateWithRect(CGRectMake(ftextRect.pos.x,ftextRect.pos.y, ftextRect.dimen.minWidth, ftextRect.dimen.minHeight),NULL),NULL);
+        frame = CTFramesetterCreateFrame(framesetterRef,CFRangeMake(0,0),CGPathCreateWithRect(CGRectMake(ftextRect.pos.x,ftextRect.pos.y, ftextRect.w, ftextRect.h),NULL),NULL);
         // CFRetain(frame);
     };
     void * getNative(){
@@ -151,6 +159,9 @@ public:
             };
         }
     };
+    void reload() {
+        
+    };
     ~CTTextRect(){
         // CFRelease(frame);
         // CFRelease(framesetterRef);
@@ -158,7 +169,7 @@ public:
     };
 };
 
-Core::SharedPtr<TextRect> TextRect::Create(Core::String & _val,Core::SharedPtr<Font> & font,Core::Rect rect){
+Core::SharedPtr<TextRect> TextRect::Create(OmegaWTK::UniString & _val,Core::SharedPtr<Font> & font,Core::Rect rect){
     return std::make_shared<CTTextRect>(_val,font,rect);
 };
 
@@ -190,7 +201,7 @@ Core::SharedPtr<Font> FontEngine::CreateFont(FontDescriptor & desc){
     return std::make_shared<CoreTextFont>(desc,_font_final);
 };
 
-Core::SharedPtr<Font> FontEngine::CreateFontFromFile(FS::Path path, FontDescriptor &desc){
+Core::SharedPtr<Font> FontEngine::CreateFontFromFile(OmegaCommon::FS::Path path, FontDescriptor &desc){
     CTFontSymbolicTraits fontTraits;
     
     switch (desc.style) {
@@ -210,7 +221,7 @@ Core::SharedPtr<Font> FontEngine::CreateFontFromFile(FS::Path path, FontDescript
             break;
     }
 
-    NSURL *url = [NSURL fileURLWithPath:Native::Cocoa::core_string_to_ns_string(path.absPath()) isDirectory:NO];
+    NSURL *url = [NSURL fileURLWithPath:Native::Cocoa::common_string_to_ns_string(path.absPath()) isDirectory:NO];
     CFArrayRef fontDescriptors = CTFontManagerCreateFontDescriptorsFromURL((__bridge CFURLRef)url);
     CTFontDescriptorRef idealFont;
     for(unsigned i = 0;i < CFArrayGetCount(fontDescriptors);i++){

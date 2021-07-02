@@ -48,7 +48,7 @@ add_third_party(
     "${CMAKE_CURRENT_BINARY_DIR}/third_party/zlib"
 )
 
-set(ZLIB_LIB "${CMAKE_CURRENT_BINARY_DIR}/third_party/zlib/libz${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set(ZLIB_LIB "${CMAKE_CURRENT_BINARY_DIR}/third_party/zlib/lib/libz${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
 add_third_party(
     NAME 
@@ -65,7 +65,7 @@ add_third_party(
     ZLIB
 )
 
-set(PNG_LIB "${CMAKE_CURRENT_BINARY_DIR}/third_party/libpng/libpng${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set(PNG_LIB "${CMAKE_CURRENT_BINARY_DIR}/third_party/libpng/lib/libpng${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
 add_third_party(
     NAME 
@@ -80,7 +80,7 @@ add_third_party(
     ZLIB
 )
 
-set(JPEG_LIB "${CMAKE_CURRENT_BINARY_DIR}/third_party/libjpeg-turbo/libturbojpeg${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set(JPEG_LIB "${CMAKE_CURRENT_BINARY_DIR}/third_party/libjpeg-turbo/lib/libturbojpeg${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
 add_third_party(
     NAME 
@@ -263,7 +263,7 @@ add_subdirectory("src")
 
 set(OMEGAWTK_TARGET_UTILS_DIR ${CMAKE_SOURCE_DIR}/target)
 
-# add_subdirectory("tests")
+add_subdirectory("tests")
 
 if(TARGET_WIN32 OR TARGET_GTK)
     install(TARGETS ${OmegaWTKLibs} EXPORT OmegaWTKTargets

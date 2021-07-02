@@ -32,7 +32,7 @@ namespace OmegaWTK {
 
             INTERFACE_METHOD(void,enable)
             INTERFACE_METHOD(void,disable)
-            
+
             /// @name ScrollItem Methods
             ///@{
             virtual void toggleHorizontalScrollBar(bool & state) = 0;

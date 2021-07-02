@@ -29,7 +29,7 @@ namespace OmegaWTK::UI {
 
         SharedHandle<Composition::Font> currentfont;
 
-        void pushChar(char32_t c);
+        // void pushChar(char32_t c);
         friend class UserInputDelegate;
     public:
         OmegaCommon::String & string();

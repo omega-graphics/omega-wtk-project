@@ -2,7 +2,7 @@
 
 namespace OmegaWTK {
 
-MenuItem::MenuItem(const Core::String & name,bool hasSubMenu,Menu *subMenu):name(name),native(nullptr),hasSubMenu(hasSubMenu),subMenu(subMenu),isSeperator(false){
+MenuItem::MenuItem(const OmegaCommon::String & name,bool hasSubMenu,Menu *subMenu):name(name),native(nullptr),hasSubMenu(hasSubMenu),subMenu(subMenu),isSeperator(false){
     
 };
 
@@ -31,7 +31,12 @@ void MenuItem::disable(){
     native->setState(false);
 };
 
-Menu::Menu(Core::String name,std::initializer_list<MenuItem *> menu_items,MenuDelegate * delegate):name(name),menuItems(menu_items),native(Native::make_native_menu(name)),delegate(delegate),hasDelegate(delegate != nullptr){
+Menu::Menu(OmegaCommon::String name,std::initializer_list<MenuItem *> menu_items,MenuDelegate * delegate):
+name(name),
+menuItems(menu_items),
+native(Native::make_native_menu(name)),
+delegate(delegate),
+hasDelegate(delegate != nullptr){
     auto it = menu_items.begin();
     while(it != menu_items.end()){
         auto & menu_item = *it;
@@ -48,7 +53,7 @@ Menu::Menu(Core::String name,std::initializer_list<MenuItem *> menu_items,MenuDe
 
 MenuDelegate::MenuDelegate(){};
 
-MenuItem *CategoricalMenu(const Core::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate){
+MenuItem *CategoricalMenu(const OmegaCommon::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate){
 #ifdef TARGET_WIN32
     return new MenuItem(name,true,new Menu("",items,delegate));
 #endif
@@ -57,11 +62,11 @@ MenuItem *CategoricalMenu(const Core::String & name,std::initializer_list<MenuIt
 #endif
 };
 
-MenuItem *ButtonMenuItem(const Core::String & name){
+MenuItem *ButtonMenuItem(const OmegaCommon::String & name){
     return new MenuItem(name,false,nullptr);
 };
 
-MenuItem *SubMenu(const Core::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate){
+MenuItem *SubMenu(const OmegaCommon::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate){
     #ifdef TARGET_WIN32
         return new MenuItem(name,true,new Menu("",items,delegate));
     #endif 

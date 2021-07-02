@@ -7,7 +7,7 @@ namespace OmegaWTK::UI {
     };
 
 
-    Core::String & TextInput::string(){
+    OmegaCommon::String & TextInput::string(){
         return textStr;
     };
 
@@ -26,7 +26,7 @@ namespace OmegaWTK::UI {
 
     void UserInputDelegate::onKeyDown(Native::NativeEventPtr event){
         Native::KeyDownParams *params = (Native::KeyDownParams *)event->params;
-        widgetPtr->pushChar(params->key);
+        // widgetPtr->pushChar(params->key);
     };
 
     void UserInputDelegate::onKeyUp(Native::NativeEventPtr event){
@@ -34,32 +34,32 @@ namespace OmegaWTK::UI {
     };
 
     
-    TextInput::WIDGET_CONSTRUCTOR(TextInput,SharedHandle<Composition::Font> currentfont,Core::String placeholder):
+    TextInput::WIDGET_CONSTRUCTOR(TextInput,SharedHandle<Composition::Font> currentfont,OmegaCommon::String placeholder):
     WIDGET_CONSTRUCT_SUPER(),
     textStr(""),
     placeholder(placeholder),
     currentfont(currentfont){
-        canRecieveInput = WidgetState<bool>::Create(false);
-        textRect = Composition::TextRect::Create(textStr,currentfont,rect);
-        /// Assume default style.
-        auto rootLayer = rootView->getLayerTreeLimb()->getRootLayer();
-        auto style = make<Composition::LayerStyle>();
-        style->setBackgroundColor(Composition::Color::Transparent);
-        style->add(VISUAL_RECT(Rect(0,0,rect.dimen.minWidth,rect.dimen.minHeight),Composition::ColorBrush(Composition::Color::Red)));
-        style->add(VISUAL_TEXT(textRect,Composition::ColorBrush(Composition::Color::Black)));
-        rootLayer->setStyle(style);
-        delegate = std::shared_ptr<ViewDelegate>(new UserInputDelegate(textRect.get(),this));
+        // canRecieveInput = WidgetState<bool>::Create(false);
+        // textRect = Composition::TextRect::Create(textStr,currentfont,rect);
+        // /// Assume default style.
+        // auto rootLayer = rootView->getLayerTreeLimb()->getRootLayer();
+        // auto style = make<Composition::LayerStyle>();
+        // style->setBackgroundColor(Composition::Color::Transparent);
+        // style->add(VISUAL_RECT(Rect(0,0,rect.dimen.minWidth,rect.dimen.minHeight),Composition::ColorBrush(Composition::Color::Red)));
+        // style->add(VISUAL_TEXT(textRect,Composition::ColorBrush(Composition::Color::Black)));
+        // rootLayer->setStyle(style);
+        // delegate = std::shared_ptr<ViewDelegate>(new UserInputDelegate(textRect.get(),this));
     };
 
     void TextInput::setFont(SharedHandle<Composition::Font> &font){
         currentfont = font;
     };
 
-    void TextInput::pushChar(UniChar c){
-        auto & temp = textRect->getString();
-        temp += char(c);
-        refresh();
-    };
+    // void TextInput::pushChar(UniChar c){
+    //     auto & temp = textRect->getString();
+    //     temp += char(c);
+    //     refresh();
+    // };
 
     void TextInput::resize(Core::Rect &newRect){
 
