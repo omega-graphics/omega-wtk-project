@@ -90,12 +90,5 @@ void Compositor::scheduleCommand(UniqueHandle<CompositionRenderCommand> command)
     commandQueue.push(*ptr);
 };
 
-std::future<RenderCommandStatus> Compositor::executeCurrentRenderCommand(){
-
-    
-
-    return {};
-};
-
 
 };

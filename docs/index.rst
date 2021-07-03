@@ -8,7 +8,7 @@ This site features all the documentation for using OmegaWTK
   :caption: Table of Contents
   :maxdepth: 1
 
-  install
+  Building
   BasicProject
 
 

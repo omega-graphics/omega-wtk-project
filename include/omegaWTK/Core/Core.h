@@ -19,6 +19,8 @@
 
 namespace OmegaWTK {
 
+    static OmegaGTE::GTE gte;
+
     #define INTERFACE class
 
     #define INTERFACE_METHOD(type,name,args...) virtual type name(args) = 0;

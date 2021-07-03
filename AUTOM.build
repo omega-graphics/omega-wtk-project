@@ -142,7 +142,7 @@ media_srcs = glob("./src/Media/*.cpp")
 
 OmegaWTKModule(name="Media",sources=media_srcs,deps=["OmegaWTKCore","libpng","libjpeg-turbo","libtiff"],configs=["libpng__conf","libjpeg-turbo__conf","libtiff__conf"] + core_configs)
 
-composition_srcs = glob("./src/Composition/*.cpp")
+composition_srcs = glob("./src/Composition/*.cpp") + glob("./src/Composition/backend/*.cpp")
 if is_mac:
     composition_srcs += ["./src/Composition/backend/mtl/CTFontEngine.mm"]
 

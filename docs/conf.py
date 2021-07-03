@@ -10,8 +10,7 @@ version = "0.6"
 
 extensions = ["sphinx.ext.viewcode"]
 
-html_theme_path = ["_themes"]
-html_theme = "omegawtk"
+html_theme = 'sphinx_material'
 
 
 

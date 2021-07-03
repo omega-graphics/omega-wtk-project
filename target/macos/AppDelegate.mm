@@ -62,11 +62,13 @@
 
 // }
 -(void)applicationDidFinishLaunching:(NSNotification *)notification {
+   OmegaWTK::gte = OmegaGTE::Init();
    appInst = new OmegaWTK::AppInst();
    omegaWTKMain(appInst);
 
 }
 -(void)applicationWillTerminate:(NSNotification *)notification {
     delete appInst;
+    OmegaGTE::Close(OmegaWTK::gte);
 }
 @end

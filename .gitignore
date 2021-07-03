@@ -7,6 +7,7 @@ sphinxout
 gn-utils
 conf_out
 third_party
+*out
 # Prerequisites
 *.d
 omega-common

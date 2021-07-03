@@ -1,8 +1,11 @@
 #include "omegaWTK/Core/Core.h"
 #include "omegaWTK/Composition/Layer.h"
 #include "omegaWTK/Composition/CompositorClient.h"
+
 #include <chrono>
 #include <thread>
+
+#include "backend/RenderTarget.h"
 
 #ifndef OMEGAWTK_COMPOSTION_COMPOSITOR_H
 #define OMEGAWTK_COMPOSTION_COMPOSITOR_H
@@ -65,6 +68,8 @@ namespace OmegaWTK::Composition {
      OmegaWTK's Composition Engine Frontend Interface
      */
     class OMEGAWTK_EXPORT Compositor {
+        RenderTargetStore renderTargetStore;
+
         std::mutex queueMutex;
         Core::PriorityQueueHeap<CompositionRenderCommand,CompareRenderCommands> commandQueue;
 
