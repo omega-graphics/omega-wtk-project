@@ -58,7 +58,9 @@ View::View(const Core::Rect & rect,Native::NativeItemPtr nativeItem,View *parent
 };
 
 SharedHandle<Composition::Layer> View::makeLayer(Core::Rect rect){
-    return std::make_shared<Composition::Layer>(rect,this);
+    auto layer = std::make_shared<Composition::Layer>(rect,this);
+    layer->parentLimb = layerTreeLimb.get();
+    return layer;
 };
 
 View::~View(){

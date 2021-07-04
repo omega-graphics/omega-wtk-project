@@ -1,14 +1,29 @@
-#import "MTLBDCALayerTree.h"
-#import "MTLBDCompositionImage.h"
-#import "MTLBDTriangulator.h"
-#import "MTLBDCompositionRenderTarget.h"
+#include "../RenderTarget.h"
+#import "CALayerTree.h"
 
 #import <QuartzCore/QuartzCore.h>
 
 #include "NativePrivate/macos/CocoaUtils.h"
+#include "NativePrivate/macos/CocoaItem.h"
+
+
 
 namespace OmegaWTK::Composition {
-MTLBDCALayerTree::MTLBDCALayerTree(MTLBDCompositionDeviceContext *deviceContext):deviceContext(deviceContext){
+
+
+OmegaGTE::NativeRenderTargetDescriptor * makeDescForViewRenderTarget(ViewRenderTarget *renderTarget){
+    auto cocoaView = (Native::Cocoa::CocoaItem *)renderTarget->getNativePtr();
+    auto *desc = new OmegaGTE::NativeRenderTargetDescriptor;
+    OmegaWTKCocoaView *view = (__bridge OmegaWTKCocoaView *)cocoaView->getBinding();
+    CAMetalLayer *metalLayer = [CAMetalLayer layer];
+    metalLayer.frame = view.frame;
+    metalLayer.contentsScale = [NSScreen mainScreen].backingScaleFactor;
+    [view.layer addSublayer:metalLayer];
+    desc->metalLayer = metalLayer;
+    return desc;
+};
+
+MTLCALayerTree::MTLCALayerTree(MTLBDCompositionDeviceContext *deviceContext):deviceContext(deviceContext){
     
 };
 

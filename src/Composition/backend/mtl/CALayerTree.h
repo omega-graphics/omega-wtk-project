@@ -1,20 +1,30 @@
-#include "../BDCompositionVisualTree.h"
-#include "MTLBDCompositionDevice.h"
+#include "../VisualTree.h"
+#include "../RenderTarget.h"
 
 #ifndef OMEGAWTK_COMPOSITION_MTL_MTLBDCALAYERTREE_H
 #define OMEGAWTK_COMPOSITION_MTL_MTLBDCALAYERTREE_H
+
+// #ifdef __OBJC__
 
 @class CALayer;
 @class CAMetalLayer;
 @class CATransformLayer;
 
+// #else 
+
+// struct CALayer;
+// struct CAMetalLayer;
+// struct CATransformLayer;
+
+// #endif
+
 namespace OmegaWTK::Composition {
     /**
      Metal Backend Impl of the BDCompositionVisualTree using CALayers
      */
-    class MTLBDCALayerTree : public BDCompositionVisualTree {
-        MTLBDCompositionDeviceContext *deviceContext;
-        typedef BDCompositionVisualTree Parent;
+    class MTLCALayerTree : public BackendVisualTree {
+        // MTLBDCompositionDeviceContext *deviceContext;
+        typedef BackendVisualTree Parent;
         friend class MTLBDCompositionDeviceContext;
     public:
         /**
@@ -24,23 +34,24 @@ namespace OmegaWTK::Composition {
         struct Visual : public Parent::Visual {
             CAMetalLayer *metalLayer;
             CATransformLayer *transformLayer;
-            BDCompositionImageRenderTarget * imgTarget;
-            Core::SharedPtr<BDCompositionImage> img;
+            GERenderTargetContext imgRenderTaget;
             Core::Position pos;
             bool attachTransformLayer;
         };
     public:
-        MTLBDCALayerTree(MTLBDCompositionDeviceContext *device);
-        static Core::SharedPtr<MTLBDCALayerTree> Create(MTLBDCompositionDeviceContext *device);
+        MTLCALayerTree();
+        static Core::SharedPtr<MTLCALayerTree> Create();
         Core::SharedPtr<Parent::Visual> makeVisual(Core::SharedPtr<BDCompositionImageRenderTarget> & imgTarget,Core::SharedPtr<BDCompositionImage> &img);
         Core::SharedPtr<Parent::Visual> makeVisual(BDCompositionImageRenderTarget *imgTarget,Core::SharedPtr<BDCompositionImage> &img);
-        void setRootVisual(Core::SharedPtr<Parent::Visual> visual);
+        void setRootVisual(Core::SharedPtr<Parent::Visual> & visual);
         void drawNewCompImageToVisual(BDCompositionImageRenderTarget *imgTarget, Core::SharedPtr<BDCompositionImage> &img);
         void replaceRootVisual(Core::SharedPtr<Parent::Visual> visual);
         void replaceVisualWithTargetPtr(BDCompositionImageRenderTarget * imgTarget, Core::SharedPtr<Parent::Visual> visual);
         void addVisual(Core::SharedPtr<Parent::Visual> & visual);
         void layout();
     };
+
+    
 
 };
 

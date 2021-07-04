@@ -21,7 +21,7 @@ namespace OmegaWTK::Composition {
         /**
         Create a GERenderTarget Context
         */
-        GERenderTargetContext(OmegaGTE::SharedHandle<OmegaGTE::GERenderTarget> & renderTarget);
+        GERenderTargetContext(OmegaGTE::SharedHandle<OmegaGTE::GERenderTarget> renderTarget);
     };
 
     struct BackendCompRenderTarget {

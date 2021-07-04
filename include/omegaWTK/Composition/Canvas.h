@@ -114,6 +114,10 @@ namespace OmegaWTK {
      
     */
     class OMEGAWTK_EXPORT CanvasSurface {
+
+        friend class Layer;
+
+        Layer * parentLayer;
         
         CompositorClient *client;
 
@@ -124,6 +128,8 @@ namespace OmegaWTK {
     public:
 
         CanvasSurface(Core::Rect & rect,CompositorClient *client);
+
+        Layer * getParentLayer();
 
         void drawRect(Core::Rect & rect,Core::SharedPtr<Brush> & brush);
 

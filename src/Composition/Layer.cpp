@@ -8,8 +8,8 @@ namespace OmegaWTK::Composition {
 Layer::Layer(const Core::Rect &rect,
              CompositorClient *compClient)
     : surface_rect(rect),
-      parent_ptr(nullptr),needsNativeResize(false) {
-  
+      parent_ptr(nullptr),needsNativeResize(false),surface(std::make_shared<CanvasSurface>()){
+          surface->parentLayer = this;
 };
 
 void Layer::addSubLayer(SharedHandle<Layer> &layer) {
@@ -44,7 +44,11 @@ SharedHandle<CanvasSurface> & Layer::getSurface(){
 
 void Layer::resize(Core::Rect &newRect){
     surface_rect = newRect;
-    needsNativeResize = true;
+    parentLimb->getParentTree()->notifyObserversOfResize(this);
+};
+
+LayerTree::Limb * Layer::getParentLimb(){
+    return parentLimb;
 };
 
 //void Layer::redraw() { ownerCompositor->updateRequestedLayer(this); };
@@ -73,6 +77,24 @@ void LayerTree::setRootLimb(SharedHandle<Limb> & limb){
     rootLimb = limb;
 };
 
+void LayerTree::notifyObserversOfResize(Layer *layer){
+    for(auto & observer : observers){
+        observer->layerHasResized(layer);
+    };
+};
+
+void LayerTree::notifyObserversOfDisable(Layer *layer){
+    for(auto & observer : observers){
+        observer->layerHasDisabled(layer);
+    };
+};
+
+void LayerTree::notifyObserversOfEnable(Layer *layer){
+    for(auto & observer : observers){
+        observer->layerHasEnabled(layer);
+    };
+};
+
 LayerTree::Limb::Limb(const Core::Rect &rect,CompositorClient *compClient,ViewRenderTarget *renderTarget):limbRoot(new Layer(rect,compClient)),enabled(true),renderTarget(renderTarget){
     renderTarget->getNativePtr()->setLayerTreeLimb(this);
 };
@@ -81,9 +103,9 @@ void LayerTree::Limb::addLayer(SharedHandle<Layer> layer){
     limbRoot->addSubLayer(layer);
 };
 
-void LayerTree::Limb::commit(){
+// void LayerTree::Limb::commit(){
     
-};
+// };
 
 // void LayerTree::Limb::redraw(){
 //     limbRoot->ownerCompositor->updateRequestedLayerTreeLimb(this);
@@ -127,12 +149,18 @@ LayerTree::Limb * LayerTree::getLimbAtIndexFromParent(unsigned idx,Limb *parent)
     return body[parent][idx].get();
 };
 
+void LayerTree::addObserver(LayerTreeObserver * observer){
+    observers.push_back(observer);
+};
+
 LayerTree::~LayerTree(){
     
 };
 
 SharedHandle<LayerTree::Limb> LayerTree::createLimb(const Core::Rect & rect,CompositorClient *compClient,ViewRenderTarget *renderTarget){
-    return std::make_shared<LayerTree::Limb>(rect,compClient,renderTarget);
+    auto limb = std::make_shared<LayerTree::Limb>(rect,compClient,renderTarget);
+    limb->parentTree = this;
+    return limb;
 };
 
 

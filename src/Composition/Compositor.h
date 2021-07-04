@@ -67,7 +67,10 @@ namespace OmegaWTK::Composition {
     /**
      OmegaWTK's Composition Engine Frontend Interface
      */
-    class OMEGAWTK_EXPORT Compositor {
+    class OMEGAWTK_EXPORT Compositor : public LayerTreeObserver {
+
+        OmegaCommon::Vector<LayerTree *> targetLayerTrees;
+
         RenderTargetStore renderTargetStore;
 
         std::mutex queueMutex;
@@ -89,6 +92,9 @@ namespace OmegaWTK::Composition {
         std::future<RenderCommandStatus> executeCurrentRenderCommand();
 
     public:
+        void layerHasEnabled(Layer *layer) override;
+        void layerHasResized(Layer *layer) override;
+        void layerHasDisabled(Layer *layer) override;
         void scheduleCommand(UniqueHandle<CompositionRenderCommand> command);
         
         

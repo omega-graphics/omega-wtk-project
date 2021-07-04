@@ -52,6 +52,14 @@ namespace OmegaWTK::Composition {
     
 // };
 
+CanvasSurface::CanvasSurface(Core::Rect & rect,CompositorClient *client):rect(rect),client(client){
+
+};
+
+Layer * CanvasSurface::getParentLayer(){
+    return parentLayer;
+};
+
 void CanvasSurface::submitCommandToClient(VisualCommand * visual){
     client->queueVisualCommand(visual);
 };
