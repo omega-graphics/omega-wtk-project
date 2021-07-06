@@ -11,22 +11,33 @@ namespace OmegaWTK::Composition {
 
     class GERenderTargetContext {
         
-        OmegaGTE::SharedHandle<OmegaGTE::GERenderTarget> renderTarget;
-
-
+        OmegaGTE::SharedHandle<OmegaGTE::GENativeRenderTarget> renderTarget;
+        OmegaGTE::SharedHandle<OmegaGTE::OmegaTessalationEngineContext> tessContext;
+        bool __hasQueuedRenderJobs;
     public:
+        OmegaGTE::GERenderTarget *getRenderTarget();
+        bool hasQueuedRenderJobs();
         void renderToTarget(VisualCommand::Type type,void *params);
+        void applyEffectToTarget(CanvasLayerEffect::Type type,void *params);
+        /**
+         Commit all queued render jobs to GPU.
+        */
         void commit();
         
         /**
-        Create a GERenderTarget Context
+            Create a GERenderTarget Context
+            @param renderTarget
         */
-        GERenderTargetContext(OmegaGTE::SharedHandle<OmegaGTE::GERenderTarget> renderTarget);
+        GERenderTargetContext(OmegaGTE::SharedHandle<OmegaGTE::GENativeRenderTarget> & renderTarget);
     };
 
+    class BackendVisualTree;
+
     struct BackendCompRenderTarget {
-        GERenderTargetContext viewRenderTarget;
-        OmegaCommon::MapVec<CanvasSurface *,GERenderTargetContext> surfaceTargets;
+        GERenderTargetContext * viewRenderTarget;
+        Core::SharedPtr<BackendVisualTree> visualTree;
+        OmegaCommon::MapVec<CanvasSurface *,GERenderTargetContext *> surfaceTargets;
+        void renderVisualTree();
     };
 
 

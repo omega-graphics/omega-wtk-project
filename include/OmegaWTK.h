@@ -13,7 +13,7 @@
 // Composition Exports
 #include "omegaWTK/Composition/CompositorClient.h"
 #include "omegaWTK/Composition/Layer.h"
-#include "omegaWTK/Composition/LayerAnimation.h"
+#include "omegaWTK/Composition/Animation.h"
 #include "omegaWTK/Composition/Brush.h"
 #include "omegaWTK/Composition/GeometricGraphicsPath.h"
 #include "omegaWTK/Composition/FontEngine.h"

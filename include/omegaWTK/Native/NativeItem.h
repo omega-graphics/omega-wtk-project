@@ -10,7 +10,7 @@ namespace OmegaWTK {
 
         INTERFACE NativeLayerTreeLimb {
             public:
-            INTERFACE_METHOD(void,commit)
+            // INTERFACE_METHOD(void,commit)
         };
         /// Null Object Placeholder for native object!
         INTERFACE NativeItem {

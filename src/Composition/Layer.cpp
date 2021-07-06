@@ -8,7 +8,7 @@ namespace OmegaWTK::Composition {
 Layer::Layer(const Core::Rect &rect,
              CompositorClient *compClient)
     : surface_rect(rect),
-      parent_ptr(nullptr),needsNativeResize(false),surface(std::make_shared<CanvasSurface>()){
+      parent_ptr(nullptr),needsNativeResize(false),surface(std::make_shared<CanvasSurface>(surface_rect,compClient)){
           surface->parentLayer = this;
 };
 
@@ -135,6 +135,10 @@ void LayerTree::Limb::disable(){
 
 Layer * LayerTree::Limb::getRootLayer(){
     return limbRoot;
+};
+
+LayerTree *LayerTree::Limb::getParentTree(){
+    return parentTree;
 };
 
 LayerTree::Limb * LayerTree::getTreeRoot(){

@@ -72,7 +72,7 @@ namespace Composition {
             iterator end();
             void disable();
             void enable();
-            void commit();
+            // void commit();
             // void layout();
         };
     private:

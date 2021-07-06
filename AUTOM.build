@@ -12,7 +12,7 @@ subdir("./gte")
 third_party_dir = f"{root_out_dir}/third_party"
 gen_third_party_dir = f"{gen_root_out_dir}/third_party"
 
-assert(program_exists("cmake"))
+assert_expr(program_exists("cmake"))
 
 zlib_export = f"{gen_third_party_dir}/zlib/lib/libz.dylib"
 
@@ -87,7 +87,7 @@ ThirdParty(
     install="make install"
 )
 
-assert(program_exists("perl"))
+assert_expr(program_exists("perl"))
 
 ThirdParty(
     name="openssl",
@@ -114,18 +114,17 @@ elif is_win:
 
 
 Config("OmegaWTK_Config",[],[omega_wtk_include_dir],standard_defines)
+set_property("OmegaWTK_Config","configs",["icu__conf"])
 
-
-def OmegaWTKModule(name:str,sources:str,deps:"list[str]",configs:"list[str]"):
+def OmegaWTKModule(name:str,sources:str,deps:"list[str]"):
     SourceSet(f"OmegaWTK{name}",sources,deps)
-    set_property(f"OmegaWTK{name}","configs",["OmegaWTK_Config","OmegaGTE_conf","omega-common_conf"] + configs)
 
 
 core_srcs = glob("./src/Core/*.cpp")
 
-core_configs = ["icu__conf"]
 
-OmegaWTKModule(name="Core",sources=core_srcs,deps=["icu","openssl"],configs=core_configs)
+OmegaWTKModule(name="Core",sources=core_srcs,deps=["icu","openssl","OmegaGTE"])
+set_property("OmegaWTKCore","configs",["OmegaWTK_Config"])
 append_property("OmegaWTKCore","include_dirs",["./tools/assetc"])
 
 native_srcs = glob("./src/Native/*.cpp")
@@ -135,27 +134,30 @@ if is_mac:
 else:
     other_srcs = []
 
-OmegaWTKModule(name="Native",sources=native_srcs + other_srcs,deps=["OmegaWTKCore"],configs=core_configs)
+OmegaWTKModule(name="Native",sources=native_srcs + other_srcs,deps=["OmegaWTKCore"])
 append_property("OmegaWTKNative","include_dirs",["./src/Native/private_include"])
 
 media_srcs = glob("./src/Media/*.cpp")
 
-OmegaWTKModule(name="Media",sources=media_srcs,deps=["OmegaWTKCore","libpng","libjpeg-turbo","libtiff"],configs=["libpng__conf","libjpeg-turbo__conf","libtiff__conf"] + core_configs)
+OmegaWTKModule(name="Media",sources=media_srcs,deps=["OmegaWTKCore"])
+append_property("OmegaWTKMedia","configs",["libpng__conf","libjpeg-turbo__conf","libtiff__conf"])
 
 composition_srcs = glob("./src/Composition/*.cpp") + glob("./src/Composition/backend/*.cpp")
 if is_mac:
-    composition_srcs += ["./src/Composition/backend/mtl/CTFontEngine.mm"]
+    composition_srcs += glob("./src/Composition/backend/mtl/*.mm")
 
-OmegaWTKModule(name="Composition",sources=composition_srcs,deps=["OmegaWTKCore","OmegaWTKNative","OmegaWTKMedia"],configs=core_configs)
+OmegaWTKModule(name="Composition",sources=composition_srcs,deps=["OmegaWTKCore","OmegaWTKNative","OmegaWTKMedia"])
 append_property("OmegaWTKComposition","include_dirs",["./src/Native/private_include"])
 ui_srcs = glob("./src/UI/*.cpp")
 
-OmegaWTKModule(name="UI",sources=ui_srcs,deps=["OmegaWTKCore","OmegaWTKComposition","OmegaWTKNative","OmegaWTKMedia"],configs=core_configs)
+OmegaWTKModule(name="UI",sources=ui_srcs,deps=["OmegaWTKCore","OmegaWTKComposition","OmegaWTKNative","OmegaWTKMedia"])
 
 conf_out = f"./conf_out"
 
 configure("./src/Info.plist.in",f"{conf_out}/OmegaWTK_res/Info.plist")
 configure("./src/version.plist.in",f"{conf_out}/OmegaWTK_res/version.plist")
+
+
 
 if is_mac:
     FrameworkBundle("OmegaWTK",
@@ -166,8 +168,8 @@ if is_mac:
     "OmegaWTKMedia",
     "OmegaWTKUI"],
     "Frameworks",OMEGAWTK_VERSION)
-    confgs = ["OmegaWTK_Config","OmegaGTE_conf","omega-common_conf"] + core_configs + ["libpng__conf","libjpeg-turbo__conf","libtiff__conf"]
-    set_property("OmegaWTK","configs",confgs)
+
+    set_property("OmegaWTK","configs",["OmegaWTK_Config"])
     set_property("OmegaWTK","resources",[f"{conf_out}/OmegaWTK_res/Info.plist",f"{conf_out}/OmegaWTK_res/version.plist"])
     set_property("OmegaWTK","frameworks",["Cocoa.framework","QuartzCore.framework","OmegaGTE.framework"])
     set_property("OmegaWTK","embedded_frameworks",["OmegaGTE.framework"])
@@ -175,4 +177,16 @@ if is_mac:
 
 
 
+def OmegaWTKTest(name:str,app_id:str,sources:"list[str]"):
+    if is_mac:
+        BUNDLE_ID = app_id
+        APPNAME = name
+        AppBundle(name,sources + ["./target/macos/main.mm","./target/macos/AppDelegate.mm"],["OmegaWTK"],"Apps")
+        configure("./target/macos/Info.plist.in",f"{conf_out}/{name}_res/Info.plist")
+        set_property(name,"info_plist",f"{conf_out}/{name}_res/Info.plist")
+        set_property(name,"resources",["./target/macos/MainMenu.nib"])
+        set_property(name,"frameworks",["OmegaWTK.framework"])
+        set_property(name,"embedded_frameworks",["OmegaWTK.framework"])
 
+
+OmegaWTKTest(name="RootWidgetTest",app_id="org.omegagraphics.RootWidgetTest",sources=["./tests/RootWidget/Main.cpp"])

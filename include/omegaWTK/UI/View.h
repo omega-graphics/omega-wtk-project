@@ -5,7 +5,7 @@
 
 #include "omegaWTK/Composition/Layer.h"
 #include "omegaWTK/Composition/CompositorClient.h"
-#include "omegaWTK/Composition/LayerAnimation.h"
+#include "omegaWTK/Composition/Animation.h"
 #include "omegaWTK/Native/NativeItem.h"
 #include "omegaWTK/Native/NativeEvent.h"
 #include "omegaWTK/Native/NativeApp.h"

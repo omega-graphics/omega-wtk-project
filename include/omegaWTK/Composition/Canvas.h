@@ -3,7 +3,7 @@
 #include "FontEngine.h"
 #include "Brush.h"
 #include "omegaWTK/Media/ImgCodec.h"
-#include "LayerAnimation.h"
+#include "Animation.h"
 
 #include <algorithm>
 
@@ -108,6 +108,8 @@ namespace OmegaWTK {
         VisualCommand() = delete;
         VisualCommand(Type type,void * params):type(type),params(params){};
     };
+
+    class Layer;
 
     class CompositorClient;
     /**
