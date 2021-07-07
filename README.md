@@ -1,12 +1,20 @@
 # OmegaWTK (Omega-Widget Tool Kit)
  A cross-platform widget toolkit written in c++
+    
+
+---
 
 ### Build 
 
->NOTE: Please clone the `omega-graphics/autom` repo and build the contents of that repo before continung
+
+##### Requirements:
+
+> Clone the [`omega-graphics/autom`](https://github.com/omega-graphics/autom) repo and follow the instructions listed in the README
+
+
 1. Clone the repo
 ```sh
-clone https://github.com/omega-graphics/omega-wtk-project ./wtk
+autom-clone https://github.com/omega-graphics/omega-wtk-project ./wtk
 ```
 2. Configure the build
 ```sh
@@ -17,8 +25,15 @@ autom --mode gn --out out
 ```sh
 ninja -C out
 ```
-
+<!-- 
 4. Install
 ```sh
-autom-install --prefix=$USERS_PATH/OmegaWTK ./out
-```
+autom-install --prefix ~/OmegaWTK ./out
+``` -->
+
+
+### License
+
+Apache 2.0
+
+See [LICENSE](LICENSE)
