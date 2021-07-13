@@ -54,7 +54,7 @@ namespace OmegaWTK {
         */
         void attachToWindow(SharedHandle<AppWindow> & window);
 
-        ~WidgetTreeHost() = default;
+        ~WidgetTreeHost();
     };
 };
 

@@ -6,13 +6,13 @@
 
 namespace OmegaWTK::Native{
     namespace Win {
-        void updateAllHWNDPos(UINT root_wnd_height,Core::Vector<HWND> * hwnds_to_update);
+        void updateAllHWNDPos(UINT root_wnd_height,OmegaCommon::Vector<HWND> * hwnds_to_update);
         /// Factory for registering and creating HWNDs.
         /// NOTE: Only instiantitate this class once!
         class HWNDFactory {
-            Core::Vector<Core::String> wndclassregistry;
+            OmegaCommon::Vector<OmegaCommon::String> wndclassregistry;
             /// Root hwnd children!
-            Core::Vector<HWND> all_hwnds;
+            OmegaCommon::Vector<HWND> all_hwnds;
             static LRESULT WndProc(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
             static LRESULT WndProc2(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
             public:

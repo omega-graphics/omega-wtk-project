@@ -22,7 +22,6 @@ class View;
 namespace Composition {
     
     class ViewRenderTarget;
-    class Compositor;
         /**
             A mutlifeatured surface for composing visuals on.
          */

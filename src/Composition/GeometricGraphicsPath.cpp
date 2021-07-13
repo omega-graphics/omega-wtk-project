@@ -8,7 +8,7 @@ using namespace OmegaGTE;
 
 Core::SharedPtr<GeometricGraphicsPath> RoundedRectFrame(Core::RoundedRect rect,unsigned width){
     float delta_w = width/2.f;
-    
+        
     GVectorPath2D path_a({rect.pos.x + delta_w,rect.pos.y + rect.rad_y});
     GVectorPath2D path_b({rect.pos.x - delta_w,rect.pos.y + rect.rad_y});
     /// Left Side of Rect

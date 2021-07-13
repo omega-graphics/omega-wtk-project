@@ -1,82 +1,99 @@
 #include "DCVisualTree.h"
 #include <iostream>
-#include "DXBDCompositionRenderTarget.h"
+#include "NativePrivate/win/HWNDItem.h"
 
 
 
 namespace OmegaWTK::Composition {
-    
-    DCVisualTree::DCVisualTree(DXBDCompositionDevice *device):device(device),hwndTarget(nullptr){};
 
-    DCVisualTree::Visual::Visual(IDCompositionVisual2 *v,Core::SharedPtr<BDCompositionImageRenderTarget> &img,Core::Position &pos):visual(v),img(img),pos(pos){
-        
+    IDCompositionDevice2 *comp_device = nullptr;
+    // IDCompositionDevice3 *comp_device_2 = nullptr;
+
+    Core::SharedPtr<BackendVisualTree> CreateVisualTree(){
+        return DCVisualTree::Create();
     };
+
+    OmegaGTE::NativeRenderTargetDescriptor * makeDescForViewRenderTarget(ViewRenderTarget *renderTarget){
+        auto desc = new OmegaGTE::NativeRenderTargetDescriptor;
+        auto hwndItem =  (Native::Win::HWNDItem *)renderTarget->getNativePtr();
+        desc->hwnd = hwndItem->hwnd;
+        desc->isHwnd = true;
+        return desc;
+    };
+    OmegaGTE::NativeRenderTargetDescriptor * makeDescForCanvasSurface(CanvasSurface *surface){
+       auto desc = new OmegaGTE::NativeRenderTargetDescriptor;
+       desc->isHwnd = false;
+       auto & rect = surface->getParentLayer()->getLayerRect();
+
+       UINT dpi = GetDpiFromDpiAwarenessContext(GetThreadDpiAwarenessContext());
+       float scaleFactor = FLOAT(dpi)/96.f;
+
+       desc->height = rect.h * scaleFactor;
+       desc->width = rect.w * scaleFactor;
+       return desc;
+    };
+
+    
+    DCVisualTree::DCVisualTree():hwndTarget(nullptr){
+        if(comp_device == nullptr) {
+            IDCompositionDesktopDevice *dev;
+            auto hr = DCompositionCreateDevice3(NULL,IID_PPV_ARGS(&dev));
+            if(FAILED(hr)){
+
+            };
+            comp_device = dev;
+        }
+    };
+
+    // DCVisualTree::Visual::Visual(IDCompositionVisual2 *v,Core::Position &pos):visual(v),img(img),pos(pos){
+        
+    // };
 
     DCVisualTree::Visual::~Visual(){
         visual->RemoveAllVisuals();
         Core::SafeRelease(&visual);
     };
 
-    Core::SharedPtr<BDCompositionVisualTree::Visual> DCVisualTree::makeVisual(Core::SharedPtr<BDCompositionImageRenderTarget> &img){
-        DXBDCompositionImageRenderTarget *dxImgTarget = (DXBDCompositionImageRenderTarget *)img.get();
+    Core::SharedPtr<BackendVisualTree::Visual> DCVisualTree::makeVisual(GERenderTargetContext & renderContext,
+                                                            OmegaGTE::NativeRenderTargetDescriptor & targetDesc,
+                                                            Core::Position & pos){
+        
+        auto imgTarget = (OmegaGTE::GENativeRenderTarget *)renderContext.getRenderTarget();
+        IDXGISwapChain3 *swapChain = (IDXGISwapChain3 *)imgTarget->getSwapChain();
 
         
         HRESULT hr;
         IDCompositionVisual2 *v;
-        hr = device->dcomp_device_1->CreateVisual(&v);
+        hr = comp_device->CreateVisual(&v);
         if(FAILED(hr)){
 
         };
 
-        hr = v->SetContent(dxImgTarget->dxgi_swap_chain_3.get());
+        hr = v->SetContent(swapChain);
         if(FAILED(hr)){
             std::stringstream ss;
             ss << std::hex << hr;
             MessageBoxA(HWND_DESKTOP,(std::string("Failed to set Content of Visual. ERROR:") + ss.str()).c_str(),NULL,MB_OK);
         };
         // rc.visual = nullptr;
-        return std::make_shared<Visual>(v,img,dxImgTarget->rect.pos);
+        auto _v = new Visual{renderContext};
+        _v->pos = pos;
+        _v->visual = v;
+        return std::shared_ptr<Visual>(_v);
     };
 
-    void DCVisualTree::setRootVisual(Core::SharedPtr<Parent::Visual> visual){
-        root_v = visual;
+    void DCVisualTree::setRootVisual(Core::SharedPtr<Parent::Visual> & visual){
+        root = visual;
     };
 
-    void DCVisualTree::replaceRootVisual(Core::SharedPtr<Parent::Visual> visual){
-        root_v.reset();
-        root_v = visual;
-    };
-
-    // void DCVisualTree::replaceVisualWithTargetPtr(Core::SharedPtr<BDCompositionImageRenderTarget> &imgTarget,Core::SharedPtr<Parent::Visual>  visual){
-    //     for(auto & v : body){
-    //         Visual *_v = (Visual *)v.get();
-    //         if(_v->img == imgTarget){
-    //             v = visual;
-    //             break;
-    //         };
-    //     };
-    // };
-
-    void DCVisualTree::replaceVisualWithTargetPtr(BDCompositionImageRenderTarget *imgTarget, Core::SharedPtr<Parent::Visual> visual){
-        for(auto & v : body){
-            Visual *_v = (Visual *)v.get();
-            if(_v->img.get() == imgTarget){
-                v = visual;
-                break;
-            };
-        };
-    };
 
     void DCVisualTree::addVisual(Core::SharedPtr<Parent::Visual> & visual){
         body.push_back(visual);
     };
 
-    void DCVisualTree::layout(){
 
-    };
-
-     Core::SharedPtr<BDCompositionVisualTree> DCVisualTree::Create(DXBDCompositionDevice *device){
-        return std::make_shared<DCVisualTree>(device);
+     Core::SharedPtr<BackendVisualTree> DCVisualTree::Create(){
+        return std::make_shared<DCVisualTree>();
     };
 
 };

@@ -28,10 +28,10 @@ namespace OmegaWTK {
             void setLayerTreeLimb(NativeLayerTreeLimb *limb){ layerTreelimb = limb;};
 
             INTERFACE_METHOD(void,resize,Core::Rect & newRect)
-            INTERFACE_METHOD(void *,getBinding)
+            INTERFACE_METHOD(void *,getBinding,)
 
-            INTERFACE_METHOD(void,enable)
-            INTERFACE_METHOD(void,disable)
+            INTERFACE_METHOD(void,enable,)
+            INTERFACE_METHOD(void,disable,)
 
             /// @name ScrollItem Methods
             ///@{

@@ -8,6 +8,10 @@ namespace OmegaWTK {
 
     };
 
+    WidgetTreeHost::~WidgetTreeHost(){
+        
+    };
+
     WidgetTreeHost * WidgetTreeHost::Create(){
         return new WidgetTreeHost();
     };

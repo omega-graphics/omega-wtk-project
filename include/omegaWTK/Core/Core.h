@@ -2,6 +2,8 @@
 
 #include <OmegaGTE.h>
 
+#include <cassert>
+
 /// Regex Lib
 // #define PCRE2_CODE_UNIT_WIDTH 8
 // #include <pcre2.h>
@@ -21,13 +23,16 @@ namespace OmegaWTK {
 
     static OmegaGTE::GTE gte;
 
+    #ifdef INTERFACE 
+    #undef INTERFACE
+    #endif
     #define INTERFACE class
 
-    #define INTERFACE_METHOD(type,name,args...) virtual type name(args) = 0;
+    #define INTERFACE_METHOD(type,name,...) virtual type name(__VA_ARGS__) = 0;
 
     #define DELEGATE INTERFACE
     
-    #define DELEGATE_METHOD(type,name,args...) INTERFACE_METHOD(type,name,args)
+    #define DELEGATE_METHOD(type,name,...) INTERFACE_METHOD(type,name,__VA_ARGS__)
     
     typedef enum : int {
         CodeOk,

@@ -3,7 +3,7 @@
 
 namespace OmegaWTK::Composition {
 
-    void cpp_str_to_cpp_wstr(Core::String str,std::wstring & res){
+    void cpp_str_to_cpp_wstr(OmegaCommon::String str,OmegaCommon::WString & res){
         CStringW w_str(str.data());
         res = std::move(w_str);
     };
@@ -45,18 +45,31 @@ namespace OmegaWTK::Composition {
         void _updateStrInternal(){
 
         };
-        Core::String string;
     public:
+        void reload(){
+            HRESULT hr;
+            FLOAT scaleFactor = FLOAT(GetDpiForWindow(GetForegroundWindow()))/96.f;
+            DWriteFont *dwrite_font = (DWriteFont *)font.get();
+            
+            Core::SafeRelease(&textLayout);
+
+            hr = FontEngine::instance->dwrite_factory->CreateTextLayout((const WCHAR *)text_val.getBuffer(),text_val.length(),dwrite_font->textFormat.get(),rect.w * scaleFactor,rect.h * scaleFactor,&textLayout);
+            if(FAILED(hr)){
+                // MessageBox!!
+                exit(1);
+            };
+        };
         void * getNative(){
             return (void *)textLayout.get();
         };
-        DWriteTextRect(Core::String & _val,Core::SharedPtr<Font> & font,Core::Rect & rect):TextRect(_val,font,rect){
+        DWriteTextRect(OmegaWTK::UniString & _val,Core::SharedPtr<Font> & font,Core::Rect & rect):TextRect(_val,font,rect){
             HRESULT hr;
-            std::wstring textVal;
+            
+           
             FLOAT scaleFactor = FLOAT(GetDpiForWindow(GetForegroundWindow()))/96.f;
             DWriteFont *dwrite_font = (DWriteFont *)font.get();
-            cpp_str_to_cpp_wstr(_val,textVal);
-            hr = FontEngine::instance->dwrite_factory->CreateTextLayout(textVal.c_str(),textVal.size(),dwrite_font->textFormat.get(),rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor,&textLayout);
+            
+            hr = FontEngine::instance->dwrite_factory->CreateTextLayout((const WCHAR *)_val.getBuffer(),_val.length(),dwrite_font->textFormat.get(),rect.w * scaleFactor,rect.h * scaleFactor,&textLayout);
             if(FAILED(hr)){
                 // MessageBox!!
                 exit(1);
@@ -87,7 +100,7 @@ namespace OmegaWTK::Composition {
         };
     };
 
-    SharedHandle<TextRect> TextRect::Create(Core::String &_val, Core::SharedPtr<Font> &font, Core::Rect rect){
+    SharedHandle<TextRect> TextRect::Create(OmegaWTK::UniString &_val, Core::SharedPtr<Font> &font, Core::Rect rect){
         return std::make_shared<DWriteTextRect>(_val,font,rect);
     };
 

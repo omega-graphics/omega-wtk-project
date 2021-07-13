@@ -3,11 +3,12 @@
 #include "WinAppWindow.h"
 #include "omegaWTK/Native/NativeApp.h"
 #include <sstream>
-#pragma comment(lib,"gdi32.lib")
+
+#pragma comment(lib,"gdi32.lib") 
 
 namespace OmegaWTK::Native::Win {
     
-    void updateAllHWNDPos(UINT root_wnd_height,Core::Vector<HWND> * hwnds_to_update){
+    void updateAllHWNDPos(UINT root_wnd_height,OmegaCommon::Vector<HWND> * hwnds_to_update){
      RECT rc;
      auto it = hwnds_to_update->begin();
      HDWP hdwp = BeginDeferWindowPos(hwnds_to_update->size());
@@ -115,7 +116,7 @@ namespace OmegaWTK::Native::Win {
         
         // unsigned wndHeight = rc.bottom - rc.top;
         // unsigned height = rect.dimen.minHeight * scaleFactor;
-        HWND hwnd = CreateWindowExA(ext_style,MAKEINTATOM(atom),name,base_style,rect.pos.x *scaleFactor,(rc.bottom - (rect.dimen.minHeight) * scaleFactor) - (rect.pos.y * scaleFactor),rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor,wind_parent,NULL,hInst,custom_params);
+        HWND hwnd = CreateWindowExA(ext_style,MAKEINTATOM(atom),name,base_style,rect.pos.x *scaleFactor,(rc.bottom - (rect.h) * scaleFactor) - (rect.pos.y * scaleFactor),rect.w * scaleFactor,rect.h * scaleFactor,wind_parent,NULL,hInst,custom_params);
         // UpdateWindow(hwnd);
         BLENDFUNCTION blend = { 0 };
         blend.BlendOp = AC_SRC_OVER;
@@ -137,8 +138,8 @@ namespace OmegaWTK::Native::Win {
         // MessageBox(HWND_DESKTOP,"Making Window from Atom","NOTE",MB_OK);
         FLOAT scaleFactor = FLOAT(dpi)/96.f;
         
-        auto y = rc.bottom - ((rect.dimen.minHeight - rect.pos.y) * scaleFactor);
-        HWND hwnd = CreateWindowA(MAKEINTATOM(atom),name,base_style,CW_USEDEFAULT,CW_USEDEFAULT,rect.dimen.minWidth * scaleFactor,rect.dimen.minHeight * scaleFactor,HWND_DESKTOP,NULL,hInst,custom_params);
+        auto y = rc.bottom - ((rect.h - rect.pos.y) * scaleFactor);
+        HWND hwnd = CreateWindowA(MAKEINTATOM(atom),name,base_style,CW_USEDEFAULT,CW_USEDEFAULT,rect.w * scaleFactor,rect.h * scaleFactor,HWND_DESKTOP,NULL,hInst,custom_params);
         std::ostringstream ss;
         RECT wndRECT;
         GetClientRect(hwnd,&wndRECT);

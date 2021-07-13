@@ -94,11 +94,11 @@ public:
 };
 
 #define WIDGET_TEMPLATE_BEGIN()
-#define WIDGET_TEMPLATE_VIEW(class_name,args)
+#define WIDGET_TEMPLATE_VIEW(class_name,...)
 #define WIDGET_TEMPLATE_END()
 
 #define WIDGET_CONSTRUCTOR_DEFAULT(class_name) class_name(const Core::Rect & rect,WidgetTreeHost *parentHost,SharedHandle<Widget> parent)
-#define WIDGET_CONSTRUCTOR(class_name,params...) class_name(const Core::Rect & rect,WidgetTreeHost *parentHost,SharedHandle<Widget> parent,params)
+#define WIDGET_CONSTRUCTOR(class_name,...) class_name(const Core::Rect & rect,WidgetTreeHost *parentHost,SharedHandle<Widget> parent,__VA_ARGS__)
 #define WIDGET_CONSTRUCT_SUPER() Widget(rect,parentHost,parent)
 
 #define WIDGET_NOTIFY_OBSERVERS_SHOW() notifyObservers(Widget::Show,nullptr)

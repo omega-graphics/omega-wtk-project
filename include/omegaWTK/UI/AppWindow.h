@@ -55,15 +55,13 @@ class AppWindowDelegate;
         struct SystemButton {
             Core::Rect rect;
             Composition::Color bkgrd;
-            SharedImageHandle img;
-            Composition::LayerAnimationController animController;
+            SharedHandle<Media::BitmapImage> img;
+            Composition::AnimationController animController;
         };
         void setUseStandardSystemButtons(bool use);
         void setCloseButton(SharedHandle<SystemButton> & button);
         void setMaxmizeButton(SharedHandle<SystemButton> & button);
         void setMinimizeButton(SharedHandle<SystemButton> & button);
-
-        void setMenuStyle(SharedHandle<Composition::MenuStyle> & style);
 #endif
 
 #if TARGET_MACOS

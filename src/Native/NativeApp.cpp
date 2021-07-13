@@ -66,9 +66,9 @@ RECT __get_hwnd_real_coords(HWND hwnd){
     RECT rc;
     auto & _rect = item->wndrect;
     rc.left = _rect.pos.x;
-    rc.right = _rect.pos.x + _rect.dimen.minWidth;
+    rc.right = _rect.pos.x + _rect.w;
     rc.bottom = _rect.pos.y;
-    rc.top = _rect.pos.y + _rect.dimen.minHeight;
+    rc.top = _rect.pos.y + _rect.h;
     return rc;
 };
 

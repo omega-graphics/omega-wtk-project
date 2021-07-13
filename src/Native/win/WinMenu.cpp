@@ -20,7 +20,7 @@ namespace OmegaWTK::Native::Win {
          Constructs a Regular Menu Item
          NOTE: Only Initalizes info!
         */
-        WinMenuItem(const Core::String & name,WinMenu *parent,bool hasSubMenu,WinMenu *subMenu);
+        WinMenuItem(const OmegaCommon::String & name,WinMenu *parent,bool hasSubMenu,WinMenu *subMenu);
         /**
          Constructs a Menu Seperator Item
          NOTE: Only Initalizes info!
@@ -41,7 +41,7 @@ namespace OmegaWTK::Native::Win {
             HMENU hmenu;
             MENUINFO info;
             friend class WinMenuItem;
-            Core::Vector<WinMenuItem *> items;
+            OmegaCommon::Vector<WinMenuItem *> items;
             void insertMenuItem(NMI menu_item, unsigned idx) {
                 WinMenuItem *item = (WinMenuItem *)menu_item;
                 item->idx = idx;
@@ -67,7 +67,7 @@ namespace OmegaWTK::Native::Win {
                 if(hasDelegate)
                     delegate->onSelectItem(idx);
             };
-            WinMenu(const Core::String & name){
+            WinMenu(const OmegaCommon::String & name){
 
                 info.dwMenuData = (ULONG_PTR)this;
                 info.cbSize = sizeof(info);
@@ -89,7 +89,7 @@ namespace OmegaWTK::Native::Win {
             };
         };
 
-        WinMenuItem::WinMenuItem(const Core::String &name,WinMenu *parent,bool hasSubMenu,WinMenu *subMenu):subMenu(subMenu),hasSubMenu(hasSubMenu),parent(parent){
+        WinMenuItem::WinMenuItem(const OmegaCommon::String &name,WinMenu *parent,bool hasSubMenu,WinMenu *subMenu):subMenu(subMenu),hasSubMenu(hasSubMenu),parent(parent){
             info.cbSize = sizeof(info);
             info.dwItemData = (ULONG_PTR)this;
             info.fMask = MIIM_STRING | MIIM_DATA | MIIM_STATE;
@@ -114,10 +114,10 @@ namespace OmegaWTK::Native::Win {
         };
 
 
-    NM make_win_menu(const Core::String &name){
+    NM make_win_menu(const OmegaCommon::String &name){
         return new WinMenu(name);
     };
-    NMI make_win_menu_item(const Core::String & str,NM parent,bool hasSubMenu,NM subMenu){
+    NMI make_win_menu_item(const OmegaCommon::String & str,NM parent,bool hasSubMenu,NM subMenu){
         return new WinMenuItem(str,(WinMenu *)parent,hasSubMenu,(WinMenu *)subMenu);
     };
     NMI make_win_menu_seperator(){

@@ -1,6 +1,9 @@
-#include "omegaWTK/Core/Core.h"
-#include "../BDCompositionVisualTree.h"
-#include "DXBDCompositionDevice.h"
+#include "../RenderTarget.h"
+#include "../VisualTree.h"
+
+#include <dcomp.h>
+
+#pragma comment(lib,"dcomp.lib")
 
 
 #ifndef OMEGAWTK_COMPOSITION_DX_DCVISUALTREE_H
@@ -10,29 +13,25 @@ namespace OmegaWTK::Composition {
 /**
      DirectX Backend Impl of the BDCompositionVisualTree using IDCompositionVisuals
 */
-class DCVisualTree : public BDVisualTree {
-    DXBDCompositionDevice *device;
+class DCVisualTree : public BackendVisualTree {
     Core::UniqueComPtr<IDCompositionTarget> hwndTarget;
-    typedef BDCompositionVisualTree Parent;
-    friend class DXBDCompositionDeviceContext;
+    typedef BackendVisualTree Parent;
     public:
     struct Visual : Parent::Visual {
         IDCompositionVisual2 * visual;
         IDCompositionVisual2 * shadowVisual = nullptr;
-        Core::SharedPtr<BDCompositionImageRenderTarget> img;
+        // OmegaGTE::SharedHandle<OmegaGTE::GETextureRenderTarget> img;
         Core::Position pos;
-        Visual(IDCompositionVisual2 *v,Core::SharedPtr<BDCompositionImageRenderTarget> &img,Core::Position &pos);
         ~Visual();
     };
-    DCVisualTree(DXBDCompositionDevice *device);
-    static Core::SharedPtr<BDCompositionVisualTree> Create(DXBDCompositionDevice *device);
-    Core::SharedPtr<Parent::Visual> makeVisual(Core::SharedPtr<BDCompositionImageRenderTarget> & imgRenderTarget);
-    void replaceRootVisual(Core::SharedPtr<Parent::Visual> visual);
-    // void replaceVisualWithTargetPtr(Core::SharedPtr<BDCompositionImageRenderTarget> & imgTarget,Core::SharedPtr<Parent::Visual>  visual);
-    void replaceVisualWithTargetPtr(BDCompositionImageRenderTarget *imgTarget, Core::SharedPtr<Parent::Visual> visual);
-    void setRootVisual(Core::SharedPtr<Parent::Visual> visual);
-    void addVisual(Core::SharedPtr<Parent::Visual> & visual);
-    void layout();
+    DCVisualTree();
+    static Core::SharedPtr<BackendVisualTree> Create();
+    void addVisual(Core::SharedPtr<Parent::Visual> & visual) override;
+    Core::SharedPtr<Parent::Visual> makeVisual(GERenderTargetContext & renderContext,
+                                                            OmegaGTE::NativeRenderTargetDescriptor & targetDesc,
+                                                            Core::Position & pos) override;
+    void setRootVisual(Core::SharedPtr<Parent::Visual> & visual) override;
+   
 };
 
 };

@@ -159,7 +159,7 @@ namespace OmegaWTK::Native::Win {
                         UINT width = LOWORD(lParam);
                         UINT height = HIWORD(lParam);
                         updateAllHWNDPos(height,&raw_children);
-                        wndrect = OmegaWTK::Rect(wndrect.pos.x,wndrect.pos.y,FLOAT(width)/scaleFactor,FLOAT(height)/scaleFactor);
+                        wndrect = OmegaWTK::Core::Rect {wndrect.pos.x,wndrect.pos.y,FLOAT(width)/scaleFactor,FLOAT(height)/scaleFactor};
                         auto params = new Native::WindowWillResize(wndrect);
                         emitIfPossible(new NativeEvent(NativeEvent::WindowWillResize,params));
                     };

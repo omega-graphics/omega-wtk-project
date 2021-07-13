@@ -14,8 +14,8 @@ namespace OmegaWTK::Native {
             bool isScrollView;
             protected:
             HWNDItem *parent;
-            Core::Vector<HWND> raw_children;
-            Core::Vector<HWNDItem *> children;
+            OmegaCommon::Vector<HWND> raw_children;
+            OmegaCommon::Vector<HWNDItem *> children;
             UINT currentDpi;
             bool isTracking;
             bool hovered;
