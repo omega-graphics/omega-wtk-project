@@ -27,7 +27,7 @@ LANGUAGE 9, 1
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 
-IDI_@APPNAME@       ICON         "@APPNAME@.ico"
+IDI_@APPNAME@       ICON         "app.ico"
 IDI_SMALL               ICON         "small.ico"
 
 /////////////////////////////////////////////////////////////////////////////

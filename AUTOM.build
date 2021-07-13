@@ -32,7 +32,7 @@ ThirdParty(
 )
 
 if is_win:
-    libpng_export = [f"{gen_third_party_dir}/libpng/lib/libpng16.lib",f"{gen_third_party_dir}/libpng/bin/libpng16.dll"]
+    libpng_export = [f"{gen_third_party_dir}/libpng/bin/libpng16.dll",f"{gen_third_party_dir}/libpng/lib/libpng16.lib"]
 elif is_mac:
     libpng_export = [f"{gen_third_party_dir}/libpng/lib/libpng.dylib"]
 
@@ -250,6 +250,8 @@ elif is_win:
 
     set_property("OmegaWTK","configs",["OmegaWTK_Config"])
 
+if is_win:
+    EMBED = abspath("./target/windows/app.exe.manifest")
 
 def OmegaWTKTest(name:str,app_id:str,sources:"list[str]"):
     if is_mac:
@@ -261,6 +263,32 @@ def OmegaWTKTest(name:str,app_id:str,sources:"list[str]"):
         set_property(name,"resources",["./target/macos/MainMenu.nib"])
         set_property(name,"frameworks",["OmegaWTK.framework"])
         set_property(name,"embedded_frameworks",["OmegaWTK.framework"])
+    elif is_win:
+        APPNAME = name
+        configure("./target/windows/manifest.rc.in",f"{conf_out}/{name}_res/manifest.rc")
+        configure("./target/windows/resource_script.rc.in",f"{conf_out}/{name}_res/resource_script.rc")
+        configure("./target/windows/resource.h.in",f"{conf_out}/{name}_res/resource.h")
+        configure("./target/windows/mmain.cpp.in",f"{conf_out}/{name}_res/mmain.cpp")
+        Copy(f"{name}_res_copy",[
+            f"{conf_out}/{name}_res/mmain.cpp",
+            f"{conf_out}/{name}_res/resource.h",
+            f"{conf_out}/{name}_res/resource_script.rc",
+            f"{conf_out}/{name}_res/manifest.rc",
+            "./target/windows/app.ico",
+            "./target/windows/small.ico",
+            "./target/windows/targetver.h"],[],f"{gen_root_out_dir}/{name}_res")
+
+        Executable(name,[
+            f"{gen_root_out_dir}/{name}_res/mmain.cpp",
+            f"{gen_root_out_dir}/{name}_res/resource_script.rc",
+            f"{gen_root_out_dir}/{name}_res/manifest.rc"] + sources,[f"{name}_res_copy","OmegaWTK"],f"testapps/{name}")
+        append_property(name,"defines",["WINDOWS_PRIVATE"])
+
+        Copy(f"{name}_deps_copy",[
+            f"{root_out_dir}/lib/OmegaGTE.dll",
+            f"{root_out_dir}/lib/OmegaWTK.dll",
+            zlib_export[0],libpng_export[0],libjpeg_turbo_export[0],libtiff_export[0]] + icu_lib_exports,[name],f"{gen_root_out_dir}/testapps/{name}")
+
 
 
 OmegaWTKTest(name="RootWidgetTest",app_id="org.omegagraphics.RootWidgetTest",sources=["./tests/RootWidget/Main.cpp"])
