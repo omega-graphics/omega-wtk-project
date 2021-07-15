@@ -8,6 +8,7 @@ parser.add_argument("--out-dir",type=str,nargs="?")
 parser.add_argument("--config",type=str,nargs="?")
 parser.add_argument("--build",type=str,nargs="?")
 parser.add_argument("--install",type=str,nargs="?")
+parser.add_argument("--install-name",type=str,nargs="?")
 
 args = parser.parse_args()
 
@@ -31,3 +32,6 @@ if args.build:
     os.system(args.build)
 if args.install:
     os.system(args.install)
+if args.install_name:
+    os.chdir(dest_dir)
+    os.system(args.install_name)

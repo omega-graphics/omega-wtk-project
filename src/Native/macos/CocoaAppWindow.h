@@ -12,13 +12,13 @@ class CocoaAppWindow : public NativeWindow {
     OmegaWTKNativeCocoaAppWindowController *windowController;
     OmegaWTKNativeCocoaAppWindowDelegate *windowDelegate;
 public:
-    NSWindow *window;
     NativeEventEmitter *getEmitter();
     void disable();
     void enable();
     void attachWidgets();
     void initialDisplay();
     void close();
+    __strong NSWindow *getWindow();
     CocoaAppWindow(Core::Rect & rect,NativeEventEmitter *emitter);
     // ~CocoaAppWindow();
 };

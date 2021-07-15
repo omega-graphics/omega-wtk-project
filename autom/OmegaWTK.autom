@@ -3,15 +3,17 @@
 
 third_party_script = abspath("./third_party.py")
 
-def ThirdParty(name:str,deps:"list[str]",exports:"list[str]",source_dir:str,binary_dir:str,install_dir:str,config:str,build:str,install:str,libs:"list[str]"):
-
-   Script(name,[],deps,third_party_script,
-   ["--src-dir",abspath(source_dir),
+def ThirdParty(name:str,deps:"list[str]",exports:"list[str]",source_dir:str,binary_dir:str,install_dir:str,config:str,build:str,install:str,libs:"list[str]",install_name:str):
+   args = ["--src-dir",abspath(source_dir),
    "--tmp-dir",abspath(binary_dir),
    "--out-dir",install_dir,
    "--config",config,
    "--build",build,
-   "--install",install],exports) 
+   "--install",install]
+   if is_mac:
+      args += ["--install-name",install_name]
+   Script(name,[],deps,third_party_script,args
+   ,exports) 
    
    Config(f"{name}__conf",[],[f"{install_dir}/include"],[])
    if is_win:

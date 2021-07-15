@@ -4,7 +4,7 @@ using namespace OmegaWTK;
 
 int omegaWTKMain(OmegaWTK::AppInst *app){
 
-    auto window = make<AppWindow>(Core::Rect {1000,1000});
+    auto window = make<AppWindow>(Core::Rect {Core::Position {0,0},500,500});
 
     app->windowManager->setRootWindow(window);
     app->windowManager->displayRootWindow();

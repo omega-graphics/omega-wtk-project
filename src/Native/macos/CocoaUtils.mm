@@ -11,8 +11,11 @@ NSString * common_string_to_ns_string(const OmegaCommon::String & str){
 };
 
 NSRect core_rect_to_cg_rect(const Core::Rect & rect){
+    std::cout << "X:" << rect.pos.x  << "Y:" << rect.pos.y << "W:" << rect.w << "H:" << rect.h;
     return NSMakeRect(rect.pos.x,rect.pos.y,rect.w,rect.h);
 };
+
+
 
 CGPoint core_pos_to_cg_point(const Core::Position & pos){
     return CGPointMake(pos.x,pos.y);

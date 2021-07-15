@@ -10,7 +10,7 @@ namespace OmegaWTK::Native::Cocoa {
         NSSavePanel *savePanel;
     public:
         void show(){
-            NSWindow *parentWindow = ((CocoaAppWindow *)this->parentWindow)->window;
+            NSWindow *parentWindow = ((CocoaAppWindow *)this->parentWindow)->getWindow();
             if(!openPanel){
                 /// If is Save Panel
                 __block NSURL *url = nil;
@@ -54,7 +54,7 @@ namespace OmegaWTK::Native::Cocoa {
         NSAlert *dialog;
     public:
         void show(){
-            NSWindow *parentWindow = ((CocoaAppWindow *)this->parentWindow)->window;
+            NSWindow *parentWindow = ((CocoaAppWindow *)this->parentWindow)->getWindow();
             [dialog beginSheetModalForWindow:parentWindow completionHandler:^(NSModalResponse response){
 //                this->close();
                 

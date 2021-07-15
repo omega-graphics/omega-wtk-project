@@ -1,4 +1,4 @@
-# OmegaWTK (Omega-Widget Tool Kit)
+# OmegaWTK (Omega Widget ToolKit)
  A cross-platform widget toolkit written in c++
     
 

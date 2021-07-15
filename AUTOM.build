@@ -28,7 +28,8 @@ ThirdParty(
     config=f"cmake -S . -B {third_party_dir}/temp/zlib -G\"Ninja\" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=\"{third_party_dir}/zlib\"",
     build="cmake --build .",
     install="cmake --build . --target install",
-    libs=[f"{gen_third_party_dir}/zlib/lib/zlib.lib"]
+    libs=[f"{gen_third_party_dir}/zlib/lib/zlib.lib"],
+    install_name="install_name_tool -id @rpath/libz.dylib ./lib/libz.dylib"
 )
 
 if is_win:
@@ -46,7 +47,8 @@ ThirdParty(
     config=f"cmake -S . -B {third_party_dir}/temp/libpng -G\"Ninja\" -DCMAKE_BUILD_TYPE=Release -DPNG_ARM_NEON=off  -DZLIB_DIR=\"{third_party_dir}/zlib\" -DCMAKE_INSTALL_PREFIX=\"{third_party_dir}/libpng\"",
     build="cmake --build .",
     install="cmake --build . --target install",
-    libs=[f"{gen_third_party_dir}/libpng/lib/libpng16.lib"]
+    libs=[f"{gen_third_party_dir}/libpng/lib/libpng16.lib"],
+    install_name="install_name_tool -id @rpath/libpng.dylib ./lib/libpng.dylib"
 )
 if is_win:
     libjpeg_turbo_export = [f"{gen_third_party_dir}/libjpeg-turbo/bin/turbojpeg.dll",f"{gen_third_party_dir}/libjpeg-turbo/lib/turbojpeg.lib"]
@@ -63,7 +65,8 @@ ThirdParty(
     config=f"cmake -S . -B {third_party_dir}/temp/libjpeg-turbo -G\"Ninja\" -DCMAKE_BUILD_TYPE=Release -DZLIB_DIR=\"{third_party_dir}/zlib\" -DCMAKE_INSTALL_PREFIX=\"{third_party_dir}/libjpeg-turbo\"",
     build="cmake --build .",
     install="cmake --build . --target install",
-    libs=[f"{gen_third_party_dir}/libjpeg-turbo/lib/turbojpeg.lib"]
+    libs=[f"{gen_third_party_dir}/libjpeg-turbo/lib/turbojpeg.lib"],
+    install_name="install_name_tool -id @rpath/libturbojpeg.dylib ./lib/libturbojpeg.dylib"
 )
 if is_win:
     libtiff_export = [f"{gen_third_party_dir}/libtiff/bin/tiff.dll",f"{gen_third_party_dir}/libtiff/lib/tiff.lib"]
@@ -79,7 +82,8 @@ ThirdParty(
     config=f"cmake -S . -B {third_party_dir}/temp/libtiff -G\"Ninja\" -DCMAKE_BUILD_TYPE=Release -DZLIB_DIR=\"{third_party_dir}/zlib\"  -DJPEG_DIR=\"{third_party_dir}/libjpeg-turbo\" -DCMAKE_INSTALL_PREFIX=\"{third_party_dir}/libtiff\"",
     build="cmake --build .",
     install="cmake --build . --target install",
-    libs=[f"{gen_third_party_dir}/libtiff/lib/tiff.lib"]
+    libs=[f"{gen_third_party_dir}/libtiff/lib/tiff.lib"],
+    install_name="install_name_tool -id @rpath/libtiff.dylib ./lib/libtiff.dylib"
 )
 
 if is_win:
@@ -96,6 +100,8 @@ elif is_mac:
     icu_lib_exports = [f"{gen_third_party_dir}/icu/lib/libicuuc.dylib",
                     f"{gen_third_party_dir}/icu/lib/libicui18n.dylib",
                     f"{gen_third_party_dir}/icu/lib/libicudata.dylib"]
+
+    icu_implib_exports = []
 
 if is_win:
     src_dir = "./external-libs/icu-69/code/icu4c/source/allinone"
@@ -137,7 +143,8 @@ else:
         config = config_,
         build=build_com,
         install=install_com,
-        libs=[]
+        libs=[],
+        install_name="install_name_tool -id @rpath/libicuuc.dylib ./lib/libicuuc.dylib; install_name_tool -change libicudata.69.dylib @rpath/libicudata.dylib ./lib/libicuuc.dylib; install_name_tool -change libicudata.69.dylib @rpath/libicudata.dylib -id @rpath/libicui18n.dylib ./lib/libicui18n.dylib;install_name_tool -change libicudata.69.dylib @rpath/libicudata.dylib -change libicuuc.69.dylib @rpath/libicuuc.dylib ./lib/libicui18n.dylib; install_name_tool -id @rpath/libicudata.dylib ./lib/libicudata.dylib"
     )
 
 # assert_expr(program_exists("perl"))
@@ -235,8 +242,9 @@ if is_mac:
 
     set_property("OmegaWTK","configs",["OmegaWTK_Config"])
     set_property("OmegaWTK","resources",[f"{conf_out}/OmegaWTK_res/Info.plist",f"{conf_out}/OmegaWTK_res/version.plist"])
-    set_property("OmegaWTK","frameworks",["Cocoa.framework","QuartzCore.framework","OmegaGTE.framework"])
-    set_property("OmegaWTK","embedded_frameworks",["OmegaGTE.framework"])
+    set_property("OmegaWTK","frameworks",["Cocoa.framework","QuartzCore.framework"])
+    # set_property("OmegaWTK","embedded_frameworks",[])
+    set_property("OmegaWTK","embedded_libs",zlib_export + libpng_export + libjpeg_turbo_export + libtiff_export + icu_lib_exports)
 
 elif is_win:
     SharedLibrary("OmegaWTK",["./src/OmegaWTK.cpp"], 
@@ -260,9 +268,10 @@ def OmegaWTKTest(name:str,app_id:str,sources:"list[str]"):
         AppBundle(name,sources + ["./target/macos/main.mm","./target/macos/AppDelegate.mm"],["OmegaWTK"],"Apps")
         configure("./target/macos/Info.plist.in",f"{conf_out}/{name}_res/Info.plist")
         set_property(name,"info_plist",f"{conf_out}/{name}_res/Info.plist")
-        set_property(name,"resources",["./target/macos/MainMenu.nib"])
-        set_property(name,"frameworks",["OmegaWTK.framework"])
-        set_property(name,"embedded_frameworks",["OmegaWTK.framework"])
+        set_property(name,"resources",[abspath("./target/macos/MainMenu.nib")])
+        set_property(name,"frameworks",["Cocoa.framework"])
+        set_property(name,"ldflags",["-rpath","@loader_path/../Frameworks/OmegaWTK.framework/Libraries"])
+        set_property(name,"embedded_frameworks",["OmegaWTK.framework","OmegaGTE.framework"])
     elif is_win:
         APPNAME = name
         configure("./target/windows/manifest.rc.in",f"{conf_out}/{name}_res/manifest.rc")

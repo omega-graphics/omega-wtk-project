@@ -21,7 +21,6 @@ CocoaAppWindow::CocoaAppWindow(Core::Rect & rect,NativeEventEmitter *emitter):Na
     windowDelegate = [[OmegaWTKNativeCocoaAppWindowDelegate alloc] init];
     windowController = [[OmegaWTKNativeCocoaAppWindowController alloc] initWithRect:core_rect_to_cg_rect(rect) delegate:windowDelegate];
     windowDelegate.cppBinding = this;
-    window = windowController.window;
 };
 
 NativeEventEmitter * CocoaAppWindow::getEmitter() {
@@ -29,46 +28,55 @@ NativeEventEmitter * CocoaAppWindow::getEmitter() {
 };
 
 void CocoaAppWindow::disable(){
-    if([window isVisible] == YES){
-        [window setIsVisible:NO];
+    if([windowController.window isVisible] == YES){
+        [windowController.window orderOut:nil];
     };
 };
 
 void CocoaAppWindow::enable(){
-    if([window isVisible] == NO){
-        [window setIsVisible:YES];
+    if([windowController.window isVisible] == NO){
+        [windowController.window makeKeyAndOrderFront:nil];
     };
 };
 
 void CocoaAppWindow::attachWidgets(){
-    NSView *rootView = [[NSView alloc] initWithFrame:window.frame];
-    rootView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
-    auto it = windowWidgetRootViews.begin();
-    while(it != windowWidgetRootViews.end()){
-        CocoaItem *item = (CocoaItem *)*it;
-        NSViewController *view = (NSViewController *)item->getBinding();
-        [rootView addSubview:view.view];
-        ++it;
-    };
-    [window setContentView:rootView];
+    // NSView *rootView = [[NSView alloc] initWithFrame:window.frame];
+    // rootView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    // auto it = windowWidgetRootViews.begin();
+    // while(it != windowWidgetRootViews.end()){
+    //     CocoaItem *item = (CocoaItem *)*it;
+    //     NSViewController *view = (NSViewController *)item->getBinding();
+    //     [rootView addSubview:view.view];
+    //     ++it;
+    // };
+    // [window setContentView:rootView];
 };
 
 void CocoaAppWindow::initialDisplay(){
-    [window center];
-    [window layoutIfNeeded];
-    if(menu){
-        NSMenu * windowMenu = (NSMenu *)menu->getNativeBinding();
-        [window setMenu:windowMenu];
-        [NSApp setMainMenu:windowMenu];
-    };
-    
-    [windowController showWindow:NSApp.delegate];
+    [windowController.window center];
+    // NSView *rootView = [[NSView alloc] initWithFrame:window.frame];
+    // rootView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    // [window setContentView:rootView];
+    // // [window layoutIfNeeded];
+    // // if(menu){
+    // //     NSMenu * windowMenu = (NSMenu *)menu->getNativeBinding();
+    // //     [window setMenu:windowMenu];
+    // //     [NSApp setMainMenu:windowMenu];
+    // // };
+    NSLog(@"Display Window");
+    [windowController showWindow:windowDelegate];
+    [windowController.window makeKeyAndOrderFront:nil];
+    NSLog(@"IS Visible :%d",[windowController.window isVisible]);
 };
 
 void CocoaAppWindow::close(){
-    if([window isVisible] == YES)
-        [window close];
+    if([windowController.window isVisible] == YES)
+        [windowController.window close];
 };
+
+ __strong NSWindow *CocoaAppWindow::getWindow(){
+     return windowController.window;
+ };
 
 // CocoaAppWindow::~CocoaAppWindow(){
 //     close();
@@ -77,6 +85,7 @@ void CocoaAppWindow::close(){
 };
 
 @implementation OmegaWTKNativeCocoaAppWindowDelegate
+
 -(void)emitIfPossible:(OmegaWTK::Native::NativeEventPtr)event{
     if(self.cppBinding->hasEventEmitter()){
         self.cppBinding->getEmitter()->emit(event);
@@ -99,7 +108,6 @@ void CocoaAppWindow::close(){
 @end
 
 @implementation OmegaWTKNativeCocoaAppWindowController
-
 - (instancetype)initWithRect:(NSRect) rect delegate:(id<NSWindowDelegate>) delegate
 {
     self = [super initWithWindow:[[NSWindow alloc] initWithContentRect:rect styleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable backing:NSBackingStoreBuffered defer:NO]];

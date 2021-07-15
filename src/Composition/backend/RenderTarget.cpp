@@ -52,8 +52,4 @@ namespace OmegaWTK::Composition {
         renderTarget->commitAndPresent();
     };
 
-    void BackendCompRenderTarget::renderVisualTree(){
-
-    };
-
 }

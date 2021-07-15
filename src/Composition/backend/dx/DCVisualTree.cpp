@@ -96,4 +96,8 @@ namespace OmegaWTK::Composition {
         return std::make_shared<DCVisualTree>();
     };
 
+    void BackendCompRenderTarget::renderVisualTree(){
+
+    };
+
 };
