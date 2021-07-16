@@ -85,7 +85,7 @@ SharedHandle<AppWindow> AppWindowManager::getRootWindow(){
 };
 
 void AppWindowManager::displayRootWindow(){
-    rootWindow->layer->native_window_ptr->attachWidgets();
+    // rootWindow->layer->native_window_ptr->attachWidgets();
     // rootWindow->drawWidgets();
     rootWindow->layer->native_window_ptr->initialDisplay();
 };

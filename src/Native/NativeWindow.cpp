@@ -20,9 +20,9 @@ namespace OmegaWTK::Native {
     void NativeWindow::setMenu(NM menu){
         this->menu = menu;
     };
-    void NativeWindow::addNativeItem(NativeItemPtr item){
-        windowWidgetRootViews.push_back(item);
-    };
+    // void NativeWindow::addNativeItem(NativeItemPtr item){
+    //     windowWidgetRootViews.push_back(item);
+    // };
     NWH make_native_window(Core::Rect & rect,NativeEventEmitter *emitter){
         #ifdef TARGET_WIN32
             return Win::make_win_window(rect,emitter);

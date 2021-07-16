@@ -24,10 +24,10 @@ namespace OmegaWTK::Native {
         virtual void enable() = 0;
         virtual void disable() = 0;
         virtual void initialDisplay() = 0;
-        virtual void attachWidgets() = 0;
+        // virtual void attachWidgets() = 0;
         virtual void close() = 0;
         void setMenu(NM menu);
-        void addNativeItem(NativeItemPtr item);
+        virtual void addNativeItem(NativeItemPtr item) = 0;
         #ifdef TARGET_MACOS
         protected:
         Core::Rect & rect;

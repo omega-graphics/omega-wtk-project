@@ -20,7 +20,10 @@ CocoaAppWindow::CocoaAppWindow(Core::Rect & rect,NativeEventEmitter *emitter):Na
 
     windowDelegate = [[OmegaWTKNativeCocoaAppWindowDelegate alloc] init];
     windowController = [[OmegaWTKNativeCocoaAppWindowController alloc] initWithRect:core_rect_to_cg_rect(rect) delegate:windowDelegate];
-    windowDelegate.cppBinding = this;
+    windowDelegate.cppBinding = this; 
+    NSView *rootView = [[NSView alloc] initWithFrame:windowController.window.frame];
+    rootView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    [windowController.window setContentView:rootView];
 };
 
 NativeEventEmitter * CocoaAppWindow::getEmitter() {
@@ -39,18 +42,24 @@ void CocoaAppWindow::enable(){
     };
 };
 
-void CocoaAppWindow::attachWidgets(){
-    // NSView *rootView = [[NSView alloc] initWithFrame:window.frame];
-    // rootView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
-    // auto it = windowWidgetRootViews.begin();
-    // while(it != windowWidgetRootViews.end()){
-    //     CocoaItem *item = (CocoaItem *)*it;
-    //     NSViewController *view = (NSViewController *)item->getBinding();
-    //     [rootView addSubview:view.view];
-    //     ++it;
-    // };
-    // [window setContentView:rootView];
+void CocoaAppWindow::addNativeItem(NativeItemPtr item){
+        // auto *cocoaitem = (CocoaItem *)item;
+        NSViewController *viewC = (NSViewController *)item->getBinding();
+        [windowController.window.contentView addSubview:viewC.view];
 };
+
+// void CocoaAppWindow::attachWidgets(){
+//     // NSView *rootView = [[NSView alloc] initWithFrame:window.frame];
+//     // rootView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+//     // auto it = windowWidgetRootViews.begin();
+//     // while(it != windowWidgetRootViews.end()){
+//     //     CocoaItem *item = (CocoaItem *)*it;
+//     //     NSViewController *view = (NSViewController *)item->getBinding();
+//     //     [rootView addSubview:view.view];
+//     //     ++it;
+//     // };
+//     // [window setContentView:rootView];
+// };
 
 void CocoaAppWindow::initialDisplay(){
     [windowController.window center];
