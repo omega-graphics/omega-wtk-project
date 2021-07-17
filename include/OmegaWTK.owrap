@@ -1,4 +1,4 @@
-ref "./OmegaWTK.h"
+header "./OmegaWTK.h"
 
 namespace OmegaWTK {
 
