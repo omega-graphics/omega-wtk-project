@@ -8,24 +8,13 @@
 namespace OmegaWTK::Media {
 
 
-void create_video_codec(void *gpu_device_ptr);
-void destroy_video_codec();
+class VideoInputStream {
 
-enum class VideoCodecType : OPT_PARAM {
-    Mpeg4
 };
 
-class VideoOStream  {
-        
+class VideoOutputStream {
+    
 };
-
-class VideoIStream  {
-        
-};
-
-VideoIStream decode_video(void *data,size_t data_size,VideoCodecType type);
-void encode_video(VideoOStream ostream,VideoCodecType type);
-
 
 };
 
