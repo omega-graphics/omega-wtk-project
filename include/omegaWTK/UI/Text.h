@@ -10,10 +10,19 @@ namespace OmegaWTK::UI {
      Defines one or more lines of text layed out in a rect.
      */
     class OMEGAWTK_EXPORT TextWidget : public Widget {
-        OmegaCommon::String textStr;
+        OmegaWTK::UniString textStr;
         SharedHandle<Composition::Font> currentfont;
+        SharedHandle<Composition::TextRect> textRect;
+        void render();
     public:
         WIDGET_CONSTRUCTOR(TextWidget,SharedHandle<Composition::Font> & currentfont);
+
+        void setText(const OmegaCommon::String & textStr);
+
+        void setText(const OmegaCommon::WString & textStr);
+        
+        void setText(const OmegaCommon::UString & textStr);
+        
         void setFont(SharedHandle<Composition::Font> & font);
         void resize(Core::Rect &newRect);
     };

@@ -71,8 +71,8 @@ void CompositorScheduler::run() {
 };
 
 CompositorScheduler::~CompositorScheduler(){
-    std::lock_guard<std::mutex> lk(mutex); 
     {
+        std::lock_guard<std::mutex> lk(mutex); 
         shutdown = true;
     }
     t->join();

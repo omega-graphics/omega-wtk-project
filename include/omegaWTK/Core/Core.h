@@ -255,8 +255,6 @@ namespace OmegaWTK {
 
             };
             ~QueueHeap(){
-                while(!empty())
-                    pop();
                 free(_data);
             };
         };

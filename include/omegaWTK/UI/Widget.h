@@ -20,7 +20,9 @@ class WidgetTreeHost;
  @see AppWindow
 */
 class OMEGAWTK_EXPORT  Widget {
+    bool initialDrawComplete = false;
 protected:
+
     SharedHandle<CanvasView> rootView;
     SharedHandle<Widget> parent;
     SharedHandle<Composition::LayerTree> layerTree;
@@ -57,6 +59,11 @@ private:
     friend class AppWindow;
     friend class AppWindowManager;
     friend class WidgetTreeHost;
+     /**
+      Re-renders the Widget
+     */
+    virtual void render();
+
 public:
     /**
      Get the Widget's root View's rect
@@ -83,10 +90,6 @@ public:
      Hide the Widget if shown
     */
     void hide();
-    /**
-     Redraws the Widget with the current state of its layer tree.
-     */
-    virtual void refresh();
 protected:
     Widget(const Core::Rect & rect,WidgetTreeHost *treeHost,SharedHandle<Widget> parent);
 public:

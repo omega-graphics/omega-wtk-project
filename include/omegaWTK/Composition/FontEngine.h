@@ -35,11 +35,13 @@ protected:
     Core::SharedPtr<Font> font;
     virtual void _updateStrInternal() = 0;
 public:
+    virtual OmegaGTE::SharedHandle<OmegaGTE::GETexture>  toBitmap() = 0;
+
     Core::Rect rect;
     virtual void *getNative() = 0;
     virtual void getGlyphBoundingBoxes(Core::Rect ** rects,unsigned * count) = 0;
     // OmegaWTK::UniString & getString() noexcept{ return text_val;};
-    virtual void reload() = 0;
+    // virtual void reload() = 0;
     /**
      @brief Creates a TextRect from a String, Font, Rect
      @param _val[in] The text's string.

@@ -2,8 +2,36 @@
 
 namespace OmegaWTK::UI {
 
+    static SharedHandle<OmegaWTK::Composition::Brush> default_brush = OmegaWTK::Composition::ColorBrush(OmegaWTK::Composition::Color::Black);
+
+    TextWidget::WIDGET_CONSTRUCTOR(TextWidget,SharedHandle<OmegaWTK::Composition::Font> & currentfont):WIDGET_CONSTRUCT_SUPER(),currentfont(currentfont){
+
+    };
+
     void TextWidget::resize(Core::Rect &newRect){
         
+    };
+
+    void TextWidget::setText(const OmegaCommon::String & textStr){
+        this->textStr = OmegaWTK::UniString::fromUTF8(textStr);
+        textRect = Composition::TextRect::Create(this->textStr,currentfont,rect());
+    };
+
+
+    void TextWidget::setText(const OmegaCommon::WString & textStr){
+         this->textStr = OmegaWTK::UniString((char16_t *)textStr.data());
+    };
+        
+    void TextWidget::setText(const OmegaCommon::UString & textStr){
+         this->textStr = OmegaWTK::UniString::fromUTF32((const UChar32 *)textStr.c_str(),textStr.size());
+    };
+
+    void TextWidget::render(){
+        auto & canvasSurface = rootView->getLayerTreeLimb()->getRootLayer()->getSurface();
+        
+        canvasSurface->drawTextRect(textRect,default_brush);
+
+        rootView->commitRender();
     };
 
 

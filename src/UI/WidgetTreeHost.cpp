@@ -21,7 +21,7 @@ namespace OmegaWTK {
             attachedToWindow = true;
             window->_add_widget(&root);
             window->widgetTreeHosts.emplace_back(this);
-            if(window->rootWidgets.size() == 1)
+            if(window->widgetTreeHosts.size() == 1)
                 window->setFrontendPtr(compositor.get());
         }
     };

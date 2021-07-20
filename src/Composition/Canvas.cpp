@@ -60,6 +60,11 @@ Layer * CanvasSurface::getParentLayer(){
     return parentLayer;
 };
 
+void CanvasSurface::drawTextRect(SharedHandle<Composition::TextRect> &textRect, Core::SharedPtr<Brush> &brush){
+    auto comm = new VisualCommand {VisualCommand::Text,new VisualCommand::TextParams {textRect,brush}};
+    submitCommandToClient(comm);
+};
+
 void CanvasSurface::submitCommandToClient(VisualCommand * visual){
     client->queueVisualCommand(visual);
 };

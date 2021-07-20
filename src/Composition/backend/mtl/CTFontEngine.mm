@@ -128,13 +128,9 @@ public:
         float scaleFactor = [NSScreen mainScreen].backingScaleFactor;
         auto ftextRect = OmegaWTK::Core::Rect {float(rect.pos.x) * scaleFactor,float(rect.pos.y) * scaleFactor,float(rect.w) * scaleFactor,float(rect.h) * scaleFactor};
         CoreTextFont *fontRef = (CoreTextFont *)font.get();
-        
-        OmegaCommon::String converted_str;
-        text_val.toUTF8String(converted_str);
 
         
-        
-        strData = [[NSAttributedString alloc] initWithString:Native::Cocoa::common_string_to_ns_string(converted_str) attributes:@{NSParagraphStyleAttributeName:paragraphStyle,NSFontAttributeName:(__bridge id)fontRef->native}];
+        strData = [[NSAttributedString alloc] initWithString:[[NSString alloc] initWithCharacters:(const unichar *)text_val.getBuffer() length:text_val.length()] attributes:@{NSParagraphStyleAttributeName:paragraphStyle,NSFontAttributeName:(__bridge id)fontRef->native}];
         // Draw Text to CGBitmap!
         framesetterRef = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)strData);
         frame = CTFramesetterCreateFrame(framesetterRef,CFRangeMake(0,0),CGPathCreateWithRect(CGRectMake(ftextRect.pos.x,ftextRect.pos.y, ftextRect.w, ftextRect.h),NULL),NULL);
@@ -159,9 +155,31 @@ public:
             };
         }
     };
-    void reload() {
+    // void reload() {
         
-    };
+    // };
+    OmegaGTE::SharedHandle<OmegaGTE::GETexture> toBitmap(){
+        CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+        void *data = new unsigned char[rect.w * rect.h * scaleFactor * scaleFactor];
+        CGContextRef context = CGBitmapContextCreate(data,rect.w * scaleFactor,rect.h * scaleFactor,8,rect.w * 4 * 8,CGColorSpaceCreateDeviceRGB(),0);
+        CGContextSetTextMatrix(context,CGAffineTransformIdentity);
+        CGContextScaleCTM(context,1,-1);
+        CTFrameDraw(frame,context);
+        CGContextRelease(context);
+
+        OmegaGTE::TextureDescriptor desc;
+        desc.depth = 0;
+        desc.type = OmegaGTE::GETexture::Texture2D;
+        desc.width = rect.w * scaleFactor;
+        desc.height = rect.h * scaleFactor;
+        desc.storage_opts = OmegaGTE::Shared;
+
+        auto texture = gte.graphicsEngine->makeTexture(desc);
+     
+        texture->copyBytes(data,rect.w * rect.h * scaleFactor * scaleFactor);
+      
+        return texture;
+    }; 
     ~CTTextRect(){
         // CFRelease(frame);
         // CFRelease(framesetterRef);

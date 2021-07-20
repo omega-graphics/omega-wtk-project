@@ -32,11 +32,9 @@ class AppWindowDelegate;
         SharedHandle<AppWindowDelegate> delegate;
         /// A list of all attached widget tree hosts. 
         /// (Only needed to week widget tree hosts alive during application)
-        OmegaCommon::Vector<SharedHandle<WidgetTreeHost>> widgetTreeHosts;
+        OmegaCommon::Vector<WidgetTreeHost *> widgetTreeHosts;
 
         Core::Rect rect;
-
-        OmegaCommon::Vector<SharedHandle<Widget>> rootWidgets;
 
         SharedHandle<Menu> menu;
 
@@ -77,6 +75,7 @@ class AppWindowDelegate;
         SharedHandle<Native::NativeNoteDialog> openNoteDialog(const Native::NativeNoteDialog::Descriptor & desc);
         
         AppWindow(Core::Rect rect,AppWindowDelegate * delegate = nullptr);
+        ~AppWindow();
     };
 /**
  @brief Manages the displaying of AppWindows as well as the window heirarchy for a single application.

@@ -15,9 +15,9 @@ class OMEGAWTK_EXPORT VideoView :  public View,
                                    public Media::VideoCaptureSessionPreviewOutput, 
                                    public Composition::CompositorVideoClient {
     VideoViewController *controller;
-    Media::VideoIStream *currentStream;
+    Media::VideoInputStream *currentStream;
 public:
-    void setVideoInput(Media::VideoIStream *videoIn);
+    void setVideoInput(Media::VideoInputStream *videoIn);
    void setController(VideoViewController *controller);
    VideoView(const Core::Rect & rect,Composition::Compositor * comp,View *parent = nullptr);
 };

@@ -32,17 +32,20 @@ Core::Rect & Widget::rect(){
 };
 
 void Widget::show(){
+    if(!initialDrawComplete)
+        render();
+
     rootView->renderTarget->getNativePtr()->enable();
     WIDGET_NOTIFY_OBSERVERS_SHOW();
+
 };
 void Widget::hide(){
     rootView->renderTarget->getNativePtr()->disable();
     WIDGET_NOTIFY_OBSERVERS_HIDE();
 };
 
-void Widget::refresh(){
+void Widget::render(){
     rootView->commitRender();
-    // compositor->updateLayerTree(layerTree.get());
 };
 
 void Widget::addObserver(WidgetObserver * observer){

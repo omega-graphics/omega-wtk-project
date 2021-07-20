@@ -3,6 +3,7 @@
 #include "omegaWTK/Native/NativeWindow.h"
 #include "omegaWTK/Native/NativeDialog.h"
 #include "omegaWTK/Composition/CompositorClient.h"
+#include "omegaWTK/UI/WidgetTreeHost.h"
 
 namespace OmegaWTK {
 
@@ -38,17 +39,9 @@ void AppWindow::_add_widget(SharedHandle<Widget> * handle){
 
     if((*handle)->rootView->renderTarget) {
         layer->native_window_ptr->addNativeItem((*handle)->rootView->renderTarget->getNativePtr());
-        rootWidgets.push_back(*handle);
     }
 };
 
-// void AppWindow::addLayout(SharedHandle<Layout> layout){
-//     for(auto & widget : *layout)
-//     {
-//         std::shared_ptr<Widget> ptr(&widget);
-//         _add_widget(&ptr);
-//     };
-// };
 
 SharedHandle<Native::NativeFSDialog> AppWindow::openFSDialog(const Native::NativeFSDialog::Descriptor & desc){
     return Native::NativeFSDialog::Create(desc,layer->native_window_ptr);
@@ -58,20 +51,18 @@ SharedHandle<Native::NativeNoteDialog> AppWindow::openNoteDialog(const Native::N
     return Native::NativeNoteDialog::Create(desc,layer->native_window_ptr);
 };
 
-// void AppWindow::drawWidgets(){
-//     auto widget_it = rootWidgets.begin();
-//     while(widget_it != rootWidgets.end()){
-//         (*widget_it)->compositor->prepareDraw(widget_it->get()->layerTree.get());
-//         ++widget_it;
-//     };
-// };
-
 void AppWindow::close(){
     layer->native_window_ptr->close();
 };
 
 void AppWindow::commitRender(){
     
+};
+
+AppWindow::~AppWindow(){
+    for(auto widgetHost : widgetTreeHosts){
+        delete widgetHost;
+    };
 };
 
 AppWindowManager::AppWindowManager():rootWindow(nullptr){};
