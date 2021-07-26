@@ -9,7 +9,7 @@ namespace OmegaWTK {
     };
 
     WidgetTreeHost::~WidgetTreeHost(){
-        
+        delete compositor;
     };
 
     WidgetTreeHost * WidgetTreeHost::Create(){
@@ -22,7 +22,7 @@ namespace OmegaWTK {
             window->_add_widget(&root);
             window->widgetTreeHosts.emplace_back(this);
             if(window->widgetTreeHosts.size() == 1)
-                window->setFrontendPtr(compositor.get());
+                window->setFrontendPtr(compositor);
         }
     };
 

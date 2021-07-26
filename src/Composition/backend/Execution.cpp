@@ -39,13 +39,13 @@ std::future<RenderCommandStatus> Compositor::executeCurrentRenderCommand(){
         target = &renderTargetStore.store[currentCommand->renderTarget];
     };
 
-    OmegaCommon::ArrayRef<VisualCommand> commands {currentCommand->_visuals,currentCommand->_visuals + currentCommand->visual_count};
+    OmegaCommon::ArrayRef<VisualCommand *> commands {currentCommand->_visuals,currentCommand->_visuals + currentCommand->visual_count};
     
     std::promise<RenderCommandStatus> status_promise;
     
     for(auto & com : commands){
         GERenderTargetContext *surfaceRenderTargetCtxt;
-        auto surface = com.targetSurface;
+        auto surface = com->targetSurface;
         auto s_found = target->surfaceTargets.find(surface);
         if(s_found == target->surfaceTargets.end()){
             OmegaGTE::NativeRenderTargetDescriptor *desc = makeDescForCanvasSurface(surface);
@@ -80,7 +80,7 @@ std::future<RenderCommandStatus> Compositor::executeCurrentRenderCommand(){
         else {
             surfaceRenderTargetCtxt = target->surfaceTargets[surface];
         };
-        surfaceRenderTargetCtxt->renderToTarget(com.type,com.params);
+        surfaceRenderTargetCtxt->renderToTarget(com->type,com->params);
     };
 
     for(auto & s_target_pair : target->surfaceTargets){

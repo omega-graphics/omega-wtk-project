@@ -29,7 +29,7 @@ namespace OmegaWTK::Composition {
        Priority priority;
        CompositionRenderCommandThreasholdParams thresholdParams;
        CompositionRenderTarget *renderTarget;
-       VisualCommand *_visuals;
+       VisualCommand **_visuals;
        unsigned visual_count;
    };
    
@@ -40,7 +40,7 @@ namespace OmegaWTK::Composition {
 
         void processCommand(CompositionRenderCommand & command);
         std::mutex mutex;
-        std::thread * t;
+        std::thread t;
 
        CompositorScheduler(Compositor *compositor);
        ~CompositorScheduler();
@@ -72,7 +72,7 @@ namespace OmegaWTK::Composition {
 
         RenderTargetStore renderTargetStore;
 
-        std::mutex queueMutex;
+        std::mutex * queueMutex;
 
         bool queueIsReady;
 
@@ -98,7 +98,7 @@ namespace OmegaWTK::Composition {
         void layerHasEnabled(Layer *layer) override;
         void layerHasResized(Layer *layer) override;
         void layerHasDisabled(Layer *layer) override;
-        void scheduleCommand(UniqueHandle<CompositionRenderCommand> command);
+        void scheduleCommand(CompositionRenderCommand * command);
         
         
         Compositor();

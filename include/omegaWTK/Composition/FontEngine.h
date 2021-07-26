@@ -51,7 +51,7 @@ public:
     */
     static Core::SharedPtr<TextRect> Create(OmegaWTK::UniString & _val,Core::SharedPtr<Font> & font,Core::Rect rect);
 protected:
-    TextRect(OmegaWTK::UniString & _val,Core::SharedPtr<Font> & font,Core::Rect & rect):text_val(_val),rect(rect),font(font){};
+    TextRect(OmegaWTK::UniString & _val,Core::SharedPtr<Font> & font,Core::Rect & rect):text_val(_val),font(font),rect(rect){};
 };
 /**
  @brief A struct that describes a Font that can be created by the FontEngine.

@@ -51,7 +51,7 @@ Core::SharedPtr<BackendVisualTree::Visual> MTLCALayerTree::makeVisual(
                                                             OmegaGTE::NativeRenderTargetDescriptor & targetDesc,
                                                             Core::Position & pos){
 
-    auto v = new Visual{renderContext};
+    auto * v = new Visual{{renderContext}};
     v->attachTransformLayer = false;
     v->metalLayer = targetDesc.metalLayer;
     v->pos = pos;
@@ -84,6 +84,10 @@ void BackendCompRenderTarget::renderVisualTree(){
 
 void GERenderTargetContext::applyEffectToTarget(CanvasLayerEffect::Type type, void *params){
         
+};
+
+MTLCALayerTree::~MTLCALayerTree(){
+    
 };
 
 // Core::SharedPtr<MTLBDCALayerTree> MTLBDCALayerTree::Create(MTLBDCompositionDeviceContext *deviceContext){

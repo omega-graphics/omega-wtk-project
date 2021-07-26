@@ -29,6 +29,7 @@ namespace OmegaWTK::Composition {
             @param renderTarget
         */
         GERenderTargetContext(OmegaGTE::SharedHandle<OmegaGTE::GENativeRenderTarget> & renderTarget);
+        ~GERenderTargetContext(); 
     };
 
     class BackendVisualTree;
@@ -43,7 +44,7 @@ namespace OmegaWTK::Composition {
 
 
     struct RenderTargetStore {
-        OmegaCommon::MapVec<CompositionRenderTarget *,BackendCompRenderTarget> store;
+        OmegaCommon::MapVec<CompositionRenderTarget *,BackendCompRenderTarget> store = {};
     };
 
 };

@@ -21,7 +21,10 @@ namespace OmegaWTK::Composition {
         INTERFACE_METHOD(Core::SharedPtr<Visual>,makeVisual,GERenderTargetContext & renderContext,
                                                             OmegaGTE::NativeRenderTargetDescriptor & targetDesc,
                                                             Core::Position & pos)
-        INTERFACE_METHOD(void,setRootVisual,Core::SharedPtr<Visual> & visual)     
+        INTERFACE_METHOD(void,setRootVisual,Core::SharedPtr<Visual> & visual)    
+        virtual ~BackendVisualTree(){
+            
+        }; 
     };
 
     Core::SharedPtr<BackendVisualTree> CreateVisualTree();

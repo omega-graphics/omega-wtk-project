@@ -4,6 +4,9 @@
 
 namespace OmegaWTK::Composition {
 
+LayerTreeObserver::~LayerTreeObserver(){
+    
+};
 
 Layer::Layer(const Core::Rect &rect,
              CompositorClient *compClient)

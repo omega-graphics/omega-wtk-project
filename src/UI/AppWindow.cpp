@@ -60,6 +60,7 @@ void AppWindow::commitRender(){
 };
 
 AppWindow::~AppWindow(){
+    std::cout << "Closing Window" << std::endl;
     for(auto widgetHost : widgetTreeHosts){
         delete widgetHost;
     };

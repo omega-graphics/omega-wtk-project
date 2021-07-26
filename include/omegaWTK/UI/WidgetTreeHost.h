@@ -19,7 +19,7 @@ namespace OmegaWTK {
          NOTE: The instance of this class that was first attached to an 
          AppWindow will be used for managing composition of the WindowLayer.
          */
-        UniqueHandle<Composition::Compositor> compositor;
+        Composition::Compositor * compositor;
         /// The Root Widget
         SharedHandle<Widget> root;
 

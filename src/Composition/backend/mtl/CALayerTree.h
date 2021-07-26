@@ -40,6 +40,7 @@ namespace OmegaWTK::Composition {
         };
     public:
         MTLCALayerTree();
+        ~MTLCALayerTree();
         static Core::SharedPtr<MTLCALayerTree> Create();
         void addVisual(Core::SharedPtr<Parent::Visual> & visual) override;
         Core::SharedPtr<Parent::Visual> makeVisual(GERenderTargetContext & renderContext,

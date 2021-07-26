@@ -38,9 +38,9 @@ namespace OmegaWTK::Composition {
     class OMEGAWTK_EXPORT CompositorClient {
         friend class CanvasSurface;
 
-        Compositor *frontend;
+        Compositor *frontend = nullptr;
 
-        OmegaCommon::Vector<VisualCommand> drawQueue;
+        OmegaCommon::Vector<VisualCommand *> drawQueue;
 
         void queueVisualCommand(VisualCommand *v);
     protected:
@@ -48,6 +48,7 @@ namespace OmegaWTK::Composition {
     public:
         void setFrontendPtr(Compositor *frontend);
         virtual void commitRender() = 0;
+        virtual ~CompositorClient();
     };
 
     /** @brief A CompositorClient that only allows for video frame submission/verification.
@@ -55,7 +56,7 @@ namespace OmegaWTK::Composition {
         and verifying successful frame completion. 
     */
     class OMEGAWTK_EXPORT CompositorVideoClient {
-        Compositor *frontend;
+        Compositor *frontend = nullptr;
 
         OmegaCommon::Vector<VisualCommand> drawQueue;
     protected:
@@ -64,6 +65,7 @@ namespace OmegaWTK::Composition {
     public:
         void setFrontendPtr(Compositor *frontend);
         virtual void commitCurrentFrame() = 0;
+        virtual ~CompositorVideoClient();
     };
 
     

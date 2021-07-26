@@ -15,7 +15,7 @@ namespace OmegaWTK::Composition {
 
     // };
     void CompositorClient::queueVisualCommand(VisualCommand *v){
-        drawQueue.push_back(*v);
+        drawQueue.push_back(v);
     };
 
     void CompositorClient::setFrontendPtr(Compositor *frontend){
@@ -23,17 +23,25 @@ namespace OmegaWTK::Composition {
     };
 
     void CompositorClient::submit(CompositionRenderTarget *renderTarget){
-        auto command = std::make_unique<CompositionRenderCommand>();
+        auto command = new CompositionRenderCommand();
         command->renderTarget = renderTarget;
         unsigned visual_c = drawQueue.size();
-        command->_visuals = (VisualCommand *)malloc(sizeof(VisualCommand) * visual_c);
+        command->_visuals = (VisualCommand **)malloc(sizeof(VisualCommand *) * visual_c);
         std::move(drawQueue.begin(),drawQueue.end(),command->_visuals);
         drawQueue.clear();
         command->priority = CompositionRenderCommand::Low;
         command->thresholdParams.hasThreshold = false;
         command->thresholdParams.timeStamp = std::chrono::high_resolution_clock::now();
         command->visual_count = visual_c;
-        frontend->scheduleCommand(std::move(command));
+        frontend->scheduleCommand(command);
+    };
+
+    CompositorClient::~CompositorClient(){
+
+    };
+
+    CompositorVideoClient::~CompositorVideoClient(){
+        
     };
 
     ViewRenderTarget::ViewRenderTarget(Native::NativeItemPtr _native) : native(_native){};

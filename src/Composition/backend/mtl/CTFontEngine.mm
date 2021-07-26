@@ -126,7 +126,7 @@ public:
         };
         
         float scaleFactor = [NSScreen mainScreen].backingScaleFactor;
-        auto ftextRect = OmegaWTK::Core::Rect {float(rect.pos.x) * scaleFactor,float(rect.pos.y) * scaleFactor,float(rect.w) * scaleFactor,float(rect.h) * scaleFactor};
+        auto ftextRect = OmegaWTK::Core::Rect {{float(rect.pos.x) * scaleFactor,float(rect.pos.y) * scaleFactor},float(rect.w) * scaleFactor,float(rect.h) * scaleFactor};
         CoreTextFont *fontRef = (CoreTextFont *)font.get();
 
         

@@ -6,7 +6,7 @@ namespace OmegaWTK::Composition {
     OmegaGTE::SharedHandle<OmegaGTE::GERenderPipelineState> pipelineState;
     
     GERenderTargetContext::GERenderTargetContext(OmegaGTE::SharedHandle<OmegaGTE::GENativeRenderTarget> & renderTarget):
-    renderTarget(renderTarget),__hasQueuedRenderJobs(false),tessContext(gte.tessalationEngine->createTEContextFromNativeRenderTarget(renderTarget)){
+    renderTarget(renderTarget),tessContext(gte.tessalationEngine->createTEContextFromNativeRenderTarget(renderTarget)),__hasQueuedRenderJobs(false){
         
     };
     
@@ -72,6 +72,10 @@ namespace OmegaWTK::Composition {
             }
         }
     };
+
+    GERenderTargetContext::~GERenderTargetContext(){
+
+    }; 
 
     OmegaGTE::GERenderTarget *GERenderTargetContext::getRenderTarget(){
         return renderTarget.get();

@@ -163,6 +163,8 @@ namespace Composition {
          @param layer
         */
         INTERFACE_METHOD(void,layerHasEnabled,Layer *layer)
+
+        virtual ~LayerTreeObserver();
     };
 
     /**
