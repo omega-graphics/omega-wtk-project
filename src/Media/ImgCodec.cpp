@@ -43,7 +43,6 @@ namespace OmegaWTK::Media {
     
 class PNGCodec : public ImgCodec {
     int srgb_intent;
-    bool hasPalette;
     int num_palette;
     png_colorp palette;
     static void userReadData(png_structp png_ptr, png_bytep data, png_size_t length){
@@ -98,23 +97,34 @@ class PNGCodec : public ImgCodec {
                 png_color_16p trans_color;
                 if(png_get_tRNS(png_ptr,info_ptr,&trans_alpha,&num_trans,&trans_color) == PNG_INFO_tRNS){
                     colorFormat = BitmapImage::ColorFormat::RGBA;
+                     alphaFormat = BitmapImage::AlphaFormat::Straight;
                     png_set_tRNS_to_alpha(png_ptr);
+                }
+                else {
+                    colorFormat = BitmapImage::ColorFormat::RGB;
+                    alphaFormat = BitmapImage::AlphaFormat::Ingore;
                 };
                 
                 break;
             }
             case PNG_COLOR_TYPE_GRAY : {
                 png_set_gray_to_rgb(png_ptr);
+                colorFormat = BitmapImage::ColorFormat::RGB;
+                alphaFormat = BitmapImage::AlphaFormat::Ingore;
                 break;
             };
             case PNG_COLOR_TYPE_PALETTE : {
-                if(png_get_PLTE(png_ptr,info_ptr,&palette,&num_palette) == PNG_INFO_PLTE){
-                    png_set_palette_to_rgb(png_ptr);
-                };
+                png_get_PLTE(png_ptr,info_ptr,&palette,&num_palette);
+                png_set_palette_to_rgb(png_ptr);
+                colorFormat = BitmapImage::ColorFormat::RGB;
+                alphaFormat = BitmapImage::AlphaFormat::Ingore;
                 break;
             }
-            default:
+            default: {
+                colorFormat = BitmapImage::ColorFormat::Unknown;
+                alphaFormat = BitmapImage::AlphaFormat::Unknown;
                 break;
+            }
         }
         std::cout << std::endl;
         std::stringstream ss;
@@ -210,8 +220,8 @@ class PNGCodec : public ImgCodec {
                    storage->gamma = file_gamma;
                    std::cout << "gAMA Chunk:{" << "fileGamma:" << file_gamma << " }" << std::endl;
                    if(!storage->sRGB){
-                       char * gamma_str;
-                       double screen_gamma;
+                    //    char * gamma_str;
+                    //    double screen_gamma;
                        png_set_gamma(png_ptr,DEFAULT_SCREEN_GAMMA,file_gamma);
                    };
                }

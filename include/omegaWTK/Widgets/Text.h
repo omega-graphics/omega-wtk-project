@@ -1,4 +1,4 @@
-#include "Widget.h"
+#include "omegaWTK/UI/Widget.h"
 #include "omegaWTK/Core/Unicode.h"
 
 #ifndef OMEGAWTK_UI_TEXTINPUT_H

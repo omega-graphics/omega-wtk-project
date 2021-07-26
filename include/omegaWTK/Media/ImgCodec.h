@@ -19,12 +19,14 @@ namespace OmegaWTK {
             enum class ColorFormat : OPT_PARAM {
                 RGB,
                 RGBA,
-                Pallete
+                Pallete,
+                Unknown
             };
             enum class AlphaFormat : OPT_PARAM {
                 Straight,
                 Premultipled,
-                Ingore
+                Ingore,
+                Unknown
             };
             bool sRGB;
             bool hasGamma;

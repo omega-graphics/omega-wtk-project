@@ -213,6 +213,7 @@ namespace OmegaWTK {
         */
         template<class _Ty>
         class QueueHeap {
+            std::allocator<_Ty> _alloc;
             protected:
             _Ty *_data;
             public:
@@ -247,15 +248,16 @@ namespace OmegaWTK {
             };
             void resize(size_type new_max_size){
                 assert(max_len < new_max_size && "");
-                realloc(_data,sizeof(_Ty) * new_max_size);
+                _alloc.deallocate(_data,max_len);
+                _data = _alloc.allocate(new_max_size);
                 max_len = new_max_size;
             };
 
-            QueueHeap(size_type max_size):_data((_Ty *)malloc(sizeof(_Ty) * max_size)),max_len(max_size){
+            QueueHeap(size_type max_size):_data((_Ty *)_alloc.allocate(max_size)),max_len(max_size){
 
             };
             ~QueueHeap(){
-                free(_data);
+                _alloc.deallocate(_data,max_len);
             };
         };
 

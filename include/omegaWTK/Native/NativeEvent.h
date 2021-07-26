@@ -12,6 +12,7 @@ typedef void* NativeEventParams;
 class OMEGAWTK_EXPORT NativeEvent {
 public:
     typedef enum : OPT_PARAM {
+        Unknown,
         /**View Events*/
         HasLoaded,
         CursorEnter,

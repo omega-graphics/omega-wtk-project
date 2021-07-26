@@ -7,8 +7,8 @@ namespace OmegaWTK::Composition {
 
 Layer::Layer(const Core::Rect &rect,
              CompositorClient *compClient)
-    : surface_rect(rect),
-      parent_ptr(nullptr),needsNativeResize(false),surface(std::make_shared<CanvasSurface>(surface_rect,compClient)){
+    :
+      surface(std::make_shared<CanvasSurface>(surface_rect,compClient)),parent_ptr(nullptr),surface_rect(rect),needsNativeResize(false){
           surface->parentLayer = this;
 };
 

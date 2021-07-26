@@ -60,6 +60,8 @@ namespace OmegaWTK::Native::Cocoa {
                                SET_NATIVE_EVENT_PARAMS(params,new KeyUpParams({omegaKC}));
                                 )
             default: {
+                type = NativeEvent::Unknown;
+                params = nullptr;
                 break;
             };
         }

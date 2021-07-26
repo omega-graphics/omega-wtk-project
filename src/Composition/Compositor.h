@@ -3,6 +3,7 @@
 #include "omegaWTK/Composition/CompositorClient.h"
 
 #include <chrono>
+#include <condition_variable>
 #include <thread>
 
 #include "backend/RenderTarget.h"
@@ -38,11 +39,9 @@ namespace OmegaWTK::Composition {
         bool shutdown;
 
         void processCommand(CompositionRenderCommand & command);
-
         std::mutex mutex;
-       std::thread * t;
+        std::thread * t;
 
-       void run();
        CompositorScheduler(Compositor *compositor);
        ~CompositorScheduler();
    };
@@ -74,14 +73,18 @@ namespace OmegaWTK::Composition {
         RenderTargetStore renderTargetStore;
 
         std::mutex queueMutex;
+
+        bool queueIsReady;
+
+        std::condition_variable queueCondition;
         Core::PriorityQueueHeap<CompositionRenderCommand,CompareRenderCommands> commandQueue;
 
         friend class CompositorClient;
         friend class CompositorScheduler;
 
-        Core::UniquePtr<CompositorScheduler> scheduler;
+        CompositorScheduler scheduler;
 
-        CompositionRenderCommand *currentCommand;
+        CompositionRenderCommand *currentCommand = nullptr;
 
         bool allowUpdates = false;
 
@@ -99,7 +102,7 @@ namespace OmegaWTK::Composition {
         
         
         Compositor();
-        // ~Compositor();
+        ~Compositor();
     };
 
     struct BackendExecutionContext {

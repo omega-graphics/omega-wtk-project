@@ -13,10 +13,10 @@ namespace OmegaWTK::Native::Cocoa {
             NSWindow *parentWindow = ((CocoaAppWindow *)this->parentWindow)->getWindow();
             if(!openPanel){
                 /// If is Save Panel
-                __block NSURL *url = nil;
+                // __block NSURL *url = nil;
                 [savePanel beginSheetModalForWindow:parentWindow completionHandler:^(NSModalResponse response){
                     if(response == NSModalResponseOK){
-                        url = [savePanel URL];
+                        // url = [savePanel URL];
                     };
                 }];
 
@@ -25,10 +25,10 @@ namespace OmegaWTK::Native::Cocoa {
             }
             else if(!savePanel){
                  /// If is Save Panel
-                __block NSURL *url = nil;
+                // __block NSURL *url = nil;
                 [openPanel beginSheetModalForWindow:parentWindow completionHandler:^(NSModalResponse response){
                     if(response == NSModalResponseOK){
-                        url = [[openPanel URLs] firstObject];
+                        // url = [[openPanel URLs] firstObject];
                     };
                 }];
 

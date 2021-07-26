@@ -147,6 +147,22 @@ else:
         install_name="install_name_tool -id @rpath/libicuuc.dylib ./lib/libicuuc.dylib; install_name_tool -change libicudata.69.dylib @rpath/libicudata.dylib ./lib/libicuuc.dylib; install_name_tool -change libicudata.69.dylib @rpath/libicudata.dylib -id @rpath/libicui18n.dylib ./lib/libicui18n.dylib;install_name_tool -change libicudata.69.dylib @rpath/libicudata.dylib -change libicuuc.69.dylib @rpath/libicuuc.dylib ./lib/libicui18n.dylib; install_name_tool -id @rpath/libicudata.dylib ./lib/libicudata.dylib"
     )
 
+xml_exports = [f"{gen_third_party_dir}/libxml/lib/libxml2.a"]
+
+ThirdParty(
+    name="libxml",
+    deps=[],
+    exports=xml_exports,
+    source_dir="./external-libs/libxml2/code",
+    binary_dir=f"{third_party_dir}/temp/libxml",
+    install_dir=f"{third_party_dir}/libxml",
+    config=f"cmake -S . -B {third_party_dir}/temp/libxml -G\"Ninja\" -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=\"{third_party_dir}/libxml\"",
+    build="sudo cmake --build .",
+    install="sudo cmake --build . --target install",
+    libs=[f"{gen_third_party_dir}/libxml/lib/libxml2.lib"],
+    install_name=""
+)
+
 # assert_expr(program_exists("perl"))
 
 # ThirdParty(
@@ -179,7 +195,7 @@ if is_win:
 
 
 Config("OmegaWTK_Config",[],[omega_wtk_include_dir],standard_defines)
-set_property("OmegaWTK_Config","configs",["icu__conf"])
+set_property("OmegaWTK_Config","configs",["icu__conf","libxml__conf"])
 
 def OmegaWTKModule(name:str,sources:str,deps:"list[str]"):
     SourceSet(f"OmegaWTK{name}",sources,deps)
@@ -223,7 +239,12 @@ ui_srcs = glob("./src/UI/*.cpp")
 
 OmegaWTKModule(name="UI",sources=ui_srcs,deps=["OmegaWTKCore","OmegaWTKComposition","OmegaWTKNative","OmegaWTKMedia"])
 append_property("OmegaWTKUI","defines",priv_defines)
+
+widgets_srcs = glob("./src/Widgets/*.cpp")
+OmegaWTKModule(name="Widgets",sources=widgets_srcs,deps=["OmegaWTKCore","OmegaWTKComposition","OmegaWTKNative","OmegaWTKMedia","OmegaWTKUI"])
+
 conf_out = f"./conf_out"
+
 
 configure("./src/Info.plist.in",f"{conf_out}/OmegaWTK_res/Info.plist")
 configure("./src/version.plist.in",f"{conf_out}/OmegaWTK_res/version.plist")
@@ -237,9 +258,10 @@ if is_mac:
     "OmegaWTKComposition",
     "OmegaWTKNative",
     "OmegaWTKMedia",
-    "OmegaWTKUI"],
+    "OmegaWTKUI",
+    "OmegaWTKWidgets"],
     "Frameworks",OMEGAWTK_VERSION)
-
+    set_property("OmegaWTK","libs",["lzma","iconv"])
     set_property("OmegaWTK","configs",["OmegaWTK_Config"])
     set_property("OmegaWTK","resources",[f"{conf_out}/OmegaWTK_res/Info.plist",f"{conf_out}/OmegaWTK_res/version.plist"])
     set_property("OmegaWTK","frameworks",["Cocoa.framework","QuartzCore.framework"])

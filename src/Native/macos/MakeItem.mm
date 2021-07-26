@@ -14,7 +14,10 @@ NativeItemPtr make_item_cocoa(const Core::Rect & rect,ItemType type,NativeItemPt
         item_type = CocoaItem::View;
     else if(type == ScrollItem){
         item_type = CocoaItem::ScrollView;
-    };
+    }
+    else {
+        item_type = CocoaItem::View;
+    }
     return new CocoaItem(rect,item_type,(CocoaItem *)parent);
 };
 

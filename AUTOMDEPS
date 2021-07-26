@@ -54,6 +54,12 @@
            "branch":"default"
         },
         {
+            "type":"git_clone",
+            "url":"https://gitlab.gnome.org/GNOME/libxml2.git",
+            "dest":"$(third_party_dest)/libxml2/code",
+            "branch":"default"
+        },
+        {
             "type":"download",
             "url":"https://ftp.pcre.org/pub/pcre/pcre2-10.36.zip",
             "dest":"./temp/pcre2.zip"

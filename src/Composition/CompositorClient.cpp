@@ -26,6 +26,7 @@ namespace OmegaWTK::Composition {
         auto command = std::make_unique<CompositionRenderCommand>();
         command->renderTarget = renderTarget;
         unsigned visual_c = drawQueue.size();
+        command->_visuals = (VisualCommand *)malloc(sizeof(VisualCommand) * visual_c);
         std::move(drawQueue.begin(),drawQueue.end(),command->_visuals);
         drawQueue.clear();
         command->priority = CompositionRenderCommand::Low;

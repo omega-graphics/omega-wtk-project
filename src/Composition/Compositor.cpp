@@ -1,6 +1,7 @@
 #include "Compositor.h"
 #include "omegaWTK/Composition/Layer.h"
 #include <chrono>
+#include <mutex>
 namespace OmegaWTK::Composition {
 
 
@@ -41,22 +42,29 @@ void CompositorScheduler::processCommand(CompositionRenderCommand & command ){
 
 
 
-CompositorScheduler::CompositorScheduler(Compositor * compositor):compositor(compositor),shutdown(false){
-    run();
-};
-
-void CompositorScheduler::run() {
-    t = new std::thread([&](){
+CompositorScheduler::CompositorScheduler(Compositor * compositor):compositor(compositor),shutdown(false),mutex(),t(new std::thread([&](){
         std::cout << "--> Starting Up" << std::endl;
-        while(!shutdown){
+        while(true){
             {
-                std::lock_guard<std::mutex> lk(compositor->queueMutex);
-                if(!compositor->commandQueue.empty()){
+                bool hasCommands = false;
+                // {
+                //     std::unique_lock<std::mutex> lk(compositor->queueMutex);
+                //     compositor->queueCondition.wait(lk,[&]{ return compositor->queueIsReady;});
+                //     hasCommands = !compositor->commandQueue.empty();
+                //     lk.unlock();
+                // }
+
+                if(hasCommands){
                     auto & command = compositor->commandQueue.first();
                     processCommand(command);
                 };
             }
-            std::lock_guard<std::mutex> shutdown_lk(mutex);
+            {
+                std::lock_guard<std::mutex> shutdown_lk(mutex);
+                if(shutdown){
+                    break;
+                };
+            }
         };
 
         {
@@ -67,10 +75,12 @@ void CompositorScheduler::run() {
         }
         
         std::cout << "--> Shutting Down" << std::endl;
-    });
+    })){
+
 };
 
 CompositorScheduler::~CompositorScheduler(){
+    std::cout << "close" << std::endl;
     {
         std::lock_guard<std::mutex> lk(mutex); 
         shutdown = true;
@@ -80,14 +90,34 @@ CompositorScheduler::~CompositorScheduler(){
 };
 
 
-Compositor::Compositor():commandQueue(200),scheduler(std::make_unique<CompositorScheduler>(this)){
+Compositor::Compositor():queueMutex(),queueIsReady(false),queueCondition(),commandQueue(200),scheduler(this){
     
 };
 
+Compositor::~Compositor(){
+    std::cout << std::endl;
+     std::cout << "~Compositor" << std::endl;
+};
+
 void Compositor::scheduleCommand(UniqueHandle<CompositionRenderCommand> command){
-    const std::lock_guard<std::mutex> lk(queueMutex);
     auto ptr = command.release();
-    commandQueue.push(*ptr);
+
+    {
+        
+        std::cout << "BEFORE LOCK (pthread_mutex_ptr :" << queueMutex.native_handle() << ")" << std::endl;
+        
+        // if (!queueMutex.try_lock()){
+        //     std::cout << "LOCK IS OWNED BY OTHER THREAD!" << std::endl;
+        // };
+        std::unique_lock<std::mutex> lk(queueMutex);
+        std::cout << "AFTER LOCK" << std::endl;
+        queueIsReady = false;
+        commandQueue.push(*ptr);
+        queueIsReady = true;
+        std::cout << "PUSHED COMMAND" << std::endl;
+        lk.unlock();
+    }
+    // queueCondition.notify_one();
 };
 
 

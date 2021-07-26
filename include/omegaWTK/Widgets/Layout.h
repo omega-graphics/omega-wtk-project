@@ -1,4 +1,4 @@
-#include "Widget.h"
+#include "omegaWTK/UI/Widget.h"
 
 #ifndef OMEGAWTK_UI_LAYOUT_H
 #define OMEGAWTK_UI_LAYOUT_H
@@ -28,7 +28,7 @@ namespace OmegaWTK {
         WidgetLayoutDescriptor(SharedHandle<Widget> widget,float ratio,Core::Optional<unsigned> dimen = {});
     };
     
-    class OMEGAWTK_EXPORT Layout {
+    class OMEGAWTK_EXPORT Layout : public Widget {
         Core::Rect layoutRect;
         OmegaCommon::Vector<WidgetLayoutDescriptor> widgetLayouts;
     public:
@@ -44,14 +44,14 @@ namespace OmegaWTK {
         Iterator begin();
         Iterator end();
 
-        Layout(const Core::Rect & rect,std::initializer_list<WidgetLayoutDescriptor> widgetLayouts,bool implyPadding = false);
+        WIDGET_CONSTRUCTOR(Layout,std::initializer_list<WidgetLayoutDescriptor> widgetLayouts,bool implyPadding = false);
     };
 
     typedef Layout StaticLayout;
 
     class OMEGAWTK_EXPORT DynamicLayout : public Layout {
     public:
-        DynamicLayout(const Core::Rect & initRect,std::initializer_list<WidgetLayoutDescriptor> widgetLayouts,bool implyPadding = false);
+        WIDGET_CONSTRUCTOR(DynamicLayout,std::initializer_list<WidgetLayoutDescriptor> widgetLayouts,bool implyPadding = false);
         void resizeLayout(const Core::Rect & newRect);
     };
 };

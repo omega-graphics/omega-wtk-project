@@ -1,4 +1,4 @@
-#include "omegaWTK/UI/Text.h"
+#include "omegaWTK/Widgets/Text.h"
 
 namespace OmegaWTK::UI {
 

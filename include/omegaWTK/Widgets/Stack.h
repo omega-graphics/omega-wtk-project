@@ -1,4 +1,4 @@
-#include "Widget.h"
+#include "omegaWTK/UI/Widget.h"
 
 #ifndef OMEGAWTK_UI_STACK_H
 #define OMEGAWTK_UI_STACK_H

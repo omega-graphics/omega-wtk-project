@@ -25,10 +25,12 @@
 #include "omegaWTK/UI/App.h"
 #include "omegaWTK/UI/AppWindow.h"
 #include "omegaWTK/UI/View.h"
-#include "omegaWTK/UI/Text.h"
-// #include "omegaWTK/UI/Stack.h"
-#include "omegaWTK/UI/Layout.h"
 // #include "omegaWTK/UI/Panel.h"
+
+// Widgets Exports
+#include "omegaWTK/Widgets/Text.h"
+// #include "omegaWTK/UI/Stack.h"
+#include "omegaWTK/Widgets/Layout.h"
 
 #include "omegaWTK/Main.h"
 

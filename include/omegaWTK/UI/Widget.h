@@ -103,6 +103,7 @@ public:
 #define WIDGET_CONSTRUCTOR_DEFAULT(class_name) class_name(const Core::Rect & rect,WidgetTreeHost *parentHost,SharedHandle<Widget> parent)
 #define WIDGET_CONSTRUCTOR(class_name,...) class_name(const Core::Rect & rect,WidgetTreeHost *parentHost,SharedHandle<Widget> parent,__VA_ARGS__)
 #define WIDGET_CONSTRUCT_SUPER() Widget(rect,parentHost,parent)
+#define WIDGET_CONSTRUCT_SUPER_W_ARGS(class_name,...) class_name(rect,parentHost,parent,__VA_ARGS__)
 
 #define WIDGET_NOTIFY_OBSERVERS_SHOW() notifyObservers(Widget::Show,nullptr)
 #define WIDGET_NOTIFY_OBSERVERS_HIDE() notifyObservers(Widget::Hide,nullptr)

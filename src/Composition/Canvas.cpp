@@ -52,12 +52,17 @@ namespace OmegaWTK::Composition {
     
 // };
 
-CanvasSurface::CanvasSurface(Core::Rect & rect,CompositorClient *client):rect(rect),client(client){
+CanvasSurface::CanvasSurface(Core::Rect & rect,CompositorClient *client):client(client),rect(rect){
 
 };
 
 Layer * CanvasSurface::getParentLayer(){
     return parentLayer;
+};
+
+void CanvasSurface::drawRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush){
+    auto comm = new VisualCommand {VisualCommand::Rect,new VisualCommand::RectParams {rect,brush}};
+    submitCommandToClient(comm);
 };
 
 void CanvasSurface::drawTextRect(SharedHandle<Composition::TextRect> &textRect, Core::SharedPtr<Brush> &brush){

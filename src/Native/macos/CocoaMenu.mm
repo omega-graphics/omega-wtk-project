@@ -23,7 +23,7 @@ class CocoaMenuItem : public NativeMenuItem {
     CocoaMenuItemDelegate *delegate;
     CocoaMenu *sub_menu;
     CocoaMenu *parent_menu;
-    bool hasSubMenu;
+    // bool hasSubMenu;
     unsigned idx = 0;
     friend class CocoaMenu;
 public:
@@ -41,7 +41,7 @@ public:
     /**
      Consructs a Seperator Menu Item!
      */
-    CocoaMenuItem():item([NSMenuItem separatorItem]),sub_menu(nullptr),hasSubMenu(false),isSeperator(true){
+    CocoaMenuItem():sub_menu(nullptr),isSeperator(true),item([NSMenuItem separatorItem]){
         [item setEnabled:NO];
     };
     ~CocoaMenuItem(){};
@@ -86,7 +86,7 @@ public:
     };
 };
 
-CocoaMenuItem::CocoaMenuItem(const OmegaCommon::String & str,CocoaMenu *parent,bool hasSubMenu,CocoaMenu *subMenu):item([[NSMenuItem alloc] initWithTitle:common_string_to_ns_string(str) action:nil keyEquivalent:@""]),delegate([[CocoaMenuItemDelegate alloc] initWithCppBinding:this]),parent_menu(parent),hasSubMenu(hasSubMenu),sub_menu(subMenu),isSeperator(false){
+CocoaMenuItem::CocoaMenuItem(const OmegaCommon::String & str,CocoaMenu *parent,bool hasSubMenu,CocoaMenu *subMenu):delegate([[CocoaMenuItemDelegate alloc] initWithCppBinding:this]),sub_menu(subMenu),parent_menu(parent),isSeperator(false),item([[NSMenuItem alloc] initWithTitle:common_string_to_ns_string(str) action:nil keyEquivalent:@""]){
     [delegate hasMenu];
     if(hasSubMenu){
         [item setSubmenu:sub_menu->menu];

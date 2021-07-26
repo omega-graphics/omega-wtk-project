@@ -4,7 +4,6 @@
 #include "omegaWTK/Composition/Layer.h"
 #include "omegaWTK/Composition/Canvas.h"
 #include "omegaWTK/Native/NativeDialog.h"
-#include "Layout.h"
 
 #ifndef OMEGAWTK_UI_APPWINDOW_H
 #define OMEGAWTK_UI_APPWINDOW_H

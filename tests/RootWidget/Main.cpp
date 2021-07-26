@@ -2,10 +2,24 @@
 
 using namespace OmegaWTK;
 
+
+static OmegaWTK::Core::SharedPtr<Composition::Brush> brush;
 static SharedHandle<Composition::Font> font;
+
+class RectWidget : public Widget {
+public:
+    WIDGET_CONSTRUCTOR_DEFAULT(RectWidget):WIDGET_CONSTRUCT_SUPER(){
+        auto & surface = rootView->getLayerTreeLimb()->getRootLayer()->getSurface();
+        auto r = rect;
+        surface->drawRect(r,brush);
+    };
+
+};
 
 int omegaWTKMain(OmegaWTK::AppInst *app){
     Composition::FontDescriptor desc ("Arial",20);
+
+    brush = Composition::ColorBrush(Composition::Color::Green);
 
     font = Composition::FontEngine::instance->CreateFont(desc);
 
@@ -13,11 +27,11 @@ int omegaWTKMain(OmegaWTK::AppInst *app){
 
     auto treeHost = WidgetTreeHost::Create();
 
-    auto textWidget = treeHost->makeWidget<UI::TextWidget>(Core::Rect {Core::Position {0,0},200,50},nullptr,font);
-    textWidget->setText(U"Hello World!");
-    textWidget->show();
+    auto rectWidget = treeHost->makeWidget<RectWidget>(Core::Rect {Core::Position {0,0},100,100});
 
-    treeHost->setRoot(textWidget);
+    rectWidget->show();
+
+    treeHost->setRoot(rectWidget);
 
     treeHost->attachToWindow(window);
 

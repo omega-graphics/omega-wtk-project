@@ -1,4 +1,4 @@
-#include "omegaWTK/UI/Layout.h"
+#include "omegaWTK/Widgets/Layout.h"
 
 namespace OmegaWTK {
 
@@ -30,7 +30,7 @@ public:
 };
 
 
-Layout::Layout(const Core::Rect & rect,std::initializer_list<WidgetLayoutDescriptor> widgetLayouts,bool implyPadding):layoutRect(rect),widgetLayouts(widgetLayouts){
+Layout::WIDGET_CONSTRUCTOR(Layout,std::initializer_list<WidgetLayoutDescriptor> widgetLayouts,bool implyPadding):WIDGET_CONSTRUCT_SUPER(),layoutRect(rect),widgetLayouts(widgetLayouts){
     auto layout_desc_it = widgetLayouts.begin();
     while (layout_desc_it != widgetLayouts.end()) {
         ++layout_desc_it;
@@ -66,7 +66,7 @@ Layout::Iterator Layout::end(){
 
 
 
-DynamicLayout::DynamicLayout(const Core::Rect & rect,std::initializer_list<WidgetLayoutDescriptor> widgetLayouts,bool implyPadding):Layout(rect,widgetLayouts,implyPadding){
+DynamicLayout::WIDGET_CONSTRUCTOR(DynamicLayout,std::initializer_list<WidgetLayoutDescriptor> widgetLayouts,bool implyPadding):WIDGET_CONSTRUCT_SUPER_W_ARGS(Layout,widgetLayouts,implyPadding){
 
 };
 

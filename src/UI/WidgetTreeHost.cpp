@@ -3,7 +3,7 @@
 
 namespace OmegaWTK {
     WidgetTreeHost::WidgetTreeHost():
-    compositor(std::make_unique<Composition::Compositor>()),attachedToWindow(false)
+    compositor(new Composition::Compositor()),attachedToWindow(false)
     {
 
     };
