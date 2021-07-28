@@ -15,7 +15,7 @@ public:
 };
 typedef NativeApp *NAP;
 
-NAP make_native_app();
+NAP make_native_app(void *data);
 //void free_native_app();
 
 // NAMI make_menu_item(Core::String & str,bool hasSubMenu,bool isSeperator = false,NAM subMenuPtr = nullptr);

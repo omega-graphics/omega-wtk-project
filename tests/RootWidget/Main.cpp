@@ -34,9 +34,8 @@ int omegaWTKMain(OmegaWTK::AppInst *app){
     // treeHost->setRoot(rectWidget);
 
     // treeHost->attachToWindow(window);
-
     app->windowManager->setRootWindow(window);
     app->windowManager->displayRootWindow();
      
-    return app->start();
+    return AppInst::start();
 };

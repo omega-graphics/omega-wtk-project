@@ -12,14 +12,18 @@ namespace OmegaWTK {
         class NativeApp;
     };
 
+
+
 class OMEGAWTK_EXPORT AppInst {
     Native::NativeApp * ptr;
+    static AppInst *instance;
 public:
     UniqueHandle<AppWindowManager> windowManager;
-    static AppInst *instance;
-    AppInst();
-    int start();
-    void terminate();
+    AppInst(void *data);
+    static int start();
+    static void terminate();
+
+   
 // #ifdef TARGET_WIN32
 //     AppInst(void * windows_inst);
 // #endif
@@ -31,15 +35,12 @@ public:
     
 };
 
-#ifdef TARGET_WIN32 
-#ifdef WINDOWS_PRIVATE
+// #ifdef TARGET_WIN32 
+// #ifdef WINDOWS_PRIVATE
 
-OMEGAWTK_EXPORT void * create_hwnd_factory(void * hinst);
-OMEGAWTK_EXPORT void * hwnd_factory_get_all_hwnds(void *hwnd_factory);
-OMEGAWTK_EXPORT void free_hwnd_factory(void *factory);
-OMEGAWTK_EXPORT RECT get_hwnd_item_coords(void * hwnd);
+// OMEGAWTK_EXPORT RECT get_hwnd_item_coords(void * hwnd);
 
-#endif
-#endif
+// #endif
+// #endif
 
 #endif

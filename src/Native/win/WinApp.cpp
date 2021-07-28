@@ -1,13 +1,40 @@
 #include "WinApp.h"
 #include <Windows.h>
+#include <PathCch.h>
+#include <atlstr.h>
+#include <string>
+#include <io.h>
+#include <fcntl.h>
+
+#include "HWNDFactory.h"
+
+#pragma comment(lib, "runtimeobject.lib")
+#pragma comment(lib, "pathcch.lib")
 
 namespace OmegaWTK::Native::Win {
     class WinApp : public NativeApp {
     public:
-        void terminate(){
+        WinApp(void *data){
+            HWNDFactory *factory = new HWNDFactory((HINSTANCE)data);
+            HWNDFactory::appFactoryInst = factory;
+            /**
+             Set current directory to executable's dir.
+            */
+            HRESULT hr;
+            LPTSTR exec_string = GetCommandLineA();
+            ATL::CStringW str(exec_string);
+            std::wstring ws(str.GetBuffer());
+            hr = PathCchRemoveFileSpec(ws.data(),ws.size());
+            if(FAILED(hr)){
+
+            };
+            // MessageBoxW(HWND_DESKTOP,ws.data(),L"NOTE",MB_OK);
+            SetCurrentDirectoryW(ws.data());
+        };
+        void terminate() override{
             PostQuitMessage(0);
         };
-        void runEventLoop(){
+        int runEventLoop() override{
             // HACCEL hAccelTable = LoadAccelerators(hInstance,MAKEINTRESOURCE(IDC_@APPNAME@));
 
             MSG msg = {};
@@ -21,9 +48,12 @@ namespace OmegaWTK::Native::Win {
             }
             return msg.wParam;
         };
+        ~WinApp(){
+            delete HWNDFactory::appFactoryInst;
+        };
     };
     
-    NAP make_win_app(){
-        return new WinApp();
+    NAP make_win_app(void *data){
+        return new WinApp(data);
     };
 };

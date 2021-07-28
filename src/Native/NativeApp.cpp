@@ -24,9 +24,9 @@ NativeApp::~NativeApp(){
     
 };
 
-NAP make_native_app(){
+NAP make_native_app(void *data){
 #ifdef TARGET_WIN32
-    return Win::make_win_app();
+    return Win::make_win_app(data);
 #endif
     
 #ifdef TARGET_MACOS
@@ -46,20 +46,6 @@ NAP make_native_app(){
 
 #include "win/HWNDFactory.h"
 #include "NativePrivate/win/HWNDItem.h"
-
-void *__create_hwnd_factory(void *hinst){
-    auto ptr = new OmegaWTK::Native::Win::HWNDFactory((HINSTANCE)hinst);
-    OmegaWTK::Native::Win::HWNDFactory::appFactoryInst = ptr;
-    return ptr;
-};
-
-void * __hwnd_factory_get_all_hwnds(void * hwnd_factory){
-    return ((OmegaWTK::Native::Win::HWNDFactory *)hwnd_factory)->getAllHwnds();
-};
-
-void __free_hwnd_factory(void * hwnd_factory){
-    delete (OmegaWTK::Native::Win::HWNDFactory *) hwnd_factory;
-};
 
 RECT __get_hwnd_real_coords(HWND hwnd){
     auto item = (OmegaWTK::Native::Win::HWNDItem *)OmegaWTK::Native::Win::getHWNDUserData(hwnd);
