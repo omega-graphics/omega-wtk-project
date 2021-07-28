@@ -26,6 +26,11 @@ namespace OmegaWTK::Native::Win {
         hovered = false;
     };
 
+    void WinAppWindow::addNativeItem(NativeItemPtr item){
+       auto *hwndItem = (HWNDItem *)item;
+       SetParent(hwndItem->hwnd,hwnd);
+    };
+
     LRESULT WinAppWindow::ProcessWndMsg(UINT u_int,WPARAM wParam,LPARAM lParam){
         LRESULT result = 0;
         // MessageBoxA(HWND_DESKTOP,"WinAppWindow WndProc","NOTE",MB_OK);

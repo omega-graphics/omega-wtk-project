@@ -46,6 +46,19 @@ namespace OmegaWTK::Composition {
 
         };
     public:
+        OmegaGTE::SharedHandle<OmegaGTE::GETexture> toBitmap() {
+            UINT dpi = GetDpiFromDpiAwarenessContext(GetThreadDpiAwarenessContext());
+            FLOAT scaleFactor = FLOAT(dpi)/96.f;
+            OmegaGTE::TextureDescriptor textureDesc;
+            textureDesc.depth = 0;
+            textureDesc.type = OmegaGTE::GETexture::Texture2D;
+            textureDesc.height = rect.h * scaleFactor;
+            textureDesc.width = rect.w * scaleFactor;
+            textureDesc.storage_opts = OmegaGTE::Shared;
+            auto texture = gte.graphicsEngine->makeTexture(textureDesc);
+            
+            return texture;
+        };
         void reload(){
             HRESULT hr;
             FLOAT scaleFactor = FLOAT(GetDpiForWindow(GetForegroundWindow()))/96.f;

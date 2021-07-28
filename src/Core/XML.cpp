@@ -1,8 +1,8 @@
 #include "omegaWTK/Core/XML.h"
 
-#include <libxml2/libxml/tree.h>
-#include <libxml2/libxml/parser.h>
-#include <libxml2/libxml/xmlIO.h>
+#include <libxml/xmlversion.h>
+#include <libxml/parser.h>
+#include <libxml/xmlIO.h>
 
 namespace OmegaWTK::Core {
 
@@ -19,7 +19,7 @@ namespace OmegaWTK::Core {
         char buffer[fileSize];
 
         in.read(buffer,fileSize);
-
+    
         xmlDocPtr doc =  xmlParseMemory(buffer,fileSize);
         XMLDocument ret;
         ret.data = doc;

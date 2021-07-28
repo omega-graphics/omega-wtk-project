@@ -44,7 +44,7 @@ ThirdParty(
     source_dir="./external-libs/libpng/code",
     binary_dir=f"{third_party_dir}/temp/libpng",
     install_dir=f"{third_party_dir}/libpng",
-    config=f"cmake -S . -B {third_party_dir}/temp/libpng -G\"Ninja\" -DCMAKE_BUILD_TYPE=Release -DPNG_ARM_NEON=off  -DZLIB_DIR=\"{third_party_dir}/zlib\" -DCMAKE_INSTALL_PREFIX=\"{third_party_dir}/libpng\"",
+    config=f"cmake -S . -B {third_party_dir}/temp/libpng -G\"Ninja\" -DCMAKE_BUILD_TYPE=Release -DPNG_ARM_NEON=off  -DCMAKE_PREFIX_PATH=\"{third_party_dir}/zlib\" -DCMAKE_INSTALL_PREFIX=\"{third_party_dir}/libpng\"",
     build="cmake --build .",
     install="cmake --build . --target install",
     libs=[f"{gen_third_party_dir}/libpng/lib/libpng16.lib"],
@@ -79,7 +79,7 @@ ThirdParty(
     source_dir="./external-libs/libtiff/code",
     binary_dir=f"{third_party_dir}/temp/libtiff",
     install_dir=f"{third_party_dir}/libtiff",
-    config=f"cmake -S . -B {third_party_dir}/temp/libtiff -G\"Ninja\" -DCMAKE_BUILD_TYPE=Release -DZLIB_DIR=\"{third_party_dir}/zlib\"  -DJPEG_DIR=\"{third_party_dir}/libjpeg-turbo\" -DCMAKE_INSTALL_PREFIX=\"{third_party_dir}/libtiff\"",
+    config=f"cmake -S . -B {third_party_dir}/temp/libtiff -G\"Ninja\" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=\"{third_party_dir}/zlib\;{third_party_dir}/libjpeg-turbo\" -DCMAKE_INSTALL_PREFIX=\"{third_party_dir}/libtiff\"",
     build="cmake --build .",
     install="cmake --build . --target install",
     libs=[f"{gen_third_party_dir}/libtiff/lib/tiff.lib"],
@@ -119,7 +119,7 @@ if is_win:
 
     Copy("icu_include_copy",["./external-libs/icu-69/code/icu4c/include"],["icu_build"],f"{gen_third_party_dir}/icu")
 
-    Copy("icu_lib_copy",["./external-libs/icu-69/code/icu4c/lib64/icuin.lib","./external-libs/icu-69/code/icu4c/lib64/icuuc.lib"],["icu_build"],f"{gen_third_party_dir}/icu/lib")
+    Copy("icu_lib_copy",["./external-libs/icu-69/code/icu4c/lib64/icudt.lib","./external-libs/icu-69/code/icu4c/lib64/icuin.lib","./external-libs/icu-69/code/icu4c/lib64/icuuc.lib"],["icu_build"],f"{gen_third_party_dir}/icu/lib")
 
     Group("icu",["icu_build","icu_dll_copy","icu_include_copy","icu_lib_copy"])
 
@@ -147,21 +147,32 @@ else:
         install_name="install_name_tool -id @rpath/libicuuc.dylib ./lib/libicuuc.dylib; install_name_tool -change libicudata.69.dylib @rpath/libicudata.dylib ./lib/libicuuc.dylib; install_name_tool -change libicudata.69.dylib @rpath/libicudata.dylib -id @rpath/libicui18n.dylib ./lib/libicui18n.dylib;install_name_tool -change libicudata.69.dylib @rpath/libicudata.dylib -change libicuuc.69.dylib @rpath/libicuuc.dylib ./lib/libicui18n.dylib; install_name_tool -id @rpath/libicudata.dylib ./lib/libicudata.dylib"
     )
 
-xml_exports = [f"{gen_third_party_dir}/libxml/lib/libxml2.a"]
+if is_win:
+    xml_exports = [f"{gen_third_party_dir}/libxml/bin/libxml2.dll",f"{gen_third_party_dir}/libxml/lib/libxml2.lib"]  
+else:
+    xml_exports = [f"{gen_third_party_dir}/libxml/lib/libxml2.a"]
 
+sudo = "sudo"
+shared = "-DBUILD_SHARED_LIBS=OFF"
+inc_dir = f"-I{third_party_dir}/icu/include"
+if is_win:
+    sudo = ""
+    shared = ""
 ThirdParty(
     name="libxml",
-    deps=[],
+    deps=["icu"],
     exports=xml_exports,
     source_dir="./external-libs/libxml2/code",
     binary_dir=f"{third_party_dir}/temp/libxml",
     install_dir=f"{third_party_dir}/libxml",
-    config=f"cmake -S . -B {third_party_dir}/temp/libxml -G\"Ninja\" -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=\"{third_party_dir}/libxml\"",
-    build="sudo cmake --build .",
-    install="sudo cmake --build . --target install",
+    config=f"cmake -S . -B {third_party_dir}/temp/libxml -G\"Ninja\" -DCMAKE_C_FLAGS=\"{inc_dir}\" -DCMAKE_PREFIX_PATH=\"{third_party_dir}/zlib;{third_party_dir}/icu\" -DLIBXML2_WITH_ICU=ON -DLIBXML2_WITH_ICONV=OFF -DLIBXML2_WITH_LZMA=OFF {shared} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=\"{third_party_dir}/libxml\"",
+    build=f"{sudo} cmake --build .",
+    install=f"{sudo} cmake --build . --target install",
     libs=[f"{gen_third_party_dir}/libxml/lib/libxml2.lib"],
     install_name=""
 )
+
+set_property("libxml__conf","include_dirs",[f"{third_party_dir}/libxml/include/libxml2"])
 
 # assert_expr(program_exists("perl"))
 
@@ -204,7 +215,7 @@ def OmegaWTKModule(name:str,sources:str,deps:"list[str]"):
 core_srcs = glob("./src/Core/*.cpp")
 
 
-OmegaWTKModule(name="Core",sources=core_srcs,deps=["icu","OmegaGTE"])
+OmegaWTKModule(name="Core",sources=core_srcs,deps=["icu","libxml","OmegaGTE"])
 set_property("OmegaWTKCore","configs",["OmegaWTK_Config"])
 append_property("OmegaWTKCore","include_dirs",["./tools/assetc"])
 append_property("OmegaWTKCore","defines",priv_defines)
@@ -261,7 +272,6 @@ if is_mac:
     "OmegaWTKUI",
     "OmegaWTKWidgets"],
     "Frameworks",OMEGAWTK_VERSION)
-    set_property("OmegaWTK","libs",["lzma","iconv"])
     set_property("OmegaWTK","configs",["OmegaWTK_Config"])
     set_property("OmegaWTK","resources",[f"{conf_out}/OmegaWTK_res/Info.plist",f"{conf_out}/OmegaWTK_res/version.plist"])
     set_property("OmegaWTK","frameworks",["Cocoa.framework","QuartzCore.framework"])
@@ -276,6 +286,7 @@ elif is_win:
     "OmegaWTKMedia",
     "OmegaWTKUI",
     "OmegaGTE",
+    "OmegaWTKWidgets",
     "omega-common"],"lib")
 
     set_property("OmegaWTK","configs",["OmegaWTK_Config"])
@@ -313,12 +324,12 @@ def OmegaWTKTest(name:str,app_id:str,sources:"list[str]"):
             f"{gen_root_out_dir}/{name}_res/mmain.cpp",
             f"{gen_root_out_dir}/{name}_res/resource_script.rc",
             f"{gen_root_out_dir}/{name}_res/manifest.rc"] + sources,[f"{name}_res_copy","OmegaWTK"],f"testapps/{name}")
-        append_property(name,"defines",["WINDOWS_PRIVATE"])
+        append_property(name,"defines",["WINDOWS_PRIVATE","OMEGAWTK_APP"])
 
         Copy(f"{name}_deps_copy",[
             f"{root_out_dir}/lib/OmegaGTE.dll",
             f"{root_out_dir}/lib/OmegaWTK.dll",
-            zlib_export[0],libpng_export[0],libjpeg_turbo_export[0],libtiff_export[0]] + icu_lib_exports,[name],f"{gen_root_out_dir}/testapps/{name}")
+            zlib_export[0],libpng_export[0],libjpeg_turbo_export[0],libtiff_export[0],xml_exports[0]] + icu_lib_exports,[name],f"{gen_root_out_dir}/testapps/{name}")
 
 
 
