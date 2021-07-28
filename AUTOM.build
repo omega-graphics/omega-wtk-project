@@ -287,7 +287,7 @@ def OmegaWTKTest(name:str,app_id:str,sources:"list[str]"):
     if is_mac:
         BUNDLE_ID = app_id
         APPNAME = name
-        AppBundle(name,sources + ["./target/macos/main.mm","./target/macos/AppDelegate.mm"],["OmegaWTK"],"Apps")
+        AppBundle(name,sources + ["./target/macos/main.mm"],["OmegaWTK"],"Apps")
         configure("./target/macos/Info.plist.in",f"{conf_out}/{name}_res/Info.plist")
         set_property(name,"info_plist",f"{conf_out}/{name}_res/Info.plist")
         set_property(name,"resources",[abspath("./target/macos/MainMenu.nib")])

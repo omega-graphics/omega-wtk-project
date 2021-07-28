@@ -1,8 +1,8 @@
-#import <Cocoa/Cocoa.h>
-#import <mach-o/dyld.h>
-#include <dlfcn.h>
+#include <OmegaWTK.h>
+
 
 int main(int argc,const char * argv[]){
-    NSLog(@"%@",[[NSBundle mainBundle] sharedFrameworksPath]);
-    return NSApplicationMain(argc,argv);
+    auto * app = new OmegaWTK::AppInst();
+    omegaWTKMain(app);
+    return 0;
 };

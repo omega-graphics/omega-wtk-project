@@ -25,18 +25,18 @@ int omegaWTKMain(OmegaWTK::AppInst *app){
 
     auto window = make<AppWindow>(Core::Rect {Core::Position {0,0},500,500});
 
-    auto treeHost = WidgetTreeHost::Create();
+    // auto treeHost = WidgetTreeHost::Create();
 
-    auto rectWidget = treeHost->makeWidget<RectWidget>(Core::Rect {Core::Position {0,0},100,100});
+    // auto rectWidget = treeHost->makeWidget<RectWidget>(Core::Rect {Core::Position {0,0},100,100});
 
-    rectWidget->show();
+    // rectWidget->show();
 
-    treeHost->setRoot(rectWidget);
+    // treeHost->setRoot(rectWidget);
 
-    treeHost->attachToWindow(window);
+    // treeHost->attachToWindow(window);
 
     app->windowManager->setRootWindow(window);
     app->windowManager->displayRootWindow();
      
-    return 0;
+    return app->start();
 };
