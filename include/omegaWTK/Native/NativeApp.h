@@ -8,6 +8,7 @@ namespace OmegaWTK::Native {
 
 class OMEGAWTK_EXPORT NativeApp {
 public:
+    virtual int runEventLoop() = 0;
     virtual void terminate() = 0;
     NativeApp();
     ~NativeApp();

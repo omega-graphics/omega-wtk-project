@@ -18,6 +18,7 @@ public:
     UniqueHandle<AppWindowManager> windowManager;
     static AppInst *instance;
     AppInst();
+    int start();
     void terminate();
 // #ifdef TARGET_WIN32
 //     AppInst(void * windows_inst);

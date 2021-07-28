@@ -115,19 +115,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  PSTR lpCmdLi
    
     omegaWTKMain(appInst);
 
-    HACCEL hAccelTable = LoadAccelerators(hInstance,MAKEINTRESOURCE(IDC_@APPNAME@));
-    BOOL breturn;
-
-    MSG msg = {};
-    while (GetMessage(&msg,nullptr,0,0))
-    {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-    }
-
     free_hwnd_factory(factory);
 
     CoUninitialize();

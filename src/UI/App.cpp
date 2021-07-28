@@ -18,6 +18,10 @@ AppInst::AppInst():ptr(Native::make_native_app()),windowManager(std::make_unique
         loadAssetFile("./assets.omxa");
 };
 
+int AppInst::start(){
+    return ptr->runEventLoop();
+};
+
 void AppInst::terminate() {
     windowManager->closeAllWindows();
     ptr->terminate();
