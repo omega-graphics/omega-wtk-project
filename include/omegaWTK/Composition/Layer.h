@@ -18,6 +18,7 @@ namespace OmegaWTK {
 class AppWindow;
 class AppWindowManager;
 class View;
+class Widget;
 
 namespace Composition {
     
@@ -36,6 +37,8 @@ namespace Composition {
      */
     class OMEGAWTK_EXPORT LayerTree {
         friend class ::OmegaWTK::View;
+        friend class ::OmegaWTK::Widget;
+        void setCompClientRecurse(CompositorClient *compClient);
     protected:
         OmegaCommon::Vector<LayerTreeObserver *> observers;
 
@@ -47,14 +50,21 @@ namespace Composition {
 
         void notifyObserversOfEnable(Layer *layer);
 
+         /**
+         @note Only called by ::OmegaWTK::Widget
+        */
+        void notifyObserversOfWidgetDetach();
+
     public:
+       
         class OMEGAWTK_EXPORT Limb : public Native::NativeLayerTreeLimb {
             LayerTree *parentTree;
             Layer *limbRoot;
             bool enabled;
-            ViewRenderTarget *renderTarget;
+           
             friend class LayerTree;
         public:
+            ViewRenderTarget *renderTarget;
 
             LayerTree *getParentTree();
             using iterator = OmegaCommon::Vector<SharedHandle<Layer>>::iterator;
@@ -66,7 +76,7 @@ namespace Composition {
              @param compClient A Pointer to the parent CompositorClient.
              @returns A Limb
              */
-            Limb(const Core::Rect & rect,CompositorClient *compClient,ViewRenderTarget *renderTarget);
+            Limb(const Core::Rect & rect,ViewRenderTarget *renderTarget);
             iterator begin();
             iterator end();
             void disable();
@@ -79,13 +89,14 @@ namespace Composition {
         OmegaCommon::Map<Limb *,OmegaCommon::Vector<SharedHandle<Limb>>> body;
     public:
         void addObserver(LayerTreeObserver * observer);
+        void removeObserver(LayerTreeObserver * observer);
         Limb *getTreeRoot();
         unsigned getParentLimbChildCount(Limb *parent);
         Limb *getLimbAtIndexFromParent(unsigned idx,Limb *parent);
         /**
          Creates a Limb for the Layer Tree
          */
-        SharedHandle<Limb> createLimb(const Core::Rect &rect_for_root_layer,CompositorClient *compClient,ViewRenderTarget *renderTarget);
+        SharedHandle<Limb> createLimb(const Core::Rect &rect_for_root_layer,ViewRenderTarget *renderTarget);
         /**
          Adds a Limb to the Layer Tree.
          @param limb
@@ -113,6 +124,7 @@ namespace Composition {
         
         friend class LayerTree;
         friend class ::OmegaWTK::View;
+        void setCompClientRecurse(CompositorClient *compClient);
         void addSubLayer(SharedHandle<Layer> & layer);
         void removeSubLayer(SharedHandle<Layer> & layer);
     public:
@@ -139,13 +151,18 @@ namespace Composition {
         /// @}
         
         
-        Layer(const Core::Rect & rect,CompositorClient *compClient);
+        Layer(const Core::Rect & rect);
 //            Layer(Layer &layer);
         ~Layer();
     };
 
     INTERFACE LayerTreeObserver {
     public:
+
+        /**
+         A method called when the Widget/LayerTree has detached from a WidgetTree.
+        */
+        INTERFACE_METHOD(void,hasDetached,LayerTree *tree);
         /**
          A method called when the target layer has resized within this LayerTree
          @param layer

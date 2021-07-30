@@ -119,9 +119,9 @@ namespace OmegaWTK {
 
         friend class Layer;
 
-        Layer * parentLayer;
+        Layer * parentLayer = nullptr;
         
-        CompositorClient *client;
+        CompositorClient *client = nullptr;
 
         Core::Rect & rect;
 
@@ -129,7 +129,7 @@ namespace OmegaWTK {
 
     public:
 
-        CanvasSurface(Core::Rect & rect,CompositorClient *client);
+        CanvasSurface(Core::Rect & rect);
 
         Layer * getParentLayer();
 

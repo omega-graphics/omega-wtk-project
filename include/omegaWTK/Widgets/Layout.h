@@ -44,14 +44,14 @@ namespace OmegaWTK {
         Iterator begin();
         Iterator end();
 
-        WIDGET_CONSTRUCTOR(Layout,std::initializer_list<WidgetLayoutDescriptor> widgetLayouts,bool implyPadding = false);
+        Layout(const Core::Rect & rect,Widget *parent,std::initializer_list<WidgetLayoutDescriptor> widgetLayouts,bool implyPadding = false);
     };
 
     typedef Layout StaticLayout;
 
     class OMEGAWTK_EXPORT DynamicLayout : public Layout {
     public:
-        WIDGET_CONSTRUCTOR(DynamicLayout,std::initializer_list<WidgetLayoutDescriptor> widgetLayouts,bool implyPadding = false);
+        DynamicLayout(const Core::Rect & rect,Widget *parent,std::initializer_list<WidgetLayoutDescriptor> widgetLayouts,bool implyPadding = false);
         void resizeLayout(const Core::Rect & newRect);
     };
 };

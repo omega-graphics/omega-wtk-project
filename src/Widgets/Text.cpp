@@ -4,7 +4,7 @@ namespace OmegaWTK::UI {
 
     static SharedHandle<OmegaWTK::Composition::Brush> default_brush = OmegaWTK::Composition::ColorBrush(OmegaWTK::Composition::Color::Black);
 
-    TextWidget::WIDGET_CONSTRUCTOR(TextWidget,SharedHandle<OmegaWTK::Composition::Font> & currentfont):WIDGET_CONSTRUCT_SUPER(),currentfont(currentfont){
+    TextWidget::TextWidget(const Core::Rect & rect,Widget *parent,SharedHandle<OmegaWTK::Composition::Font> & currentfont):Widget(rect,parent),currentfont(currentfont){
 
     };
 
@@ -62,8 +62,8 @@ namespace OmegaWTK::UI {
     };
 
     
-    TextInput::WIDGET_CONSTRUCTOR(TextInput,SharedHandle<Composition::Font> currentfont,OmegaCommon::String placeholder):
-    WIDGET_CONSTRUCT_SUPER(),
+    TextInput::TextInput(const Core::Rect & rect,Widget *parent,SharedHandle<Composition::Font> currentfont,OmegaCommon::String placeholder):
+    Widget(rect,parent),
     textStr(""),
     placeholder(placeholder),
     currentfont(currentfont){

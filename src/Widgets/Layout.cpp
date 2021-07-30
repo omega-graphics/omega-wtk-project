@@ -30,7 +30,7 @@ public:
 };
 
 
-Layout::WIDGET_CONSTRUCTOR(Layout,std::initializer_list<WidgetLayoutDescriptor> widgetLayouts,bool implyPadding):WIDGET_CONSTRUCT_SUPER(),layoutRect(rect),widgetLayouts(widgetLayouts){
+Layout::Layout(const Core::Rect & rect,Widget *parent,std::initializer_list<WidgetLayoutDescriptor> widgetLayouts,bool implyPadding):Widget(rect,parent),widgetLayouts(widgetLayouts){
     auto layout_desc_it = widgetLayouts.begin();
     while (layout_desc_it != widgetLayouts.end()) {
         ++layout_desc_it;
@@ -66,7 +66,7 @@ Layout::Iterator Layout::end(){
 
 
 
-DynamicLayout::WIDGET_CONSTRUCTOR(DynamicLayout,std::initializer_list<WidgetLayoutDescriptor> widgetLayouts,bool implyPadding):WIDGET_CONSTRUCT_SUPER_W_ARGS(Layout,widgetLayouts,implyPadding){
+DynamicLayout::DynamicLayout(const Core::Rect & rect,Widget *parent,std::initializer_list<WidgetLayoutDescriptor> widgetLayouts,bool implyPadding):Layout(rect,parent,widgetLayouts,implyPadding){
 
 };
 

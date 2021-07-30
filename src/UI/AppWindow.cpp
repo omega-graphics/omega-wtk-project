@@ -31,15 +31,21 @@ void AppWindow::setMenu(SharedHandle<Menu> & menu){
 //     menuStyle = style;
 // };
 
-void AppWindow::_add_widget(SharedHandle<Widget> * handle){
+void AppWindow::_add_widget(Widget * handle){
 //    (*handle)->compositor->prepareDraw((*handle)->layerTree.get());
     std::ostringstream ss(""); 
-    ss << "WidgetRootViewPtr:" << (*handle)->rootView << std::endl << "WidgetRootTargetPtr:" << (*handle)->rootView->renderTarget << std::endl;
+    ss << "WidgetRootViewPtr:" << handle->rootView << std::endl << "WidgetRootTargetPtr:" << handle->rootView->renderTarget << std::endl;
     std::cout << ss.str();
 
-    if((*handle)->rootView->renderTarget) {
-        layer->native_window_ptr->addNativeItem((*handle)->rootView->renderTarget->getNativePtr());
+    if(handle->rootView->renderTarget) {
+        layer->native_window_ptr->addNativeItem(handle->rootView->renderTarget->getNativePtr());
     }
+};
+
+void AppWindow::add(Widget *widget){
+    auto treeHost = WidgetTreeHost::Create();
+    treeHost->setRoot(widget);
+    treeHost->attachToWindow(this);
 };
 
 
@@ -55,12 +61,14 @@ void AppWindow::close(){
     layer->native_window_ptr->close();
 };
 
+
 void AppWindow::commitRender(){
     
 };
 
 AppWindow::~AppWindow(){
     std::cout << "Closing Window" << std::endl;
+    close();
     for(auto widgetHost : widgetTreeHosts){
         delete widgetHost;
     };
@@ -68,11 +76,11 @@ AppWindow::~AppWindow(){
 
 AppWindowManager::AppWindowManager():rootWindow(nullptr){};
 
-void AppWindowManager::setRootWindow(SharedHandle<AppWindow> & handle){
+void AppWindowManager::setRootWindow(AppWindow * handle){
     rootWindow = handle;
 };
 
-SharedHandle<AppWindow> AppWindowManager::getRootWindow(){
+AppWindow * AppWindowManager::getRootWindow(){
     return rootWindow;
 };
 

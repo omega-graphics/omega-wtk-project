@@ -11,10 +11,11 @@
 namespace OmegaWTK::Media {
 
     class WMFAudioVideoProcessor : public AudioVideoProcessor {
+        IMFMediaSession *currentSession;
     public:
 
         void beginEncode() override{
-            
+            MFCreateMediaSession(NULL,&currentSession);
         }
     
         void encodeFrame() override{
@@ -22,19 +23,19 @@ namespace OmegaWTK::Media {
         }
 
         void endEncode() override{
-
+            Core::SafeRelease(&currentSession);
         }
 
         void beginDecode() override{
-
+           MFCreateMediaSession(NULL,&currentSession);
         }
 
         void decodeFrame() override {
-
+            
         }
 
         void endDecode() override{
-
+            Core::SafeRelease(&currentSession);
         }
         
         WMFAudioVideoProcessor(){

@@ -95,6 +95,7 @@ namespace OmegaWTK::Composition {
         std::future<RenderCommandStatus> executeCurrentRenderCommand();
 
     public:
+        void hasDetached(LayerTree *tree) override;
         void layerHasEnabled(Layer *layer) override;
         void layerHasResized(Layer *layer) override;
         void layerHasDisabled(Layer *layer) override;

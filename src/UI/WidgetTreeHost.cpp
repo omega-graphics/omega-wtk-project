@@ -16,17 +16,17 @@ namespace OmegaWTK {
         return new WidgetTreeHost();
     };
 
-    void WidgetTreeHost::attachToWindow(SharedHandle<AppWindow> & window){
+    void WidgetTreeHost::attachToWindow(AppWindow * window){
         if(!attachedToWindow) {
             attachedToWindow = true;
-            window->_add_widget(&root);
+            window->_add_widget(root);
             window->widgetTreeHosts.emplace_back(this);
             if(window->widgetTreeHosts.size() == 1)
                 window->setFrontendPtr(compositor);
         }
     };
 
-    void WidgetTreeHost::setRoot(SharedHandle<Widget> widget){
+    void WidgetTreeHost::setRoot(Widget * widget){
         root = widget;
     };
 };

@@ -15,7 +15,7 @@ namespace OmegaWTK::UI {
         SharedHandle<Composition::TextRect> textRect;
         void render();
     public:
-        WIDGET_CONSTRUCTOR(TextWidget,SharedHandle<Composition::Font> & currentfont);
+        TextWidget(const Core::Rect & rect,Widget *parent,SharedHandle<Composition::Font> & currentfont);
 
         void setText(const OmegaCommon::String & textStr);
 
@@ -44,7 +44,7 @@ namespace OmegaWTK::UI {
         OmegaCommon::String & string();
         void resize(Core::Rect &newRect);
         void setFont(SharedHandle<Composition::Font> & font);
-        WIDGET_CONSTRUCTOR(TextInput,SharedHandle<Composition::Font> currentfont,OmegaCommon::String placeholder = "Input Text Here...");
+        TextInput(const Core::Rect & rect,Widget *parent,SharedHandle<Composition::Font> currentfont,OmegaCommon::String placeholder = "Input Text Here...");
     };
 };
 

@@ -8,12 +8,18 @@ LayerTreeObserver::~LayerTreeObserver(){
     
 };
 
-Layer::Layer(const Core::Rect &rect,
-             CompositorClient *compClient)
+Layer::Layer(const Core::Rect &rect)
     :
-      surface(std::make_shared<CanvasSurface>(surface_rect,compClient)),parent_ptr(nullptr),surface_rect(rect),needsNativeResize(false){
+      surface(std::make_shared<CanvasSurface>(surface_rect)),surface_rect(rect),needsNativeResize(false){
           surface->parentLayer = this;
 };
+
+void Layer::setCompClientRecurse(Composition::CompositorClient *compClient){
+    surface->client = compClient;
+    for(auto & c : children){
+        c->setCompClientRecurse(compClient);
+    };
+}
 
 void Layer::addSubLayer(SharedHandle<Layer> &layer) {
   layer->parent_ptr = (this);
@@ -53,8 +59,6 @@ void Layer::resize(Core::Rect &newRect){
 LayerTree::Limb * Layer::getParentLimb(){
     return parentLimb;
 };
-
-//void Layer::redraw() { ownerCompositor->updateRequestedLayer(this); };
 
 Layer::~Layer() { };
 
@@ -98,7 +102,20 @@ void LayerTree::notifyObserversOfEnable(Layer *layer){
     };
 };
 
-LayerTree::Limb::Limb(const Core::Rect &rect,CompositorClient *compClient,ViewRenderTarget *renderTarget):limbRoot(new Layer(rect,compClient)),enabled(true),renderTarget(renderTarget){
+void LayerTree::notifyObserversOfWidgetDetach(){
+    for(auto & observer : observers){
+        observer->hasDetached(this);
+    };
+};
+
+void LayerTree::setCompClientRecurse(CompositorClient *compClient){
+    rootLimb->getRootLayer()->setCompClientRecurse(compClient);
+    for(auto & b : body){
+
+    };
+};
+
+LayerTree::Limb::Limb(const Core::Rect &rect,ViewRenderTarget *renderTarget):limbRoot(new Layer(rect)),enabled(true),renderTarget(renderTarget){
     renderTarget->getNativePtr()->setLayerTreeLimb(this);
 };
 
@@ -160,12 +177,21 @@ void LayerTree::addObserver(LayerTreeObserver * observer){
     observers.push_back(observer);
 };
 
+void LayerTree::removeObserver(LayerTreeObserver * observer){
+    for(auto it = observers.begin();it != observers.end();it++){
+        if(observer == *it){
+            observers.erase(it);
+            break;
+        }
+    };
+};
+
 LayerTree::~LayerTree(){
     
 };
 
-SharedHandle<LayerTree::Limb> LayerTree::createLimb(const Core::Rect & rect,CompositorClient *compClient,ViewRenderTarget *renderTarget){
-    auto limb = std::make_shared<LayerTree::Limb>(rect,compClient,renderTarget);
+SharedHandle<LayerTree::Limb> LayerTree::createLimb(const Core::Rect & rect,ViewRenderTarget *renderTarget){
+    auto limb = std::make_shared<LayerTree::Limb>(rect,renderTarget);
     limb->parentTree = this;
     return limb;
 };

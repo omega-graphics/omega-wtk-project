@@ -24,12 +24,12 @@ class OMEGAWTK_EXPORT  Widget {
 protected:
 
     SharedHandle<CanvasView> rootView;
-    SharedHandle<Widget> parent;
+    Widget * parent;
     SharedHandle<Composition::LayerTree> layerTree;
     /**
      The WidgetTreeHost that hosts this widget.
     */
-    WidgetTreeHost *treeHost;
+    WidgetTreeHost *treeHost = nullptr;
         /**
      Makes a Canvas View attached to this widget and returns it.
      @param rect The Rectangle to use
@@ -46,15 +46,20 @@ protected:
 //    SharedHandle<VideoView> makeVideoView(const Core::Rect & rect,View *parent);
     
 private:
+    OmegaCommon::Vector<Widget *> children;
+    void setTreeHostRecurse(WidgetTreeHost *host);
+    void removeChildWidget(Widget *ptr);
     /// Observers
     OmegaCommon::Vector<WidgetObserver *> observers;
 protected:
     typedef enum : OPT_PARAM {
         Resize,
         Show,
-        Hide
+        Hide,
+        Detach,
+        Attach
     } WidgetEventType;
-    void notifyObservers(WidgetEventType eventType,Core::Rect * rect);
+    void notifyObservers(WidgetEventType eventType,void* params);
 private:
     friend class AppWindow;
     friend class AppWindowManager;
@@ -69,7 +74,7 @@ public:
      Get the Widget's root View's rect
     */
     Core::Rect & rect();
-    void setParentView(View *view);
+    void setParentWidget(Widget *widget);
     /**
      Add a WidgetObserver to be notified.
     */
@@ -91,19 +96,15 @@ public:
     */
     void hide();
 protected:
-    Widget(const Core::Rect & rect,WidgetTreeHost *treeHost,SharedHandle<Widget> parent);
+    Widget(const Core::Rect & rect,Widget * parent);
 public:
     virtual ~Widget();
 };
 
-#define WIDGET_TEMPLATE_BEGIN()
-#define WIDGET_TEMPLATE_VIEW(class_name,...)
-#define WIDGET_TEMPLATE_END()
+// #define WIDGET_TEMPLATE_BEGIN()
+// #define WIDGET_TEMPLATE_VIEW(class_name,...)
+// #define WIDGET_TEMPLATE_END()
 
-#define WIDGET_CONSTRUCTOR_DEFAULT(class_name) class_name(const Core::Rect & rect,WidgetTreeHost *parentHost,SharedHandle<Widget> parent)
-#define WIDGET_CONSTRUCTOR(class_name,...) class_name(const Core::Rect & rect,WidgetTreeHost *parentHost,SharedHandle<Widget> parent,__VA_ARGS__)
-#define WIDGET_CONSTRUCT_SUPER() Widget(rect,parentHost,parent)
-#define WIDGET_CONSTRUCT_SUPER_W_ARGS(class_name,...) class_name(rect,parentHost,parent,__VA_ARGS__)
 
 #define WIDGET_NOTIFY_OBSERVERS_SHOW() notifyObservers(Widget::Show,nullptr)
 #define WIDGET_NOTIFY_OBSERVERS_HIDE() notifyObservers(Widget::Hide,nullptr)
@@ -122,6 +123,10 @@ protected:
 public:
     WidgetObserver();
     /// Implement in subclasses!
+    /// Called when the Widget has been attached to a WidgetTree.
+    virtual void onWidgetAttach(Widget *parent){};
+     /// Called when the Widget has been dettached from a WidgetTree.
+    virtual void onWidgetDetach(Widget *parent){};
     /// Called when the Widget has changed size.
     virtual void onWidgetChangeSize(Core::Rect oldRect,Core::Rect & newRect){};
     /// Called when the Widget has just been Hidden.

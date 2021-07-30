@@ -21,29 +21,22 @@ namespace OmegaWTK {
          */
         Composition::Compositor * compositor;
         /// The Root Widget
-        SharedHandle<Widget> root;
+        Widget * root;
 
         bool attachedToWindow;
 
         WidgetTreeHost();
     public:
 
-        static WidgetTreeHost * Create();
+        Composition::Compositor *compPtr(){return compositor;};
 
-        /**
-         @brief Creates a Widget that will be added as a child of this WidgetTreeHost.
-         @param[in] args The Widget's Constructor arguments
-        */
-        template<class T,class ...Args,std::enable_if_t<std::is_base_of_v<Widget,T>,int> = 0>
-        SharedHandle<T> makeWidget(const Core::Rect & rect,SharedHandle<Widget> parent = nullptr,Args && ...args){
-            return make<T>(rect,this,parent,args...);
-        };
+        static WidgetTreeHost * Create();
 
         /**
          @brief Set the root of the Widget tree.
          @param[in] widget The root of the Widget Tree
         */
-        void setRoot(SharedHandle<Widget> widget);
+        void setRoot(Widget * widget);
 
         /**
          @brief Attach this host to an AppWindow
@@ -52,7 +45,7 @@ namespace OmegaWTK {
          If this instance of this class is the first to be attached to the AppWindow specified,
          its Compositor will be used to manage composition for its WindowLayer.
         */
-        void attachToWindow(SharedHandle<AppWindow> & window);
+        void attachToWindow(AppWindow * window);
 
         ~WidgetTreeHost();
     };

@@ -42,7 +42,7 @@ class AppWindowDelegate;
         friend class AppWindowDelegate;
         friend class AppWindowManager;
         friend class WidgetTreeHost;
-        void _add_widget(SharedHandle<Widget> * widget);
+        void _add_widget(Widget * widget);
 
         void commitRender();
 
@@ -66,7 +66,7 @@ class AppWindowDelegate;
         void setMaximizeButtonPos(Core::Position pos); 
         void setMinimizeButtonPos(Core::Position pos); 
 #endif
-        
+        void add(Widget *widget);
         void setMenu(SharedHandle<Menu> & menu);
         SharedHandle<Composition::WindowLayer> & getLayer();
         void close();
@@ -80,13 +80,13 @@ class AppWindowDelegate;
  @brief Manages the displaying of AppWindows as well as the window heirarchy for a single application.
 */
  class OMEGAWTK_EXPORT  AppWindowManager {
-        SharedHandle<AppWindow> rootWindow;
+        AppWindow * rootWindow;
         void closeAllWindows();
         friend class AppInst;
         public:
         AppWindowManager();
-        void setRootWindow(SharedHandle<AppWindow> & handle);
-        SharedHandle<AppWindow> getRootWindow();
+        void setRootWindow(AppWindow * handle);
+        AppWindow * getRootWindow();
         void displayRootWindow();
     };
     

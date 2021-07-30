@@ -6,7 +6,8 @@
 namespace OmegaWTK {
 
 
-Widget::Widget(const Core::Rect & rect,WidgetTreeHost *parentHost,SharedHandle<Widget> parent):parent(parent),treeHost(parentHost){
+Widget::Widget(const Core::Rect & rect,Widget * parent):parent(parent){
+    parent->children.push_back(this);
     layerTree = std::make_shared<Composition::LayerTree>();
     rootView = std::make_shared<CanvasView>(rect,layerTree.get(),nullptr);
     // std::cout << "Constructing View for Widget" << std::endl;
@@ -55,6 +56,14 @@ void Widget::addObserver(WidgetObserver * observer){
     };
 };
 
+void Widget::setTreeHostRecurse(WidgetTreeHost *host){
+    treeHost = host;
+    rootView->setFrontendRecurse(host->compPtr());
+    for(auto c : children){
+        c->setTreeHostRecurse(host);
+    };
+};
+
 void Widget::removeObserver(WidgetObserver *observerPtr){
     auto it = observers.begin();
     while(it != observers.end()){
@@ -67,7 +76,7 @@ void Widget::removeObserver(WidgetObserver *observerPtr){
     };
 };
 
-void Widget::notifyObservers(Widget::WidgetEventType event_ty,Core::Rect * rect){
+void Widget::notifyObservers(Widget::WidgetEventType event_ty,void* params){
     for(auto & observer : observers){
         switch (event_ty) {
             case Show : {
@@ -79,11 +88,44 @@ void Widget::notifyObservers(Widget::WidgetEventType event_ty,Core::Rect * rect)
                 break;
             };
             case Resize : {
-                observer->onWidgetChangeSize(*rect,rootView->rect);
+                observer->onWidgetChangeSize(*(Core::Rect *)params,rootView->rect);
+                break;
+            }
+            case Attach : {
+                observer->onWidgetAttach((Widget *)params);
+                break;
+            }
+            case Detach : {
+                observer->onWidgetDetach((Widget *)params);
                 break;
             }
         }
     };
+};
+
+void Widget::removeChildWidget(Widget *ptr){
+    for(auto it = children.begin();it != children.end();it++){
+        if(ptr == *it){
+            rootView->removeSubView(ptr->rootView.get());
+            children.erase(it);
+            ptr->notifyObservers(Detach,this);
+            ptr->layerTree->notifyObserversOfWidgetDetach();
+            break;
+        };
+    };
+};
+
+void Widget::setParentWidget( Widget * widget){
+    assert(widget != nullptr && "Cannot set Widget as child of a null Widget");
+
+    if(parent != nullptr){
+        parent->removeChildWidget(this);
+    }
+    parent = widget;
+    parent->children.push_back(this);
+    setTreeHostRecurse(widget->treeHost);
+    parent->rootView->addSubView(rootView.get());
+    notifyObservers(Attach,(void *)widget);
 };
 
 Widget::~Widget(){

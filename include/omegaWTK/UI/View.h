@@ -30,6 +30,7 @@ namespace OmegaWTK {
         SharedHandle<Composition::ViewRenderTarget> renderTarget;
         friend class Widget;
     private:
+        void setFrontendRecurse(Composition::Compositor *frontend);
         Composition::LayerTree *widgetLayerTree;
         View * parent_ptr;
         Core::Rect rect;

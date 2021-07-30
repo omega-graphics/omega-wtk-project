@@ -4,7 +4,16 @@
 #include <mutex>
 namespace OmegaWTK::Composition {
 
-
+void Compositor::hasDetached(LayerTree *tree){
+    for(auto it = targetLayerTrees.begin();it != targetLayerTrees.end();it++){
+        if(tree == *it){
+            targetLayerTrees.erase(it);
+            renderTargetStore.cleanTreeTargets(tree);
+            tree->removeObserver(this);
+            break;
+        }
+    }
+};
 
 void CompositorScheduler::processCommand(CompositionRenderCommand & command ){
     auto _now = std::chrono::high_resolution_clock::now();

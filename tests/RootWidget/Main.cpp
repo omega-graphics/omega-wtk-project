@@ -8,10 +8,14 @@ static SharedHandle<Composition::Font> font;
 
 class RectWidget : public Widget {
 public:
-    WIDGET_CONSTRUCTOR_DEFAULT(RectWidget):WIDGET_CONSTRUCT_SUPER(){
+    RectWidget(const Core::Rect &rect,Widget *parent):Widget(rect,parent){
+        
+    };
+
+    void render() override {
         auto & surface = rootView->getLayerTreeLimb()->getRootLayer()->getSurface();
-        auto r = rect;
-        surface->drawRect(r,brush);
+        surface->drawRect(rect(),brush);
+        rootView->commitRender();
     };
 
 };
@@ -23,7 +27,7 @@ int omegaWTKMain(OmegaWTK::AppInst *app){
 
     font = Composition::FontEngine::instance->CreateFont(desc);
 
-    auto window = make<AppWindow>(Core::Rect {Core::Position {0,0},500,500});
+    AppWindow window (Core::Rect {Core::Position {0,0},500,500});
 
     // auto treeHost = WidgetTreeHost::Create();
 
@@ -34,7 +38,7 @@ int omegaWTKMain(OmegaWTK::AppInst *app){
     // treeHost->setRoot(rectWidget);
 
     // treeHost->attachToWindow(window);
-    app->windowManager->setRootWindow(window);
+    app->windowManager->setRootWindow(&window);
     app->windowManager->displayRootWindow();
      
     return AppInst::start();

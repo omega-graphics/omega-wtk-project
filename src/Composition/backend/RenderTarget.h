@@ -1,5 +1,6 @@
 #include "omegaWTK/Core/Core.h"
 #include "omegaWTK/Composition/CompositorClient.h"
+#include "omegaWTK/Composition/Layer.h"
 
 #ifndef OMEGAWTK_COMPOSITION_BACKED_RENDERTARGETSTORE_H
 #define OMEGAWTK_COMPOSITION_BACKED_RENDERTARGETSTORE_H
@@ -44,6 +45,10 @@ namespace OmegaWTK::Composition {
 
 
     struct RenderTargetStore {
+     private:
+        void cleanTargets(LayerTree *tree,LayerTree::Limb *limb);
+    public:
+        void cleanTreeTargets(LayerTree *tree);
         OmegaCommon::MapVec<CompositionRenderTarget *,BackendCompRenderTarget> store = {};
     };
 

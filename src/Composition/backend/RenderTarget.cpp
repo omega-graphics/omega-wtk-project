@@ -2,17 +2,34 @@
 
 namespace OmegaWTK::Composition {
 
+    void RenderTargetStore::cleanTargets(LayerTree *tree,LayerTree::Limb *limb){
+        auto found = store.find(limb->renderTarget);
+        if(found != store.end()){
+            store.erase(found);
+        }
+        auto c = tree->getParentLimbChildCount(limb);
+        for(unsigned i = 0;i < c;i++){
+            auto child = tree->getLimbAtIndexFromParent(i,limb);
+            cleanTargets(tree,child);
+        }
+    }
+
+    void RenderTargetStore::cleanTreeTargets(LayerTree *tree){
+        auto root = tree->getTreeRoot();
+        cleanTargets(tree,root);
+    }
+
     OmegaGTE::SharedHandle<OmegaGTE::GEFunctionLibrary> stdlibrary;
     OmegaGTE::SharedHandle<OmegaGTE::GERenderPipelineState> pipelineState;
     
     GERenderTargetContext::GERenderTargetContext(OmegaGTE::SharedHandle<OmegaGTE::GENativeRenderTarget> & renderTarget):
     renderTarget(renderTarget),tessContext(gte.tessalationEngine->createTEContextFromNativeRenderTarget(renderTarget)),__hasQueuedRenderJobs(false){
         
-    };
+    }
     
     bool GERenderTargetContext::hasQueuedRenderJobs(){
         return __hasQueuedRenderJobs;
-    };
+    }
 
     void GERenderTargetContext::renderToTarget(VisualCommand::Type type, void *params){
         if(!__hasQueuedRenderJobs)
@@ -71,18 +88,18 @@ namespace OmegaWTK::Composition {
                 break;
             }
         }
-    };
+    }
 
     GERenderTargetContext::~GERenderTargetContext(){
 
-    }; 
+    } 
 
     OmegaGTE::GERenderTarget *GERenderTargetContext::getRenderTarget(){
         return renderTarget.get();
-    };
+    }
 
     void GERenderTargetContext::commit(){
         renderTarget->commitAndPresent();
-    };
+    }
 
 }

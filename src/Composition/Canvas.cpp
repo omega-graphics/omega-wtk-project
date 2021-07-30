@@ -52,7 +52,7 @@ namespace OmegaWTK::Composition {
     
 // };
 
-CanvasSurface::CanvasSurface(Core::Rect & rect,CompositorClient *client):client(client),rect(rect){
+CanvasSurface::CanvasSurface(Core::Rect & rect):rect(rect){
 
 };
 
