@@ -3,6 +3,7 @@
 #include <OmegaGTE.h>
 
 #include <cassert>
+#include <iomanip>
 
 /// Regex Lib
 // #define PCRE2_CODE_UNIT_WIDTH 8
@@ -33,6 +34,19 @@ namespace OmegaWTK {
     #define DELEGATE INTERFACE
     
     #define DELEGATE_METHOD(type,name,...) INTERFACE_METHOD(type,name,__VA_ARGS__)
+
+    // inline const char *time_stamp(){
+    //     time_t tt;
+    //     tt = std::time(nullptr);
+    //     tm *ti = std::localtime(&tt);
+
+    //     return std::asctime(ti);
+
+        
+    // };
+        
+
+    #define OMEGAWTK_DEBUG(msg) ::std::cout << "[OmegaWTKDebug " << " ] - " << msg << ::std::endl;
     
     typedef enum : int {
         CodeOk,

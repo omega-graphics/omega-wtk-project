@@ -13,6 +13,10 @@
 #define OMEGAWTK_EXPORT __declspec(dllexport)
 #endif
 
+#if defined(TARGET_WIN32)
+#define _CRT_SECURE_NO_WARNINGS 1
+#endif
+
 #endif
 
 /// OMEGAWTK_DEPRECATED Macro

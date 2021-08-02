@@ -13,7 +13,7 @@ namespace OmegaWTK::UI {
         OmegaWTK::UniString textStr;
         SharedHandle<Composition::Font> currentfont;
         SharedHandle<Composition::TextRect> textRect;
-        void render();
+        void render() override;
     public:
         TextWidget(const Core::Rect & rect,Widget *parent,SharedHandle<Composition::Font> & currentfont);
 
@@ -40,6 +40,7 @@ namespace OmegaWTK::UI {
 
         // void pushChar(char32_t c);
         friend class UserInputDelegate;
+        void render() override;
     public:
         OmegaCommon::String & string();
         void resize(Core::Rect &newRect);

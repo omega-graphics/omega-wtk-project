@@ -34,6 +34,10 @@ namespace OmegaWTK::UI {
         rootView->commitRender();
     };
 
+    void TextInput::render(){
+        
+    };
+
 
     OmegaCommon::String & TextInput::string(){
         return textStr;

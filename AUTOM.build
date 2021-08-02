@@ -325,6 +325,7 @@ def OmegaWTKTest(name:str,app_id:str,sources:"list[str]"):
             f"{gen_root_out_dir}/{name}_res/resource_script.rc",
             f"{gen_root_out_dir}/{name}_res/manifest.rc"] + sources,[f"{name}_res_copy","OmegaWTK"],f"testapps/{name}")
         append_property(name,"defines",["WINDOWS_PRIVATE","OMEGAWTK_APP"])
+        set_property(name,"ldflags",["/ENTRY:WinMainCRTStartup"])
 
         Copy(f"{name}_deps_copy",[
             f"{root_out_dir}/lib/OmegaGTE.dll",

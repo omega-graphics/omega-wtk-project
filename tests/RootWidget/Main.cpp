@@ -23,21 +23,15 @@ public:
 int omegaWTKMain(OmegaWTK::AppInst *app){
     Composition::FontDescriptor desc ("Arial",20);
 
+    std::cout << "Hello World" << std::endl;
+
     brush = Composition::ColorBrush(Composition::Color::Green);
 
     font = Composition::FontEngine::instance->CreateFont(desc);
 
     AppWindow window (Core::Rect {Core::Position {0,0},500,500});
 
-    // auto treeHost = WidgetTreeHost::Create();
-
-    // auto rectWidget = treeHost->makeWidget<RectWidget>(Core::Rect {Core::Position {0,0},100,100});
-
-    // rectWidget->show();
-
-    // treeHost->setRoot(rectWidget);
-
-    // treeHost->attachToWindow(window);
+    
     app->windowManager->setRootWindow(&window);
     app->windowManager->displayRootWindow();
      
