@@ -20,50 +20,59 @@ class AppInst;
 namespace OmegaWTK::Composition {
 
 class Font;
+
+/**
+ @brief A continious run of Glyphs (without line wrapping)
+ @paragraph
+ Create from an Unicode String.
+*/
+class OMEGAWTK_EXPORT GlyphRun {
+
+   UChar *content;
+   size_t length;
+
+public:
+
+    virtual Core::Rect getBoundingRectOfGlyphAtIndex(size_t glyphIdx) = 0;
+
+
+    /**
+     @brief Updates the Glyph Run's Content
+     @param data[in] Unicode char buffer
+     @param length[in] Unicode char buffer length.
+    */
+    void update(UChar *data,size_t length){
+        this->content = data;
+        this->length = length;
+    };
+
+    /**
+     @brief Updates the Glyph Run's Content
+     @param str[in]
+    */
+    void update(const OmegaWTK::UniString & str){
+        content = (UChar *)str.getBuffer();
+        length = str.length();
+    };
+
+    /**
+     @brief Creates a Glyph Run from a Unicode String.
+     @param str[in] The Unicode String.
+     @returns SharedPtr<GlyphRun>
+    */
+    static Core::SharedPtr<GlyphRun> fromUStringAndFont(const OmegaWTK::UniString & str,Core::SharedPtr<Font> & font);
+};
+
 /**
  @brief A rectangular container that holds text drawn with a Font created by the FontEngine.
  @paragraph Description
  When creating an instance of this class, invoke the static method `Create` method, 
  which will return an instance of the appropriate platform specific subclass implementing the platform specific 
  features and bindings.
- NOTE: This class references a OmegaWTK::UniString stored in some Widget.
 */
 
-class OMEGAWTK_EXPORT  TextRect {
-protected:
-    OmegaWTK::UniString & text_val;
-    Core::SharedPtr<Font> font;
-    virtual void _updateStrInternal() = 0;
-public:
-    virtual OmegaGTE::SharedHandle<OmegaGTE::GETexture>  toBitmap() = 0;
-
-    Core::Rect rect;
-    virtual void *getNative() = 0;
-    virtual void getGlyphBoundingBoxes(Core::Rect ** rects,unsigned * count) = 0;
-    // OmegaWTK::UniString & getString() noexcept{ return text_val;};
-    // virtual void reload() = 0;
-    /**
-     @brief Creates a TextRect from a String, Font, Rect
-     @param _val[in] The text's string.
-     @param font[in] The Font used to draw the text with.
-     @param rect[in] The Rect to draw the text in.
-     @returns SharedPtr<TextRect>
-    */
-    static Core::SharedPtr<TextRect> Create(OmegaWTK::UniString & _val,Core::SharedPtr<Font> & font,Core::Rect rect);
-protected:
-    TextRect(OmegaWTK::UniString & _val,Core::SharedPtr<Font> & font,Core::Rect & rect):text_val(_val),font(font),rect(rect){};
-};
-/**
- @brief A struct that describes a Font that can be created by the FontEngine.
-*/
-struct OMEGAWTK_EXPORT  FontDescriptor {
-    typedef enum : OPT_PARAM {
-        Regular,
-        Italic,
-        Bold,
-        BoldAndItalic
-    } FontStyle;
-    typedef enum : OPT_PARAM {
+struct OMEGAGTE_EXPORT TextLayoutDescriptor {
+     typedef enum : OPT_PARAM {
         LeftUpper,
         LeftCenter,
         LeftLower,
@@ -79,12 +88,51 @@ struct OMEGAWTK_EXPORT  FontDescriptor {
         WrapByWord,
         WrapByCharacter
     } Wrapping;
+    Alignment alignment;
+    Wrapping wrapping;
+};
+
+class OMEGAWTK_EXPORT  TextRect {
+protected:
+    // OmegaWTK::UniString & text_val;
+    virtual void _updateStrInternal() = 0;
+public:
+    virtual OmegaGTE::SharedHandle<OmegaGTE::GETexture>  toBitmap() = 0;
+
+    Core::Rect rect;
+
+    virtual void *getNative() = 0;
+
+    /**
+     @brief Draws a Glyph Run to the Rect.
+     @param glyphRun[in]
+    */
+    virtual void drawRun(Core::SharedPtr<GlyphRun> &glyphRun,const Core::Position & startPosition) = 0;
+
+    /**
+     @brief Creates an empty TextRect from a Rect and a TextLayoutDescriptor.
+     @param rect[in] The Rect to draw the text in.
+     @param layoutDesc[in]
+     @returns SharedPtr<TextRect>
+    */
+    static Core::SharedPtr<TextRect> Create(Core::Rect rect,const TextLayoutDescriptor & layoutDesc);
+protected:
+    TextRect(Core::Rect & rect):rect(rect){};
+};
+/**
+ @brief A struct that describes a Font that can be created by the FontEngine.
+*/
+struct OMEGAWTK_EXPORT  FontDescriptor {
+    typedef enum : OPT_PARAM {
+        Regular,
+        Italic,
+        Bold,
+        BoldAndItalic
+    } FontStyle;
     OmegaCommon::String family;
     FontStyle style;
-    Alignment textAlignment;
-    Wrapping wrapping;
     unsigned size;
-    FontDescriptor(OmegaCommon::String _family,unsigned size,FontStyle _style = Regular,Alignment textAlignment = LeftUpper,Wrapping wrapping = WrapByWord):family(_family),style(_style),textAlignment(textAlignment),wrapping(wrapping),size(size){};
+    FontDescriptor(OmegaCommon::String _family,unsigned size,FontStyle _style = Regular):family(_family),style(_style),textAlignment(textAlignment),wrapping(wrapping),size(size){};
     ~FontDescriptor(){};
 };
 

@@ -4,10 +4,12 @@
 #define OMEGAWTK_COMPOSITION_GEOMETRICGRAPHICSPATH_H
 
 namespace OmegaWTK::Composition {
+
 class OMEGAWTK_EXPORT  GeometricGraphicsPath {
     OmegaGTE::GVectorPath2D path_a;
     OmegaGTE::GVectorPath2D path_b;
 public:
+    void write(OmegaGTE::GPoint2D pt_a,OmegaGTE::GPoint2D pt_b);
     GeometricGraphicsPath(OmegaGTE::GVectorPath2D & path_a,OmegaGTE::GVectorPath2D & path_b);
 };
 Core::SharedPtr<GeometricGraphicsPath> RoundedRectFrame(Core::RoundedRect rect,unsigned width);

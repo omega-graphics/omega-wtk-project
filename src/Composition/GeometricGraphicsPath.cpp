@@ -6,6 +6,11 @@ using namespace OmegaGTE;
         
     };
 
+    void GeometricGraphicsPath::write(OmegaGTE::GPoint2D pt_a,OmegaGTE::GPoint2D pt_b){
+        path_a.append(pt_a);
+        path_b.append(pt_b);
+    };
+
 Core::SharedPtr<GeometricGraphicsPath> RoundedRectFrame(Core::RoundedRect rect,unsigned width){
     float delta_w = width/2.f;
         
