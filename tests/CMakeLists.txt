@@ -1,4 +1,8 @@
-add_subdirectory("RootWidget")
-# if(SWIFT_BUILD)
-#     add_subdirectory("SwiftImport")
-# endif()
+# add_subdirectory("RootWidget")
+# # if(SWIFT_BUILD)
+# #     add_subdirectory("SwiftImport")
+# # endif()
+
+add_executable(BasicAppTest BasicAppTest/main.cpp)
+target_sources(BasicAppTest PRIVATE ${CMAKE_SOURCE_DIR}/target/macos/main.mm)
+target_link_frameworks(BasicAppTest "OmegaWTK")

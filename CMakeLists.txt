@@ -43,6 +43,17 @@ add_third_party(
 	INSTALL make install)
 
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/icu/include")
+	
+add_third_party(
+	NAME libxml2 
+	SOURCE_DIR "${THIRD_PARTY_SRC_DIR}/libxml2/code" 
+	BINARY_DIR "${THIRD_PARTY_OUTPUT_DIR}/temp/libxml2"
+	INSTALL_DIR "${THIRD_PARTY_OUTPUT_DIR}/libxml2"
+	CMAKE_BUILD_ARGS -DLIBXML2_WITH_ICU=TRUE -DLIBXML2_WITH_ICONV=FALSE -DLIBXML2_WITH_LZMA=FALSE -DCMAKE_PREFIX_PATH=${THIRD_PARTY_OUTPUT_DIR}/icu -DCMAKE_C_FLAGS="-I${THIRD_PARTY_OUTPUT_DIR}/icu/include"
+	DEPS icu)
+	
+	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/libxml2/include")
+	set(LIBXML2_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libxml2/lib/libxml2.dylib")
 
 add_third_party(
 	NAME zlib 
@@ -130,8 +141,10 @@ source_group(OmegaWTKWidgets ${WIDGETS_SRCS})
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist.in" ${CMAKE_CURRENT_BINARY_DIR}/Info.plist @ONLY)
 
-add_omega_graphics_module("OmegaWTK" FRAMEWORK INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" VERSION ${OMEGAWTK_VERSION} HEADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" DEPENDS OmegaGTE.framework icu zlib libpng libjpeg-turbo libtiff SOURCES ${CORE_SRCS} ${NATIVE_SRCS} ${COMPOSITION_SRCS} ${UI_SRCS} ${WIDGETS_SRCS})
-target_include_directories("OmegaWTK" PUBLIC ${THIRD_PARTY_INCLUDEDIRS})
+add_omega_graphics_module("OmegaWTK" FRAMEWORK INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" VERSION ${OMEGAWTK_VERSION} HEADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" DEPENDS OmegaGTE.framework icu zlib libpng libjpeg-turbo libtiff libxml2 SOURCES ${CORE_SRCS} ${NATIVE_SRCS} ${COMPOSITION_SRCS} ${UI_SRCS} ${WIDGETS_SRCS})
+target_include_directories("OmegaWTK" PUBLIC ${THIRD_PARTY_INCLUDEDIRS} $<TARGET_PROPERTY:OmegaCommon,INCLUDE_DIRECTORIES> )
 target_link_system_frameworks("OmegaWTK" Metal Cocoa QuartzCore)
 target_link_frameworks("OmegaWTK" OmegaGTE)
-target_link_libraries("OmegaWTK" PUBLIC "OmegaCommon")
+target_link_libraries("OmegaWTK" PUBLIC "OmegaCommon" ${LIBXML2_EXPORT})
+
+add_subdirectory(tests)

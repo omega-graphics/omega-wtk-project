@@ -39,7 +39,7 @@ namespace OmegaWTK::Composition {
         GERenderTargetContext * viewRenderTarget;
         Core::SharedPtr<BackendVisualTree> visualTree;
         OmegaCommon::MapVec<CanvasSurface *,GERenderTargetContext *> surfaceTargets;
-        void renderVisualTree();
+        // void renderVisualTree();
     };
 
 

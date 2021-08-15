@@ -27,7 +27,7 @@ namespace OmegaWTK::Composition {
         }; 
     };
 
-    Core::SharedPtr<BackendVisualTree> CreateVisualTree();
+    // Core::SharedPtr<BackendVisualTree> CreateVisualTree();
 
 };
 

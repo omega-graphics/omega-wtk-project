@@ -4,8 +4,8 @@
 
 namespace OmegaWTK::Composition {
 
-OmegaGTE::NativeRenderTargetDescriptor * makeDescForViewRenderTarget(ViewRenderTarget *renderTarget);
-OmegaGTE::NativeRenderTargetDescriptor * makeDescForCanvasSurface(CanvasSurface *layer);
+// OmegaGTE::NativeRenderTargetDescriptor * makeDescForViewRenderTarget(ViewRenderTarget *renderTarget);
+// OmegaGTE::NativeRenderTargetDescriptor * makeDescForCanvasSurface(CanvasSurface *layer);
 
 void Compositor::layerHasResized(Layer *layer){
 
@@ -26,14 +26,14 @@ std::future<RenderCommandStatus> Compositor::executeCurrentRenderCommand(){
 
     auto found = renderTargetStore.store.find(currentCommand->renderTarget);
     if(found == renderTargetStore.store.end()){
-        __buildVisualTree = true;
-        auto renderTarget = (ViewRenderTarget *)currentCommand->renderTarget;
-        auto desc = makeDescForViewRenderTarget(renderTarget);
-        auto geTarget = gte.graphicsEngine->makeNativeRenderTarget(*desc);
-        BackendCompRenderTarget compTarget {new GERenderTargetContext{geTarget}};
-        compTarget.visualTree = CreateVisualTree();
-        renderTargetStore.store.insert(std::make_pair(renderTarget,compTarget));
-        target = &renderTargetStore.store[renderTarget];
+        // __buildVisualTree = true;
+        // auto renderTarget = (ViewRenderTarget *)currentCommand->renderTarget;
+        // auto desc = makeDescForViewRenderTarget(renderTarget);
+        // auto geTarget = gte.graphicsEngine->makeNativeRenderTarget(*desc);
+        // BackendCompRenderTarget compTarget {new GERenderTargetContext{geTarget}};
+        // compTarget.visualTree = CreateVisualTree();
+        // renderTargetStore.store.insert(std::make_pair(renderTarget,compTarget));
+        // target = &renderTargetStore.store[renderTarget];
     }
     else {
         target = &renderTargetStore.store[currentCommand->renderTarget];
@@ -48,7 +48,7 @@ std::future<RenderCommandStatus> Compositor::executeCurrentRenderCommand(){
         auto surface = com->targetSurface;
         auto s_found = target->surfaceTargets.find(surface);
         if(s_found == target->surfaceTargets.end()){
-            OmegaGTE::NativeRenderTargetDescriptor *desc = makeDescForCanvasSurface(surface);
+            // OmegaGTE::NativeRenderTargetDescriptor *desc = makeDescForCanvasSurface(surface);
             
 
             auto targetTree = surface->getParentLayer()->getParentLimb()->getParentTree();
@@ -67,14 +67,14 @@ std::future<RenderCommandStatus> Compositor::executeCurrentRenderCommand(){
                 targetLayerTrees.push_back(targetTree);
             }
 
-            auto _target = gte.graphicsEngine->makeNativeRenderTarget(*desc);
-            auto ctxt = new GERenderTargetContext{_target};
-            auto visual = target->visualTree->makeVisual(*ctxt,*desc,surface->getParentLayer()->getLayerRect().pos);
-            if(surface->getParentLayer()->isChildLayer())
-                target->visualTree->addVisual(visual);
-            else 
-                target->visualTree->setRootVisual(visual);
-            target->surfaceTargets.insert(std::make_pair(surface,ctxt));
+            // auto _target = gte.graphicsEngine->makeNativeRenderTarget(*desc);
+            // auto ctxt = new GERenderTargetContext{_target};
+            // auto visual = target->visualTree->makeVisual(*ctxt,*desc,surface->getParentLayer()->getLayerRect().pos);
+            // if(surface->getParentLayer()->isChildLayer())
+            //     target->visualTree->addVisual(visual);
+            // else 
+            //     target->visualTree->setRootVisual(visual);
+            // target->surfaceTargets.insert(std::make_pair(surface,ctxt));
             surfaceRenderTargetCtxt = target->surfaceTargets[surface];
         }
         else {
@@ -89,8 +89,8 @@ std::future<RenderCommandStatus> Compositor::executeCurrentRenderCommand(){
             s_target->commit();
     };
 
-    if(__buildVisualTree)
-        target->renderVisualTree();
+    // if(__buildVisualTree)
+    //     target->renderVisualTree();
 
 
     auto commandStatus = status_promise.get_future();
