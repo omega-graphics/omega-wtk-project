@@ -96,10 +96,10 @@ namespace OmegaWTK {
             Core::SharedPtr<Brush> brush;
             Core::Optional<Border> border;
         } EllipseParams;
-        typedef struct {
-            Core::SharedPtr<TextRect> textRect;
-            Core::SharedPtr<Brush> brush;
-        } TextParams;
+        // typedef struct {
+        //     Core::SharedPtr<TextRect> textRect;
+        //     Core::SharedPtr<Brush> brush;
+        // } TextParams;
         typedef struct {
             Core::SharedPtr<Media::BitmapImage> img;
             Core::Rect rect;
@@ -139,7 +139,7 @@ namespace OmegaWTK {
 
         void drawEllipse(Core::Ellipse & ellipse,Core::SharedPtr<Brush> & brush);
 
-        void drawTextRect(SharedHandle<Composition::TextRect> & textRect,Core::SharedPtr<Brush> & brush);
+        // void drawTextRect(SharedHandle<Composition::TextRect> & textRect,Core::SharedPtr<Brush> & brush);
 
         void drawImage(SharedHandle<Media::BitmapImage> & img,Core::SharedPtr<Brush> & brush);
 

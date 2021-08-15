@@ -14,7 +14,7 @@ AppInst::AppInst(void *data):ptr(Native::make_native_app(data)),windowManager(st
     instance = this;
     gte = OmegaGTE::Init();
     OMEGAWTK_DEBUG("Application Startup")
-    Composition::FontEngine::Create();
+    // Composition::FontEngine::Create();
     OmegaCommon::FS::Path assets_path("./assets.omxa");
     if(assets_path.exists())
         loadAssetFile("./assets.omxa");
@@ -36,7 +36,7 @@ void AppInst::terminate() {
 
 AppInst::~AppInst(){
     instance = nullptr;
-    Composition::FontEngine::Destroy();
+    // Composition::FontEngine::Destroy();
     OmegaGTE::Close(gte);
 };
 

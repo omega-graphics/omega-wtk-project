@@ -10,85 +10,85 @@
 
 namespace OmegaWTK::Composition {
 
-Core::SharedPtr<BackendVisualTree> CreateVisualTree(){
-    return MTLCALayerTree::Create();
-};
+// Core::SharedPtr<BackendVisualTree> CreateVisualTree(){
+//     return MTLCALayerTree::Create();
+// };
 
 
-OmegaGTE::NativeRenderTargetDescriptor * makeDescForViewRenderTarget(
-                                        ViewRenderTarget *renderTarget){
+// OmegaGTE::NativeRenderTargetDescriptor * makeDescForViewRenderTarget(
+//                                         ViewRenderTarget *renderTarget){
 
-    auto cocoaView = (Native::Cocoa::CocoaItem *)renderTarget->getNativePtr();
-    auto *desc = new OmegaGTE::NativeRenderTargetDescriptor;
-    OmegaWTKCocoaView *view = (__bridge OmegaWTKCocoaView *)cocoaView->getBinding();
-    CAMetalLayer *metalLayer = [CAMetalLayer layer];
-    metalLayer.frame = view.frame;
-    metalLayer.contentsScale = [NSScreen mainScreen].backingScaleFactor;
-    view.layer = metalLayer;
-    desc->metalLayer = metalLayer;
-    return desc;
-};
+//     auto cocoaView = (Native::Cocoa::CocoaItem *)renderTarget->getNativePtr();
+//     auto *desc = new OmegaGTE::NativeRenderTargetDescriptor;
+//     OmegaWTKCocoaView *view = (__bridge OmegaWTKCocoaView *)cocoaView->getBinding();
+//     CAMetalLayer *metalLayer = [CAMetalLayer layer];
+//     metalLayer.frame = view.frame;
+//     metalLayer.contentsScale = [NSScreen mainScreen].backingScaleFactor;
+//     view.layer = metalLayer;
+//     desc->metalLayer = metalLayer;
+//     return desc;
+// };
 
-OmegaGTE::NativeRenderTargetDescriptor * makeDescForCanvasSurface(CanvasSurface *layer){
-   auto *desc = new OmegaGTE::NativeRenderTargetDescriptor;
-   CAMetalLayer *metalLayer = [CAMetalLayer layer];
-   metalLayer.frame = Native::Cocoa::core_rect_to_cg_rect(layer->getParentLayer()->getLayerRect());
-   metalLayer.contentsScale = [NSScreen mainScreen].backingScaleFactor;
-   desc->metalLayer = metalLayer;
-   return desc;
-};
+// OmegaGTE::NativeRenderTargetDescriptor * makeDescForCanvasSurface(CanvasSurface *layer){
+//    auto *desc = new OmegaGTE::NativeRenderTargetDescriptor;
+//    CAMetalLayer *metalLayer = [CAMetalLayer layer];
+//    metalLayer.frame = Native::Cocoa::core_rect_to_cg_rect(layer->getParentLayer()->getLayerRect());
+//    metalLayer.contentsScale = [NSScreen mainScreen].backingScaleFactor;
+//    desc->metalLayer = metalLayer;
+//    return desc;
+// };
 
-MTLCALayerTree::MTLCALayerTree(){
+// MTLCALayerTree::MTLCALayerTree(){
 
-};
+// };
 
-Core::SharedPtr<MTLCALayerTree> MTLCALayerTree::Create(){
-    return Core::SharedPtr<MTLCALayerTree>(new MTLCALayerTree());
-};
+// Core::SharedPtr<MTLCALayerTree> MTLCALayerTree::Create(){
+//     return Core::SharedPtr<MTLCALayerTree>(new MTLCALayerTree());
+// };
 
-Core::SharedPtr<BackendVisualTree::Visual> MTLCALayerTree::makeVisual(
-                                                            GERenderTargetContext &renderContext,
-                                                            OmegaGTE::NativeRenderTargetDescriptor & targetDesc,
-                                                            Core::Position & pos){
+// Core::SharedPtr<BackendVisualTree::Visual> MTLCALayerTree::makeVisual(
+//                                                             GERenderTargetContext &renderContext,
+//                                                             OmegaGTE::NativeRenderTargetDescriptor & targetDesc,
+//                                                             Core::Position & pos){
 
-    auto * v = new Visual{{renderContext}};
-    v->attachTransformLayer = false;
-    v->metalLayer = targetDesc.metalLayer;
-    v->pos = pos;
-    return std::shared_ptr<Visual>(v);
-};
+//     auto * v = new Visual{{renderContext}};
+//     v->attachTransformLayer = false;
+//     v->metalLayer = targetDesc.metalLayer;
+//     v->pos = pos;
+//     return std::shared_ptr<Visual>(v);
+// };
 
-void MTLCALayerTree::setRootVisual(Core::SharedPtr<BackendVisualTree::Visual> & visual){
-    root = visual;
-};
+// void MTLCALayerTree::setRootVisual(Core::SharedPtr<BackendVisualTree::Visual> & visual){
+//     root = visual;
+// };
 
-void MTLCALayerTree::addVisual(Core::SharedPtr<Parent::Visual> & visual){
-    body.push_back(visual);
-};
+// void MTLCALayerTree::addVisual(Core::SharedPtr<Parent::Visual> & visual){
+//     body.push_back(visual);
+// };
 
-void BackendCompRenderTarget::renderVisualTree(){
-    MTLCALayerTree *layerTree = (MTLCALayerTree *)visualTree.get();
-    MTLCALayerTree::Visual *root = (MTLCALayerTree::Visual *)layerTree->root.get();
-    OmegaGTE::GENativeRenderTarget *target = (OmegaGTE::GENativeRenderTarget *)root->imgRenderTarget.getRenderTarget();
-    root->metalLayer.anchorPoint = CGPointMake(0.f,0.f);
-    target->commitAndPresent();
-    for(auto & child : layerTree->body){
-        CAMetalLayer *childLayer = ((MTLCALayerTree::Visual *)child.get())->metalLayer;
-        [root->metalLayer addSublayer:childLayer];
-        childLayer.position = Native::Cocoa::core_pos_to_cg_point(child->pos);
-        childLayer.anchorPoint = CGPointMake(0.f,0.f);
-        [childLayer setNeedsDisplay];
-    };
-    [root->metalLayer setNeedsDisplay];
-};
+// void BackendCompRenderTarget::renderVisualTree(){
+//     MTLCALayerTree *layerTree = (MTLCALayerTree *)visualTree.get();
+//     MTLCALayerTree::Visual *root = (MTLCALayerTree::Visual *)layerTree->root.get();
+//     OmegaGTE::GENativeRenderTarget *target = (OmegaGTE::GENativeRenderTarget *)root->imgRenderTarget.getRenderTarget();
+//     root->metalLayer.anchorPoint = CGPointMake(0.f,0.f);
+//     target->commitAndPresent();
+//     for(auto & child : layerTree->body){
+//         CAMetalLayer *childLayer = ((MTLCALayerTree::Visual *)child.get())->metalLayer;
+//         [root->metalLayer addSublayer:childLayer];
+//         childLayer.position = Native::Cocoa::core_pos_to_cg_point(child->pos);
+//         childLayer.anchorPoint = CGPointMake(0.f,0.f);
+//         [childLayer setNeedsDisplay];
+//     };
+//     [root->metalLayer setNeedsDisplay];
+// };
 
-void GERenderTargetContext::applyEffectToTarget(CanvasLayerEffect::Type type, void *params){
+// void GERenderTargetContext::applyEffectToTarget(CanvasLayerEffect::Type type, void *params){
         
-};
+// };
 
-MTLCALayerTree::~MTLCALayerTree(){
+// MTLCALayerTree::~MTLCALayerTree(){
     
-};
+// };
 
 // Core::SharedPtr<MTLBDCALayerTree> MTLBDCALayerTree::Create(MTLBDCompositionDeviceContext *deviceContext){
 //     return std::make_shared<MTLBDCALayerTree>(deviceContext);
