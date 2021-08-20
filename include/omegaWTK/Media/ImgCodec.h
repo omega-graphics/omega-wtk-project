@@ -10,11 +10,13 @@ namespace OmegaWTK {
             int compression_type;
         };
         struct ImgHeader;
+
+        typedef unsigned char ImgByte;
     
         struct OMEGAWTK_EXPORT BitmapImage {
             Core::UniquePtr<ImgProfile> profile;
             Core::UniquePtr<ImgHeader> header;
-            void *data;
+            ImgByte *data;
             
             enum class ColorFormat : OPT_PARAM {
                 RGB,
@@ -49,8 +51,10 @@ namespace OmegaWTK {
             BitmapImage::AlphaFormat alpha_format;
             size_t stride;
         };
+        
         OMEGAWTK_EXPORT StatusWithObj<BitmapImage> loadImageFromFile(OmegaCommon::FS::Path path);
         OMEGAWTK_EXPORT StatusWithObj<BitmapImage> loadImageFromAssets(OmegaCommon::FS::Path path);
+
     #define IMPORT_IMG(img) ::OmegaWTK::Media::loadImageFromAssets(img)
     };
 };

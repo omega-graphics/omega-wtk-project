@@ -9,7 +9,7 @@ namespace OmegaWTK::Native{
         void updateAllHWNDPos(UINT root_wnd_height,OmegaCommon::Vector<HWND> * hwnds_to_update);
         /// Factory for registering and creating HWNDs.
         /// NOTE: Only instiantitate this class once!
-        class HWNDFactory {
+        class OMEGAWTK_EXPORT HWNDFactory {
             OmegaCommon::Vector<OmegaCommon::String> wndclassregistry;
             /// Root hwnd children!
             OmegaCommon::Vector<HWND> all_hwnds;

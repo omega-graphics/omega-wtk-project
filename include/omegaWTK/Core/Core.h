@@ -20,6 +20,8 @@
 #ifndef OMEGAWTK_CORE_CORE_H
 #define OMEGAWTK_CORE_CORE_H
 
+/// @brief OmegaWTK
+/// A cross platform user interface api.
 namespace OmegaWTK {
 
     static OmegaGTE::GTE gte;

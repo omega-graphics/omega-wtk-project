@@ -1,4 +1,4 @@
-/// ICU 69 C++ Bindings!
+/// @file ICU 69 C++ Bindings!
 
 
 #include <unicode/calendar.h>

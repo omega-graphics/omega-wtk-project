@@ -14,23 +14,25 @@ namespace OmegaWTK::Composition {
     };
 
     OmegaGTE::NativeRenderTargetDescriptor * makeDescForViewRenderTarget(ViewRenderTarget *renderTarget){
-        auto desc = new OmegaGTE::NativeRenderTargetDescriptor;
-        auto hwndItem =  (Native::Win::HWNDItem *)renderTarget->getNativePtr();
-        desc->hwnd = hwndItem->hwnd;
-        desc->isHwnd = true;
-        return desc;
+        // auto desc = new OmegaGTE::NativeRenderTargetDescriptor;
+        // auto hwndItem =  (Native::Win::HWNDItem *)renderTarget->getNativePtr();
+        // desc->hwnd = hwndItem->hwnd;
+        // desc->isHwnd = true;
+        // return desc;
+        return nullptr;
     };
     OmegaGTE::NativeRenderTargetDescriptor * makeDescForCanvasSurface(CanvasSurface *surface){
-       auto desc = new OmegaGTE::NativeRenderTargetDescriptor;
-       desc->isHwnd = false;
-       auto & rect = surface->getParentLayer()->getLayerRect();
+    //    auto desc = new OmegaGTE::NativeRenderTargetDescriptor;
+    //    desc->isHwnd = false;
+    //    auto & rect = surface->getParentLayer()->getLayerRect();
 
-       UINT dpi = GetDpiFromDpiAwarenessContext(GetThreadDpiAwarenessContext());
-       float scaleFactor = FLOAT(dpi)/96.f;
+    //    UINT dpi = GetDpiFromDpiAwarenessContext(GetThreadDpiAwarenessContext());
+    //    float scaleFactor = FLOAT(dpi)/96.f;
 
-       desc->height = rect.h * scaleFactor;
-       desc->width = rect.w * scaleFactor;
-       return desc;
+    //    desc->height = rect.h * scaleFactor;
+    //    desc->width = rect.w * scaleFactor;
+    //    return desc;
+        return nullptr;
     };
 
     
@@ -76,7 +78,7 @@ namespace OmegaWTK::Composition {
             MessageBoxA(HWND_DESKTOP,(std::string("Failed to set Content of Visual. ERROR:") + ss.str()).c_str(),NULL,MB_OK);
         };
         // rc.visual = nullptr;
-        auto _v = new Visual{renderContext};
+        auto _v = new Visual{{renderContext}};
         _v->pos = pos;
         _v->visual = v;
         return std::shared_ptr<Visual>(_v);
@@ -96,8 +98,8 @@ namespace OmegaWTK::Composition {
         return std::make_shared<DCVisualTree>();
     };
 
-    void BackendCompRenderTarget::renderVisualTree(){
+    // void BackendCompRenderTarget::renderVisualTree(){
 
-    };
+    // };
 
 };

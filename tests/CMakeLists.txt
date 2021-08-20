@@ -4,5 +4,9 @@
 # # endif()
 
 add_executable(BasicAppTest BasicAppTest/main.cpp)
-target_sources(BasicAppTest PRIVATE ${CMAKE_SOURCE_DIR}/target/macos/main.mm)
-target_link_frameworks(BasicAppTest "OmegaWTK")
+add_dependencies(BasicAppTest "OmegaWTK")
+if(TARGET_MACOS)
+    add_dependencies(BasicAppTest "OmegaWTK.framework")
+    target_sources(BasicAppTest PRIVATE ${CMAKE_SOURCE_DIR}/target/macos/main.mm)
+    target_link_frameworks(BasicAppTest "OmegaWTK")
+endif()

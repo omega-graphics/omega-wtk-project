@@ -24,7 +24,7 @@ namespace OmegaWTK::Native::Win {
     };
 
     class WinNoteDialog : public NativeNoteDialog {
-        static CALLBACK INT_PTR DlgProc(HWND, UINT, WPARAM, LPARAM);
+        static INT_PTR DlgProc(HWND , UINT, WPARAM, LPARAM);
         HGLOBAL hgbl;
         public:
         WinNoteDialog(const Descriptor & desc,NWH nativeWindow);

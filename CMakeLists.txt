@@ -32,6 +32,29 @@ set(THIRD_PARTY_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external-libs)
 set(THIRD_PARTY_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/deps)
 set(THIRD_PARTY_INCLUDEDIRS)
 
+set(ICU_VERSION 69)
+
+if(TARGET_WIN32)
+
+file(MAKE_DIRECTORY  ${THIRD_PARTY_OUTPUT_DIR}/icu/bin)
+file(MAKE_DIRECTORY  ${THIRD_PARTY_OUTPUT_DIR}/icu/lib)
+
+add_third_party(
+	CUSTOM_PROJECT
+	NAME icu 
+	SOURCE_DIR "${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/source/allinone" 
+	BINARY_DIR "${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/source/allinone"
+	INSTALL_DIR "${THIRD_PARTY_OUTPUT_DIR}/icu"
+	CONF "" 
+	BUILD msbuild allinone.sln -p:Configuration=Release
+	INSTALL ${CMAKE_COMMAND} -E copy_directory "${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/include" "${THIRD_PARTY_OUTPUT_DIR}/icu/include"
+	&& ${CMAKE_COMMAND} -E copy "${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/bin64/icuuc${ICU_VERSION}.dll" "${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/bin64/icudt${ICU_VERSION}.dll" "${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/bin64/icuin${ICU_VERSION}.dll" "${THIRD_PARTY_OUTPUT_DIR}/icu/bin"
+	&& ${CMAKE_COMMAND} -E copy "${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/lib64/icuuc.lib" "${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/lib64/icudt.lib" "${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/lib64/icuin.lib" "${THIRD_PARTY_OUTPUT_DIR}/icu/lib")
+
+	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/icu/include")
+	
+
+else()
 add_third_party(
 	CUSTOM_PROJECT
 	NAME icu 
@@ -44,6 +67,9 @@ add_third_party(
 
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/icu/include")
 	
+endif()
+
+
 add_third_party(
 	NAME libxml2 
 	SOURCE_DIR "${THIRD_PARTY_SRC_DIR}/libxml2/code" 
@@ -52,8 +78,12 @@ add_third_party(
 	CMAKE_BUILD_ARGS -DLIBXML2_WITH_ICU=TRUE -DLIBXML2_WITH_ICONV=FALSE -DLIBXML2_WITH_LZMA=FALSE -DCMAKE_PREFIX_PATH=${THIRD_PARTY_OUTPUT_DIR}/icu -DCMAKE_C_FLAGS="-I${THIRD_PARTY_OUTPUT_DIR}/icu/include"
 	DEPS icu)
 	
-	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/libxml2/include")
-	set(LIBXML2_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libxml2/lib/libxml2.dylib")
+	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/libxml2/include/libxml2")
+	if(TARGET_WIN32)
+		set(LIBXML2_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libxml2/lib/libxml2.lib")
+	elseif(TARGET_MACOS)
+		set(LIBXML2_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libxml2/lib/libxml2.dylib")
+	endif()
 
 add_third_party(
 	NAME zlib 
@@ -62,14 +92,21 @@ add_third_party(
 	INSTALL_DIR "${THIRD_PARTY_OUTPUT_DIR}/zlib")
 	
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/zlib/include")
+	if(TARGET_WIN32)
+		set(ZLIB_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/zlib/lib/zlib.lib")
+	endif()
 	
 add_third_party(
 	NAME libpng
 	SOURCE_DIR "${THIRD_PARTY_SRC_DIR}/libpng/code"
 	BINARY_DIR "${THIRD_PARTY_OUTPUT_DIR}/temp/libpng"
 	INSTALL_DIR "${THIRD_PARTY_OUTPUT_DIR}/libpng"
-	CMAKE_BUILD_ARGS -DCMAKE_PREFIX_PATH="${THIRD_PARTY_OUTPUT_DIR}/zlib"
+	CMAKE_BUILD_ARGS -DCMAKE_PREFIX_PATH=${THIRD_PARTY_OUTPUT_DIR}/zlib
 	DEPS zlib)
+
+	if(TARGET_WIN32)
+		set(LIBPNG_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libpng/lib/libpng16.lib")
+	endif()
 	
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/libpng/include")
 
@@ -78,8 +115,12 @@ add_third_party(
 	SOURCE_DIR "${THIRD_PARTY_SRC_DIR}/libjpeg-turbo/code"
 	BINARY_DIR ${THIRD_PARTY_OUTPUT_DIR}/temp/libjpeg-turbo
 	INSTALL_DIR ${THIRD_PARTY_OUTPUT_DIR}/libjpeg-turbo
-	CMAKE_BUILD_ARGS -DCMAKE_PREFIX_PATH="${THIRD_PARTY_OUTPUT_DIR}/zlib"
+	CMAKE_BUILD_ARGS -DCMAKE_PREFIX_PATH=${THIRD_PARTY_OUTPUT_DIR}/zlib
 	DEPS zlib)
+
+	if(TARGET_WIN32)
+		set(LIBJPEGTURBO_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libjpeg-turbo/lib/turbojpeg.lib")
+	endif()
 	
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/libjpeg-turbo/include")
 	
@@ -88,8 +129,12 @@ add_third_party(
 	SOURCE_DIR ${THIRD_PARTY_SRC_DIR}/libtiff/code
 	BINARY_DIR ${THIRD_PARTY_OUTPUT_DIR}/temp/libtiff
 	INSTALL_DIR ${THIRD_PARTY_OUTPUT_DIR}/libtiff
-	CMAKE_BUILD_ARGS -DCMAKE_PREFIX_PATH="${THIRD_PARTY_OUTPUT_DIR}/zlib,${THIRD_PARTY_OUTPUT_DIR}/libjpeg-turbo"
+	CMAKE_BUILD_ARGS -DCMAKE_PREFIX_PATH=${THIRD_PARTY_OUTPUT_DIR}/zlib;${THIRD_PARTY_OUTPUT_DIR}/libjpeg-turbo
 	DEPS zlib libjpeg-turbo)
+
+	if(TARGET_WIN32)
+		set(LIBTIFF_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libtiff/lib/tiff.lib")
+	endif()
 	
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/libtiff/include")
 
@@ -117,12 +162,26 @@ source_group(OmegaWTKNative ${NATIVE_SRCS})
 set(NATIVE_PRIVATE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/Native/private_include")
 set_source_files_properties(${NATIVE_SRCS} PROPERTIES INCLUDE_DIRECTORIES ${NATIVE_PRIVATE_INCLUDE_DIR})
 
+#OmegaWTK Media SubModule
+
+file(GLOB MEDIA_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/*.cpp")
+source_group(OmegaWTKMedia ${NATIVE_SRCS})
+if(TARGET_WIN32)
+	file(GLOB WIN_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/wmf/*.cpp")
+	set(MEDIA_SRCS ${MEDIA_SRCS} ${WIN_SRCS})
+	
+elseif(TARGET_MACOS)
+	file(GLOB MACOS_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/avf/*.mm")
+	set(MEDIA_SRCS ${MEDIA_SRCS} ${MACOS_SRCS})
+	
+endif()
 #OmegaWTK Composition SubModule
 
 file(GLOB COMPOSITION_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Composition/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/Composition/backend/*.cpp")
 
 if(TARGET_WIN32)
 	file(GLOB WIN_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Composition/backend/dx/*.cpp")
+	set(COMPOSITION_SRCS ${COMPOSITION_SRCS} ${WIN_SRCS})
 elseif(TARGET_MACOS)
 	file(GLOB MACOS_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Composition/backend/mtl/*.mm")
 	set(COMPOSITION_SRCS ${COMPOSITION_SRCS} ${MACOS_SRCS})
@@ -141,10 +200,22 @@ source_group(OmegaWTKWidgets ${WIDGETS_SRCS})
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist.in" ${CMAKE_CURRENT_BINARY_DIR}/Info.plist @ONLY)
 
-add_omega_graphics_module("OmegaWTK" FRAMEWORK INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" VERSION ${OMEGAWTK_VERSION} HEADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" DEPENDS OmegaGTE.framework icu zlib libpng libjpeg-turbo libtiff libxml2 SOURCES ${CORE_SRCS} ${NATIVE_SRCS} ${COMPOSITION_SRCS} ${UI_SRCS} ${WIDGETS_SRCS})
+add_omega_graphics_module("OmegaWTK" FRAMEWORK INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" VERSION ${OMEGAWTK_VERSION} HEADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" DEPENDS OmegaGTE icu zlib libpng libjpeg-turbo libtiff libxml2 SOURCES ${CORE_SRCS} ${NATIVE_SRCS} ${MEDIA_SRCS} ${COMPOSITION_SRCS} ${UI_SRCS} ${WIDGETS_SRCS})
+if(TARGET_MACOS)
+	add_dependencies("OmegaWTK" OmegaGTE.framework)
+endif()
 target_include_directories("OmegaWTK" PUBLIC ${THIRD_PARTY_INCLUDEDIRS} $<TARGET_PROPERTY:OmegaCommon,INCLUDE_DIRECTORIES> )
-target_link_system_frameworks("OmegaWTK" Metal Cocoa QuartzCore)
-target_link_frameworks("OmegaWTK" OmegaGTE)
-target_link_libraries("OmegaWTK" PUBLIC "OmegaCommon" ${LIBXML2_EXPORT})
+if(TARGET_MACOS)
+	target_link_system_frameworks("OmegaWTK" Metal Cocoa QuartzCore)
+	target_link_frameworks("OmegaWTK" OmegaGTE)
+else()
+	target_link_libraries("OmegaWTK" PUBLIC OmegaGTE)
+	target_include_directories("OmegaWTK" PUBLIC $<TARGET_PROPERTY:OmegaGTE,INCLUDE_DIRECTORIES>)
+endif()
+target_link_libraries("OmegaWTK" PUBLIC "OmegaCommon" ${LIBXML2_EXPORT} ${LIBPNG_EXPORT} ${LIBJPEGTURBO_EXPORT} ${LIBTIFF_EXPORT})
 
-add_subdirectory(tests)
+if(TARGET_WIN32)
+	target_compile_definitions("OmegaWTK" PRIVATE WINDOWS_PRIVATE)
+endif()
+
+# add_subdirectory(tests)

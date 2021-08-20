@@ -6,6 +6,7 @@
 #include <ShlObj.h>
 #include <mfapi.h>
 
+#pragma comment(lib,"mfplat.lib")
 #pragma comment(lib,"mf.lib")
 
 namespace OmegaWTK::Media {

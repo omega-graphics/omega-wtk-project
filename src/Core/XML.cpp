@@ -16,11 +16,12 @@ namespace OmegaWTK::Core {
         in.seekg(0,std::ios::end);
         fileSize = in.tellg();
         in.seekg(0,std::ios::beg);
-        char buffer[fileSize];
+
+        auto * buffer = new char[fileSize];
 
         in.read(buffer,fileSize);
-    
-        xmlDocPtr doc =  xmlParseMemory(buffer,fileSize);
+        
+        auto doc =  xmlParseMemory(buffer,fileSize);
         XMLDocument ret;
         ret.data = doc;
         return ret;
