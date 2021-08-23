@@ -1,0 +1,120 @@
+
+body, h1, h2, h3, h4, table, div, p, a, dl, span, tr, col, ul  {
+    font-family:'Segoe UI';
+    
+
+}
+
+p {
+    font-size: 15px;
+}
+
+div.titlearea, div.main-nav {
+    padding: 5px
+}
+
+
+#projectname {
+    font-size: 50px;
+}
+
+div.contents {
+    font-family: inherit;
+}
+
+body {
+    margin: 0;
+}
+
+table.memberdecls {
+    border-spacing: 0px;
+    padding: 0px;
+}
+
+div.header {
+    padding: 10px
+}
+
+div.summary a {
+    padding:10px
+}
+
+.mdescLeft, .mdescRight, .memItemLeft, .memItemRight, .memTemplItemLeft, .memTemplItemRight, .memTemplParams {
+    /* background-color: #d7e4ff; */
+    border: none;
+    margin: 20%;
+    font-size: 18px;
+    padding: 1px 0 0 8px;
+}
+
+.memItemLeft {
+    padding: 1px 0 0 30px;
+}
+
+tr.even {
+    /* background-color: #d7e4ff; */
+    padding: 5px;
+}
+
+tr.seperator {
+    display:none
+}
+
+tr.memitem {
+
+}
+
+
+
+table.directory {
+    font: 400 14px Roboto,sans-serif;
+}
+
+span.lineno {
+    padding-right: 4px;
+    text-align: right;
+    border-right: 5px solid #b5ffb5;
+    background-color: #E8E8E8;
+    white-space: pre;
+}
+
+div.line {
+    font-family: Consolas;
+    font-size: 21px;
+    background-color:#5e5e5e;
+}
+
+span.icona {
+    padding: 5px;
+    background-color: #bce7fd;
+    border: black;
+    border-width: thick;
+    display: inline-block;
+    border-radius: 5px;
+}
+
+/* Syntax Highligting Section*/
+span.keyword, span.keywordflow {
+    color: #770dbe;
+    font-family: inherit;
+}
+
+span.keywordtype {
+    color: #8d2fcc;
+    font-family: inherit;
+}
+
+span.preprocessor {
+    color: #ac1010;
+    font-family: inherit;
+}
+
+span.comment {
+    color:#57af54;
+    font-family: inherit;
+}
+
+.code {
+    color:#b9c091;
+    font-family: inherit;
+}
