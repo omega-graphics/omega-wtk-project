@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/CMakeFiles/libpng"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/CMakeFiles/libpng.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/CMakeFiles/CMakeFiles/libpng-complete.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/libpng-prefix/src/libpng-stamp/CMakeFiles/libpng-build.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/libpng-prefix/src/libpng-stamp/CMakeFiles/libpng-configure.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/libpng-prefix/src/libpng-stamp/CMakeFiles/libpng-download.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/libpng-prefix/src/libpng-stamp/CMakeFiles/libpng-install.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/libpng-prefix/src/libpng-stamp/CMakeFiles/libpng-mkdir.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/libpng-prefix/src/libpng-stamp/CMakeFiles/libpng-patch.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/libpng-prefix/src/libpng-stamp/CMakeFiles/libpng-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"libpng"
+		],
+		"name" : "libpng"
+	}
+}

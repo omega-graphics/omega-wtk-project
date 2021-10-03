@@ -73,7 +73,7 @@ class AppWindowDelegate;
         SharedHandle<Native::NativeFSDialog> openFSDialog(const Native::NativeFSDialog::Descriptor & desc);
         SharedHandle<Native::NativeNoteDialog> openNoteDialog(const Native::NativeNoteDialog::Descriptor & desc);
         
-        AppWindow(Core::Rect rect,AppWindowDelegate * delegate = nullptr);
+        explicit AppWindow(Core::Rect rect,AppWindowDelegate * delegate = nullptr);
         ~AppWindow();
     };
 /**
@@ -96,7 +96,7 @@ class AppWindowDelegate;
 
 
 */
-class OMEGAWTK_EXPORT   AppWindowDelegate : public Native::NativeEventProcessor {
+INTERFACE OMEGAWTK_EXPORT  AppWindowDelegate : public Native::NativeEventProcessor {
     private:
         void onRecieveEvent(Native::NativeEventPtr event);
         friend class AppWindow;

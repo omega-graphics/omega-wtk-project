@@ -1,22 +1,21 @@
-#! /usr/bin/env python3
+import "autom/OmegaWTK"
 
+var OMEGAWTK_VERSION = "0.6"
 
-include("./autom/OmegaWTK.autom")
+project(name:"OmegaWTK",version:OMEGAWTK_VERSION)
 
-OMEGAWTK_VERSION = "0.6"
+subdir(path:"./gte")
 
-Project("OmegaWTK",OMEGAWTK_VERSION)
-
-subdir("./gte")
-
-third_party_dir = f"{root_out_dir}/third_party"
-gen_third_party_dir = f"{gen_root_out_dir}/third_party"
+var third_party_dir = "$(root_out_dir)/third_party"
+var gen_third_party_dir = "$(gen_root_out_dir)/third_party"
 
 assert_expr(program_exists("cmake"))
-if is_win:
+if (is_win){
     zlib_export = [f"{gen_third_party_dir}/zlib/bin/zlib.dll",f"{gen_third_party_dir}/zlib/lib/zlib.lib"]
-elif is_mac:
+}
+elif (is_mac){
     zlib_export = [f"{gen_third_party_dir}/zlib/lib/libz.dylib"]
+}
     
 ThirdParty(
     name="zlib",
@@ -208,8 +207,9 @@ if is_win:
 Config("OmegaWTK_Config",[],[omega_wtk_include_dir],standard_defines)
 set_property("OmegaWTK_Config","configs",["icu__conf","libxml__conf"])
 
-def OmegaWTKModule(name:str,sources:str,deps:"list[str]"):
-    SourceSet(f"OmegaWTK{name}",sources,deps)
+func OmegaWTKModule(name,sources,deps) {
+    return SourceSet(name:f"OmegaWTK{name}",srcs:sources)
+}
 
 
 core_srcs = glob("./src/Core/*.cpp")

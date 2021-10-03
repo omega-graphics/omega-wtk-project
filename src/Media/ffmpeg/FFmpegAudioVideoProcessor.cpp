@@ -37,5 +37,5 @@ namespace OmegaWTK::Media {
         };
     };
 
-    AudioVideoProcessor * avProcessor = new FFmpegAudioVideoProcessor();
+    Core::UniquePtr<AudioVideoProcessor> avProcessor;
 };

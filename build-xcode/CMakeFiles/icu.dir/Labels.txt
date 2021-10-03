@@ -1,0 +1,13 @@
+# Target labels
+ icu
+# Source files and their labels
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/CMakeFiles/icu
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/CMakeFiles/icu.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/CMakeFiles/CMakeFiles/icu-complete.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/icu-prefix/src/icu-stamp/CMakeFiles/icu-build.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/icu-prefix/src/icu-stamp/CMakeFiles/icu-configure.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/icu-prefix/src/icu-stamp/CMakeFiles/icu-download.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/icu-prefix/src/icu-stamp/CMakeFiles/icu-install.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/icu-prefix/src/icu-stamp/CMakeFiles/icu-mkdir.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/icu-prefix/src/icu-stamp/CMakeFiles/icu-patch.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/icu-prefix/src/icu-stamp/CMakeFiles/icu-update.rule

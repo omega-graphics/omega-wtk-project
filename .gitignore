@@ -13,6 +13,7 @@ third_party
 omega-common
 gte
 *.gn
+.cache
 
 # Compiled Object files
 *.slo

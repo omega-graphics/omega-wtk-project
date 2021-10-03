@@ -15,7 +15,6 @@ public:
     NativeEventEmitter *getEmitter();
     void disable();
     void enable();
-    // void attachWidgets();
     void initialDisplay();
     void close();
     void addNativeItem(NativeItemPtr item);

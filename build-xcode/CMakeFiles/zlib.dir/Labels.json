@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/CMakeFiles/zlib"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/CMakeFiles/zlib.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/CMakeFiles/CMakeFiles/zlib-complete.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/zlib-prefix/src/zlib-stamp/CMakeFiles/zlib-build.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/zlib-prefix/src/zlib-stamp/CMakeFiles/zlib-configure.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/zlib-prefix/src/zlib-stamp/CMakeFiles/zlib-download.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/zlib-prefix/src/zlib-stamp/CMakeFiles/zlib-install.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/zlib-prefix/src/zlib-stamp/CMakeFiles/zlib-mkdir.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/zlib-prefix/src/zlib-stamp/CMakeFiles/zlib-patch.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/zlib-prefix/src/zlib-stamp/CMakeFiles/zlib-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"zlib"
+		],
+		"name" : "zlib"
+	}
+}

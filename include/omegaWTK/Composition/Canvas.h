@@ -1,9 +1,9 @@
 #include "omegaWTK/Core/Core.h"
-#include "Color.h"
+#include "Brush.h"
+#include "Path.h"
 #include "FontEngine.h"
 #include "Brush.h"
 #include "omegaWTK/Media/ImgCodec.h"
-#include "Animation.h"
 
 #include <algorithm>
 
@@ -63,12 +63,9 @@ namespace OmegaWTK {
 ///   
 
 
-    class CanvasSurface;
+    class Canvas;
     /// An object drawn by a Compositor.
     struct  OMEGAWTK_EXPORT VisualCommand {
-
-        CanvasSurface *targetSurface;
-
         typedef enum : OPT_PARAM {
             Rect,
             RoundedRect,
@@ -84,9 +81,7 @@ namespace OmegaWTK {
         } RectParams;
         
         typedef struct {
-            Core::Rect rect;
-            unsigned rad_x;
-            unsigned rad_y;
+            Core::RoundedRect rect;
             Core::SharedPtr<Brush> brush;
             Core::Optional<Border> border;
         } RoundedRectParams;
@@ -112,10 +107,14 @@ namespace OmegaWTK {
     class Layer;
 
     class CompositorClient;
+
+    /// @brief A frozen state of visual items drawn to a Canvas.
+    struct CanvasFrame;
+
     /**
      
     */
-    class OMEGAWTK_EXPORT CanvasSurface {
+    class OMEGAWTK_EXPORT Canvas {
 
         friend class Layer;
 
@@ -125,13 +124,15 @@ namespace OmegaWTK {
 
         Core::Rect & rect;
 
-        void submitCommandToClient(VisualCommand * visual);
+        SharedHandle<CanvasFrame> current;
 
     public:
 
-        CanvasSurface(Core::Rect & rect);
+        explicit Canvas(Core::Rect & rect);
 
         Layer * getParentLayer();
+
+        void drawPath(Path & path);
 
         void drawRect(Core::Rect & rect,Core::SharedPtr<Brush> & brush);
 
@@ -144,6 +145,13 @@ namespace OmegaWTK {
         void drawImage(SharedHandle<Media::BitmapImage> & img,Core::SharedPtr<Brush> & brush);
 
         void applyEffect(SharedHandle<CanvasLayerEffect> & effect);
+
+        /// @brief Sends current frame to Compositor Client to be drawn.
+        void sendFrame();
+        /// @brief Retrives current Frame drawn.
+        SharedHandle<CanvasFrame> getCurrentFrame();
+        /// @brief Retrives current Frame drawn and resets Canvas state.
+        SharedHandle<CanvasFrame> nextFrame();
     };
 
 

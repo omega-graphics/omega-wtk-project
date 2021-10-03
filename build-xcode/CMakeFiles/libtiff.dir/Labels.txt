@@ -1,0 +1,13 @@
+# Target labels
+ libtiff
+# Source files and their labels
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/CMakeFiles/libtiff
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/CMakeFiles/libtiff.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/CMakeFiles/CMakeFiles/libtiff-complete.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/libtiff-prefix/src/libtiff-stamp/CMakeFiles/libtiff-build.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/libtiff-prefix/src/libtiff-stamp/CMakeFiles/libtiff-configure.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/libtiff-prefix/src/libtiff-stamp/CMakeFiles/libtiff-download.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/libtiff-prefix/src/libtiff-stamp/CMakeFiles/libtiff-install.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/libtiff-prefix/src/libtiff-stamp/CMakeFiles/libtiff-mkdir.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/libtiff-prefix/src/libtiff-stamp/CMakeFiles/libtiff-patch.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-xcode/libtiff-prefix/src/libtiff-stamp/CMakeFiles/libtiff-update.rule

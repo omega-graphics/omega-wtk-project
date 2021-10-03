@@ -10,7 +10,7 @@ LayerTreeObserver::~LayerTreeObserver(){
 
 Layer::Layer(const Core::Rect &rect)
     :
-      surface(std::make_shared<CanvasSurface>(surface_rect)),surface_rect(rect),needsNativeResize(false){
+        surface(std::make_shared<Canvas>(surface_rect)), surface_rect(rect), needsNativeResize(false){
           surface->parentLayer = this;
 };
 
@@ -47,7 +47,7 @@ void Layer::removeSubLayer(SharedHandle<Layer> &layer) {
 //     this->style = style;
 // };
 
-SharedHandle<CanvasSurface> & Layer::getSurface(){
+SharedHandle<Canvas> & Layer::getSurface(){
     return surface;
 };
 

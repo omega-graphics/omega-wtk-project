@@ -108,8 +108,7 @@ Compositor::~Compositor(){
      delete queueMutex;
 };
 
-void Compositor::scheduleCommand(CompositionRenderCommand * command){
-    auto ptr = command;
+void Compositor::scheduleCommand(SharedHandle<CompositorCommand> & command){
 
     {
         
@@ -121,7 +120,7 @@ void Compositor::scheduleCommand(CompositionRenderCommand * command){
         std::unique_lock<std::mutex> lk(*queueMutex);
         std::cout << "AFTER LOCK" << std::endl;
         queueIsReady = false;
-        commandQueue.push(*ptr);
+        commandQueue.push(command);
         queueIsReady = true;
         std::cout << "PUSHED COMMAND" << std::endl;
         lk.unlock();

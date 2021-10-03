@@ -20,7 +20,9 @@ CocoaAppWindow::CocoaAppWindow(Core::Rect & rect,NativeEventEmitter *emitter):Na
 
     windowDelegate = [[OmegaWTKNativeCocoaAppWindowDelegate alloc] init];
     windowController = [[OmegaWTKNativeCocoaAppWindowController alloc] initWithRect:core_rect_to_cg_rect(rect) delegate:windowDelegate];
-    windowDelegate.cppBinding = this; 
+    windowDelegate.cppBinding = this;
+
+
     NSView *rootView = [[NSView alloc] initWithFrame:windowController.window.frame];
     rootView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
     [windowController.window setContentView:rootView];
@@ -48,19 +50,6 @@ void CocoaAppWindow::addNativeItem(NativeItemPtr item){
         [windowController.window.contentView addSubview:viewC.view];
 };
 
-// void CocoaAppWindow::attachWidgets(){
-//     // NSView *rootView = [[NSView alloc] initWithFrame:window.frame];
-//     // rootView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
-//     // auto it = windowWidgetRootViews.begin();
-//     // while(it != windowWidgetRootViews.end()){
-//     //     CocoaItem *item = (CocoaItem *)*it;
-//     //     NSViewController *view = (NSViewController *)item->getBinding();
-//     //     [rootView addSubview:view.view];
-//     //     ++it;
-//     // };
-//     // [window setContentView:rootView];
-// };
-
 void CocoaAppWindow::initialDisplay(){
     [windowController.window center];
     // NSView *rootView = [[NSView alloc] initWithFrame:window.frame];
@@ -87,9 +76,6 @@ void CocoaAppWindow::close(){
      return windowController.window;
  };
 
-// CocoaAppWindow::~CocoaAppWindow(){
-//     close();
-// };
 
 };
 
@@ -107,11 +93,17 @@ void CocoaAppWindow::close(){
 };
 -(void)windowDidResize:(NSNotification *)notification 
 {
-    // CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
-    // NSLog(@"Window FRAME: {x:%f,y:%f,w:%f,h:%f}",_cppBinding->window.contentView.frame.origin.x,_cppBinding->window.contentView.frame.origin.y,_cppBinding->window.contentView.frame.size.width,_cppBinding->window.contentView.frame.size.height);
-    // OmegaWTK::Native::WindowWillResize *params = new OmegaWTK::Native::WindowWillResize(OmegaWTK::Rect(_cppBinding->window.contentView.frame.origin.x,_cppBinding->window.contentView.frame.origin.y,_cppBinding->window.contentView.frame.size.width,_cppBinding->window.contentView.frame.size.height));
-    // OmegaWTK::Native::NativeEventPtr event = new OmegaWTK::Native::NativeEvent(OmegaWTK::Native::NativeEvent::WindowWillResize,params);
-    // [self emitIfPossible:event];
+     CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+     NSLog(@"Window FRAME: {x:%f,y:%f,w:%f,h:%f}",self.window.contentView.frame.origin.x,self.window.contentView.frame.origin.y,self.window.contentView.frame.size.width,self.window.contentView.frame.size.height);
+     auto *params = new OmegaWTK::Native::WindowWillResize(
+             OmegaWTK::Core::Rect
+                     {(float)self.window.contentView.frame.origin.x,
+                      (float)self.window.contentView.frame.origin.y,
+                      (float)self.window.contentView.frame.size.width,
+                      (float)self.window.contentView.frame.size.height}
+     );
+     auto event = new OmegaWTK::Native::NativeEvent(OmegaWTK::Native::NativeEvent::WindowWillResize,params);
+     [self emitIfPossible:event];
 };
 
 @end
@@ -119,7 +111,7 @@ void CocoaAppWindow::close(){
 @implementation OmegaWTKNativeCocoaAppWindowController
 - (instancetype)initWithRect:(NSRect) rect delegate:(id<NSWindowDelegate>) delegate
 {
-    self = [super initWithWindow:[[NSWindow alloc] initWithContentRect:rect styleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable backing:NSBackingStoreBuffered defer:NO]];
+    self = [super initWithWindow:[[NSWindow alloc] initWithContentRect:rect styleMask:NSWindowStyleMaskBorderless | NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable backing:NSBackingStoreBuffered defer:NO]];
     if (self) {
         NSWindow *window = self.window;
         window.delegate = delegate;
@@ -128,3 +120,9 @@ void CocoaAppWindow::close(){
 }
 
 @end
+
+namespace OmegaWTK::Native {
+    NWH make_native_window(Core::Rect & rect,NativeEventEmitter *emitter){
+        return new Cocoa::CocoaAppWindow(rect,emitter);
+    };
+}
