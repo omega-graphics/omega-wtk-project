@@ -7,8 +7,8 @@
 // Media Exports
 #include "omegaWTK/Media/ImgCodec.h"
 #include "omegaWTK/Media/VideoCodec.h"
-#include "omegaWTK/Media/VideoCapture.h"
-#include "omegaWTK/Media/AudioCapture.h"
+#include "omegaWTK/Media/Video.h"
+#include "omegaWTK/Media/Audio.h"
 
 // Composition Exports
 #include "omegaWTK/Composition/CompositorClient.h"

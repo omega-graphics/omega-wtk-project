@@ -83,7 +83,7 @@ namespace OmegaWTK::Composition {
         bool queueIsReady;
 
         std::condition_variable queueCondition;
-        Core::PriorityQueueHeap<SharedHandle<CompositorCommand>,CompareCommands> commandQueue;
+        OmegaCommon::PriorityQueueHeap<SharedHandle<CompositorCommand>,CompareCommands> commandQueue;
 
         friend class CompositorClient;
         friend class CompositorScheduler;

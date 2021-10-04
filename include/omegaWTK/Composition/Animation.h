@@ -227,20 +227,35 @@ namespace OmegaWTK::Composition {
         } type;
 
         OmegaGTE::GPoint2D st_pt = {0,0};
-        OmegaGTE::GPoint2D end_pt {100,0};
+        OmegaGTE::GPoint2D end_pt {1.0,1.0};
 
         OmegaGTE::GPoint2D a = {0,0},b = {0,0};
-
-        OmegaGTE::GPoint2D current_pt = {0,0};
     public:
-        void reset();
-        void next();
-        /// @brief Get the slope at the current position.
-        float get();
-        bool end();
-        static SharedHandle<AnimationCurve> Linear(float y);
-        static SharedHandle<AnimationCurve> Quadratic(float y,OmegaGTE::GPoint2D a);
-        static SharedHandle<AnimationCurve> Cubic(float y,OmegaGTE::GPoint2D a,OmegaGTE::GPoint2D b);
+        class Traversal {
+            AnimationCurve & curve;
+            OmegaGTE::GPoint2D _start;
+            OmegaGTE::GPoint2D _end;
+
+            OmegaGTE::GPoint2D cur = {0.0,0.0};
+            float viewport_h;
+            float viewport_w;
+            float curve_h;
+
+            struct {
+                OmegaGTE::GPoint2D _a_cur;
+                OmegaGTE::GPoint2D _b_cur;
+            } quadraticBezierT;
+        public:
+            OmegaGTE::GPoint2D get();
+            void next();
+            bool end();
+            void reset();
+            explicit Traversal(AnimationCurve & curve,OmegaGTE::GPoint2D & st,OmegaGTE::GPoint2D & end,float & h);
+        };
+        Traversal traverse(OmegaGTE::GPoint2D st,OmegaGTE::GPoint2D end,float h);
+        static SharedHandle<AnimationCurve> Linear();
+        static SharedHandle<AnimationCurve> Quadratic(OmegaGTE::GPoint2D a);
+        static SharedHandle<AnimationCurve> Cubic(OmegaGTE::GPoint2D a,OmegaGTE::GPoint2D b);
     };
 
     /// @brief A generic keyframe-based animation timeline for any given duration of time.

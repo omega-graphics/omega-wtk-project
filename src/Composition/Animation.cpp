@@ -102,22 +102,51 @@ namespace OmegaWTK::Composition {
 // };
 
 
-SharedHandle<AnimationCurve> AnimationCurve::Linear(float y) {
+SharedHandle<AnimationCurve> AnimationCurve::Linear() {
     auto curve = SharedHandle<AnimationCurve>(new AnimationCurve{Type::Linear});
-    curve->end_pt.y = y;
     return curve;
 }
 
-void AnimationCurve::reset() {
-    current_pt = OmegaGTE::GPoint2D {0,0};
+
+AnimationCurve::Traversal::Traversal(AnimationCurve &curve,
+                                     OmegaGTE::GPoint2D &st,
+                                     OmegaGTE::GPoint2D &end,
+                                     float &h):
+                                     curve(curve),
+                                     _start(st),
+                                     _end(end),
+                                     viewport_h(h),viewport_w(end.x - st.x){
+    if(curve.type == Type::Linear){
+        curve_h = _end.y - _start.y;
+    }
+    else if(curve.type == Type::QuadraticBezier){
+        quadraticBezierT._a_cur = st;
+        quadraticBezierT._b_cur = curve.a;
+    }
+    cur = OmegaGTE::GPoint2D{_start.x/viewport_w,_start.y/viewport_h};
 }
 
-float AnimationCurve::get() {
-    
+void AnimationCurve::Traversal::next() {
+    if(curve.type == Type::Linear){
+        cur.x += (1.f/viewport_w);
+        cur.y += (1.f/curve_h);
+    }
 }
 
-bool AnimationCurve::end() {
-    return current_pt.x == end_pt.x;
+OmegaGTE::GPoint2D AnimationCurve::Traversal::get() {
+    return OmegaGTE::GPoint2D{cur.x * viewport_w,cur.y * viewport_h};
+}
+
+bool AnimationCurve::Traversal::end() {
+    return cur.x == 1.f;
+}
+
+void AnimationCurve::Traversal::reset() {
+    cur = OmegaGTE::GPoint2D {0.f,0.f};
+}
+
+AnimationCurve::Traversal AnimationCurve::traverse(OmegaGTE::GPoint2D st, OmegaGTE::GPoint2D end, float h) {
+    return Traversal(*this,st,end,h);
 }
 
 
