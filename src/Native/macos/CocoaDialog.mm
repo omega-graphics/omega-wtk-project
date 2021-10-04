@@ -8,35 +8,36 @@ namespace OmegaWTK::Native::Cocoa {
     class CocoaFSDialog : public NativeFSDialog {
         NSOpenPanel *openPanel;
         NSSavePanel *savePanel;
+
+        __block OmegaCommon::Promise<OmegaCommon::String> strVal;
     public:
-        void show(){
+        OmegaCommon::Async<OmegaCommon::String> getResult(){
             NSWindow *parentWindow = ((CocoaAppWindow *)this->parentWindow)->getWindow();
             if(!openPanel){
                 /// If is Save Panel
                 // __block NSURL *url = nil;
+
                 [savePanel beginSheetModalForWindow:parentWindow completionHandler:^(NSModalResponse response){
-                    if(response == NSModalResponseOK){
-                        // url = [savePanel URL];
-                    };
+                        NSURL * url = [savePanel URL];
+                        strVal.set([url fileSystemRepresentation]);
                 }];
 
-                // return [url fileSystemRepresentation];
+                return strVal.async();
 
             }
             else if(!savePanel){
                  /// If is Save Panel
                 // __block NSURL *url = nil;
                 [openPanel beginSheetModalForWindow:parentWindow completionHandler:^(NSModalResponse response){
-                    if(response == NSModalResponseOK){
-                        // url = [[openPanel URLs] firstObject];
-                    };
+//                    if(response == NSModalResponseOK){
+//                        // url = [[openPanel URLs] firstObject];
+//                    };
+                    NSURL * url = [savePanel URL];
+                    strVal.set([url fileSystemRepresentation]);
                 }];
 
-                // return [url fileSystemRepresentation];
+                return strVal.async();
             };
-        };
-        void close(){
-
         };
         CocoaFSDialog(const Descriptor &desc,NWH nativeWindow):NativeFSDialog(nativeWindow){
            if(desc.type == Read){
@@ -56,12 +57,8 @@ namespace OmegaWTK::Native::Cocoa {
         void show(){
             NSWindow *parentWindow = ((CocoaAppWindow *)this->parentWindow)->getWindow();
             [dialog beginSheetModalForWindow:parentWindow completionHandler:^(NSModalResponse response){
-//                this->close();
                 
             }];
-        };
-        void close(){
-//            [dialog panel]
         };
         CocoaNoteDialog(const Descriptor &desc,NWH nativeWindow):NativeNoteDialog(nativeWindow){
             dialog = [[NSAlert alloc] init];
@@ -69,15 +66,16 @@ namespace OmegaWTK::Native::Cocoa {
             dialog.alertStyle = NSAlertStyleInformational;
             dialog.messageText = Cocoa::common_string_to_ns_string(desc.title);
             dialog.informativeText = Cocoa::common_string_to_ns_string(desc.str);
+            show();
         };
     };
 
     SharedHandle<NativeFSDialog> make_cocoa_fs_dialog(const NativeFSDialog::Descriptor &desc,NWH nativeWindow){
 //        return std::make_shared<CocoaFSDialog>();
-          return std::make_shared<CocoaFSDialog>(desc,nativeWindow);
+          return SharedHandle<NativeFSDialog>(new CocoaFSDialog(desc,nativeWindow));
     };
 
     SharedHandle<NativeNoteDialog> make_cocoa_note_dialog(const NativeNoteDialog::Descriptor &desc,NWH nativeWindow){
-        return std::make_shared<CocoaNoteDialog>(desc,nativeWindow);
+        return SharedHandle<NativeNoteDialog>(new CocoaNoteDialog(desc,nativeWindow));
     };
 };

@@ -10,7 +10,6 @@ namespace OmegaWTK::Native {
          NativeDialog(NWH parentWindow);
         NWH parentWindow;
         public:
-        virtual void close() = 0;
     };
 
     class NativeFSDialog : public NativeDialog {
@@ -26,13 +25,7 @@ namespace OmegaWTK::Native {
             OmegaCommon::FS::Path openLocation;
         };
         static SharedHandle<NativeFSDialog> Create(const Descriptor & desc,NWH nativeWindow);
-        virtual void show() = 0;
-        virtual void close()  = 0 ;
-    };
-
-    class NativeFSDialogDelegate {
-    protected:
-        
+        virtual OmegaCommon::Async<OmegaCommon::String> getResult() = 0;
     };
 
     class NativeNoteDialog : public NativeDialog {
@@ -44,8 +37,6 @@ namespace OmegaWTK::Native {
             OmegaCommon::String str;
         };
         static SharedHandle<NativeNoteDialog> Create(const Descriptor & desc,NWH nativeWindow);
-         virtual void show() = 0;
-         virtual void close() = 0;
     };
 
     
