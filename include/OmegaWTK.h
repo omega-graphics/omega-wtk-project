@@ -7,15 +7,15 @@
 // Media Exports
 #include "omegaWTK/Media/ImgCodec.h"
 #include "omegaWTK/Media/VideoCodec.h"
-#include "omegaWTK/Media/VideoCapture.h"
-#include "omegaWTK/Media/AudioCapture.h"
+#include "omegaWTK/Media/Video.h"
+#include "omegaWTK/Media/Audio.h"
 
 // Composition Exports
 #include "omegaWTK/Composition/CompositorClient.h"
 #include "omegaWTK/Composition/Layer.h"
 #include "omegaWTK/Composition/Animation.h"
 #include "omegaWTK/Composition/Brush.h"
-#include "omegaWTK/Composition/GeometricGraphicsPath.h"
+#include "omegaWTK/Composition/Path.h"
 #include "omegaWTK/Composition/FontEngine.h"
 
 // UI Exports

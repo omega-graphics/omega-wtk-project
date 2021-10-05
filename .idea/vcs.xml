@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external-libs/icu-69/code" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external-libs/libjpeg-turbo/code" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external-libs/libpng/code" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external-libs/libtiff/code" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external-libs/libxml2/code" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external-libs/openssl/code" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external-libs/zlib/code" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/gte" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/gte/common" vcs="Git" />
+  </component>
+</project>

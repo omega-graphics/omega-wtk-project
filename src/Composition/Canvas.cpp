@@ -2,6 +2,13 @@
 #include "omegaWTK/Composition/CompositorClient.h"
 
 namespace OmegaWTK::Composition {
+
+    struct CanvasFrame {
+        Core::Rect & rect;
+        OmegaCommon::Vector<VisualCommand> currentVisuals;
+        OmegaCommon::Vector<CanvasLayerEffect> currentEffects;
+    };
+
 // #define VISUAL_SET_PARAMS(arg)                                                 \
 //   switch (type) {                                                              \
 //   case Rect: {                                                                 \
@@ -52,27 +59,39 @@ namespace OmegaWTK::Composition {
     
 // };
 
-CanvasSurface::CanvasSurface(Core::Rect & rect):rect(rect){
+Canvas::Canvas(Core::Rect & rect): rect(rect){
 
 };
 
-Layer * CanvasSurface::getParentLayer(){
+Layer * Canvas::getParentLayer(){
     return parentLayer;
 };
 
-void CanvasSurface::drawRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush){
-    auto comm = new VisualCommand {VisualCommand::Rect,new VisualCommand::RectParams {rect,brush}};
-    submitCommandToClient(comm);
+void Canvas::drawRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush){
+    current->currentVisuals.push_back(VisualCommand {VisualCommand::Rect,new VisualCommand::RectParams {rect,brush}});
 };
+
+SharedHandle<CanvasFrame> Canvas::getCurrentFrame() {
+    return current;
+}
+
+SharedHandle<CanvasFrame> Canvas::nextFrame() {
+    auto frame = getCurrentFrame();
+    current.reset();
+    return frame;
+}
+
+void Canvas::sendFrame() {
+    auto frame = nextFrame();
+    Timestamp ts = std::chrono::high_resolution_clock::now();
+    client->queueFrame(frame,ts);
+}
 
 // void CanvasSurface::drawTextRect(SharedHandle<Composition::TextRect> &textRect, Core::SharedPtr<Brush> &brush){
 //     auto comm = new VisualCommand {VisualCommand::Text,new VisualCommand::TextParams {textRect,brush}};
 //     submitCommandToClient(comm);
 // };
 
-void CanvasSurface::submitCommandToClient(VisualCommand * visual){
-    client->queueVisualCommand(visual);
-};
 
 // void LayerStyle::add(Visual::RectParams params){
 //     _construct_visual(Visual::Rect,params);

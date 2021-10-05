@@ -8,7 +8,7 @@ add_omega_wtk_lib(
     "Layer.cpp"
     "Canvas.cpp"
     "Brush.cpp"
-    "GeometricGraphicsPath.cpp"
+    "Path.cpp"
     "LayerAnimation.cpp"
     "CompositorClient.cpp"
     "Compositor.h"

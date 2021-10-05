@@ -12,26 +12,6 @@
 #define OMEGAWTK_COMPOSTION_COMPOSITOR_H
 
 namespace OmegaWTK::Composition {
-
-
-
-   struct CompositionRenderCommandThreasholdParams {
-       bool hasThreshold;
-       std::chrono::time_point<std::chrono::high_resolution_clock> timeStamp;
-       std::chrono::time_point<std::chrono::high_resolution_clock> threshold;
-   };
-
-   struct CompositionRenderCommand {
-       typedef enum {
-           Low,
-           High,
-       } Priority;
-       Priority priority;
-       CompositionRenderCommandThreasholdParams thresholdParams;
-       CompositionRenderTarget *renderTarget;
-       VisualCommand **_visuals;
-       unsigned visual_count;
-   };
    
    class CompositorScheduler {
        Compositor *compositor;
@@ -42,7 +22,7 @@ namespace OmegaWTK::Composition {
         std::mutex mutex;
         std::thread t;
 
-       CompositorScheduler(Compositor *compositor);
+       explicit CompositorScheduler(Compositor *compositor);
        ~CompositorScheduler();
    };
 
@@ -52,13 +32,39 @@ namespace OmegaWTK::Composition {
        Delayed
    };
 
-   struct CompareRenderCommands {
-        auto operator()(Composition::CompositionRenderCommand & lhs,Composition::CompositionRenderCommand & rhs){
-            bool cond1,cond2;
-            cond1 = lhs.thresholdParams.timeStamp < rhs.thresholdParams.timeStamp;
-            cond2 = lhs.thresholdParams.hasThreshold? (rhs.thresholdParams.hasThreshold? (lhs.thresholdParams.threshold < rhs.thresholdParams.threshold) : true) : rhs.thresholdParams.hasThreshold? (lhs.thresholdParams.hasThreshold? (rhs.thresholdParams.threshold < lhs.thresholdParams.threshold) : false)  : true;
-            // printf("Sort Cond:%i\n",((cond1 == true) && (cond2 == true)));
-            return (cond1 == true) && (cond2 == true);
+   struct CompareCommands {
+        auto operator()(SharedHandle<Composition::CompositorCommand> & lhs,SharedHandle<Composition::CompositorCommand> & rhs){
+            if(lhs->type == CompositorCommand::View){
+                return true;
+            }
+            else if(rhs->type == CompositorCommand::View){
+                return false;
+            }
+            else if(lhs->type == CompositorCommand::HoldRender){
+                return true;
+            }
+            else if(rhs->type == CompositorCommand::HoldRender){
+                return false;
+            }
+            else if(lhs->type == CompositorCommand::ResumeRender){
+                return true;
+            }
+            else if(rhs->type == CompositorCommand::ResumeRender){
+                return false;
+            }
+            else if(lhs->type == CompositorCommand::Render && rhs->type == CompositorCommand::Render) {
+                auto _lhs = std::dynamic_pointer_cast<CompositionRenderCommand>(lhs);
+                auto _rhs = std::dynamic_pointer_cast<CompositionRenderCommand>(rhs);
+                bool cond1, cond2;
+                cond1 = _lhs->thresholdParams.timeStamp < _rhs->thresholdParams.timeStamp;
+                cond2 = _lhs->thresholdParams.hasThreshold ? (_rhs->thresholdParams.hasThreshold ? (
+                        _lhs->thresholdParams.threshold < _rhs->thresholdParams.threshold) : true)
+                                                         : _rhs->thresholdParams.hasThreshold
+                                                           ? (_lhs->thresholdParams.hasThreshold ? (
+                                        _rhs->thresholdParams.threshold < _lhs->thresholdParams.threshold) : false) : true;
+                // printf("Sort Cond:%i\n",((cond1 == true) && (cond2 == true)));
+                return cond1 && cond2;
+            }
         };
     };
 
@@ -66,7 +72,7 @@ namespace OmegaWTK::Composition {
     /**
      OmegaWTK's Composition Engine Frontend Interface
      */
-    class OMEGAWTK_EXPORT Compositor : public LayerTreeObserver {
+    class OMEGAWTK_EXPORT Compositor {
 
         OmegaCommon::Vector<LayerTree *> targetLayerTrees;
 
@@ -77,7 +83,7 @@ namespace OmegaWTK::Composition {
         bool queueIsReady;
 
         std::condition_variable queueCondition;
-        Core::PriorityQueueHeap<CompositionRenderCommand,CompareRenderCommands> commandQueue;
+        OmegaCommon::PriorityQueueHeap<SharedHandle<CompositorCommand>,CompareCommands> commandQueue;
 
         friend class CompositorClient;
         friend class CompositorScheduler;
@@ -95,11 +101,7 @@ namespace OmegaWTK::Composition {
         std::future<RenderCommandStatus> executeCurrentRenderCommand();
 
     public:
-        void hasDetached(LayerTree *tree) override;
-        void layerHasEnabled(Layer *layer) override;
-        void layerHasResized(Layer *layer) override;
-        void layerHasDisabled(Layer *layer) override;
-        void scheduleCommand(CompositionRenderCommand * command);
+        void scheduleCommand(SharedHandle<CompositorCommand> & command);
         
         
         Compositor();

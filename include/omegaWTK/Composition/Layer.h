@@ -114,7 +114,7 @@ namespace Composition {
     class OMEGAWTK_EXPORT Layer {
         unsigned id_gen = 0;
         LayerTree::Limb *parentLimb;
-        SharedHandle<CanvasSurface> surface;
+        SharedHandle<Canvas> surface;
         OmegaCommon::Vector<SharedHandle<Layer>> children;
 
         Layer * parent_ptr;
@@ -147,7 +147,7 @@ namespace Composition {
         /// @name Composing Functions!
         /// Draws on to its target!
         /// @{
-        SharedHandle<CanvasSurface> & getSurface();
+        SharedHandle<Canvas> & getSurface();
         /// @}
         
         
@@ -190,7 +190,7 @@ namespace Composition {
     class OMEGAWTK_EXPORT  WindowLayer {
         Native::NWH native_window_ptr;
         Core::Rect & rect;
-        SharedHandle<CanvasSurface> windowSurface;
+        SharedHandle<Canvas> windowSurface;
         // SharedHandle<MenuStyle> menuStyle;
         friend class OmegaWTK::AppWindow;
         friend class OmegaWTK::AppWindowManager;

@@ -13,11 +13,15 @@ namespace OmegaWTK::Media {
         VTDecompressionSessionRef decompSession;
 
     public:
-        void beginEncode() override{
+        void beginEncode(BeginEncodeParams params) override{
             VTCompressionSessionCreate(NULL,0,0,kCMVideoCodecType_HEVC,NULL,NULL,NULL,NULL,NULL,&compSession);
         }
     
-        void encodeFrame() override{
+        void encodeFrame(EncodeFrameParams params) override{
+            CVPixelBufferRef pixelBuffer;
+//            CVPixelBufferCreateWithBytes()
+            CMTime time;
+            VTCompressionSessionEncodeFrame(compSession,pixelBuffer,time,time,NULL,params.dest.encoded_core_data,NULL);
 
         }
 
@@ -26,11 +30,13 @@ namespace OmegaWTK::Media {
             CFRelease(compSession);
         }   
 
-        void beginDecode() override{
+        void beginDecode(BeginDecodeParams params) override{
             VTDecompressionSessionCreate(NULL,NULL,NULL,NULL,NULL,&decompSession);
         }
 
-        void decodeFrame() override {
+        void decodeFrame(DecodeFrameParams params) override {
+            CMSampleBufferRef sampleBuffer;
+            VTDecompressionSessionDecodeFrame(decompSession,sampleBuffer,kVTDecodeFrame_1xRealTimePlayback,NULL,NULL);
 
         }
 
@@ -39,13 +45,18 @@ namespace OmegaWTK::Media {
             CFRelease(compSession);
         }
 
-        AVFAudioVideoProcessor(){
-            
-        };
-        ~AVFAudioVideoProcessor(){
-
-        };
+        AVFAudioVideoProcessor() = default;
+        ~AVFAudioVideoProcessor() = default;
     };
 
-    AudioVideoProcessor * avProcessor = new AVFAudioVideoProcessor();
+
+   Core::UniquePtr<AudioVideoProcessor> avProcessor;
+
+    void AudioVideoProcessor::Initialize() {
+        avProcessor.reset(new AVFAudioVideoProcessor());
+    }
+
+    void AudioVideoProcessor::Cleanup() {
+        avProcessor.reset();
+    }
 };

@@ -227,4 +227,21 @@ void CocoaItem::setNeedsDisplay(){
     _ptr.needsDisplay = YES;
 };
 
+
+
 };
+
+namespace OmegaWTK::Native {
+    NativeItemPtr make_native_item(Core::Rect rect,ItemType type,NativeItemPtr parent){
+        Cocoa::CocoaItem::Type item_type;
+        if(type == Default)
+            item_type = Cocoa::CocoaItem::View;
+        else if(type == ScrollItem){
+            item_type = Cocoa::CocoaItem::ScrollView;
+        }
+        else {
+            item_type = Cocoa::CocoaItem::View;
+        }
+        return new Cocoa::CocoaItem(rect,item_type,(Cocoa::CocoaItem *)parent);
+    };
+}

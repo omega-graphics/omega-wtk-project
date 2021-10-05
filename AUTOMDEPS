@@ -61,7 +61,7 @@
         },
         {
             "type":"download",
-            "url":"https://ftp.pcre.org/pub/pcre/pcre2-10.36.zip",
+            "url":"https://github.com/PhilipHazel/pcre2/releases/download/pcre2-10.38/pcre2-10.38.zip",
             "dest":"./temp/pcre2.zip"
         },
         {

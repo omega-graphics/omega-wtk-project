@@ -19,7 +19,7 @@ class AppWindowDelegate;
 /**
     @brief A standard application window for attaching and displaying widgets. Similar to a Widget, it can be styled.
     @paragraph
-    In order to display any widgets on this window a WidgetTreeHost (@see WidgetTreeHost) must be created, 
+    In order to display any widgets on this window a WidgetTreeHost must be created,
     than attached to an instance of this class.
 */
  class OMEGAWTK_EXPORT AppWindow : public Native::NativeEventEmitter, 
@@ -30,7 +30,7 @@ class AppWindowDelegate;
 
         SharedHandle<AppWindowDelegate> delegate;
         /// A list of all attached widget tree hosts. 
-        /// (Only needed to week widget tree hosts alive during application)
+        /// (Only needed to keep widget tree hosts alive during application)
         OmegaCommon::Vector<WidgetTreeHost *> widgetTreeHosts;
 
         Core::Rect rect;
@@ -73,7 +73,7 @@ class AppWindowDelegate;
         SharedHandle<Native::NativeFSDialog> openFSDialog(const Native::NativeFSDialog::Descriptor & desc);
         SharedHandle<Native::NativeNoteDialog> openNoteDialog(const Native::NativeNoteDialog::Descriptor & desc);
         
-        AppWindow(Core::Rect rect,AppWindowDelegate * delegate = nullptr);
+        explicit AppWindow(Core::Rect rect,AppWindowDelegate * delegate = nullptr);
         ~AppWindow();
     };
 /**
@@ -96,14 +96,14 @@ class AppWindowDelegate;
 
 
 */
-class OMEGAWTK_EXPORT   AppWindowDelegate : public Native::NativeEventProcessor {
+INTERFACE OMEGAWTK_EXPORT  AppWindowDelegate : public Native::NativeEventProcessor {
     private:
         void onRecieveEvent(Native::NativeEventPtr event);
         friend class AppWindow;
     protected:
        AppWindow * window;
-        virtual void windowWillClose(Native::NativeEventPtr event);
-        virtual void windowWillResize(Core::Rect & nRect);
+         INTERFACE_METHOD void windowWillClose(Native::NativeEventPtr event);
+        INTERFACE_METHOD void windowWillResize(Core::Rect & nRect);
     };
 
 

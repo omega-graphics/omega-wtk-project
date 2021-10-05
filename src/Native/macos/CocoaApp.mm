@@ -27,9 +27,7 @@ public:
         [NSApp run];
         return 0;
     };
-    ~CocoaApp(){
-        
-    };
+    ~CocoaApp() = default;
 };
 
 NAP make_cocoa_app(){
