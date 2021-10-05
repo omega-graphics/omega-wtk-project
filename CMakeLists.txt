@@ -10,7 +10,7 @@ if(APPLE)
 	set(LANGS ${LANGS} OBJCXX)
 endif()
 
-omega_graphics_project(OmegaWTK VERSION ${OMEGAWTK_VERSION} LANGUAGES ${LANGS})
+project(OmegaWTK VERSION ${OMEGAWTK_VERSION} LANGUAGES ${LANGS})
 
 omega_graphics_add_subdir(OmegaGTE gte)
 
