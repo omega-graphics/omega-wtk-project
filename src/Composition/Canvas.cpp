@@ -4,6 +4,7 @@
 namespace OmegaWTK::Composition {
 
     struct CanvasFrame {
+        Layer *targetLayer;
         Core::Rect & rect;
         OmegaCommon::Vector<VisualCommand> currentVisuals;
         OmegaCommon::Vector<CanvasLayerEffect> currentEffects;

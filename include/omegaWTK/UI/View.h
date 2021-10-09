@@ -24,7 +24,8 @@ namespace OmegaWTK {
         Sometimes referred to as the CanvasView.
         @relates Widget
      */ 
-    class OMEGAWTK_EXPORT View : public Native::NativeEventEmitter, public Composition::CompositorClient {
+    class OMEGAWTK_EXPORT View : public Native::NativeEventEmitter,
+                                 public Composition::CompositorClientProxy {
         OmegaCommon::Vector<SharedHandle<View>> subviews;
     protected:
         SharedHandle<Composition::ViewRenderTarget> renderTarget;

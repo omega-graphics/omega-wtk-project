@@ -64,11 +64,6 @@ private:
     friend class AppWindow;
     friend class AppWindowManager;
     friend class WidgetTreeHost;
-     /**
-      Re-renders the Widget
-     */
-    virtual void render();
-
 public:
     /**
      Get the Widget's root View's rect

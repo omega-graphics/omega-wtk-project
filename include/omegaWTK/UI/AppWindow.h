@@ -23,7 +23,7 @@ class AppWindowDelegate;
     than attached to an instance of this class.
 */
  class OMEGAWTK_EXPORT AppWindow : public Native::NativeEventEmitter, 
-                                   public Composition::CompositorClient {
+                                   public Composition::CompositorClientProxy {
 
         /// Its Window Layer
         UniqueHandle<Composition::WindowLayer> layer;
@@ -43,8 +43,6 @@ class AppWindowDelegate;
         friend class AppWindowManager;
         friend class WidgetTreeHost;
         void _add_widget(Widget * widget);
-
-        void commitRender();
 
         // void drawWidgets();
     public:

@@ -5,6 +5,8 @@
 #include "Brush.h"
 #include "omegaWTK/Media/ImgCodec.h"
 
+#include "CompositorClient.h"
+
 #include <algorithm>
 
 #ifndef OMEGAWTK_COMPOSITION_CANVAS_H
@@ -106,21 +108,13 @@ namespace OmegaWTK {
 
     class Layer;
 
-    class CompositorClient;
-
     /// @brief A frozen state of visual items drawn to a Canvas.
     struct CanvasFrame;
 
     /**
      
     */
-    class OMEGAWTK_EXPORT Canvas {
-
-        friend class Layer;
-
-        Layer * parentLayer = nullptr;
-        
-        CompositorClient *client = nullptr;
+    class OMEGAWTK_EXPORT Canvas : public CompositorClient {
 
         Core::Rect & rect;
 
@@ -130,7 +124,7 @@ namespace OmegaWTK {
 
         explicit Canvas(Core::Rect & rect);
 
-        Layer * getParentLayer();
+        void setTargetLayer();
 
         void drawPath(Path & path);
 
@@ -146,7 +140,7 @@ namespace OmegaWTK {
 
         void applyEffect(SharedHandle<CanvasLayerEffect> & effect);
 
-        /// @brief Sends current frame to Compositor Client to be drawn.
+        /// @brief Sends current frame to CompositorClientProxy to be drawn.
         void sendFrame();
         /// @brief Retrives current Frame drawn.
         SharedHandle<CanvasFrame> getCurrentFrame();

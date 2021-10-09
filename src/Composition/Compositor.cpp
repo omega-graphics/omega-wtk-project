@@ -4,47 +4,48 @@
 #include <mutex>
 namespace OmegaWTK::Composition {
 
-void Compositor::hasDetached(LayerTree *tree){
-    for(auto it = targetLayerTrees.begin();it != targetLayerTrees.end();it++){
-        if(tree == *it){
-            targetLayerTrees.erase(it);
-            renderTargetStore.cleanTreeTargets(tree);
-            tree->removeObserver(this);
-            break;
-        }
-    }
-};
+//void Compositor::hasDetached(LayerTree *tree){
+//    for(auto it = targetLayerTrees.begin();it != targetLayerTrees.end();it++){
+//        if(tree == *it){
+//            targetLayerTrees.erase(it);
+//            renderTargetStore.cleanTreeTargets(tree);
+//            tree->removeObserver(this);
+//            break;
+//        }
+//    }
+//};
 
-void CompositorScheduler::processCommand(CompositionRenderCommand & command ){
+void CompositorScheduler::processCommand(SharedHandle<CompositorCommand> & command ){
     auto _now = std::chrono::high_resolution_clock::now();
-    if(command.thresholdParams.hasThreshold) {
-        if(command.thresholdParams.threshold >= _now){
+
+    if(command->thresholdParams.hasThreshold) {
+        if(command->thresholdParams.threshold >= _now){
             /// Command will execute on time.
             auto command = compositor->commandQueue.first();
             compositor->commandQueue.pop();
 
-            compositor->currentCommand = &command;
+            compositor->currentCommand = command;
             
-            std::chrono::nanoseconds diff = command.thresholdParams.threshold - command.thresholdParams.timeStamp;
+            std::chrono::nanoseconds diff = command->thresholdParams.threshold - command->thresholdParams.timeStamp;
             std::this_thread::sleep_for(diff);
 
-            auto future_status = compositor->executeCurrentRenderCommand();
+            future_status = compositor->executeCurrentCommand();
             
         }
         else {
             // Command is late!!
             auto command = compositor->commandQueue.first();
-            compositor->currentCommand = &command;
+            compositor->currentCommand = command;
             compositor->commandQueue.pop();
-            auto future_status = compositor->executeCurrentRenderCommand();
+            future_status = compositor->executeCurrentCommand();
         };
     }
     else {
         /// Command will be executed right away.
         auto command = compositor->commandQueue.first();
-        compositor->currentCommand = &command;
+        compositor->currentCommand = command;
         compositor->commandQueue.pop();
-        auto future_status = compositor->executeCurrentRenderCommand();
+        auto future_status = compositor->executeCurrentCommand();
     }
 };
 

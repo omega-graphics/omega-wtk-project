@@ -199,7 +199,7 @@ unsigned int ViewAnimator::calculateTotalFrames(unsigned int &duration) {
     return (unsigned) totalFrames;
 }
 
-ViewAnimator::ViewAnimator(CompositorClient *_client):client(_client),framePerSec(30){
+ViewAnimator::ViewAnimator(CompositorClientProxy *_client):client(_client),framePerSec(30){
 
 }
 

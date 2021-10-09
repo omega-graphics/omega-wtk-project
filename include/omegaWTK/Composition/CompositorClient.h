@@ -12,17 +12,28 @@ namespace OmegaWTK::Composition {
 
     typedef std::chrono::time_point<std::chrono::high_resolution_clock> Timestamp;
 
-    class OMEGAWTK_EXPORT CompositionRenderTarget {
+    class OMEGAWTK_EXPORT CompositionRenderTarget {};
 
+    enum class CommandStatus : int {
+        Ok,
+        Failed,
+        Delayed
     };
 
+    class CompositorClient;
+
     struct CompositorCommand {
+        unsigned id;
+        CompositorClient & client;
         typedef enum : int {
+            /// A frame draw commmand
             Render,
+            /// A view command
             View,
+            // A Layer resize
             LayerResize,
-            HoldRender,
-            ResumeRender
+            /// Cancel execution of commands from client.
+            Cancel,
         } Type;
         Type type;
         typedef enum {
@@ -35,19 +46,12 @@ namespace OmegaWTK::Composition {
             Timestamp timeStamp;
             Timestamp threshold;
         }thresholdParams;
+        OmegaCommon::Promise<CommandStatus> status;
     };
 
     struct CompositorLayerResizeCommand : public CompositorCommand {
         Layer *layer;
         unsigned delta_x = 0,delta_y = 0,delta_w = 0,delta_h = 0;
-    };
-
-    struct CompositorHoldRenderCommand : public CompositorCommand {
-        Layer *layer;
-    };
-
-    struct CompositorResumeRenderCommand : public CompositorCommand {
-        Layer *layer;
     };
 
    struct CompositionRenderCommand : public CompositorCommand {
@@ -64,54 +68,85 @@ namespace OmegaWTK::Composition {
        unsigned delta_x = 0,delta_y = 0,delta_w = 0,delta_h = 0;
    };
 
+   struct CompositorCancelCommand : public CompositorCommand {
+       unsigned startID = 0,endID = 0;
+   };
 
 
-    /** @brief Compositor Client class for interaction with a Compositor
+
+    /** @brief Compositor Client Proxy class for interaction with a Compositor
         @paragraph Interaction includes submitting render commands to a Compositor,
         and verifying successful frame completion. 
     */
-    class OMEGAWTK_EXPORT CompositorClient {
-        friend class Canvas;
-        friend class LayerAnimator;
-        friend class ViewAnimator;
+    class OMEGAWTK_EXPORT CompositorClientProxy {
+        friend class CompositorClient;
 
         Compositor *frontend = nullptr;
+
+        bool recording = false;
 
         CompositionRenderTarget *renderTarget;
 
         std::queue<SharedHandle<CompositorCommand>> commandQueue;
 
-        void queueTimedFrame(SharedHandle<CanvasFrame> & frame,Timestamp & start,Timestamp & deadline);
-        void queueFrame(SharedHandle<CanvasFrame> & frame,Timestamp & start);
-        void queueLayerResizeCommand(Layer *target,unsigned delta_x,unsigned delta_y,unsigned delta_w,unsigned delta_h,Timestamp &start,Timestamp & deadline);
-        void queueViewResizeCommand(Native::NativeItemPtr nativeView,unsigned delta_x,unsigned delta_y,unsigned delta_w,unsigned delta_h,Timestamp &start,Timestamp & deadline);
-        void queueStopForRenderingLayer(Layer *target);
-        void queueResumeForRenderingLayer(Layer *target);
+        OmegaCommon::Async<CommandStatus> queueTimedFrame(unsigned & id,CompositorClient &client,
+                                                          SharedHandle<CanvasFrame> & frame,
+                                                          Timestamp & start,
+                                                          Timestamp & deadline);
+
+        OmegaCommon::Async<CommandStatus> queueFrame(unsigned & id,CompositorClient &client,
+                                                     SharedHandle<CanvasFrame> & frame,
+                                                     Timestamp & start);
+
+        OmegaCommon::Async<CommandStatus> queueLayerResizeCommand(unsigned & id,CompositorClient &client,
+                                                                  Layer *target,
+                                                                  unsigned delta_x,
+                                                                  unsigned delta_y,
+                                                                  unsigned delta_w,
+                                                                  unsigned delta_h,
+                                                                  Timestamp &start,
+                                                                  Timestamp & deadline);
+
+        OmegaCommon::Async<CommandStatus> queueViewResizeCommand(unsigned & id,CompositorClient &client,
+                                                                 Native::NativeItemPtr nativeView,
+                                                                 unsigned delta_x,
+                                                                 unsigned delta_y,
+                                                                 unsigned delta_w,
+                                                                 unsigned delta_h,
+                                                                 Timestamp &start,
+                                                                 Timestamp & deadline);
+
+        OmegaCommon::Async<CommandStatus> queueCancelCommand(unsigned & id,CompositorClient &client,unsigned startID,unsigned endID);
+
     protected:
         void submit();
-
     public:
         void setFrontendPtr(Compositor *frontend);
-        virtual void commitRender() = 0;
-        virtual ~CompositorClient();
+        void beginRecord();
+        void endRecord();
+        virtual ~CompositorClientProxy() = default;
     };
 
-    /** @brief A CompositorClient that only allows for video frame submission/verification.
-        @paragraph Interaction includes submitting render commands to a Compositor,
-        and verifying successful frame completion. 
-    */
-//    class OMEGAWTK_EXPORT CompositorVideoClient {
-//        Compositor *frontend = nullptr;
-//
-//        OmegaCommon::Vector<SharedHandle<CanvasFrame>> drawQueue;
-//    protected:
-//        void queueFrame(Core::SharedPtr<Media::BitmapImage> & img);
-//        void submit(CompositionRenderTarget *renderTarget);
-//    public:
-//        void setFrontendPtr(Compositor *frontend);
-//        virtual void commitCurrentFrame() = 0;
-//        virtual ~CompositorVideoClient();
-//    };
+
+    class OMEGAWTK_EXPORT CompositorClient {
+        CompositorClientProxy & parentProxy;
+
+        OmegaCommon::Vector<std::pair<unsigned,OmegaCommon::Async<CommandStatus>>> currentJobStatuses;
+
+        unsigned currentCommandID = 0;
+
+    protected:
+        void pushTimedFrame(SharedHandle<CanvasFrame> & frame,Timestamp & start,Timestamp & deadline);
+        void pushFrame(SharedHandle<CanvasFrame> & frame,Timestamp & start);
+        void pushLayerResizeCommand(Layer *target,unsigned delta_x,unsigned delta_y,unsigned delta_w,unsigned delta_h,Timestamp &start,Timestamp & deadline);
+        void pushViewResizeCommand(Native::NativeItemPtr nativeView,unsigned delta_x,unsigned delta_y,unsigned delta_w,unsigned delta_h,Timestamp &start,Timestamp & deadline);
+        void cancelCurrentJobs();
+    public:
+        bool busy();
+
+        explicit CompositorClient(CompositorClientProxy & proxy);
+        virtual ~CompositorClient() = default;
+    };
 
     
 

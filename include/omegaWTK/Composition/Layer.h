@@ -38,7 +38,7 @@ namespace Composition {
     class OMEGAWTK_EXPORT LayerTree {
         friend class ::OmegaWTK::View;
         friend class ::OmegaWTK::Widget;
-        void setCompClientRecurse(CompositorClient *compClient);
+        void setCompClientRecurse(CompositorClientProxy *compClient);
     protected:
         OmegaCommon::Vector<LayerTreeObserver *> observers;
 
@@ -124,7 +124,7 @@ namespace Composition {
         
         friend class LayerTree;
         friend class ::OmegaWTK::View;
-        void setCompClientRecurse(CompositorClient *compClient);
+        void setCompClientRecurse(CompositorClientProxy *compClient);
         void addSubLayer(SharedHandle<Layer> & layer);
         void removeSubLayer(SharedHandle<Layer> & layer);
     public:

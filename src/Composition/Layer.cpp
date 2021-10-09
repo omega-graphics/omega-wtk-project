@@ -14,7 +14,7 @@ Layer::Layer(const Core::Rect &rect)
           surface->parentLayer = this;
 };
 
-void Layer::setCompClientRecurse(Composition::CompositorClient *compClient){
+void Layer::setCompClientRecurse(Composition::CompositorClientProxy *compClient){
     surface->client = compClient;
     for(auto & c : children){
         c->setCompClientRecurse(compClient);
@@ -108,7 +108,7 @@ void LayerTree::notifyObserversOfWidgetDetach(){
     };
 };
 
-void LayerTree::setCompClientRecurse(CompositorClient *compClient){
+void LayerTree::setCompClientRecurse(CompositorClientProxy *compClient){
     rootLimb->getRootLayer()->setCompClientRecurse(compClient);
     for(auto & b : body){
 

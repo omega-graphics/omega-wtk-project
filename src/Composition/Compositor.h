@@ -18,7 +18,7 @@ namespace OmegaWTK::Composition {
    public:
         bool shutdown;
 
-        void processCommand(CompositionRenderCommand & command);
+        void processCommand(SharedHandle<CompositorCommand> & command);
         std::mutex mutex;
         std::thread t;
 
@@ -26,11 +26,6 @@ namespace OmegaWTK::Composition {
        ~CompositorScheduler();
    };
 
-   enum class RenderCommandStatus : int {
-       Ok,
-       Failed,
-       Delayed
-   };
 
    struct CompareCommands {
         auto operator()(SharedHandle<Composition::CompositorCommand> & lhs,SharedHandle<Composition::CompositorCommand> & rhs){
@@ -40,16 +35,10 @@ namespace OmegaWTK::Composition {
             else if(rhs->type == CompositorCommand::View){
                 return false;
             }
-            else if(lhs->type == CompositorCommand::HoldRender){
+            else if(lhs->type == CompositorCommand::Cancel){
                 return true;
             }
-            else if(rhs->type == CompositorCommand::HoldRender){
-                return false;
-            }
-            else if(lhs->type == CompositorCommand::ResumeRender){
-                return true;
-            }
-            else if(rhs->type == CompositorCommand::ResumeRender){
+            else if(rhs->type == CompositorCommand::Cancel){
                 return false;
             }
             else if(lhs->type == CompositorCommand::Render && rhs->type == CompositorCommand::Render) {
@@ -85,12 +74,12 @@ namespace OmegaWTK::Composition {
         std::condition_variable queueCondition;
         OmegaCommon::PriorityQueueHeap<SharedHandle<CompositorCommand>,CompareCommands> commandQueue;
 
-        friend class CompositorClient;
+        friend class CompositorClientProxy;
         friend class CompositorScheduler;
 
         CompositorScheduler scheduler;
 
-        CompositionRenderCommand *currentCommand = nullptr;
+        SharedHandle<CompositorCommand> currentCommand;
 
         bool allowUpdates = false;
 
@@ -98,7 +87,7 @@ namespace OmegaWTK::Composition {
         friend class LayerTree;
         friend class WindowLayer;
 
-        std::future<RenderCommandStatus> executeCurrentRenderCommand();
+        void executeCurrentCommand();
 
     public:
         void scheduleCommand(SharedHandle<CompositorCommand> & command);
