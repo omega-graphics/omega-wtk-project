@@ -56,7 +56,7 @@ namespace OmegaWTK::Native {
             /// @{
             void toggleHorizontalScrollBar(bool & state) override;
             void toggleVerticalScrollBar(bool & state) override;
-            void setClippedView(NativeItem *clippedView) override;
+            void setClippedView(SharedHandle<NativeItem> clippedView) override;
             /// @}
             typedef enum : OPT_PARAM {
                 View,

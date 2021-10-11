@@ -1,6 +1,5 @@
 #include "View.h"
 #include "omegaWTK/Media/Video.h"
-#include "omegaWTK/Media/VideoCodec.h"
 
 #ifndef OMEGAWTK_UI_VIDEOVIEW_H
 #define OMEGAWTK_UI_VIDEOVIEW_H

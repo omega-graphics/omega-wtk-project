@@ -15,11 +15,11 @@ namespace OmegaWTK::Media {
         IMFMediaSession *currentSession;
     public:
 
-        void beginEncode() override{
+        void beginEncode(BeginEncodeParams params) override{
             MFCreateMediaSession(NULL,&currentSession);
         }
     
-        void encodeFrame() override{
+        void encodeFrame(EncodeFrameParams params) override{
 
         }
 
@@ -27,11 +27,11 @@ namespace OmegaWTK::Media {
             Core::SafeRelease(&currentSession);
         }
 
-        void beginDecode() override{
+        void beginDecode(BeginDecodeParams params) override{
            MFCreateMediaSession(NULL,&currentSession);
         }
 
-        void decodeFrame() override {
+        void decodeFrame(DecodeFrameParams params) override {
             
         }
 
@@ -47,7 +47,15 @@ namespace OmegaWTK::Media {
         };
     };
 
-    AudioVideoProcessor *avProcessor = new WMFAudioVideoProcessor();
+    void AudioVideoProcessor::Initialize(){
+        avProcessor.reset(new WMFAudioVideoProcessor());
+    }
+
+    void AudioVideoProcessor::Cleanup(){
+        avProcessor.reset();
+    }
+
+    UniqueHandle<AudioVideoProcessor> avProcessor;
 
 
 };

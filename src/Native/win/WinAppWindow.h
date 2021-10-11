@@ -8,14 +8,14 @@ namespace OmegaWTK::Native::Win {
     class WinAppWindow : public NativeWindow, public HWNDItem {
         bool isReady;
         public:
-        void enable();
-        void disable();
+        void enable() override; 
+        void disable() override;
         void attachWidgets();
-        void initialDisplay();
-        void close();
-        void addNativeItem(NativeItemPtr item);
-        LRESULT ProcessWndMsg(UINT,WPARAM,LPARAM);
-        BOOL ProcessWndMsgImpl(HWND, UINT, WPARAM, LPARAM, LRESULT *);
+        void initialDisplay() override;
+        void close() override;
+        void addNativeItem(NativeItemPtr item) override;
+        LRESULT ProcessWndMsg(UINT,WPARAM,LPARAM) override;
+        BOOL ProcessWndMsgImpl(HWND, UINT, WPARAM, LPARAM, LRESULT *) override;
         WinAppWindow(Core::Rect & rect,NativeEventEmitter *emitter);
         ~WinAppWindow();
     };

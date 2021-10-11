@@ -25,9 +25,9 @@ namespace OmegaWTK::Composition {
        OmegaCommon::Promise<CommandStatus> status;
        auto async = status.async();
         commandQueue.emplace(new
-                        CompositionRenderCommand{{id,client,CompositorCommand::Type::Render,
+                        CompositionRenderCommand{id,client,CompositorCommand::Type::Render,
                                  CompositorCommand::Priority::High,
-                                 {true,start,deadline},std::move(status)},renderTarget,frame});
+                                 {true,start,deadline},std::move(status),renderTarget,frame});
         return async;
     };
 
@@ -39,10 +39,10 @@ namespace OmegaWTK::Composition {
         auto async = status.async();
         commandQueue.emplace(
             new
-            CompositionRenderCommand{{
+            CompositionRenderCommand{
                                 id,client,CompositorCommand::Type::Render,
                                  CompositorCommand::Priority::Low,
-                                 {false,start,start},std::move(status)},renderTarget,frame});
+                                 {false,start,start},std::move(status),renderTarget,frame});
         return async;
     };
 
@@ -57,13 +57,13 @@ namespace OmegaWTK::Composition {
                                                        Timestamp &deadline) {
         OmegaCommon::Promise<CommandStatus> status;
         auto async = status.async();
-        commandQueue.emplace(new CompositorViewCommand{{
+        commandQueue.emplace(new CompositorViewCommand{
             id,
             client,
             CompositorCommand::Type::View,
             CompositorCommand::Priority::High,
             {true,start,deadline},
-            std::move(status)},
+            std::move(status),
             CompositorViewCommand::Resize,nativeView,delta_x,delta_y,delta_w,delta_h});
         return async;
     }
@@ -80,12 +80,12 @@ namespace OmegaWTK::Composition {
         OmegaCommon::Promise<CommandStatus> status;
         auto async = status.async();
 
-        commandQueue.emplace(new CompositorLayerResizeCommand {{
+        commandQueue.emplace(new CompositorLayerResizeCommand {
             id,
             client,
             CompositorCommand::Type::LayerResize,
             CompositorCommand::Priority::High,
-            {true,start,deadline},std::move(status)},target,delta_x,delta_y,delta_w,delta_h});
+            {true,start,deadline},std::move(status),target,delta_x,delta_y,delta_w,delta_h});
         return async;
     }
 
@@ -96,12 +96,12 @@ namespace OmegaWTK::Composition {
         Timestamp ts = std::chrono::high_resolution_clock::now();
         OmegaCommon::Promise<CommandStatus> status;
         auto async = status.async();
-        commandQueue.emplace(new CompositorCancelCommand {{
+        commandQueue.emplace(new CompositorCancelCommand {
             id,
             client,
             CompositorCommand::Type::Cancel,
             CompositorCommand::Priority::High,
-            {false,ts,ts},std::move(status)},startID,endID});
+            {false,ts,ts},std::move(status),startID,endID});
         return async;
     }
 

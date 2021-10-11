@@ -41,7 +41,7 @@ namespace OmegaWTK {
             /**
              This Method may only be invoked if NativeItem is a ScrollView
             */
-            virtual void setClippedView(NativeItem * clippedView) = 0;
+            virtual void setClippedView(SharedHandle<NativeItem> clippedView) = 0;
             /// @}
             NativeItem();
             // ~NativeItem();

@@ -135,8 +135,6 @@ void ViewDelegate::onRecieveEvent(Native::NativeEventPtr event){
         default:
             break;
     }
-    /// Garbage Collect!
-    delete event;
 };
 
 ScrollView::ScrollView(const Core::Rect & rect,SharedHandle<View> child,bool hasVericalScrollBar,bool hasHorizontalScrollBar,View *parent):View(rect,Native::make_native_item(rect,Native::ScrollItem),parent),delegate(nullptr),hasHorizontalScrollBar(hasHorizontalScrollBar),hasVericalScrollBar(hasVericalScrollBar){

@@ -1,6 +1,7 @@
 #include "NativePrivate/win/HWNDItem.h"
 #include "HWNDFactory.h"
 #include "NativePrivate/win/WinEvent.h"
+#include <memory>
 #include <windowsx.h>
 #include <iostream>
 
@@ -72,9 +73,9 @@ namespace OmegaWTK::Native::Win {
         };
     };
 
-    void HWNDItem::setClippedView(NativeItem *clippedView){
+    void HWNDItem::setClippedView(SharedHandle<NativeItem> clippedView){
         if(isScrollView) {
-            HWNDItem *child = (HWNDItem *)clippedView;
+            auto child = std::dynamic_pointer_cast<HWNDItem>(clippedView);
             SetParent(child->hwnd,this->hwnd);
         };
     };
