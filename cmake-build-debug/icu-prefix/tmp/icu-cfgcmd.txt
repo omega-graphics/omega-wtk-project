@@ -1,1 +1,0 @@
-cmd='./configure;-prefix;/home/alex/Documents/Git/wtk/cmake-build-debug/deps/icu'
