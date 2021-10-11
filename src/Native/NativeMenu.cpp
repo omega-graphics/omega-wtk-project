@@ -15,35 +15,35 @@ void NativeMenu::setDelegate(NativeMenuDelegate *delegate){
     this->hasDelegate = true;
 };
 
-NMI make_native_menu_item(const OmegaCommon::String & str,NM parent,bool hasSubMenu,NM subMenu){
+// NMI make_native_menu_item(const OmegaCommon::String & str,NM parent,bool hasSubMenu,NM subMenu){
     
-#ifdef TARGET_MACOS
-    return Cocoa::make_cocoa_menu_item(str,parent,hasSubMenu,subMenu);
-#endif
+// #ifdef TARGET_MACOS
+//     return Cocoa::make_cocoa_menu_item(str,parent,hasSubMenu,subMenu);
+// #endif
 
-#ifdef TARGET_WIN32
-    return Win::make_win_menu_item(str,parent,hasSubMenu,subMenu);
-#endif
+// #ifdef TARGET_WIN32
+//     return Win::make_win_menu_item(str,parent,hasSubMenu,subMenu);
+// #endif
     
-};
+// };
 
-NMI make_native_menu_seperator(){
-#ifdef TARGET_MACOS
-    return Cocoa::make_cocoa_menu_seperator();
-#endif
-#ifdef TARGET_WIN32
-    return Win::make_win_menu_seperator();
-#endif
-};
+// NMI make_native_menu_seperator(){
+// #ifdef TARGET_MACOS
+//     return Cocoa::make_cocoa_menu_seperator();
+// #endif
+// #ifdef TARGET_WIN32
+//     return Win::make_win_menu_seperator();
+// #endif
+// };
 
-NM make_native_menu(const OmegaCommon::String & name){
-#ifdef TARGET_MACOS
-    return Cocoa::make_cocoa_menu(name);
-#endif
-#ifdef TARGET_WIN32
-    return Win::make_win_menu(name);
-#endif
-};
+// NM make_native_menu(const OmegaCommon::String & name){
+// #ifdef TARGET_MACOS
+//     return Cocoa::make_cocoa_menu(name);
+// #endif
+// #ifdef TARGET_WIN32
+//     return Win::make_win_menu(name);
+// #endif
+// };
 
 };
 

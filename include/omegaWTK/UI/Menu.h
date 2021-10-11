@@ -54,7 +54,7 @@ protected:
     friend class Menu;
 public:
     MenuDelegate();
-    INTERFACE_METHOD void onSelectItem(unsigned itemIndex);
+    INTERFACE_METHOD void onSelectItem(unsigned itemIndex) ABSTRACT;
 };
 /**
  Creates a Category Menu

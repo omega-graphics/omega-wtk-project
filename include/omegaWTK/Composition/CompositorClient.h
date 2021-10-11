@@ -209,11 +209,16 @@ namespace OmegaWTK::Composition {
         virtual ~CompositorClientProxy() = default;
     };
 
+    struct ActiveCommandEntry {
+        unsigned id;
+        OmegaCommon::Async<CommandStatus> status;
+    };
+
 
     class OMEGAWTK_EXPORT CompositorClient {
         CompositorClientProxy & parentProxy;
 
-        OmegaCommon::Vector<std::pair<unsigned,OmegaCommon::Async<CommandStatus>>> currentJobStatuses;
+        OmegaCommon::Vector<ActiveCommandEntry> currentJobStatuses;
 
         unsigned currentCommandID = 0;
 

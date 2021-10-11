@@ -12,7 +12,7 @@ namespace OmegaWTK {
 
         layerTreeLimb = widgetLayerTree->createLimb(rect);
         renderTarget->getNativePtr()->setLayerTreeLimb(layerTreeLimb.get());
-        Native::set_native_item_event_emitter(renderTarget->getNativePtr(),this);
+        renderTarget->getNativePtr()->event_emitter = this;
         
         if(parent_ptr) {
             parent->addSubView(this);
@@ -22,7 +22,7 @@ namespace OmegaWTK {
             layerTree->setRootLimb(layerTreeLimb);
     };
     View::View(const Core::Rect & rect,View *parent):renderTarget(std::make_unique<Composition::ViewRenderTarget>(Native::make_native_item(rect))),widgetLayerTree(nullptr),parent_ptr(parent),rect(rect){
-        Native::set_native_item_event_emitter(renderTarget->getNativePtr(),this);
+        renderTarget->getNativePtr()->event_emitter = this;
         if(parent_ptr) {
             parent->addSubView(this);
         };
@@ -138,7 +138,7 @@ void ViewDelegate::onRecieveEvent(Native::NativeEventPtr event){
 };
 
 ScrollView::ScrollView(const Core::Rect & rect,SharedHandle<View> child,bool hasVericalScrollBar,bool hasHorizontalScrollBar,View *parent):View(rect,Native::make_native_item(rect,Native::ScrollItem),parent),delegate(nullptr),hasHorizontalScrollBar(hasHorizontalScrollBar),hasVericalScrollBar(hasVericalScrollBar){
-    Native::set_native_item_event_emitter(renderTarget->getNativePtr(),this);
+    renderTarget->getNativePtr()->event_emitter = this;
     Native::NativeItemPtr ptr = renderTarget->getNativePtr();
     ptr->setClippedView(child->renderTarget->getNativePtr());
     if(hasHorizontalScrollBar)

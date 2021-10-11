@@ -20,10 +20,10 @@ namespace OmegaWTK::Native::Win {
         ATL::CComPtr<IFileSaveDialog> dialog_ty_2;
         void close();
         void show();
+        OmegaCommon::Promise<OmegaCommon::String> result;
     public:
         WinFSDialog(bool read_or_write,NWH nativeWindow);
         ~WinFSDialog();
-        static SharedHandle<NativeFSDialog> Create(const Descriptor & desc,NWH nativeWindow);
         OmegaCommon::Async<OmegaCommon::String> getResult() override;
     };
 
@@ -35,7 +35,6 @@ namespace OmegaWTK::Native::Win {
         ~WinNoteDialog();
         void show();
         void close();
-        static SharedHandle<NativeNoteDialog> Create(const Descriptor & desc,NWH nativeWindow);
     };
 
 
@@ -53,6 +52,10 @@ namespace OmegaWTK::Native::Win {
         }
     };
 
+    OmegaCommon::Async<OmegaCommon::String> WinFSDialog::getResult(){
+        return result.async();
+    }
+
 
     void WinFSDialog::show(){
         HRESULT hr;
@@ -69,17 +72,6 @@ namespace OmegaWTK::Native::Win {
             dialog_ty_1.Release();
         else 
             dialog_ty_2.Release();
-    };
-
-    SharedHandle<NativeFSDialog> WinFSDialog::Create(const Descriptor &desc,NWH nativeWindow){
-        HRESULT hr;
-        if(desc.type == Read){
-            return (SharedHandle<NativeFSDialog>)new WinFSDialog(true,nativeWindow);
-        }
-        else {
-
-            return (SharedHandle<NativeFSDialog>) new WinFSDialog(false,nativeWindow);
-        }
     };
 
     LPWORD lpwAlign(LPWORD lpIn)
@@ -204,10 +196,7 @@ namespace OmegaWTK::Native::Win {
         GlobalFree(hgbl); 
     };
 
-    SharedHandle<NativeNoteDialog> WinNoteDialog::Create(const Descriptor &desc, NWH nativeWindow){
-        return (SharedHandle<NativeNoteDialog>)new WinNoteDialog(desc,nativeWindow);
-        
-    };
+
 
     void WinNoteDialog::show(){
         DialogBoxIndirectA(HWNDFactory::appFactoryInst->hInst,(LPDLGTEMPLATE)hgbl,std::dynamic_pointer_cast<HWNDItem>(parentWindow)->hwnd,WinNoteDialog::DlgProc);
@@ -220,4 +209,8 @@ namespace OmegaWTK::Native {
         auto ptr = new Win::WinFSDialog(is_read_or_write,nativeWindow);
         return (SharedHandle<NativeFSDialog>)ptr;
     }
+     SharedHandle<NativeNoteDialog> NativeNoteDialog::Create(const Descriptor &desc, NWH nativeWindow){
+        return (SharedHandle<NativeNoteDialog>)new Win::WinNoteDialog(desc,nativeWindow);
+        
+    };
 }

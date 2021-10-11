@@ -15,11 +15,10 @@ namespace OmegaWTK {
         };
         /// Null Object Placeholder for native object!
         INTERFACE NativeItem {
-            friend void set_native_item_event_emitter(NativeItem * ptr,NativeEventEmitter * emitter);
             protected:
             NativeLayerTreeLimb *layerTreelimb;
-             NativeEventEmitter *event_emitter;
             public:
+            NativeEventEmitter *event_emitter;
             INTERFACE_METHOD void addChildNativeItem(SharedHandle<NativeItem> nativeItem) ABSTRACT;
 
             INTERFACE_METHOD void removeChildNativeItem(SharedHandle<NativeItem> nativeItem) ABSTRACT;
@@ -55,7 +54,7 @@ namespace OmegaWTK {
 
         /// Makes Native Item (If `parent` arg is nullptr, the native_item will be attached as a child to the root HWND or NSView *)
         NativeItemPtr make_native_item(Core::Rect rect,Native::ItemType type = Native::Default,NativeItemPtr parent = nullptr);
-        void set_native_item_event_emitter(NativeItemPtr ptr,NativeEventEmitter * emitter);
+        // void set_native_item_event_emitter(NativeItemPtr ptr,NativeEventEmitter * emitter);
     }
 };
 
