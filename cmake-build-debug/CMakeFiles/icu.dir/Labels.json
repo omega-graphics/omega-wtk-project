@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/CMakeFiles/icu"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/CMakeFiles/icu.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/CMakeFiles/icu-complete.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-build.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-configure.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-download.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-install.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-mkdir.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-patch.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"icu"
+		],
+		"name" : "icu"
+	}
+}

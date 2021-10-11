@@ -1,0 +1,67 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/CMakeFiles/libpng"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/CMakeFiles/libpng.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/CMakeFiles/libpng-complete.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libpng-prefix/src/libpng-stamp/libpng-build.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libpng-prefix/src/libpng-stamp/libpng-configure.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libpng-prefix/src/libpng-stamp/libpng-download.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libpng-prefix/src/libpng-stamp/libpng-install.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libpng-prefix/src/libpng-stamp/libpng-mkdir.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libpng-prefix/src/libpng-stamp/libpng-patch.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libpng-prefix/src/libpng-stamp/libpng-update.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/CMakeFiles/zlib-complete.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-build.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-configure.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-download.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-install.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-mkdir.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-patch.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"libpng"
+		],
+		"name" : "libpng"
+	}
+}

@@ -1,0 +1,13 @@
+# Target labels
+ icu
+# Source files and their labels
+/home/alex/Documents/Git/wtk/cmake-build-debug/CMakeFiles/icu
+/home/alex/Documents/Git/wtk/cmake-build-debug/CMakeFiles/icu.rule
+/home/alex/Documents/Git/wtk/cmake-build-debug/CMakeFiles/icu-complete.rule
+/home/alex/Documents/Git/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-build.rule
+/home/alex/Documents/Git/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-configure.rule
+/home/alex/Documents/Git/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-download.rule
+/home/alex/Documents/Git/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-install.rule
+/home/alex/Documents/Git/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-mkdir.rule
+/home/alex/Documents/Git/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-patch.rule
+/home/alex/Documents/Git/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-update.rule

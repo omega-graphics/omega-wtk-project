@@ -23,7 +23,7 @@ elseif(APPLE)
 	add_compile_definitions(TARGET_MACOS)
 elseif(UNIX AND NOT APPLE)
 	set(TARGET_LINUX TRUE)
-	add_compile_definitions(TARGET_LINUX)
+	add_compile_definitions(TARGET_GTK)
 endif()
 
 # Third Party Modules
@@ -138,6 +138,7 @@ add_third_party(
 	
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/libtiff/include")
 
+
 #Omega WTK Core SubModule
 
 file(GLOB CORE_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Core/*.cpp")
@@ -155,7 +156,9 @@ if(TARGET_WIN32)
 elseif(TARGET_MACOS)
 	file(GLOB MACOS_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Native/macos/*.mm")
 	set(NATIVE_SRCS ${NATIVE_SRCS} ${MACOS_SRCS})
-	
+elseif(TARGET_LINUX)
+	file(GLOB GTK_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Native/gtk/*.cpp")
+	set(NATIVE_SRCS ${NATIVE_SRCS} ${GTK_SRCS})
 endif()
 
 source_group(OmegaWTKNative ${NATIVE_SRCS})
@@ -173,7 +176,9 @@ if(TARGET_WIN32)
 elseif(TARGET_MACOS)
 	file(GLOB MACOS_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/avf/*.mm")
 	set(MEDIA_SRCS ${MEDIA_SRCS} ${MACOS_SRCS})
-	
+else()
+	file(GLOB FFMPEG_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/ffmpeg/*.cpp")
+	set(MEDIA_SRCS ${MEDIA_SRCS} ${FFMPEG_SRCS})
 endif()
 #OmegaWTK Composition SubModule
 
@@ -185,6 +190,9 @@ if(TARGET_WIN32)
 elseif(TARGET_MACOS)
 	file(GLOB MACOS_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Composition/backend/mtl/*.mm")
 	set(COMPOSITION_SRCS ${COMPOSITION_SRCS} ${MACOS_SRCS})
+else()
+	file(GLOB GTK_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Composition/backend/gtk/*.cpp")
+	set(COMPOSITION_SRCS ${COMPOSITION_SRCS} ${GTK_SRCS})
 endif()
 
 source_group(OmegaWTKComposition ${COMPOSITION_SRCS})
@@ -216,6 +224,24 @@ target_link_libraries("OmegaWTK" PUBLIC "OmegaCommon" ${LIBXML2_EXPORT} ${LIBPNG
 
 if(TARGET_WIN32)
 	target_compile_definitions("OmegaWTK" PRIVATE WINDOWS_PRIVATE)
+endif()
+if(TARGET_LINUX)
+	find_package(PkgConfig QUIET REQUIRED)
+
+	pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+	if(NOT GTK3_FOUND)
+		message("GTK 3 not found. Please install gtk3.")
+	endif()
+
+	pkg_check_modules(FFMPEG REQUIRED libavcodec libavutil libavdevice)
+
+	if(NOT FFMPEG_FOUND)
+		message("FFMPEG development files not found. Please install libavcodec, libavutil and libavdevice")
+	endif()
+
+	target_compile_options("OmegaWTK" PUBLIC ${GTK3_CFLAGS} ${FFMPEG_CFLAGS})
+	target_link_directories("OmegaWTK" PUBLIC ${GTK3_LIBRARY_DIRS} ${FFMPEG_LIBRARY_DIRS})
+	target_link_libraries("OmegaWTK" PUBLIC ${GTK3_LIBRARIES} ${FFMPEG_LIBRARIES})
 endif()
 
 # add_subdirectory(tests)

@@ -1,0 +1,1 @@
+cmd='/home/alex/Documents/CMake/bin/cmake;-S;/home/alex/Documents/Git/wtk/external-libs/zlib/code;-GNinja;-B;/home/alex/Documents/Git/wtk/cmake-build-debug/deps/temp/zlib;-DCMAKE_BUILD_TYPE=Release;-DCMAKE_INSTALL_PREFIX=/home/alex/Documents/Git/wtk/cmake-build-debug/deps/zlib'

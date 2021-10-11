@@ -1,5 +1,5 @@
 
-#include "GTKApp.h"
+#include "omegaWTK/Native/NativeApp.h"
 
 #include <gtk/gtk.h>
 
@@ -10,12 +10,19 @@ namespace OmegaWTK::Native::GTK {
         void terminate(){
             g_object_unref(native);
         };
-        GTKApp(){
+        explicit GTKApp(void *data){
             native = gtk_application_new("",G_APPLICATION_FLAGS_NONE);
+//            g_signal_connect(native,"activate",NULL,NULL);
         };
+        int runEventLoop() override {
+            return g_application_run(G_APPLICATION(native),0,NULL);
+        }
     };
 
-    NAP make_gtk_app(){
-        return new GTKApp();
+}
+
+namespace OmegaWTK::Native {
+    NAP make_native_app(void *data){
+        return (NAP)new GTK::GTKApp(data);
     };
 }

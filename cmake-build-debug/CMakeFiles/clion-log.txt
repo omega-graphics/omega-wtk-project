@@ -1,0 +1,17 @@
+/home/alex/Documents/CMake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/home/alex/Documents/LLVM/bin/clang -DCMAKE_CXX_COMPILER=/home/alex/Documents/LLVM/bin/clang++ -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_MODULE_PATH=/home/alex/Documents/Git/autom/tools/cmake -DCMAKE_MAKE_PROGRAM=/home/alex/Documents/CMake/bin/ninja /home/alex/Documents/Git/wtk
+Found Python3
+Found Python3
+Found Python3
+Found Python3
+-- Adding Module:OmegaCommon
+-- Adding Module:OmegaGTE
+CUSTOM PROJECT:icu
+CMAKE PROJECT:libxml2
+CMAKE PROJECT:zlib
+CMAKE PROJECT:libpng
+CMAKE PROJECT:libjpeg-turbo
+CMAKE PROJECT:libtiff
+-- Adding Module:OmegaWTK
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/alex/Documents/Git/wtk/cmake-build-debug

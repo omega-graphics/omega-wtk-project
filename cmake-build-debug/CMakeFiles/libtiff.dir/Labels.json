@@ -1,0 +1,91 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/CMakeFiles/libtiff"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/CMakeFiles/libtiff.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/CMakeFiles/libtiff-complete.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libtiff-prefix/src/libtiff-stamp/libtiff-build.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libtiff-prefix/src/libtiff-stamp/libtiff-configure.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libtiff-prefix/src/libtiff-stamp/libtiff-download.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libtiff-prefix/src/libtiff-stamp/libtiff-install.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libtiff-prefix/src/libtiff-stamp/libtiff-mkdir.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libtiff-prefix/src/libtiff-stamp/libtiff-patch.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libtiff-prefix/src/libtiff-stamp/libtiff-update.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/CMakeFiles/libjpeg-turbo-complete.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/CMakeFiles/zlib-complete.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libjpeg-turbo-prefix/src/libjpeg-turbo-stamp/libjpeg-turbo-build.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libjpeg-turbo-prefix/src/libjpeg-turbo-stamp/libjpeg-turbo-configure.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libjpeg-turbo-prefix/src/libjpeg-turbo-stamp/libjpeg-turbo-download.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libjpeg-turbo-prefix/src/libjpeg-turbo-stamp/libjpeg-turbo-install.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libjpeg-turbo-prefix/src/libjpeg-turbo-stamp/libjpeg-turbo-mkdir.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libjpeg-turbo-prefix/src/libjpeg-turbo-stamp/libjpeg-turbo-patch.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/libjpeg-turbo-prefix/src/libjpeg-turbo-stamp/libjpeg-turbo-update.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-build.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-configure.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-download.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-install.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-mkdir.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-patch.rule"
+		},
+		{
+			"file" : "/home/alex/Documents/Git/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"libtiff"
+		],
+		"name" : "libtiff"
+	}
+}

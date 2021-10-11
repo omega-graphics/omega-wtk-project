@@ -34,10 +34,10 @@ namespace OmegaWTK {
     #define INTERFACE_METHOD virtual
 
     #define ABSTRACT = 0;
-
-    #define DELEGATE INTERFACE
-    
-    #define DELEGATE_METHOD INTERFACE_METHOD
+//
+//    #define DELEGATE INTERFACE
+//
+//    #define DELEGATE_METHOD INTERFACE_METHOD
 
     // inline const char *time_stamp(){
     //     time_t tt;
@@ -71,17 +71,17 @@ namespace OmegaWTK {
         template<class _Ty>
         using UniquePtr = std::unique_ptr<_Ty>;
     
-        template<class _Ty>
+        template<class Ty>
         class OMEGAWTK_EXPORT UniquePtrRef {
-            UniquePtr<_Ty> & ptr;
+            UniquePtr<Ty> & ptr;
         public:
             bool hasExpired(){
                 return ptr == nullptr;
             };
-            void resetRef(UniquePtr<_Ty> & _new_ptr){
+            void resetRef(UniquePtr<Ty> & _new_ptr){
                 ptr = _new_ptr;
             };
-            UniquePtrRef(UniquePtr<_Ty> & _ptr):ptr(_ptr){};
+            explicit UniquePtrRef(UniquePtr<Ty> & _ptr):ptr(_ptr){};
         };
     
         template<class _Ty>
