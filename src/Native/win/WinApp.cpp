@@ -54,6 +54,6 @@ namespace OmegaWTK::Native::Win {
     };
     
     NAP make_win_app(void *data){
-        return new WinApp(data);
+        return (NAP)new WinApp(data);
     };
 };

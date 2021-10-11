@@ -4,22 +4,12 @@
 
 namespace OmegaWTK::Composition {
 
-LayerTreeObserver::~LayerTreeObserver(){
-    
-};
 
 Layer::Layer(const Core::Rect &rect)
     :
-        surface(std::make_shared<Canvas>(surface_rect)), surface_rect(rect), needsNativeResize(false){
-          surface->parentLayer = this;
+        surface_rect(rect), needsNativeResize(false){
+          
 };
-
-void Layer::setCompClientRecurse(Composition::CompositorClientProxy *compClient){
-    surface->client = compClient;
-    for(auto & c : children){
-        c->setCompClientRecurse(compClient);
-    };
-}
 
 void Layer::addSubLayer(SharedHandle<Layer> &layer) {
   layer->parent_ptr = (this);
@@ -46,10 +36,6 @@ void Layer::removeSubLayer(SharedHandle<Layer> &layer) {
 // void Layer::setStyle(SharedHandle<LayerStyle> & style){
 //     this->style = style;
 // };
-
-SharedHandle<Canvas> & Layer::getSurface(){
-    return surface;
-};
 
 void Layer::resize(Core::Rect &newRect){
     surface_rect = newRect;
@@ -108,15 +94,10 @@ void LayerTree::notifyObserversOfWidgetDetach(){
     };
 };
 
-void LayerTree::setCompClientRecurse(CompositorClientProxy *compClient){
-    rootLimb->getRootLayer()->setCompClientRecurse(compClient);
-    for(auto & b : body){
-
-    };
-};
-
-LayerTree::Limb::Limb(const Core::Rect &rect,ViewRenderTarget *renderTarget):limbRoot(new Layer(rect)),enabled(true),renderTarget(renderTarget){
-    renderTarget->getNativePtr()->setLayerTreeLimb(this);
+LayerTree::Limb::Limb(const Core::Rect &rect):
+limbRoot(new Layer(rect)),
+enabled(true){
+    
 };
 
 void LayerTree::Limb::addLayer(SharedHandle<Layer> layer){
@@ -153,10 +134,6 @@ void LayerTree::Limb::disable(){
         limbRoot->setEnabled(false);
 };
 
-Layer * LayerTree::Limb::getRootLayer(){
-    return limbRoot;
-};
-
 LayerTree *LayerTree::Limb::getParentTree(){
     return parentTree;
 };
@@ -190,8 +167,8 @@ LayerTree::~LayerTree(){
     
 };
 
-SharedHandle<LayerTree::Limb> LayerTree::createLimb(const Core::Rect & rect,ViewRenderTarget *renderTarget){
-    auto limb = std::make_shared<LayerTree::Limb>(rect,renderTarget);
+SharedHandle<LayerTree::Limb> LayerTree::createLimb(const Core::Rect & rect){
+    auto limb = std::make_shared<LayerTree::Limb>(rect);
     limb->parentTree = this;
     return limb;
 };

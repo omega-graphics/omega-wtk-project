@@ -1,14 +1,9 @@
 #include "omegaWTK/Composition/Canvas.h"
 #include "omegaWTK/Composition/CompositorClient.h"
+#include "omegaWTK/Composition/Layer.h"
 
 namespace OmegaWTK::Composition {
 
-    struct CanvasFrame {
-        Layer *targetLayer;
-        Core::Rect & rect;
-        OmegaCommon::Vector<VisualCommand> currentVisuals;
-        OmegaCommon::Vector<CanvasLayerEffect> currentEffects;
-    };
 
 // #define VISUAL_SET_PARAMS(arg)                                                 \
 //   switch (type) {                                                              \
@@ -60,13 +55,13 @@ namespace OmegaWTK::Composition {
     
 // };
 
-Canvas::Canvas(Core::Rect & rect): rect(rect){
+Canvas::Canvas(CompositorClientProxy &proxy,Layer &layer): CompositorClient(proxy),rect(layer.getLayerRect()),layer(layer){
 
 };
 
-Layer * Canvas::getParentLayer(){
-    return parentLayer;
-};
+// Layer * Canvas::getParentLayer(){
+//     return parentLayer;
+// };
 
 void Canvas::drawRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush){
     current->currentVisuals.push_back(VisualCommand {VisualCommand::Rect,new VisualCommand::RectParams {rect,brush}});
@@ -85,7 +80,7 @@ SharedHandle<CanvasFrame> Canvas::nextFrame() {
 void Canvas::sendFrame() {
     auto frame = nextFrame();
     Timestamp ts = std::chrono::high_resolution_clock::now();
-    client->queueFrame(frame,ts);
+    pushFrame(frame,ts);
 }
 
 // void CanvasSurface::drawTextRect(SharedHandle<Composition::TextRect> &textRect, Core::SharedPtr<Brush> &brush){

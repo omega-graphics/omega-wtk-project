@@ -21,7 +21,7 @@ namespace OmegaWTK::Native {
         event_emitter->emit(event);
     };
 
-    void set_native_item_event_emitter(NativeItemPtr ptr,NativeEventEmitter * emitter){
+    void set_native_item_event_emitter(NativeItem * ptr,NativeEventEmitter * emitter){
         ptr->event_emitter = emitter;
     };
 };

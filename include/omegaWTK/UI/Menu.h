@@ -48,13 +48,13 @@ public:
 //    ~Menu();
 };
 
-DELEGATE OMEGAWTK_EXPORT MenuDelegate : public Native::NativeMenuDelegate {
+INTERFACE OMEGAWTK_EXPORT MenuDelegate : public Native::NativeMenuDelegate {
 protected:
     Menu *menu;
     friend class Menu;
 public:
     MenuDelegate();
-    DELEGATE_METHOD(void,onSelectItem,unsigned itemIndex)
+    INTERFACE_METHOD void onSelectItem(unsigned itemIndex);
 };
 /**
  Creates a Category Menu

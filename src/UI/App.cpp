@@ -12,7 +12,7 @@ AppInst * AppInst::instance;
 
 AppInst::AppInst(void *data):ptr(Native::make_native_app(data)),windowManager(std::make_unique<AppWindowManager>()){
     instance = this;
-    gte = OmegaGTE::Init();
+    gte = OmegaGTE::InitWithDefaultDevice();
     OMEGAWTK_DEBUG("Application Startup")
     // Composition::FontEngine::Create();
     OmegaCommon::FS::Path assets_path("./assets.omxa");

@@ -1,5 +1,4 @@
 #include "omegaWTK/Native/NativeItem.h"
-#include "omegaWTK/Composition/Canvas.h"
 
 #include <queue>
 
@@ -9,6 +8,8 @@
 namespace OmegaWTK::Composition {
     class ViewRenderTarget;
     class Compositor;
+    class Layer;
+    struct CanvasFrame;
 
     typedef std::chrono::time_point<std::chrono::high_resolution_clock> Timestamp;
 

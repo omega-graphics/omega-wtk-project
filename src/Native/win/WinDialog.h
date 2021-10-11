@@ -21,6 +21,7 @@ namespace OmegaWTK::Native::Win {
         WinFSDialog(bool read_or_write,NWH nativeWindow);
         ~WinFSDialog();
         static SharedHandle<NativeFSDialog> Create(const Descriptor & desc,NWH nativeWindow);
+        OmegaCommon::Async<OmegaCommon::String> getResult() override;
     };
 
     class WinNoteDialog : public NativeNoteDialog {

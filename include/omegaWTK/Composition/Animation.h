@@ -75,7 +75,8 @@ namespace OmegaWTK::Composition {
 
     class OMEGAWTK_EXPORT LayerAnimator : public CompositorClient {
         Layer & targetLayer;
-        explicit LayerAnimator(Layer & layer);
+        ViewAnimator &parentAnimator;
+        explicit LayerAnimator(Layer & layer,ViewAnimator &parentAnimator);
     public:
         void setFrameRate(unsigned _framePerSec);
         void animate(SharedHandle<CanvasFrame> & start,const SharedHandle<AnimationTimeline> & timeline,unsigned duration);
@@ -93,6 +94,8 @@ namespace OmegaWTK::Composition {
     class OMEGAWTK_EXPORT ViewAnimator : public CompositorClient {
         OmegaCommon::Vector<SharedHandle<LayerAnimator>> layerAnims;
 
+        CompositorClientProxy & _client;
+
         Native::NativeItemPtr nativeView;
         friend class ::OmegaWTK::View;
         friend class LayerAnimator;
@@ -101,7 +104,7 @@ namespace OmegaWTK::Composition {
         unsigned calculateTotalFrames(unsigned & duration);
 
     public:
-        explicit ViewAnimator(CompositorClientProxy *_client);
+        explicit ViewAnimator(CompositorClientProxy & _client);
         void setFrameRate(unsigned _framePerSec);
         void pause();
         void resume();

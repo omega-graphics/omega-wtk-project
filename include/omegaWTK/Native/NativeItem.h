@@ -7,6 +7,7 @@ namespace OmegaWTK {
     namespace Native {
         class NativeEventEmitter;
         class NativeEvent;
+        typedef SharedHandle<NativeEvent> NativeEventPtr;
 
         INTERFACE NativeLayerTreeLimb {
             public:
@@ -19,19 +20,19 @@ namespace OmegaWTK {
             NativeLayerTreeLimb *layerTreelimb;
              NativeEventEmitter *event_emitter;
             public:
-            INTERFACE_METHOD(void,addChildNativeItem,NativeItem *nativeItem)
+            INTERFACE_METHOD void addChildNativeItem(SharedHandle<NativeItem> nativeItem) ABSTRACT;
 
-            INTERFACE_METHOD(void,removeChildNativeItem,NativeItem *nativeItem)
+            INTERFACE_METHOD void removeChildNativeItem(SharedHandle<NativeItem> nativeItem) ABSTRACT;
 
-            void sendEventToEmitter(NativeEvent *ptr);
+            void sendEventToEmitter(NativeEventPtr ptr);
             bool hasEventEmitter();
             void setLayerTreeLimb(NativeLayerTreeLimb *limb){ layerTreelimb = limb;};
 
-            INTERFACE_METHOD(void,resize,Core::Rect & newRect)
-            INTERFACE_METHOD(void *,getBinding,)
+            INTERFACE_METHOD void resize(Core::Rect & newRect) ABSTRACT;
+            INTERFACE_METHOD void * getBinding() ABSTRACT;
 
-            INTERFACE_METHOD(void,enable,)
-            INTERFACE_METHOD(void,disable,)
+            INTERFACE_METHOD void enable() ABSTRACT;
+            INTERFACE_METHOD void disable() ABSTRACT;
 
             /// @name ScrollItem Methods
             ///@{
@@ -45,7 +46,7 @@ namespace OmegaWTK {
             NativeItem();
             // ~NativeItem();
         };
-        typedef NativeItem *NativeItemPtr;
+        typedef SharedHandle<NativeItem> NativeItemPtr;
         
         typedef enum : OPT_PARAM {
             Default,

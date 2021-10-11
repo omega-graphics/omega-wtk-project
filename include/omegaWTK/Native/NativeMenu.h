@@ -10,9 +10,10 @@ namespace Native {
 class NativeMenuItem {
 public:
     virtual void setState(bool state) = 0;
+    virtual ~NativeMenuItem() = default;
 };
 
-typedef NativeMenuItem *NMI;
+typedef SharedHandle<NativeMenuItem> NMI;
 
 class NativeMenuDelegate;
 
@@ -25,13 +26,14 @@ public:
     virtual void *getNativeBinding() = 0;
     virtual void addMenuItem(NMI menu_item) = 0;
     virtual void insertMenuItem(NMI menu_item,unsigned idx) = 0;
+    virtual ~NativeMenu() = default;
 };
-typedef NativeMenu *NM;
+typedef SharedHandle<NativeMenu> NM;
 
 
-DELEGATE NativeMenuDelegate {
+INTERFACE NativeMenuDelegate {
 public:
-    DELEGATE_METHOD(void,onSelectItem,unsigned itemIndex)
+    INTERFACE_METHOD void onSelectItem(unsigned itemIndex) ABSTRACT;
 };
 
 NMI make_native_menu_item(const OmegaCommon::String & str,NM parent,bool hasSubMenu,NM subMenu);

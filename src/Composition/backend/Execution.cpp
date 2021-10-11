@@ -22,11 +22,14 @@ namespace OmegaWTK::Composition {
 void Compositor::executeCurrentCommand(){
 
     if(currentCommand->type == CompositorCommand::Render) {
+        
+        auto comm = (CompositionRenderCommand *)currentCommand.get();
+
 
         BackendCompRenderTarget *target;
         bool __buildVisualTree = false;
 
-        auto found = renderTargetStore.store.find(currentCommand->renderTarget);
+        auto found = renderTargetStore.store.find(comm->renderTarget);
         if (found == renderTargetStore.store.end()) {
             // __buildVisualTree = true;
             // auto renderTarget = (ViewRenderTarget *)currentCommand->renderTarget;
@@ -37,61 +40,12 @@ void Compositor::executeCurrentCommand(){
             // renderTargetStore.store.insert(std::make_pair(renderTarget,compTarget));
             // target = &renderTargetStore.store[renderTarget];
         } else {
-            target = &renderTargetStore.store[currentCommand->renderTarget];
+            target = &renderTargetStore.store[comm->renderTarget];
         };
 
-        OmegaCommon::ArrayRef<VisualCommand *> commands{currentCommand->,
-                                                        currentCommand->_visuals + currentCommand->visual_count};
+        OmegaCommon::ArrayRef<VisualCommand> commands{comm->frame->currentVisuals};
 
-
-        for (auto &com: commands) {
-            GERenderTargetContext *surfaceRenderTargetCtxt;
-            auto surface = com->targetSurface;
-            auto s_found = target->surfaceTargets.find(surface);
-            if (s_found == target->surfaceTargets.end()) {
-                // OmegaGTE::NativeRenderTargetDescriptor *desc = makeDescForCanvasSurface(surface);
-
-
-                auto targetTree = surface->getParentLayer()->getParentLimb()->getParentTree();
-
-                auto tree_it = targetLayerTrees.begin();
-                bool found_tree = false;
-                while (tree_it != targetLayerTrees.end()) {
-                    if (*tree_it == targetTree) {
-                        found_tree = true;
-                        break;
-                    }
-                    ++tree_it;
-                };
-                if (!found_tree) {
-                    targetTree->addObserver(this);
-                    targetLayerTrees.push_back(targetTree);
-                }
-
-                // auto _target = gte.graphicsEngine->makeNativeRenderTarget(*desc);
-                // auto ctxt = new GERenderTargetContext{_target};
-                // auto visual = target->visualTree->makeVisual(*ctxt,*desc,surface->getParentLayer()->getLayerRect().pos);
-                // if(surface->getParentLayer()->isChildLayer())
-                //     target->visualTree->addVisual(visual);
-                // else
-                //     target->visualTree->setRootVisual(visual);
-                // target->surfaceTargets.insert(std::make_pair(surface,ctxt));
-                surfaceRenderTargetCtxt = target->surfaceTargets[surface];
-            } else {
-                surfaceRenderTargetCtxt = target->surfaceTargets[surface];
-            };
-            surfaceRenderTargetCtxt->renderToTarget(com->type, com->params);
-        };
-
-        for (auto &s_target_pair: target->surfaceTargets) {
-            auto s_target = s_target_pair.second;
-            if (s_target->hasQueuedRenderJobs())
-                s_target->commit();
-        };
-
-        // if(__buildVisualTree)
-        //     target->renderVisualTree();
-
+        /// TODO: Process render commands!
     }
 
     currentCommand->status.set(CommandStatus::Ok);
