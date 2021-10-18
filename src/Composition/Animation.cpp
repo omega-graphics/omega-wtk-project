@@ -150,10 +150,17 @@ AnimationCurve::Traversal AnimationCurve::traverse(OmegaGTE::GPoint2D st, OmegaG
 }
 
 
+SharedHandle<AnimationTimeline> AnimationTimeline::Create(const OmegaCommon::Vector<Keyframe> &keyframes) {
+    auto object = std::make_shared<AnimationTimeline>();
+    object->keyframes = keyframes;
+    return object;
+}
 
 
-LayerAnimator::LayerAnimator(Layer &layer,ViewAnimator & anim):targetLayer(layer),parentAnimator(anim) {
 
+
+LayerAnimator::LayerAnimator(Layer &layer,CompositorClientProxy & proxy):CompositorClient(proxy), targetLayer(layer) {
+    
 }
 
 void LayerAnimator::transition(SharedHandle<CanvasFrame> &from, SharedHandle<CanvasFrame> &to, unsigned duration,
@@ -200,7 +207,7 @@ unsigned int ViewAnimator::calculateTotalFrames(unsigned int &duration) {
 }
 
 ViewAnimator::ViewAnimator(CompositorClientProxy *_client):client(_client),framePerSec(30){
-
+    
 }
 
 void ViewAnimator::setFrameRate(unsigned int _framePerSec) {
@@ -216,7 +223,7 @@ void ViewAnimator::resizeTransition(unsigned int delta_x, unsigned int delta_y, 
     auto frameInterval = std::chrono::milliseconds(duration/totalFrames);
     Timestamp deadline = timestamp + frameInterval;
     for(;totalFrames > 0;totalFrames--){
-        client->queueViewResizeCommand(nativeView,
+        queueViewResizeCommand(nativeView,
                                                        delta_x/totalFrames,
                                                        delta_y/totalFrames,
                                                        delta_w/totalFrames,

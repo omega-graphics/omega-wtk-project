@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <iomanip>
+#include <memory>
 
 /// Regex Lib
 // #define PCRE2_CODE_UNIT_WIDTH 8
@@ -71,17 +72,18 @@ namespace OmegaWTK {
         template<class _Ty>
         using UniquePtr = std::unique_ptr<_Ty>;
     
-        template<class _Ty>
+        template<class Ty>
         class OMEGAWTK_EXPORT UniquePtrRef {
-            UniquePtr<_Ty> & ptr;
+            UniquePtr<Ty> & ptr;
         public:
             bool hasExpired(){
                 return ptr == nullptr;
             };
-            void resetRef(UniquePtr<_Ty> & _new_ptr){
+            void resetRef(UniquePtr<Ty> & _new_ptr){
                 ptr = _new_ptr;
             };
-            UniquePtrRef(UniquePtr<_Ty> & _ptr):ptr(_ptr){};
+            explicit UniquePtrRef(UniquePtr<Ty> & _ptr):ptr(_ptr){};
+            ~UniquePtrRef() = default;
         };
     
         template<class _Ty>
@@ -220,10 +222,10 @@ namespace OmegaWTK {
         };
     };
 
-};
+}
 
 template<class _Ty>
-using SharedHandle = OmegaWTK::Core::SharedPtr<_Ty>;
+using SharedHandle = std::shared_ptr<_Ty>;
 /**Creates a Shared Instance of _Ty and returns it*/
 template<class _Ty,class... _Args>
 inline SharedHandle<_Ty> make(_Args && ...args){
@@ -231,7 +233,7 @@ inline SharedHandle<_Ty> make(_Args && ...args){
     return std::make_shared<_Ty>(args...);
 };
 template<class _Ty>
-using UniqueHandle = OmegaWTK::Core::UniquePtr<_Ty>;
+using UniqueHandle = std::unique_ptr<_Ty>;
 /**Creates a Unique Instance of _Ty and returns it*/
 template<class _Ty,class... _Args>
 inline UniqueHandle<_Ty> && construct(_Args && ...args){

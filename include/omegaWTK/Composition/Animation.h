@@ -4,8 +4,8 @@
 #include "omegaWTK/Native/NativeItem.h"
 
 
+#include "Layer.h"
 #include "Canvas.h"
-#include "CompositorClient.h"
 
 #ifndef OMEGAWTK_COMPOSITION_ANIMATION_H
 #define  OMEGAWTK_COMPOSITION_ANIMATION_H
@@ -75,7 +75,7 @@ namespace OmegaWTK::Composition {
 
     class OMEGAWTK_EXPORT LayerAnimator : public CompositorClient {
         Layer & targetLayer;
-        explicit LayerAnimator(Layer & layer);
+        explicit LayerAnimator(Layer & layer,CompositorClientProxy & proxy);
     public:
         void setFrameRate(unsigned _framePerSec);
         void animate(SharedHandle<CanvasFrame> & start,const SharedHandle<AnimationTimeline> & timeline,unsigned duration);

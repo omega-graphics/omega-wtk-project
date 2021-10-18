@@ -16,7 +16,6 @@ namespace OmegaWTK::Native::Cocoa {
             if(!openPanel){
                 /// If is Save Panel
                 // __block NSURL *url = nil;
-
                 [savePanel beginSheetModalForWindow:parentWindow completionHandler:^(NSModalResponse response){
                         NSURL * url = [savePanel URL];
                         strVal.set([url fileSystemRepresentation]);

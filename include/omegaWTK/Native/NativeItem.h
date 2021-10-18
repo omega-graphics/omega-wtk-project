@@ -19,19 +19,19 @@ namespace OmegaWTK {
             NativeLayerTreeLimb *layerTreelimb;
              NativeEventEmitter *event_emitter;
             public:
-            INTERFACE_METHOD(void,addChildNativeItem,NativeItem *nativeItem)
+            INTERFACE_METHOD void addChildNativeItem(NativeItem *nativeItem) ABSTRACT;
 
-            INTERFACE_METHOD(void,removeChildNativeItem,NativeItem *nativeItem)
+            INTERFACE_METHOD void removeChildNativeItem(NativeItem *nativeItem) ABSTRACT;
 
             void sendEventToEmitter(NativeEvent *ptr);
             bool hasEventEmitter();
             void setLayerTreeLimb(NativeLayerTreeLimb *limb){ layerTreelimb = limb;};
 
-            INTERFACE_METHOD(void,resize,Core::Rect & newRect)
-            INTERFACE_METHOD(void *,getBinding,)
+            INTERFACE_METHOD void resize(Core::Rect & newRect)ABSTRACT;
+            INTERFACE_METHOD void * getBinding() ABSTRACT;
 
-            INTERFACE_METHOD(void,enable,)
-            INTERFACE_METHOD(void,disable,)
+            INTERFACE_METHOD void enable()ABSTRACT;
+            INTERFACE_METHOD void disable()ABSTRACT;
 
             /// @name ScrollItem Methods
             ///@{

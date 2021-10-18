@@ -1,5 +1,4 @@
 #include "omegaWTK/Core/Core.h"
-// #include "omegaWTK/Native/NativeApp.h"
 #include "AppWindow.h"
 
 #ifndef OMEGAWTK_UI_APP_H
