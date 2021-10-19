@@ -109,7 +109,12 @@ namespace OmegaWTK {
     class Layer;
 
     /// @brief A frozen state of visual items drawn to a Canvas.
-    struct CanvasFrame;
+    struct CanvasFrame {
+        Layer *targetLayer;
+        Core::Rect & rect;
+        OmegaCommon::Vector<VisualCommand> currentVisuals;
+        OmegaCommon::Vector<CanvasLayerEffect> currentEffects;
+    };
 
     /**
      
@@ -120,11 +125,11 @@ namespace OmegaWTK {
 
         SharedHandle<CanvasFrame> current;
 
+        Layer &layer;
+
     public:
 
-        explicit Canvas(Core::Rect & rect);
-
-        void setTargetLayer();
+        explicit Canvas(CompositorClientProxy &proxy,Layer &layer);
 
         void drawPath(Path & path);
 

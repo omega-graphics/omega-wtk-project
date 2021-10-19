@@ -1,6 +1,7 @@
 #include "WinMenu.h"
 
 #include <Windows.h>
+#include <memory>
 #include <windowsx.h>
 namespace OmegaWTK::Native::Win {
 
@@ -15,7 +16,7 @@ namespace OmegaWTK::Native::Win {
         friend class WinMenu;
     public:
         void assignIndex(unsigned _idx){ idx = _idx;};
-        void setState(bool state);
+        void setState(bool state) override;
         /**
          Constructs a Regular Menu Item
          NOTE: Only Initalizes info!
@@ -32,7 +33,7 @@ namespace OmegaWTK::Native::Win {
             info.fType = MFT_SEPARATOR;
 
         };
-        ~WinMenuItem(){
+        ~WinMenuItem() override{
 
         };
     };
@@ -41,16 +42,16 @@ namespace OmegaWTK::Native::Win {
             HMENU hmenu;
             MENUINFO info;
             friend class WinMenuItem;
-            OmegaCommon::Vector<WinMenuItem *> items;
-            void insertMenuItem(NMI menu_item, unsigned idx) {
-                WinMenuItem *item = (WinMenuItem *)menu_item;
+            OmegaCommon::Vector<SharedHandle<WinMenuItem>> items;
+            void insertMenuItem(NMI menu_item, unsigned idx) override {
+                auto item = std::dynamic_pointer_cast<WinMenuItem>(menu_item);
                 item->idx = idx;
                 item->parent = this;
                 InsertMenuItem(hmenu,idx,TRUE,&item->info);
                 items.insert(items.begin() + idx,item);
             };
-            void addMenuItem(NMI menu_item) {
-                WinMenuItem *item = (WinMenuItem *)menu_item;
+            void addMenuItem(NMI menu_item) override {
+                auto item = std::dynamic_pointer_cast<WinMenuItem>(menu_item);
                 InsertMenuItem(hmenu,items.size(),TRUE,&item->info);
                 item->idx = items.size();
                 item->parent = this;
@@ -59,7 +60,7 @@ namespace OmegaWTK::Native::Win {
             /**
                 Returns HMENU
             */
-            void *getNativeBinding() {
+            void *getNativeBinding() override {
                 return hmenu;
             };
             public:
@@ -79,14 +80,7 @@ namespace OmegaWTK::Native::Win {
 
                 SetMenuInfo(hmenu,&info);    
             };
-            ~WinMenu(){
-                auto it = items.begin();
-                while(it != items.end()){
-                    auto item = *it;
-                    delete item;
-                    ++it;
-                };
-            };
+            ~WinMenu() override = default;
         };
 
         WinMenuItem::WinMenuItem(const OmegaCommon::String &name,WinMenu *parent,bool hasSubMenu,WinMenu *subMenu):subMenu(subMenu),hasSubMenu(hasSubMenu),parent(parent){
@@ -102,29 +96,34 @@ namespace OmegaWTK::Native::Win {
             info.fState = MFS_ENABLED;
             if(hasSubMenu)
                 info.hSubMenu = subMenu->hmenu;
-        };
+        }
 
         void WinMenuItem::setState(bool state){
             UINT mask = MF_BYPOSITION;
-            if(state)
+            if(state) {
                 mask |= MF_ENABLED;
-            else;
+            }
+            else {
                 mask |= MF_GRAYED | MF_DISABLED;
+            }
             EnableMenuItem(parent->hmenu,idx,mask);
-        };
+        }
 
 
-    NM make_win_menu(const OmegaCommon::String &name){
-        return new WinMenu(name);
-    };
-    NMI make_win_menu_item(const OmegaCommon::String & str,NM parent,bool hasSubMenu,NM subMenu){
-        return new WinMenuItem(str,(WinMenu *)parent,hasSubMenu,(WinMenu *)subMenu);
-    };
-    NMI make_win_menu_seperator(){
-        return new WinMenuItem();
-    };
     void select_item(void * menu,unsigned idx){
         WinMenu *_menu = (WinMenu *)menu;
         _menu->onSelectItem(idx);
     };
 };
+
+namespace OmegaWTK::Native {
+    NM make_native_menu(const OmegaCommon::String &name){
+        return (NM)new Win::WinMenu(name);
+    };
+    NMI make_native_menu_item(const OmegaCommon::String & str,NM parent,bool hasSubMenu,NM subMenu){
+        return (NMI)new Win::WinMenuItem(str,(Win::WinMenu *)parent.get(),hasSubMenu,(Win::WinMenu *)subMenu.get());
+    };
+    NMI make_native_menu_seperator(){
+        return (NMI)new Win::WinMenuItem();
+    };
+}

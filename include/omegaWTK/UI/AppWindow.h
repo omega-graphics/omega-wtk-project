@@ -47,10 +47,9 @@ class AppWindowDelegate;
     public:
 #if TARGET_WIN32
         struct SystemButton {
-            Core::Rect rect;
-            Composition::Color bkgrd;
-            SharedHandle<Media::BitmapImage> img;
-            Composition::AnimationController animController;
+            SharedHandle<Composition::Layer> layer;
+            SharedHandle<Composition::Canvas> canvas;
+            SharedHandle<Composition::LayerAnimator> animator;
         };
         void setUseStandardSystemButtons(bool use);
         void setCloseButton(SharedHandle<SystemButton> & button);

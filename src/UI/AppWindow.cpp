@@ -33,10 +33,6 @@ void AppWindow::setMenu(SharedHandle<Menu> & menu){
 
 void AppWindow::_add_widget(Widget * handle){
 //    (*handle)->compositor->prepareDraw((*handle)->layerTree.get());
-    std::ostringstream ss(""); 
-    ss << "WidgetRootViewPtr:" << handle->rootView << std::endl << "WidgetRootTargetPtr:" << handle->rootView->renderTarget << std::endl;
-    std::cout << ss.str();
-
     if(handle->rootView->renderTarget) {
         layer->native_window_ptr->addNativeItem(handle->rootView->renderTarget->getNativePtr());
     }
@@ -59,11 +55,6 @@ SharedHandle<Native::NativeNoteDialog> AppWindow::openNoteDialog(const Native::N
 
 void AppWindow::close(){
     layer->native_window_ptr->close();
-};
-
-
-void AppWindow::commitRender(){
-    
 };
 
 AppWindow::~AppWindow(){
@@ -111,8 +102,6 @@ void AppWindowDelegate::onRecieveEvent(Native::NativeEventPtr event){
         default:
             break;
     }
-    // MessageBoxA(HWND_DESKTOP,"Releasing Native Event","NOTE",MB_OK);
-    delete event;
 };
 
 void AppWindowDelegate::windowWillClose(Native::NativeEventPtr event){

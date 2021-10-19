@@ -10,12 +10,12 @@ namespace OmegaWTK::Composition {
 
     INTERFACE BackendRenderTargetContext {
     public:
-        INTERFACE_METHOD(void,renderToTarget,VisualCommand::Type type,void *params);
-        INTERFACE_METHOD(void,applyEffectToTarget,CanvasLayerEffect::Type type,void *params);
+        INTERFACE_METHOD void renderToTarget(VisualCommand::Type type,void *params) ABSTRACT;
+        INTERFACE_METHOD void applyEffectToTarget(CanvasLayerEffect::Type type,void *params) ABSTRACT;
         /**
          Commit all queued render jobs to GPU.
         */
-        INTERFACE_METHOD(void,commit);
+        INTERFACE_METHOD void commit() ABSTRACT;
     
         /**
             Create a GERenderTarget Context
@@ -29,7 +29,7 @@ namespace OmegaWTK::Composition {
 
     struct BackendCompRenderTarget {
         BackendRenderTargetContext * viewRenderTarget;
-        Core::SharedPtr<BackendVisualTree> visualTree;
+        SharedHandle<BackendVisualTree> visualTree;
         OmegaCommon::MapVec<Canvas *,BackendRenderTargetContext *> surfaceTargets;
         // void renderVisualTree();
     };

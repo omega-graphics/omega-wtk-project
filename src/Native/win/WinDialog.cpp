@@ -1,11 +1,42 @@
-#include "WinDialog.h"
+#include "omegaWTK/Native/NativeDialog.h"
 #include "NativePrivate/win/HWNDItem.h"
 #include "HWNDFactory.h"
 #include "WinAppWindow.h"
 #include <iostream>
+
+#include <windows.h>
+#include <ShlObj_core.h>
+#include <CommCtrl.h>
+#include <ShObjIdl.h>
+#include <atlbase.h>
+#include <windowsx.h>
 #include <atlstr.h>
 
 namespace OmegaWTK::Native::Win {
+
+     class WinFSDialog : public NativeFSDialog {
+        bool read_or_write;
+        ATL::CComPtr<IFileOpenDialog> dialog_ty_1;
+        ATL::CComPtr<IFileSaveDialog> dialog_ty_2;
+        void close();
+        void show();
+        OmegaCommon::Promise<OmegaCommon::String> result;
+    public:
+        WinFSDialog(bool read_or_write,NWH nativeWindow);
+        ~WinFSDialog();
+        OmegaCommon::Async<OmegaCommon::String> getResult() override;
+    };
+
+    class WinNoteDialog : public NativeNoteDialog {
+        static INT_PTR DlgProc(HWND , UINT, WPARAM, LPARAM);
+        HGLOBAL hgbl;
+        public:
+        WinNoteDialog(const Descriptor & desc,NWH nativeWindow);
+        ~WinNoteDialog();
+        void show();
+        void close();
+    };
+
 
     WinFSDialog::WinFSDialog(bool read_or_write,NWH nativeWindow):NativeFSDialog(nativeWindow),read_or_write(read_or_write){
         if(read_or_write)
@@ -21,14 +52,18 @@ namespace OmegaWTK::Native::Win {
         }
     };
 
+    OmegaCommon::Async<OmegaCommon::String> WinFSDialog::getResult(){
+        return result.async();
+    }
+
 
     void WinFSDialog::show(){
         HRESULT hr;
         if(read_or_write){
-            hr = dialog_ty_1->Show(((HWNDItem *)parentWindow)->hwnd);
+            hr = dialog_ty_1->Show(std::dynamic_pointer_cast<HWNDItem>(parentWindow)->hwnd);
         }
         else {
-             hr = dialog_ty_2->Show(((HWNDItem *)parentWindow)->hwnd);
+             hr = dialog_ty_2->Show(std::dynamic_pointer_cast<HWNDItem>(parentWindow)->hwnd);
         };
     };
 
@@ -37,17 +72,6 @@ namespace OmegaWTK::Native::Win {
             dialog_ty_1.Release();
         else 
             dialog_ty_2.Release();
-    };
-
-    SharedHandle<NativeFSDialog> WinFSDialog::Create(const Descriptor &desc,NWH nativeWindow){
-        HRESULT hr;
-        if(desc.type == Read){
-            return std::make_shared<WinFSDialog>(true,nativeWindow);
-        }
-        else {
-
-            return std::make_shared<WinFSDialog>(false,nativeWindow);
-        }
     };
 
     LPWORD lpwAlign(LPWORD lpIn)
@@ -172,16 +196,21 @@ namespace OmegaWTK::Native::Win {
         GlobalFree(hgbl); 
     };
 
-    SharedHandle<NativeNoteDialog> WinNoteDialog::Create(const Descriptor &desc, NWH nativeWindow){
-        return std::make_shared<WinNoteDialog>(desc,nativeWindow);
-        
-    };
+
 
     void WinNoteDialog::show(){
-        DialogBoxIndirectA(HWNDFactory::appFactoryInst->hInst,(LPDLGTEMPLATE)hgbl,((WinAppWindow *)parentWindow)->hwnd,WinNoteDialog::DlgProc);
+        DialogBoxIndirectA(HWNDFactory::appFactoryInst->hInst,(LPDLGTEMPLATE)hgbl,std::dynamic_pointer_cast<HWNDItem>(parentWindow)->hwnd,WinNoteDialog::DlgProc);
     };
+}
 
-    void WinNoteDialog::close(){
-        // 
+namespace OmegaWTK::Native {
+    SharedHandle<NativeFSDialog> NativeFSDialog::Create(const Descriptor &desc, NWH nativeWindow){
+        auto is_read_or_write = desc.type == Read? true : false;
+        auto ptr = new Win::WinFSDialog(is_read_or_write,nativeWindow);
+        return (SharedHandle<NativeFSDialog>)ptr;
+    }
+     SharedHandle<NativeNoteDialog> NativeNoteDialog::Create(const Descriptor &desc, NWH nativeWindow){
+        return (SharedHandle<NativeNoteDialog>)new Win::WinNoteDialog(desc,nativeWindow);
+        
     };
 }

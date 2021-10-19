@@ -25,6 +25,6 @@ NativeEventPtr button_event_to_native_event(NativeEvent::EventType event_type,LP
         break;
     }
     }
-    return new NativeEvent(event_type,params);
+    return (NativeEventPtr)new NativeEvent(event_type,params);
 };
 }

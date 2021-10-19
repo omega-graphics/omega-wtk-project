@@ -15,7 +15,7 @@ namespace OmegaWTK::Native {
             protected:
             HWNDItem *parent;
             OmegaCommon::Vector<HWND> raw_children;
-            OmegaCommon::Vector<HWNDItem *> children;
+            OmegaCommon::Vector<SharedHandle<HWNDItem>> children;
             UINT currentDpi;
             bool isTracking;
             bool hovered;
@@ -24,17 +24,17 @@ namespace OmegaWTK::Native {
             ATOM atom;
             void emitIfPossible(NativeEventPtr event);
             friend class HWNDFactory;
-            void enable(){
+            void enable() override{
                 enabled = true;
                 // ShowWindow(hwnd,SW_SHOWDEFAULT);
             };
-            void disable(){
+            void disable() override{
                 enabled = false;
                 // ShowWindow(hwnd,SW_HIDE);
             };
-            void resize(Core::Rect &newRect);
-            void addChildNativeItem(NativeItemPtr nativeItem);
-            void removeChildNativeItem(NativeItemPtr nativeItem);
+            void resize(Core::Rect &newRect) override;
+            void addChildNativeItem(NativeItemPtr nativeItem) override;
+            void removeChildNativeItem(NativeItemPtr nativeItem) override;
             public:
              /**
             Constructs a null HWNDItem! (Sets the Core::Rect only)
@@ -51,12 +51,12 @@ namespace OmegaWTK::Native {
             void destroy();
             RECT getClientRect();
             HDC getDCFromHWND();
-            void *getBinding(){ return (void *)hwnd;};
+            void *getBinding() override{ return (void *)hwnd;};
             /// @name ScrollView Methods
             /// @{
-            void toggleHorizontalScrollBar(bool & state);
-            void toggleVerticalScrollBar(bool & state);
-            void setClippedView(NativeItem *clippedView);
+            void toggleHorizontalScrollBar(bool & state) override;
+            void toggleVerticalScrollBar(bool & state) override;
+            void setClippedView(SharedHandle<NativeItem> clippedView) override;
             /// @}
             typedef enum : OPT_PARAM {
                 View,
@@ -69,7 +69,11 @@ namespace OmegaWTK::Native {
             Constructs/Registers an HWND and returns an HWNDItem!
             */
             HWNDItem(Core::Rect & rect,Type _type,HWNDItem *parent);
-            ~HWNDItem(){};
+            ~HWNDItem(){
+                if(IsWindow(hwnd)){
+                    DestroyWindow(hwnd);
+                }
+            };
         };
     };
 };

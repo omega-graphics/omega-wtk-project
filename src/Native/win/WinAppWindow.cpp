@@ -3,13 +3,14 @@
 #include "WinMenu.h"
 
 #include <dwmapi.h>
+#include <memory>
 #include <windowsx.h>
 
 #pragma comment(lib,"dwmapi.lib")
 
 namespace OmegaWTK::Native::Win {
     WinAppWindow::WinAppWindow(Core::Rect & rect,NativeEventEmitter *emitter):HWNDItem(rect),isReady(false){
-        set_native_item_event_emitter(this,emitter);
+        this->event_emitter = emitter;
         // MessageBoxA(HWND_DESKTOP,"Creating WinAppWindow!","NOTE",MB_OK);
         atom = HWNDFactory::appFactoryInst->registerAppWindow();
         if(!atom){
@@ -27,7 +28,7 @@ namespace OmegaWTK::Native::Win {
     };
 
     void WinAppWindow::addNativeItem(NativeItemPtr item){
-       auto *hwndItem = (HWNDItem *)item;
+       auto hwndItem = std::dynamic_pointer_cast<HWNDItem>(item);
        SetParent(hwndItem->hwnd,hwnd);
     };
 
@@ -154,7 +155,7 @@ namespace OmegaWTK::Native::Win {
                 };
                 case WM_DESTROY : {
                     if(isReady) {
-                        emitIfPossible(new NativeEvent(NativeEvent::WindowWillClose,nullptr));
+                        emitIfPossible((NativeEventPtr)new NativeEvent(NativeEvent::WindowWillClose,nullptr));
                     };
                     break;
                 };
@@ -164,9 +165,9 @@ namespace OmegaWTK::Native::Win {
                         UINT width = LOWORD(lParam);
                         UINT height = HIWORD(lParam);
                         updateAllHWNDPos(height,&raw_children);
-                        wndrect = OmegaWTK::Core::Rect {wndrect.pos.x,wndrect.pos.y,FLOAT(width)/scaleFactor,FLOAT(height)/scaleFactor};
+                        wndrect = OmegaWTK::Core::Rect {OmegaGTE::GPoint2D {wndrect.pos.x,wndrect.pos.y},FLOAT(width)/scaleFactor,FLOAT(height)/scaleFactor};
                         auto params = new Native::WindowWillResize(wndrect);
-                        emitIfPossible(new NativeEvent(NativeEvent::WindowWillResize,params));
+                        emitIfPossible((NativeEventPtr)new NativeEvent(NativeEvent::WindowWillResize,params));
                     };
                     break;
                 };
@@ -238,7 +239,7 @@ namespace OmegaWTK::Native::Win {
     void WinAppWindow::initialDisplay(){
         auto it = windowWidgetRootViews.begin();
         while(it != windowWidgetRootViews.end()){
-            auto item = (HWNDItem *)*it;
+            auto item = std::dynamic_pointer_cast<HWNDItem>(*it);
             if(!IsWindowVisible(item->hwnd))
                 ShowWindow(item->hwnd,SW_SHOW);
             ++it;
@@ -250,4 +251,11 @@ namespace OmegaWTK::Native::Win {
         close();
     };
 };
+
+namespace OmegaWTK::Native {
+    NWH make_native_window(Core::Rect &rect, NativeEventEmitter *emitter){
+        return (NWH)new Win::WinAppWindow(rect,emitter);
+    }
+    
+}
 

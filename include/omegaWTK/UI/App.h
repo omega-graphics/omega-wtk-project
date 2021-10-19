@@ -1,4 +1,8 @@
 #include "omegaWTK/Core/Core.h"
+<<<<<<< HEAD
+=======
+#include "omegaWTK/Native/NativeApp.h"
+>>>>>>> 92438724c515c597c14ef363179edf09c08ed6a8
 #include "AppWindow.h"
 
 #ifndef OMEGAWTK_UI_APP_H
@@ -14,7 +18,7 @@ namespace OmegaWTK {
 
 
 class OMEGAWTK_EXPORT AppInst {
-    Native::NativeApp * ptr;
+    Native::NAP ptr;
     static AppInst *instance;
 public:
     UniqueHandle<AppWindowManager> windowManager;
@@ -26,7 +30,7 @@ public:
 // #ifdef TARGET_WIN32
 //     AppInst(void * windows_inst);
 // #endif
-    Native::NativeApp * getNAP(){ return ptr;};
+    Native::NAP & getNAP(){ return ptr;};
     ~AppInst();
 };
 

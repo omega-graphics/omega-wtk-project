@@ -19,26 +19,26 @@ namespace OmegaWTK::Media {
         struct BeginEncodeParams {
             Codec codec;
         };
-        INTERFACE_METHOD(void,beginEncode,BeginEncodeParams params)
-        INTERFACE_METHOD(void,endEncode)
+        INTERFACE_METHOD void beginEncode(BeginEncodeParams params) ABSTRACT;
+        INTERFACE_METHOD void endEncode()ABSTRACT;
 
         struct BeginDecodeParams {
             Codec codec;
         };
-        INTERFACE_METHOD(void,beginDecode,BeginDecodeParams params)
-        INTERFACE_METHOD(void,endDecode)
+        INTERFACE_METHOD void beginDecode(BeginDecodeParams params)ABSTRACT;
+        INTERFACE_METHOD void endDecode()ABSTRACT;
 
         struct EncodeFrameParams {
             AudioVideoFrame & src;
             EncodedAudioVideoFrame & dest;
         };
-        INTERFACE_METHOD(void,encodeFrame,EncodeFrameParams params)
+        INTERFACE_METHOD void encodeFrame(EncodeFrameParams params)ABSTRACT;
 
         struct DecodeFrameParams {
             EncodedAudioVideoFrame & src;
             AudioVideoFrame & dest;
         };
-        INTERFACE_METHOD(void,decodeFrame,DecodeFrameParams params)
+        INTERFACE_METHOD void decodeFrame(DecodeFrameParams params)ABSTRACT;
 
         static void Initialize();
         static void Cleanup();

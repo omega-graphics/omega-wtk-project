@@ -1,6 +1,7 @@
 #include "NativePrivate/win/HWNDItem.h"
 #include "HWNDFactory.h"
 #include "NativePrivate/win/WinEvent.h"
+#include <memory>
 #include <windowsx.h>
 #include <iostream>
 
@@ -72,9 +73,9 @@ namespace OmegaWTK::Native::Win {
         };
     };
 
-    void HWNDItem::setClippedView(NativeItem *clippedView){
+    void HWNDItem::setClippedView(SharedHandle<NativeItem> clippedView){
         if(isScrollView) {
-            HWNDItem *child = (HWNDItem *)clippedView;
+            auto child = std::dynamic_pointer_cast<HWNDItem>(clippedView);
             SetParent(child->hwnd,this->hwnd);
         };
     };
@@ -203,14 +204,16 @@ namespace OmegaWTK::Native::Win {
     DWORD HWNDItem::getStyle(){
         return GetWindowLongPtr(hwnd,GWL_STYLE);
     };
-    void HWNDItem::addChildNativeItem(NativeItem *nativeItem){
-        children.push_back((HWNDItem *)nativeItem);
-        HWND child = ((HWNDItem *)nativeItem)->hwnd;
+    void HWNDItem::addChildNativeItem(NativeItemPtr nativeItem){
+        auto hwndItem = std::dynamic_pointer_cast<HWNDItem>(nativeItem);
+        children.push_back(hwndItem);
+        HWND child = hwndItem->hwnd;
         raw_children.push_back(child);
         SetParent(child,hwnd);
-        ((HWNDItem *)nativeItem)->parent = this;
+        hwndItem->parent = this;
     };
-    void HWNDItem::removeChildNativeItem(NativeItem * nativeItem){
+    void HWNDItem::removeChildNativeItem(NativeItemPtr nativeItem){
+         auto hwndItem = std::dynamic_pointer_cast<HWNDItem>(nativeItem);
         auto _ni_ptr_it = children.begin();
         auto _hwnd_it = raw_children.begin();
         while(_ni_ptr_it != children.end() && _hwnd_it != raw_children.end()){
@@ -218,9 +221,9 @@ namespace OmegaWTK::Native::Win {
             if(_native_item == nativeItem){
                 children.erase(_ni_ptr_it);
                 raw_children.erase(_hwnd_it);
-                HWND child = ((HWNDItem *)nativeItem)->hwnd;
+                HWND child = hwndItem->hwnd;
                 SetParent(child,NULL);
-                ((HWNDItem *)nativeItem)->parent = nullptr;
+                hwndItem->parent = nullptr;
                 return;
                 break;
             }; 
@@ -246,4 +249,19 @@ namespace OmegaWTK::Native::Win {
     HDC HWNDItem::getDCFromHWND(){
         return GetDC(hwnd);
     };
+
+
+}
+
+namespace OmegaWTK::Native {
+    NativeItemPtr make_native_item(Core::Rect rect,Native::ItemType type,NativeItemPtr parent){
+        Win::HWNDItem::Type win_type = Win::HWNDItem::View;
+        if(type == Native::Default){
+            win_type = Win::HWNDItem::View;
+        }
+        else if(type == Native::ScrollItem){
+            win_type = Win::HWNDItem::ScrollView;
+        };
+        return (NativeItemPtr)new Win::HWNDItem(rect,win_type,(Win::HWNDItem *)parent.get());
+    }
 }

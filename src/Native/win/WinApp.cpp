@@ -1,4 +1,4 @@
-#include "WinApp.h"
+#include "omegaWTK/Native/NativeApp.h"
 #include <Windows.h>
 #include <PathCch.h>
 #include <atlstr.h>
@@ -53,7 +53,11 @@ namespace OmegaWTK::Native::Win {
         };
     };
     
-    NAP make_win_app(void *data){
-        return new WinApp(data);
-    };
+
 };
+
+namespace OmegaWTK::Native {
+    NAP make_native_app(void *data){
+        return (NAP)new Win::WinApp(data);
+    };
+}

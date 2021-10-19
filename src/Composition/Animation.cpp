@@ -158,8 +158,7 @@ SharedHandle<AnimationTimeline> AnimationTimeline::Create(const OmegaCommon::Vec
 
 
 
-
-LayerAnimator::LayerAnimator(Layer &layer,CompositorClientProxy & proxy):CompositorClient(proxy), targetLayer(layer) {
+LayerAnimator::LayerAnimator(Layer &layer,ViewAnimator & parentAnimator):CompositorClient(parentAnimator), targetLayer(layer) ,parentAnimator(parentAnimator){
     
 }
 
@@ -177,7 +176,7 @@ void LayerAnimator::resizeTransition(unsigned int delta_x, unsigned int delta_y,
     auto frameInterval = std::chrono::milliseconds(duration/totalFrames);
     Timestamp deadline = timestamp + frameInterval;
     for(;totalFrames > 0;totalFrames--){
-        parentAnimator.client->queueLayerResizeCommand(&targetLayer,
+        pushLayerResizeCommand(&targetLayer,
                                                         delta_x/totalFrames,
                                                         delta_y/totalFrames,
                                                         delta_w/totalFrames,
@@ -192,9 +191,9 @@ void LayerAnimator::animate(SharedHandle<CanvasFrame> &start, const SharedHandle
 
 }
 
-void LayerAnimator::stop() {
-    parentAnimator.client->queueStopForRenderingLayer(&targetLayer);
-}
+// void LayerAnimator::stop() {
+//     cancelCurrentJobs();
+// }
 
 unsigned int ViewAnimator::calculateTotalFrames(unsigned int &duration) {
     assert(duration > 0 && "Cannot have null duration");
@@ -206,8 +205,8 @@ unsigned int ViewAnimator::calculateTotalFrames(unsigned int &duration) {
     return (unsigned) totalFrames;
 }
 
-ViewAnimator::ViewAnimator(CompositorClientProxy *_client):client(_client),framePerSec(30){
-    
+ViewAnimator::ViewAnimator(CompositorClientProxy & _client):CompositorClient(_client), _client(_client),framePerSec(30){
+
 }
 
 void ViewAnimator::setFrameRate(unsigned int _framePerSec) {
@@ -223,7 +222,7 @@ void ViewAnimator::resizeTransition(unsigned int delta_x, unsigned int delta_y, 
     auto frameInterval = std::chrono::milliseconds(duration/totalFrames);
     Timestamp deadline = timestamp + frameInterval;
     for(;totalFrames > 0;totalFrames--){
-        queueViewResizeCommand(nativeView,
+        pushViewResizeCommand(nativeView,
                                                        delta_x/totalFrames,
                                                        delta_y/totalFrames,
                                                        delta_w/totalFrames,

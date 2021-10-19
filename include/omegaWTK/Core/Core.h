@@ -35,10 +35,10 @@ namespace OmegaWTK {
     #define INTERFACE_METHOD virtual
 
     #define ABSTRACT = 0;
-
-    #define DELEGATE INTERFACE
-    
-    #define DELEGATE_METHOD INTERFACE_METHOD
+//
+//    #define DELEGATE INTERFACE
+//
+//    #define DELEGATE_METHOD INTERFACE_METHOD
 
     // inline const char *time_stamp(){
     //     time_t tt;

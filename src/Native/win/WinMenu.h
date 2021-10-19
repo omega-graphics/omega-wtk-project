@@ -6,10 +6,6 @@
 
 namespace OmegaWTK::Native {
     namespace Win {
-        NM make_win_menu(const OmegaCommon::String &name);
-        NMI make_win_menu_item(const OmegaCommon::String & str,NM parent,bool hasSubMenu,NM subMenu);
-        NMI make_win_menu_seperator();
-
         void select_item(void * menu,unsigned idx);
     };
 };

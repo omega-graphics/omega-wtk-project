@@ -11,9 +11,9 @@ public:
     virtual int runEventLoop() = 0;
     virtual void terminate() = 0;
     NativeApp();
-    ~NativeApp();
+    virtual ~NativeApp() = default;
 };
-typedef NativeApp *NAP;
+typedef SharedHandle<NativeApp> NAP;
 
 NAP make_native_app(void *data);
 //void free_native_app();

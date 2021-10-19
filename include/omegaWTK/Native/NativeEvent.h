@@ -35,7 +35,7 @@ public:
     NativeEvent(EventType _type,NativeEventParams params):type(_type),params(params){};
 };
 
-typedef NativeEvent * NativeEventPtr;
+typedef SharedHandle<NativeEvent> NativeEventPtr;
 
 struct WindowWillResize {
     Core::Rect rect;

@@ -39,7 +39,8 @@ namespace OmegaWTK::Composition {
         auto async = status.async();
         commandQueue.emplace(
             new
-            CompositionRenderCommand{id,client,CompositorCommand::Type::Render,
+            CompositionRenderCommand{
+                                id,client,CompositorCommand::Type::Render,
                                  CompositorCommand::Priority::Low,
                                  {false,start,start},std::move(status),renderTarget,frame});
         return async;
@@ -125,29 +126,43 @@ namespace OmegaWTK::Composition {
     void CompositorClient::pushLayerResizeCommand(Layer *target, unsigned int delta_x, unsigned int delta_y,
                                                   unsigned int delta_w, unsigned int delta_h, Timestamp &start,
                                                   Timestamp &deadline) {
-        currentJobStatuses.push_back(std::make_pair(currentCommandID,
-                                                    parentProxy.queueLayerResizeCommand(currentCommandID,*this,target,delta_x,delta_y,delta_w,delta_h,start,deadline)));
+        currentJobStatuses.push_back({
+            currentCommandID,
+            parentProxy.queueLayerResizeCommand(currentCommandID,*this,target,delta_x,delta_y,delta_w,delta_h,start,deadline)
+            });
         ++currentCommandID;
     }
 
     void CompositorClient::pushTimedFrame(SharedHandle<CanvasFrame> &frame, Timestamp &start, Timestamp &deadline) {
-        currentJobStatuses.push_back(std::make_pair(currentCommandID,
-                                                    parentProxy.queueTimedFrame(currentCommandID,*this,frame,start,deadline)));
+        currentJobStatuses.push_back(
+            {currentCommandID,
+            parentProxy.queueTimedFrame(currentCommandID,*this,frame,start,deadline)
+            });
+        ++currentCommandID;
+    }
+
+    void CompositorClient::pushViewResizeCommand(Native::NativeItemPtr nativeView,unsigned delta_x,unsigned delta_y,unsigned delta_w,unsigned delta_h,Timestamp &start,Timestamp & deadline){
+        currentJobStatuses.push_back(
+            {currentCommandID,
+            parentProxy.queueViewResizeCommand(currentCommandID,*this,nativeView,delta_x,delta_y,delta_w,delta_h,start,deadline)
+            });
         ++currentCommandID;
     }
 
     void CompositorClient::pushFrame(SharedHandle<CanvasFrame> &frame, Timestamp &start) {
-        currentJobStatuses.push_back(std::make_pair(currentCommandID,
-                                                    parentProxy.queueFrame(currentCommandID,*this,frame,start)));
+        currentJobStatuses.push_back({currentCommandID,
+                                    parentProxy.queueFrame(currentCommandID,*this,frame,start)
+                                                    });
         ++currentCommandID;
     }
 
     void CompositorClient::cancelCurrentJobs() {
         if(busy()) {
-            auto idStart = currentJobStatuses.front().first;
-            auto idEnd = currentJobStatuses.back().first;
-            currentJobStatuses.push_back(std::make_pair(currentCommandID,
-                                                        parentProxy.queueCancelCommand(currentCommandID, *this, idStart,idEnd)));
+            auto idStart = currentJobStatuses.front().id;
+            auto idEnd = currentJobStatuses.back().id;
+            currentJobStatuses.push_back({currentCommandID,
+                                            parentProxy.queueCancelCommand(currentCommandID, *this, idStart,idEnd)
+                                            });
             ++currentCommandID;
         }
     }
@@ -156,7 +171,7 @@ namespace OmegaWTK::Composition {
         OmegaCommon::Vector<unsigned> jobsToDelete;
         for(unsigned i = 0;i < currentJobStatuses.size();i++){
             auto & job = currentJobStatuses[i];
-            if(job.second.ready()){
+            if(job.status.ready()){
                 jobsToDelete.push_back(i);
             }
         }

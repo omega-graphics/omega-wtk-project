@@ -4,9 +4,15 @@
 namespace OmegaWTK {
 
 
-    View::View(const Core::Rect & rect,Composition::LayerTree *layerTree,View *parent):renderTarget(std::make_shared<Composition::ViewRenderTarget>(Native::make_native_item(rect))),widgetLayerTree(layerTree),parent_ptr(parent),rect(rect){
-        layerTreeLimb = widgetLayerTree->createLimb(rect,renderTarget.get());
-        Native::set_native_item_event_emitter(renderTarget->getNativePtr(),this);
+    View::View(const Core::Rect & rect,Composition::LayerTree *layerTree,View *parent):
+        renderTarget(std::make_shared<Composition::ViewRenderTarget>(Native::make_native_item(rect))),
+        widgetLayerTree(layerTree),
+        parent_ptr(parent),
+        rect(rect){
+
+        layerTreeLimb = widgetLayerTree->createLimb(rect);
+        renderTarget->getNativePtr()->setLayerTreeLimb(layerTreeLimb.get());
+        renderTarget->getNativePtr()->event_emitter = this;
         
         if(parent_ptr) {
             parent->addSubView(this);
@@ -16,7 +22,7 @@ namespace OmegaWTK {
             layerTree->setRootLimb(layerTreeLimb);
     };
     View::View(const Core::Rect & rect,View *parent):renderTarget(std::make_unique<Composition::ViewRenderTarget>(Native::make_native_item(rect))),widgetLayerTree(nullptr),parent_ptr(parent),rect(rect){
-        Native::set_native_item_event_emitter(renderTarget->getNativePtr(),this);
+        renderTarget->getNativePtr()->event_emitter = this;
         if(parent_ptr) {
             parent->addSubView(this);
         };
@@ -63,20 +69,19 @@ SharedHandle<Composition::Layer> View::makeLayer(Core::Rect rect){
     return layer;
 };
 
+SharedHandle<Composition::Canvas> View::makeCanvas(SharedHandle<Composition::Layer> &targetLayer){
+    return std::make_shared<Composition::Canvas>(*this,*targetLayer);
+}
+
 View::~View(){
     std::cout << "View will destruct" << std::endl;
 };
 
 void View::setFrontendRecurse(Composition::Compositor *frontend){
     setFrontendPtr(frontend);
-    layerTreeLimb->getRootLayer()->setCompClientRecurse(this);
     for(auto & subView : subviews){
         subView->setFrontendRecurse(frontend);
     };
-};
-
-void View::commitRender(){
-    submit(renderTarget.get());
 };
     
 // Composition::Compositor * View::getWidgetCompositor(){
@@ -130,12 +135,10 @@ void ViewDelegate::onRecieveEvent(Native::NativeEventPtr event){
         default:
             break;
     }
-    /// Garbage Collect!
-    delete event;
 };
 
 ScrollView::ScrollView(const Core::Rect & rect,SharedHandle<View> child,bool hasVericalScrollBar,bool hasHorizontalScrollBar,View *parent):View(rect,Native::make_native_item(rect,Native::ScrollItem),parent),delegate(nullptr),hasHorizontalScrollBar(hasHorizontalScrollBar),hasVericalScrollBar(hasVericalScrollBar){
-    Native::set_native_item_event_emitter(renderTarget->getNativePtr(),this);
+    renderTarget->getNativePtr()->event_emitter = this;
     Native::NativeItemPtr ptr = renderTarget->getNativePtr();
     ptr->setClippedView(child->renderTarget->getNativePtr());
     if(hasHorizontalScrollBar)

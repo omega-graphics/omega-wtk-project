@@ -38,7 +38,6 @@ namespace Composition {
     class OMEGAWTK_EXPORT LayerTree {
         friend class ::OmegaWTK::View;
         friend class ::OmegaWTK::Widget;
-        void setCompClientRecurse(CompositorClientProxy *compClient);
     protected:
         OmegaCommon::Vector<LayerTreeObserver *> observers;
 
@@ -59,13 +58,11 @@ namespace Composition {
        
         class OMEGAWTK_EXPORT Limb : public Native::NativeLayerTreeLimb {
             LayerTree *parentTree;
-            Layer *limbRoot;
+            SharedHandle<Layer> limbRoot;
             bool enabled;
            
             friend class LayerTree;
         public:
-            ViewRenderTarget *renderTarget;
-
             LayerTree *getParentTree();
             using iterator = OmegaCommon::Vector<SharedHandle<Layer>>::iterator;
             Layer *getRootLayer();
@@ -76,7 +73,7 @@ namespace Composition {
              @param compClient A Pointer to the parent CompositorClient.
              @returns A Limb
              */
-            Limb(const Core::Rect & rect,ViewRenderTarget *renderTarget);
+            Limb(const Core::Rect & rect);
             iterator begin();
             iterator end();
             void disable();
@@ -96,7 +93,7 @@ namespace Composition {
         /**
          Creates a Limb for the Layer Tree
          */
-        SharedHandle<Limb> createLimb(const Core::Rect &rect_for_root_layer,ViewRenderTarget *renderTarget);
+        SharedHandle<Limb> createLimb(const Core::Rect &rect_for_root_layer);
         /**
          Adds a Limb to the Layer Tree.
          @param limb
@@ -114,7 +111,6 @@ namespace Composition {
     class OMEGAWTK_EXPORT Layer {
         unsigned id_gen = 0;
         LayerTree::Limb *parentLimb;
-        SharedHandle<Canvas> surface;
         OmegaCommon::Vector<SharedHandle<Layer>> children;
 
         Layer * parent_ptr;
@@ -124,7 +120,6 @@ namespace Composition {
         
         friend class LayerTree;
         friend class ::OmegaWTK::View;
-        void setCompClientRecurse(CompositorClientProxy *compClient);
         void addSubLayer(SharedHandle<Layer> & layer);
         void removeSubLayer(SharedHandle<Layer> & layer);
     public:
@@ -143,13 +138,7 @@ namespace Composition {
         void setEnabled(bool state){enabled = state;};
         bool isChildLayer(){return parent_ptr != nullptr;}
         /// @}
-        
-        /// @name Composing Functions!
-        /// Draws on to its target!
-        /// @{
-        SharedHandle<Canvas> & getSurface();
-        /// @}
-        
+   
         
         Layer(const Core::Rect & rect);
 //            Layer(Layer &layer);
@@ -162,26 +151,26 @@ namespace Composition {
         /**
          A method called when the Widget/LayerTree has detached from a WidgetTree.
         */
-        INTERFACE_METHOD(void,hasDetached,LayerTree *tree);
+        INTERFACE_METHOD void hasDetached(LayerTree *tree) ABSTRACT;
         /**
          A method called when the target layer has resized within this LayerTree
          @param layer
         */
-        INTERFACE_METHOD(void,layerHasResized,Layer *layer)
+        INTERFACE_METHOD void layerHasResized(Layer *layer) ABSTRACT;
 
         /**
          A method called when the target layer has been disabled within this LayerTree
          @param layer
         */
-        INTERFACE_METHOD(void,layerHasDisabled,Layer *layer)
+        INTERFACE_METHOD void layerHasDisabled(Layer *layer) ABSTRACT;
 
         /**
          A method called when the target layer has been enabled within this LayerTree
          @param layer
         */
-        INTERFACE_METHOD(void,layerHasEnabled,Layer *layer)
+        INTERFACE_METHOD void layerHasEnabled(Layer *layer) ABSTRACT;
 
-        virtual ~LayerTreeObserver();
+        virtual ~LayerTreeObserver() = default;
     };
 
     /**

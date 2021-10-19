@@ -29,7 +29,7 @@ void CompositorScheduler::processCommand(SharedHandle<CompositorCommand> & comma
             std::chrono::nanoseconds diff = command->thresholdParams.threshold - command->thresholdParams.timeStamp;
             std::this_thread::sleep_for(diff);
 
-            future_status = compositor->executeCurrentCommand();
+            compositor->executeCurrentCommand();
             
         }
         else {
@@ -37,7 +37,7 @@ void CompositorScheduler::processCommand(SharedHandle<CompositorCommand> & comma
             auto command = compositor->commandQueue.first();
             compositor->currentCommand = command;
             compositor->commandQueue.pop();
-            future_status = compositor->executeCurrentCommand();
+            compositor->executeCurrentCommand();
         };
     }
     else {
@@ -45,32 +45,30 @@ void CompositorScheduler::processCommand(SharedHandle<CompositorCommand> & comma
         auto command = compositor->commandQueue.first();
         compositor->currentCommand = command;
         compositor->commandQueue.pop();
-        auto future_status = compositor->executeCurrentCommand();
+        compositor->executeCurrentCommand();
     }
 };
 
 
 
 
-CompositorScheduler::CompositorScheduler(Compositor * compositor):compositor(compositor),shutdown(false),mutex(),t([&](){
+CompositorScheduler::CompositorScheduler(Compositor * compositor):compositor(compositor),shutdown(false),t([&](){
         std::cout << "--> Starting Up" << std::endl;
         while(true){
             {
                 bool hasCommands = false;
-                // {
-                //     std::unique_lock<std::mutex> lk(compositor->queueMutex);
-                //     compositor->queueCondition.wait(lk,[&]{ return compositor->queueIsReady;});
-                //     hasCommands = !compositor->commandQueue.empty();
-                //     lk.unlock();
-                // }
-
-                if(hasCommands){
-                    auto & command = compositor->commandQueue.first();
-                    processCommand(command);
-                };
+                {
+                    std::unique_lock<std::mutex> lk(compositor->mutex);
+                    compositor->queueCondition.wait(lk,[&]{ return !compositor->commandQueue.empty();});
+                    lk.unlock();
+                }
+                
+                auto & command = compositor->commandQueue.first();
+                processCommand(command);
+            
             }
             {
-                std::lock_guard<std::mutex> shutdown_lk(mutex);
+                std::lock_guard<std::mutex> shutdown_lk(compositor->mutex);
                 if(shutdown){
                     break;
                 };
@@ -78,7 +76,7 @@ CompositorScheduler::CompositorScheduler(Compositor * compositor):compositor(com
         };
 
         {
-            std::lock_guard<std::mutex> lk(*compositor->queueMutex);
+            std::lock_guard<std::mutex> lk(compositor->mutex);
             if(!compositor->commandQueue.empty()){
                 std::cout << "--> Unfinished Jobs:" << compositor->commandQueue.length() << std::endl;
             };
@@ -92,41 +90,28 @@ CompositorScheduler::CompositorScheduler(Compositor * compositor):compositor(com
 CompositorScheduler::~CompositorScheduler(){
     std::cout << "close" << std::endl;
     {
-        std::lock_guard<std::mutex> lk(mutex); 
+        std::lock_guard<std::mutex> lk(compositor->mutex); 
         shutdown = true;
     }
     t.join();
 };
 
 
-Compositor::Compositor():queueMutex(new std::mutex()),queueIsReady(false),queueCondition(),commandQueue(200),scheduler(this){
+Compositor::Compositor():queueIsReady(false),queueCondition(),commandQueue(200),scheduler(this){
     
 };
 
 Compositor::~Compositor(){
-    std::cout << std::endl;
      std::cout << "~Compositor" << std::endl;
-     delete queueMutex;
 };
 
 void Compositor::scheduleCommand(SharedHandle<CompositorCommand> & command){
 
     {
-        
-        std::cout << "BEFORE LOCK (pthread_mutex_ptr :" << queueMutex->native_handle() << ")" << std::endl;
-        
-        // if (!queueMutex.try_lock()){
-        //     std::cout << "LOCK IS OWNED BY OTHER THREAD!" << std::endl;
-        // };
-        std::unique_lock<std::mutex> lk(*queueMutex);
-        std::cout << "AFTER LOCK" << std::endl;
-        queueIsReady = false;
+        std::unique_lock<std::mutex> lk(mutex);
         commandQueue.push(command);
-        queueIsReady = true;
-        std::cout << "PUSHED COMMAND" << std::endl;
-        lk.unlock();
     }
-    // queueCondition.notify_one();
+    queueCondition.notify_one();
 };
 
 

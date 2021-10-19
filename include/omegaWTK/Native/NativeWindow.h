@@ -35,7 +35,7 @@ namespace OmegaWTK::Native {
         NativeWindow(Core::Rect & rect);
         #endif
     };
-    typedef NativeWindow *NWH;
+    typedef SharedHandle<NativeWindow> NWH;
     NWH make_native_window(Core::Rect & rect,NativeEventEmitter *emitter);
 };
 

@@ -69,6 +69,8 @@ namespace OmegaWTK {
 
         SharedHandle<Composition::Layer> makeLayer(Core::Rect rect);
 
+        SharedHandle<Composition::Canvas> makeCanvas(SharedHandle<Composition::Layer> & targetLayer);
+
         Core::Rect & getRect(){ return rect;};
         Composition::LayerTree::Limb * getLayerTreeLimb(){ return layerTreeLimb.get();};
         bool isRootView(){return parent_ptr == nullptr;};
@@ -91,7 +93,7 @@ namespace OmegaWTK {
     /**
         @brief The Root View delegate class!
      */
-    DELEGATE OMEGAWTK_EXPORT ViewDelegate : public Native::NativeEventProcessor {
+    INTERFACE OMEGAWTK_EXPORT ViewDelegate : public Native::NativeEventProcessor {
         void onRecieveEvent(Native::NativeEventPtr event);
         friend class View;
         protected:

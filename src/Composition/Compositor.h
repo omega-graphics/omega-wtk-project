@@ -19,7 +19,6 @@ namespace OmegaWTK::Composition {
         bool shutdown;
 
         void processCommand(SharedHandle<CompositorCommand> & command);
-        std::mutex mutex;
         std::thread t;
 
        explicit CompositorScheduler(Compositor *compositor);
@@ -67,7 +66,7 @@ namespace OmegaWTK::Composition {
 
         RenderTargetStore renderTargetStore;
 
-        std::mutex * queueMutex;
+        std::mutex mutex;
 
         bool queueIsReady;
 

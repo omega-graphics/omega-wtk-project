@@ -33,8 +33,6 @@ Core::Rect & Widget::rect(){
 };
 
 void Widget::show(){
-    if(!initialDrawComplete)
-        render();
 
     rootView->renderTarget->getNativePtr()->enable();
     WIDGET_NOTIFY_OBSERVERS_SHOW();
@@ -43,10 +41,6 @@ void Widget::show(){
 void Widget::hide(){
     rootView->renderTarget->getNativePtr()->disable();
     WIDGET_NOTIFY_OBSERVERS_HIDE();
-};
-
-void Widget::render(){
-    rootView->commitRender();
 };
 
 void Widget::addObserver(WidgetObserver * observer){
