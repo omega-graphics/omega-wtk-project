@@ -5,7 +5,7 @@ namespace OmegaWTK {
 
 
 
-VideoView::VideoView(const Core::Rect & rect,Composition::Compositor *compositor,View *parent ):View(rect,parent){
+VideoView::VideoView(const Core::Rect & rect,Composition::LayerTree *layerTree,View *parent):View(rect,layerTree,parent){
    
 };
 

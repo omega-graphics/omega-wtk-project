@@ -2,6 +2,9 @@
 #include "omegaWTK/Composition/CompositorClient.h"
 #include "omegaWTK/UI/VideoView.h"
 #include "omegaWTK/UI/WidgetTreeHost.h"
+#include "omegaWTK/UI/SVGView.h"
+
+
 
 namespace OmegaWTK {
 
@@ -9,7 +12,7 @@ namespace OmegaWTK {
 Widget::Widget(const Core::Rect & rect,Widget * parent):parent(parent){
     parent->children.push_back(this);
     layerTree = std::make_shared<Composition::LayerTree>();
-    rootView = std::make_shared<CanvasView>(rect,layerTree.get(),nullptr);
+    rootView = SharedHandle<CanvasView>(new CanvasView(rect,layerTree.get(),nullptr));
     // std::cout << "Constructing View for Widget" << std::endl;
     if(parent)
         parent->rootView->addSubView(this->rootView.get());
@@ -21,12 +24,16 @@ Widget::Widget(const Core::Rect & rect,Widget * parent):parent(parent){
 //};
 
 SharedHandle<View> Widget::makeCanvasView(const Core::Rect & rect,View *parent){
-    return std::make_shared<CanvasView>(rect,layerTree.get(),parent);
+    return SharedHandle<CanvasView>(new CanvasView(rect,layerTree.get(),parent));
 };
 
-//SharedHandle<VideoView> Widget::makeVideoView(const Core::Rect & rect,View * parent){
-//    return std::make_shared<VideoView>(rect,compositor,parent);
-//};
+SharedHandle<SVGView> Widget::makeSVGView(const Core::Rect & rect,View *parent){
+    return SharedHandle<SVGView>(new SVGView(rect,layerTree.get(),parent));
+}
+
+SharedHandle<VideoView> Widget::makeVideoView(const Core::Rect & rect,View * parent){
+    return SharedHandle<VideoView>(new VideoView(rect,layerTree.get(),parent));
+};
 
 Core::Rect & Widget::rect(){
     return rootView->getRect();

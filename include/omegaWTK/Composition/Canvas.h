@@ -14,54 +14,31 @@
 
 namespace OmegaWTK {
     namespace Composition {
-    
-        
+
     struct OMEGAWTK_EXPORT  Border {
         Core::SharedPtr<Brush> brush;
         unsigned width;
+
         Border() = delete;
-        Border(Core::SharedPtr<Brush> & _brush,unsigned _width):brush(_brush),width(_width){};
+
+        Border(Core::SharedPtr<Brush> &_brush, unsigned _width) : brush(_brush), width(_width) {};
     };
-    
-    struct OMEGAWTK_EXPORT  CanvasLayerEffect {
+
+    struct OMEGAWTK_EXPORT  CanvasEffect {
         typedef enum : OPT_PARAM {
-            DropShadow,
-            Translation,
-            Rotation,
             DirectionalBlur,
             GaussianBlur
         } Type;
         Type type;
-        void * params;
+        void *params;
         typedef struct {
-            float x_offset, y_offset;
-            float radius;
-            float blurAmount;
-            float opacity;
-            Color color;  
-        } DropShadowParams;
-        typedef struct {
-            
-        } TranslationParams;
-        typedef struct {
-            
-        } RotationParams;
-        typedef struct {
-            float radius;
+        float radius;
         } GaussianBlurParams;
         typedef struct {
             float radius;
             float angle;
         } DirectionalBlurParams;
     };
-    
-// #define __LAYER_EFFECT ::OmegaWTK::Composition::LayerEffect
-    
-// #define LAYER_EFFECT_DROPSHADOW(x,y,radius,blurAmount,opacity,color) __LAYER_EFFECT ({__LAYER_EFFECT::DropShadow,new __LAYER_EFFECT::DropShadowParams({x,y,radius,blurAmount,opacity,color})})
-    
-// #define LAYER_EFFECT_GAUSSIANBLUR(radius) __LAYER_EFFECT ({__LAYER_EFFECT::GaussianBlur,new __LAYER_EFFECT::GaussianBlurParams({radius})})
-// #define LAYER_EFFECT_DIRECTIONALBLUR(radius,angle) __LAYER_EFFECT ({__LAYER_EFFECT::DirectionalBlur,new __LAYER_EFFECT::DirectionalBlurParams({radius,angle})})
-
 ///   
 
 
@@ -111,9 +88,12 @@ namespace OmegaWTK {
     /// @brief A frozen state of visual items drawn to a Canvas.
     struct CanvasFrame {
         Layer *targetLayer;
+        struct {
+            float r,g,b,a;
+        } background;
         Core::Rect & rect;
         OmegaCommon::Vector<VisualCommand> currentVisuals;
-        OmegaCommon::Vector<CanvasLayerEffect> currentEffects;
+        OmegaCommon::Vector<CanvasEffect> currentEffects;
     };
 
     /**
@@ -143,7 +123,7 @@ namespace OmegaWTK {
 
         void drawImage(SharedHandle<Media::BitmapImage> & img,Core::SharedPtr<Brush> & brush);
 
-        void applyEffect(SharedHandle<CanvasLayerEffect> & effect);
+        void applyEffect(SharedHandle<CanvasEffect> & effect);
 
         /// @brief Sends current frame to CompositorClientProxy to be drawn.
         void sendFrame();

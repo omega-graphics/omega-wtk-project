@@ -1,6 +1,7 @@
 #include "omegaWTK/Composition/Animation.h"
 #include "omegaWTK/Composition/CompositorClient.h"
 #include <chrono>
+#include <memory>
 
 namespace OmegaWTK::Composition {
 //    void AnimationController::setAnim(SharedHandle<AnimationBase> &anim){
@@ -149,9 +150,65 @@ AnimationCurve::Traversal AnimationCurve::traverse(OmegaGTE::GPoint2D st, OmegaG
     return Traversal(*this,st,end,h);
 }
 
+AnimationTimeline::Keyframe AnimationTimeline::Keyframe::CanvasFrameStop(float time, SharedHandle<AnimationCurve> curve,
+                                                          SharedHandle<CanvasFrame> &frame) {
+    Keyframe k {};
+    k.time = time;
+    k.curve = curve;
+    k.frame = frame;
+    k.effect = nullptr;
+    return k;
+}
+
+AnimationTimeline::Keyframe AnimationTimeline::Keyframe::DropShadowStop(float time, SharedHandle<AnimationCurve> curve,
+                                                                        LayerEffect::DropShadowParams &params) {
+    Keyframe k {};
+    k.time = time;
+    k.curve = curve;
+    k.frame = nullptr;
+
+    k.effect = std::make_shared<LayerEffect>(LayerEffect{LayerEffect::DropShadow,nullptr});
+    k.effect->params = new LayerEffect::DropShadowParams(params);
+
+    return k;
+}
+
+AnimationTimeline::Keyframe AnimationTimeline::Keyframe::TransformationStop(float time,
+                                                                            SharedHandle<AnimationCurve> curve,
+                                                                            LayerEffect::TransformationParams &params) {
+    Keyframe k {};
+    k.time = time;
+    k.curve = curve;
+    k.frame = nullptr;
+
+    k.effect = std::make_shared<LayerEffect>(LayerEffect{LayerEffect::Transformation,nullptr});
+    k.effect->params = new LayerEffect::TransformationParams(params);
+
+    return k;
+}
+
 
 SharedHandle<AnimationTimeline> AnimationTimeline::Create(const OmegaCommon::Vector<Keyframe> &keyframes) {
     auto object = std::make_shared<AnimationTimeline>();
+    bool canvasFrameStop = (bool)keyframes.front().frame;
+
+    if(!canvasFrameStop) {
+        bool shadowFrameStop = keyframes.front().effect->type == LayerEffect::DropShadow;
+
+        for(auto & k : keyframes){
+            if(shadowFrameStop){
+                assert(k.effect->type == LayerEffect::DropShadow && "All keyframes must animate the Drop Shadow effect Only");
+            }
+            else {
+                assert(k.effect->type == LayerEffect::Transformation && "All keyframes must animate the Transformation effect Only");
+            }
+        }
+    }
+    else {
+        for(auto & k : keyframes){
+            assert(k.frame && "All keyframes must be a typeof Canvas Frame Stop.");
+        }
+    }
     object->keyframes = keyframes;
     return object;
 }
@@ -185,15 +242,15 @@ void LayerAnimator::resizeTransition(unsigned int delta_x, unsigned int delta_y,
     }
 }
 
-void LayerAnimator::animate(SharedHandle<CanvasFrame> &start, const SharedHandle<AnimationTimeline> &timeline,
+void LayerAnimator::animate(const SharedHandle<AnimationTimeline> &timeline,
                                 unsigned duration) {
     assert(duration > 0 && "Cannot have null duration");
 
 }
 
-// void LayerAnimator::stop() {
-//     cancelCurrentJobs();
-// }
+ void LayerAnimator::pause() {
+     cancelCurrentJobs();
+ }
 
 unsigned int ViewAnimator::calculateTotalFrames(unsigned int &duration) {
     assert(duration > 0 && "Cannot have null duration");
@@ -207,6 +264,10 @@ unsigned int ViewAnimator::calculateTotalFrames(unsigned int &duration) {
 
 ViewAnimator::ViewAnimator(CompositorClientProxy & _client):CompositorClient(_client), _client(_client),framePerSec(30){
 
+}
+
+void ViewAnimator::pause() {
+    cancelCurrentJobs();
 }
 
 void ViewAnimator::setFrameRate(unsigned int _framePerSec) {

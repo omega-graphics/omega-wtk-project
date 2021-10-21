@@ -1,3 +1,5 @@
+#define TARGET_METAL 1
+
 #include "../RenderTarget.h"
 #import "CALayerTree.h"
 
@@ -9,10 +11,6 @@
 
 
 namespace OmegaWTK::Composition {
-
-// Core::SharedPtr<BackendVisualTree> CreateVisualTree(){
-//     return MTLCALayerTree::Create();
-// };
 
 
 // OmegaGTE::NativeRenderTargetDescriptor * makeDescForViewRenderTarget(
@@ -29,42 +27,53 @@ namespace OmegaWTK::Composition {
 //     return desc;
 // };
 
-// OmegaGTE::NativeRenderTargetDescriptor * makeDescForCanvasSurface(CanvasSurface *layer){
-//    auto *desc = new OmegaGTE::NativeRenderTargetDescriptor;
-//    CAMetalLayer *metalLayer = [CAMetalLayer layer];
-//    metalLayer.frame = Native::Cocoa::core_rect_to_cg_rect(layer->getParentLayer()->getLayerRect());
-//    metalLayer.contentsScale = [NSScreen mainScreen].backingScaleFactor;
-//    desc->metalLayer = metalLayer;
-//    return desc;
-// };
+SharedHandle<BackendVisualTree> BackendVisualTree::Create(SharedHandle<ViewRenderTarget> &view) {
+    return (SharedHandle<BackendVisualTree>)new MTLCALayerTree(view);
+}
 
-// MTLCALayerTree::MTLCALayerTree(){
+ MTLCALayerTree::MTLCALayerTree(SharedHandle<ViewRenderTarget> & renderTarget):
+         view(std::dynamic_pointer_cast<Native::Cocoa::CocoaItem>(renderTarget->getNativePtr()))
+ {
 
-// };
+ };
 
-// Core::SharedPtr<MTLCALayerTree> MTLCALayerTree::Create(){
-//     return Core::SharedPtr<MTLCALayerTree>(new MTLCALayerTree());
-// };
 
-// Core::SharedPtr<BackendVisualTree::Visual> MTLCALayerTree::makeVisual(
-//                                                             GERenderTargetContext &renderContext,
-//                                                             OmegaGTE::NativeRenderTargetDescriptor & targetDesc,
-//                                                             Core::Position & pos){
+ Core::SharedPtr<BackendVisualTree::Visual> MTLCALayerTree::makeVisual(
+                                                             Core::Rect &rect,
+                                                             Core::Position & pos){
 
-//     auto * v = new Visual{{renderContext}};
-//     v->attachTransformLayer = false;
-//     v->metalLayer = targetDesc.metalLayer;
-//     v->pos = pos;
-//     return std::shared_ptr<Visual>(v);
-// };
+     CAMetalLayer *layer = [CAMetalLayer layer];
+     layer.autoresizingMask = kCALayerNotSizable;
+     layer.layoutManager = nil;
+     layer.contentsScale = [NSScreen mainScreen].backingScaleFactor;
+     layer.frame = CGRectMake(0,0,rect.w,rect.h);
+     layer.anchorPoint = CGPointMake(0.f,0.f);
+     layer.position = CGPointMake(pos.x,pos.y);
 
-// void MTLCALayerTree::setRootVisual(Core::SharedPtr<BackendVisualTree::Visual> & visual){
-//     root = visual;
-// };
+     OmegaGTE::NativeRenderTargetDescriptor nativeRenderTargetDescriptor {layer};
 
-// void MTLCALayerTree::addVisual(Core::SharedPtr<Parent::Visual> & visual){
-//     body.push_back(visual);
-// };
+     auto target = gte.graphicsEngine->makeNativeRenderTarget(nativeRenderTargetDescriptor);
+
+     BackendRenderTargetContext compTarget (rect,target);
+
+     return std::shared_ptr<BackendVisualTree::Visual>(new MTLCALayerTree::Visual(pos,compTarget,layer,nil,false));
+ };
+
+ void MTLCALayerTree::setRootVisual(Core::SharedPtr<BackendVisualTree::Visual> & visual){
+     root = visual;
+     auto r = std::dynamic_pointer_cast<Native::Cocoa::CocoaItem>(view);
+     CALayer *parentLayer = r->getLayer();
+     auto v = std::dynamic_pointer_cast<Visual>(visual);
+     [parentLayer addSublayer:v->metalLayer];
+ };
+
+ void MTLCALayerTree::addVisual(Core::SharedPtr<Parent::Visual> & visual){
+     body.push_back(visual);
+     auto r = std::dynamic_pointer_cast<Visual>(root);
+     auto v = std::dynamic_pointer_cast<Visual>(visual);
+     [r->metalLayer addSublayer:v->metalLayer];
+     v->metalLayer.position = CGPointMake(v->pos.x,v->pos.y);
+ };
 
 // void BackendCompRenderTarget::renderVisualTree(){
 //     MTLCALayerTree *layerTree = (MTLCALayerTree *)visualTree.get();

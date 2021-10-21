@@ -21,11 +21,14 @@ class AppWindowDelegate;
     In order to display any widgets on this window a WidgetTreeHost must be created,
     than attached to an instance of this class.
 */
- class OMEGAWTK_EXPORT AppWindow : public Native::NativeEventEmitter, 
-                                   public Composition::CompositorClientProxy {
+ class OMEGAWTK_EXPORT AppWindow : public Native::NativeEventEmitter {
 
         /// Its Window Layer
         UniqueHandle<Composition::WindowLayer> layer;
+
+        SharedHandle<Composition::ViewRenderTarget> rootViewRenderTarget;
+
+        Composition::CompositorClientProxy proxy;
 
         SharedHandle<AppWindowDelegate> delegate;
         /// A list of all attached widget tree hosts. 

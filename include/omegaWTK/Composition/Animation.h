@@ -66,6 +66,13 @@ namespace OmegaWTK::Composition {
         struct Keyframe {
             float time;
             SharedHandle<AnimationCurve> curve;
+
+            SharedHandle<CanvasFrame> frame;
+            SharedHandle<LayerEffect> effect;
+
+            static Keyframe CanvasFrameStop(float time,SharedHandle<AnimationCurve> curve,SharedHandle<CanvasFrame> & frame);
+            static Keyframe DropShadowStop(float time,SharedHandle<AnimationCurve> curve,LayerEffect::DropShadowParams & params);
+            static Keyframe TransformationStop(float time,SharedHandle<AnimationCurve> curve,LayerEffect::TransformationParams & params);
         };
 
         static SharedHandle<AnimationTimeline> Create(const OmegaCommon::Vector<Keyframe> & keyframes);
@@ -79,11 +86,21 @@ namespace OmegaWTK::Composition {
         explicit LayerAnimator(Layer & layer,ViewAnimator &parentAnimator);
     public:
         void setFrameRate(unsigned _framePerSec);
-        void animate(SharedHandle<CanvasFrame> & start,const SharedHandle<AnimationTimeline> & timeline,unsigned duration);
+        void animate(const SharedHandle<AnimationTimeline> & timeline,unsigned duration);
         void pause();
         void resume();
         void resizeTransition(unsigned delta_x,unsigned delta_y,unsigned delta_w,unsigned delta_h,unsigned duration,
                               const SharedHandle<AnimationCurve> & curve = AnimationCurve::Linear());
+        void applyShadow(const LayerEffect::DropShadowParams & params);
+        void applyTransformation(const LayerEffect::TransformationParams & params);
+        void shadowTransition(const LayerEffect::DropShadowParams & from,
+                              const LayerEffect::DropShadowParams &to,
+                              unsigned duration,
+                              const SharedHandle<AnimationCurve> & curve = AnimationCurve::Linear());
+        void transformationTransition(const LayerEffect::TransformationParams & from,
+                                      const LayerEffect::TransformationParams &to,
+                                      unsigned duration,
+                                      const SharedHandle<AnimationCurve> & curve = AnimationCurve::Linear());
         void transition(SharedHandle<CanvasFrame> & from,
                         SharedHandle<CanvasFrame> & to,
                         unsigned duration,

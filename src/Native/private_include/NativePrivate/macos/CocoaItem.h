@@ -34,14 +34,14 @@ class CocoaItem : public NativeItem {
     OmegaWTKCocoaViewController *cont;
     NSScrollView *scrollView;
     friend class CocoaEventHandler;
-    void enable();
-    void disable();
-    void addChildNativeItem(NativeItem *nativeItem);
-    void removeChildNativeItem(NativeItem *nativeItem);
+    void enable() override;
+    void disable() override;
+    void addChildNativeItem(NativeItemPtr nativeItem) override;
+    void removeChildNativeItem(NativeItemPtr nativeItem) override;
 
-    void setClippedView(NativeItem *clippedView);
-    void toggleHorizontalScrollBar(bool &state);
-    void toggleVerticalScrollBar(bool &state);
+    void setClippedView(NativeItemPtr clippedView) override;
+    void toggleHorizontalScrollBar(bool &state) override;
+    void toggleVerticalScrollBar(bool &state) override;
 public:
     Core::Rect rect;
     typedef enum : OPT_PARAM {
@@ -56,7 +56,7 @@ public:
     CALayer *getLayer(){ return [_ptr getCALayer];};
     void setNeedsDisplay();
     void * getBinding();
-    CocoaItem(const Core::Rect & rect,Type _type,CocoaItem *parent);
+    explicit CocoaItem(const Core::Rect & rect,Type _type,SharedHandle<CocoaItem> parent);
     ~CocoaItem();
 };
 

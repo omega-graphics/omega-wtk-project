@@ -121,14 +121,14 @@
 
 namespace OmegaWTK::Native::Cocoa {
 
-CocoaItem::CocoaItem(const Core::Rect & rect,CocoaItem::Type _type,CocoaItem *parent):rect(rect),type(_type),isReady(false){
+CocoaItem::CocoaItem(const Core::Rect & rect,CocoaItem::Type _type,SharedHandle<CocoaItem> parent):rect(rect),type(_type),isReady(false){
     if(type == View){
         cont = [[OmegaWTKCocoaViewController alloc] initWithFrame:core_rect_to_cg_rect(rect) delegate:this];
         [cont setClass:[OmegaWTKCocoaView class]];
         _ptr = (OmegaWTKCocoaView *)cont.view;
         scrollView = nil;
         if(parent != nullptr){
-            parent->addChildNativeItem(this);
+            parent->addChildNativeItem((NativeItemPtr)this);
         };
     };
     if(type == ScrollView){
@@ -139,7 +139,7 @@ CocoaItem::CocoaItem(const Core::Rect & rect,CocoaItem::Type _type,CocoaItem *pa
         scrollView.autohidesScrollers = NO;
         scrollView.borderType = NSNoBorder;
         if(parent != nullptr){
-            parent->addChildNativeItem(this);
+            parent->addChildNativeItem((NativeItemPtr)this);
         };
     };
 };
@@ -181,7 +181,7 @@ void CocoaItem::resize(Core::Rect &newRect){
 };
 
 void CocoaItem::addChildNativeItem(NativeItemPtr native_item){
-    CocoaItem *cocoaview = (CocoaItem *)native_item;
+    auto cocoaview = std::dynamic_pointer_cast<CocoaItem>(native_item);
     if(cocoaview->_ptr != nil){
         [_ptr addSubview:cocoaview->_ptr];
     }
@@ -191,7 +191,7 @@ void CocoaItem::addChildNativeItem(NativeItemPtr native_item){
 };
 
 void CocoaItem::removeChildNativeItem(NativeItemPtr native_item){
-    CocoaItem *cocoaview = (CocoaItem *)native_item;
+    auto cocoaview = std::dynamic_pointer_cast<CocoaItem>(native_item);
     if(cocoaview->_ptr != nil){
         [cocoaview->_ptr removeFromSuperview];
     }
@@ -201,7 +201,7 @@ void CocoaItem::removeChildNativeItem(NativeItemPtr native_item){
 };
 
 void CocoaItem::setClippedView(NativeItemPtr nativeItem){
-    CocoaItem *cocoaItem = (CocoaItem *)nativeItem;
+    auto cocoaItem = std::dynamic_pointer_cast<CocoaItem>(nativeItem);
     scrollView.documentView = cocoaItem->_ptr;
 };
 
@@ -242,6 +242,6 @@ namespace OmegaWTK::Native {
         else {
             item_type = Cocoa::CocoaItem::View;
         }
-        return new Cocoa::CocoaItem(rect,item_type,(Cocoa::CocoaItem *)parent);
+        return (NativeItemPtr)new Cocoa::CocoaItem(rect,item_type,std::dynamic_pointer_cast<Cocoa::CocoaItem>(parent));
     };
 }

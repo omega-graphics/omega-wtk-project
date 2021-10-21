@@ -6,6 +6,11 @@ namespace OmegaWTK::Composition {
     // CompositorClient::CompositorClient(){
 
     // };
+
+    CompositorClientProxy::CompositorClientProxy(SharedHandle<CompositionRenderTarget> renderTarget):renderTarget(renderTarget) {
+
+    }
+
     void CompositorClientProxy::beginRecord() {
         assert(!recording && "Client proxy must not be recording before starting a new recording session");
         recording = true;
@@ -25,9 +30,9 @@ namespace OmegaWTK::Composition {
        OmegaCommon::Promise<CommandStatus> status;
        auto async = status.async();
         commandQueue.emplace(new
-                        CompositionRenderCommand{id,client,CompositorCommand::Type::Render,
+                        CompositionRenderCommand(id,client,CompositorCommand::Type::Render,
                                  CompositorCommand::Priority::High,
-                                 {true,start,deadline},std::move(status),renderTarget,frame});
+                                 {true,start,deadline},std::move(status),renderTarget,frame));
         return async;
     };
 
@@ -80,12 +85,28 @@ namespace OmegaWTK::Composition {
         OmegaCommon::Promise<CommandStatus> status;
         auto async = status.async();
 
-        commandQueue.emplace(new CompositorLayerResizeCommand {
+        commandQueue.emplace(new CompositorLayerCommand {
             id,
             client,
-            CompositorCommand::Type::LayerResize,
+            CompositorCommand::Type::Layer,
             CompositorCommand::Priority::High,
-            {true,start,deadline},std::move(status),target,delta_x,delta_y,delta_w,delta_h});
+            {true,start,deadline},std::move(status),target,renderTarget,delta_x,delta_y,delta_w,delta_h});
+        return async;
+    }
+
+    OmegaCommon::Async<CommandStatus>
+    CompositorClientProxy::queueLayerEffectCommand(unsigned int &id, CompositorClient &client, Layer *target,
+                                                   SharedHandle<LayerEffect> &effect, Timestamp &start,
+                                                   Timestamp &deadline) {
+        OmegaCommon::Promise<CommandStatus> status;
+        auto async = status.async();
+
+        commandQueue.emplace(new CompositorLayerCommand {
+                id,
+                client,
+                CompositorCommand::Type::Layer,
+                CompositorCommand::Priority::High,
+                {true,start,deadline},std::move(status),target,renderTarget,effect});
         return async;
     }
 

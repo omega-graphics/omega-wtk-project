@@ -1,4 +1,4 @@
-#import "CocoaDialog.h"
+#include "omegaWTK/Native/NativeDialog.h"
 #import "NativePrivate/macos/CocoaUtils.h"
 #import "CocoaAppWindow.h"
 
@@ -11,8 +11,8 @@ namespace OmegaWTK::Native::Cocoa {
 
         __block OmegaCommon::Promise<OmegaCommon::String> strVal;
     public:
-        OmegaCommon::Async<OmegaCommon::String> getResult(){
-            NSWindow *parentWindow = ((CocoaAppWindow *)this->parentWindow)->getWindow();
+        OmegaCommon::Async<OmegaCommon::String> getResult() override{
+            NSWindow *parentWindow = std::dynamic_pointer_cast<CocoaAppWindow>(this->parentWindow)->getWindow();
             if(!openPanel){
                 /// If is Save Panel
                 // __block NSURL *url = nil;
@@ -20,8 +20,6 @@ namespace OmegaWTK::Native::Cocoa {
                         NSURL * url = [savePanel URL];
                         strVal.set([url fileSystemRepresentation]);
                 }];
-
-                return strVal.async();
 
             }
             else if(!savePanel){
@@ -35,10 +33,10 @@ namespace OmegaWTK::Native::Cocoa {
                     strVal.set([url fileSystemRepresentation]);
                 }];
 
-                return strVal.async();
             };
+            return strVal.async();
         };
-        CocoaFSDialog(const Descriptor &desc,NWH nativeWindow):NativeFSDialog(nativeWindow){
+        explicit CocoaFSDialog(const Descriptor &desc,NWH & nativeWindow):NativeFSDialog(nativeWindow){
            if(desc.type == Read){
                openPanel = [NSOpenPanel openPanel];
                savePanel = nil;
@@ -54,12 +52,12 @@ namespace OmegaWTK::Native::Cocoa {
         NSAlert *dialog;
     public:
         void show(){
-            NSWindow *parentWindow = ((CocoaAppWindow *)this->parentWindow)->getWindow();
+            NSWindow *parentWindow = std::dynamic_pointer_cast<CocoaAppWindow>(this->parentWindow)->getWindow();
             [dialog beginSheetModalForWindow:parentWindow completionHandler:^(NSModalResponse response){
                 
             }];
         };
-        CocoaNoteDialog(const Descriptor &desc,NWH nativeWindow):NativeNoteDialog(nativeWindow){
+        explicit CocoaNoteDialog(const Descriptor &desc,NWH & nativeWindow):NativeNoteDialog(nativeWindow){
             dialog = [[NSAlert alloc] init];
             dialog.showsHelp = NO;
             dialog.alertStyle = NSAlertStyleInformational;
@@ -69,12 +67,14 @@ namespace OmegaWTK::Native::Cocoa {
         };
     };
 
-    SharedHandle<NativeFSDialog> make_cocoa_fs_dialog(const NativeFSDialog::Descriptor &desc,NWH nativeWindow){
-//        return std::make_shared<CocoaFSDialog>();
-          return SharedHandle<NativeFSDialog>(new CocoaFSDialog(desc,nativeWindow));
+};
+
+namespace OmegaWTK::Native {
+    SharedHandle<NativeFSDialog> NativeFSDialog::Create(const NativeFSDialog::Descriptor &desc,NWH nativeWindow){
+        return SharedHandle<NativeFSDialog>(new Cocoa::CocoaFSDialog(desc,nativeWindow));
     };
 
-    SharedHandle<NativeNoteDialog> make_cocoa_note_dialog(const NativeNoteDialog::Descriptor &desc,NWH nativeWindow){
-        return SharedHandle<NativeNoteDialog>(new CocoaNoteDialog(desc,nativeWindow));
+    SharedHandle<NativeNoteDialog> NativeNoteDialog::Create(const NativeNoteDialog::Descriptor &desc,NWH nativeWindow){
+        return SharedHandle<NativeNoteDialog>(new Cocoa::CocoaNoteDialog(desc,nativeWindow));
     };
-};
+}

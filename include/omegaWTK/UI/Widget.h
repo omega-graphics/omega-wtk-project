@@ -9,6 +9,7 @@ namespace OmegaWTK {
 class AppWindow;
 class AppWindowManager;
 class VideoView;
+class SVGView;
 class WidgetObserver;
 class WidgetTreeHost;
 
@@ -37,13 +38,22 @@ protected:
      @returns A standard View
      */
     SharedHandle<CanvasView> makeCanvasView(const Core::Rect & rect,View *parent);
+
+    /**
+     Makes an SVG View attached to this widget and returns it.
+     @param rect The Rectangle to use
+     @param parent The Parent View (NOTE: This view MUST be within this widget's view heirarchy)
+     @returns A Video View
+     */
+    SharedHandle<SVGView> makeSVGView(const Core::Rect & rect,View *parent);
+
     /**
      Makes a Video View attached to this widget and returns it.
      @param rect The Rectangle to use
      @param parent The Parent View (NOTE: This view MUST be within this widget's view heirarchy)
      @returns A Video View
      */
-//    SharedHandle<VideoView> makeVideoView(const Core::Rect & rect,View *parent);
+    SharedHandle<VideoView> makeVideoView(const Core::Rect & rect,View *parent);
     
 private:
     OmegaCommon::Vector<Widget *> children;

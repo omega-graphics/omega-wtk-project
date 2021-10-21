@@ -1,13 +1,5 @@
 #include "omegaWTK/Native/NativeMenu.h"
 
-#ifdef TARGET_MACOS
-#include "macos/CocoaMenu.h"
-#endif
-
-#ifdef TARGET_WIN32
-#include "win/WinMenu.h"
-#endif
-
 namespace OmegaWTK::Native {
 
 void NativeMenu::setDelegate(NativeMenuDelegate *delegate){

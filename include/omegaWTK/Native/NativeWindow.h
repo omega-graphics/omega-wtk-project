@@ -5,14 +5,16 @@
 
 #ifndef OMEGAWTK_NATIVE_NATIVEWINDOW_H
 #define OMEGAWTK_NATIVE_NATIVEWINDOW_H
-
+namespace OmegaWTK {
+    class AppWindow;
+}
 namespace OmegaWTK::Native {
-    class NativeWindow {
-        friend class AppWindow;
+    INTERFACE NativeWindow {
+        friend class ::OmegaWTK::AppWindow;
+        INTERFACE_METHOD NativeItemPtr getRootView() ABSTRACT;
     protected:
         OmegaCommon::Vector<NativeItemPtr> windowWidgetRootViews;
         NM menu = nullptr;
-//        NativeLayerTreeLimb *window_native_layer = nullptr;
     public:
 //        void setNativeLayer(NativeLayer *layer){ window_native_layer = layer;};
 #ifdef TARGET_MACOS

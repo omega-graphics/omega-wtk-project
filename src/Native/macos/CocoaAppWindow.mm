@@ -22,10 +22,9 @@ CocoaAppWindow::CocoaAppWindow(Core::Rect & rect,NativeEventEmitter *emitter):Na
     windowController = [[OmegaWTKNativeCocoaAppWindowController alloc] initWithRect:core_rect_to_cg_rect(rect) delegate:windowDelegate];
     windowDelegate.cppBinding = this;
 
+    rootView = std::dynamic_pointer_cast<CocoaItem>(Native::make_native_item(rect));
 
-    NSView *rootView = [[NSView alloc] initWithFrame:windowController.window.frame];
-    rootView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
-    [windowController.window setContentView:rootView];
+    [windowController.window setContentViewController:(NSViewController *)rootView->getBinding()];
 };
 
 NativeEventEmitter * CocoaAppWindow::getEmitter() {
@@ -47,7 +46,7 @@ void CocoaAppWindow::enable(){
 void CocoaAppWindow::addNativeItem(NativeItemPtr item){
         // auto *cocoaitem = (CocoaItem *)item;
         NSViewController *viewC = (NSViewController *)item->getBinding();
-        [windowController.window.contentView addSubview:viewC.view];
+        [windowController.window.contentViewController.view addSubview:viewC.view];
 };
 
 void CocoaAppWindow::initialDisplay(){
@@ -72,6 +71,10 @@ void CocoaAppWindow::close(){
         [windowController.window close];
 };
 
+NativeItemPtr CocoaAppWindow::getRootView() {
+    return std::static_pointer_cast<NativeItem>(rootView);
+}
+
  __strong NSWindow *CocoaAppWindow::getWindow(){
      return windowController.window;
  };
@@ -87,7 +90,7 @@ void CocoaAppWindow::close(){
     };
 };
 -(void)windowWillClose:(NSNotification *)notification {
-    OmegaWTK::Native::NativeEventPtr event = new OmegaWTK::Native::NativeEvent(OmegaWTK::Native::NativeEvent::WindowWillClose,nullptr);
+    OmegaWTK::Native::NativeEventPtr event(new OmegaWTK::Native::NativeEvent(OmegaWTK::Native::NativeEvent::WindowWillClose,nullptr));
     [self emitIfPossible:event];
     
 };
@@ -102,7 +105,7 @@ void CocoaAppWindow::close(){
                       (float)self.window.contentView.frame.size.width,
                       (float)self.window.contentView.frame.size.height}
      );
-     auto event = new OmegaWTK::Native::NativeEvent(OmegaWTK::Native::NativeEvent::WindowWillResize,params);
+    OmegaWTK::Native::NativeEventPtr event(new OmegaWTK::Native::NativeEvent(OmegaWTK::Native::NativeEvent::WindowWillResize,params));
      [self emitIfPossible:event];
 };
 
@@ -123,6 +126,6 @@ void CocoaAppWindow::close(){
 
 namespace OmegaWTK::Native {
     NWH make_native_window(Core::Rect & rect,NativeEventEmitter *emitter){
-        return new Cocoa::CocoaAppWindow(rect,emitter);
+        return (NWH)new Cocoa::CocoaAppWindow(rect,emitter);
     };
 }

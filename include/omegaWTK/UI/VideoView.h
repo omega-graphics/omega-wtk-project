@@ -11,7 +11,8 @@ namespace OmegaWTK {
 */
 class OMEGAWTK_EXPORT VideoView :  public View, 
                                    public Media::VideoFrameSink {
-   VideoView(const Core::Rect & rect,Composition::Compositor * comp,View *parent = nullptr);
+    friend class Widget;
+   VideoView(const Core::Rect & rect,Composition::LayerTree * layerTree,View *parent = nullptr);
 };
 /**
  @brief 

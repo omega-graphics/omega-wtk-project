@@ -9,6 +9,8 @@ namespace OmegaWTK {
 
     AppWindow::AppWindow(Core::Rect rect,AppWindowDelegate *delegate):
     layer(std::make_unique<Composition::WindowLayer>(rect,Native::make_native_window(rect,this))),
+    rootViewRenderTarget(new Composition::ViewRenderTarget(layer->native_window_ptr->getRootView())),
+    proxy(rootViewRenderTarget),
     delegate(delegate),
     rect(rect){
         // MessageBoxA(HWND_DESKTOP,"Create Window Layer!","NOTE",MB_OK);

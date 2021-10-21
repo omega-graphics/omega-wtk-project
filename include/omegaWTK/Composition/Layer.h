@@ -7,7 +7,9 @@
 #include "omegaWTK/Core/Core.h"
 #include "omegaWTK/Native/NativeItem.h"
 #include "omegaWTK/Native/NativeWindow.h"
-#include "Canvas.h"
+
+#include "Brush.h"
+
 #include <functional>
 
 #ifndef OMEGAWTK_COMPOSITION_LAYER_H
@@ -23,6 +25,7 @@ class Widget;
 namespace Composition {
     
     class ViewRenderTarget;
+	class Canvas;
         /**
             A mutlifeatured surface for composing visuals on.
          */
@@ -106,6 +109,24 @@ namespace Composition {
         void setRootLimb(SharedHandle<Limb> & limb);
         LayerTree();
         ~LayerTree();
+    };
+
+    struct LayerEffect {
+        enum : OPT_PARAM {
+            DropShadow,
+            Transformation,
+        } type;
+        void *params;
+        typedef struct {
+            float x_offset, y_offset;
+            float radius;
+            float blurAmount;
+            float opacity;
+            Color color;
+        } DropShadowParams;
+        typedef struct {
+
+        } TransformationParams;
     };
 
     class OMEGAWTK_EXPORT Layer {

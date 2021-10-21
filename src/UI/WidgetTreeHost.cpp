@@ -22,7 +22,7 @@ namespace OmegaWTK {
             window->_add_widget(root);
             window->widgetTreeHosts.emplace_back(this);
             if(window->widgetTreeHosts.size() == 1)
-                window->setFrontendPtr(compositor);
+                window->proxy.setFrontendPtr(compositor);
         }
     };
 

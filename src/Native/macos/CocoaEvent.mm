@@ -65,7 +65,7 @@ namespace OmegaWTK::Native::Cocoa {
                 break;
             };
         }
-        return new OmegaWTK::Native::NativeEvent(type,params);
+        return (NativeEventPtr)new OmegaWTK::Native::NativeEvent(type,params);
     };
 
 };

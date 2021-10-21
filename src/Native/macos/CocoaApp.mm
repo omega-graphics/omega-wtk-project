@@ -1,5 +1,4 @@
 #import <Cocoa/Cocoa.h>
-#import "CocoaApp.h"
 #include "omegaWTK/Native/NativeApp.h"
 
 
@@ -30,8 +29,10 @@ public:
     ~CocoaApp() = default;
 };
 
-NAP make_cocoa_app(){
-    return new CocoaApp();
 };
 
-};
+namespace OmegaWTK::Native {
+    NAP make_native_app(void *data){
+        return (NAP)new Cocoa::CocoaApp();
+    }
+}

@@ -24,13 +24,13 @@ namespace OmegaWTK {
         Sometimes referred to as the CanvasView.
         @relates Widget
      */ 
-    class OMEGAWTK_EXPORT View : public Native::NativeEventEmitter,
-                                 public Composition::CompositorClientProxy {
+    class OMEGAWTK_EXPORT View : public Native::NativeEventEmitter {
         OmegaCommon::Vector<SharedHandle<View>> subviews;
     protected:
         SharedHandle<Composition::ViewRenderTarget> renderTarget;
         friend class Widget;
     private:
+        Composition::CompositorClientProxy proxy;
         void setFrontendRecurse(Composition::Compositor *frontend);
         Composition::LayerTree *widgetLayerTree;
         View * parent_ptr;
@@ -44,16 +44,16 @@ namespace OmegaWTK {
         friend class ViewAnimator;
         friend class ScrollView;
     protected:
-        /**
-            Constructs a View using a Rect param; (With NO Layers!!)
-            NOTE:
-            This Constructed is only called when making a VideoView
-            In other words, the View that is returned has NO layers will be completlty blank.
-            @param rect[in] The Rect to use
-            @param parent[in] The Parent View
-            @returns A View!
-         */
-        View(const Core::Rect & rect,View *parent);
+//        /**
+//            Constructs a View using a Rect param; (With NO Layers!!)
+//            NOTE:
+//            This Constructed is only called when making a VideoView
+//            In other words, the View that is returned has NO layers will be completlty blank.
+//            @param rect[in] The Rect to use
+//            @param parent[in] The Parent View
+//            @returns A View!
+//         */
+//        View(const Core::Rect & rect,View *parent);
         /**
             Constructs a View using a Rect param and a NativeItem; (With NO Layers!!)
             NOTE:
@@ -64,7 +64,14 @@ namespace OmegaWTK {
             @param parent[in] The Parent View
             @returns A View!
          */
-        View(const Core::Rect & rect,Native::NativeItemPtr nativeItem,View *parent);
+        View(const Core::Rect & rect,Native::NativeItemPtr nativeItem,Composition::LayerTree *layerTree,View *parent);
+        /**
+            Constructs a View using a Rect param and constructs a LayerTree::Limb to be used on the layerTree;
+            @param rect The Rect to use
+            @param layerTree
+            @returns A View!
+         */
+        View(const Core::Rect & rect,Composition::LayerTree *layerTree,View *parent = nullptr);
     public:
 
         SharedHandle<Composition::Layer> makeLayer(Core::Rect rect);
@@ -77,13 +84,6 @@ namespace OmegaWTK {
         virtual void setDelegate(ViewDelegate *_delegate);
         virtual void resize(Core::Rect newRect);
         void commitRender();
-        /**
-            Constructs a View using a Rect param and constructs a LayerTree::Limb to be used on the layerTree;
-            @param rect The Rect to use
-            @param layerTree
-            @returns A View!
-         */
-        View(const Core::Rect & rect,Composition::LayerTree *layerTree,View *parent = nullptr);
         ~View();
     };
 
@@ -168,7 +168,7 @@ namespace OmegaWTK {
             @param rect The Rect to use
             @returns A ScrollView!
          */
-        ScrollView(const Core::Rect & rect,SharedHandle<View> child,bool hasVericalScrollBar,bool hasHorizontalScrollBar,View *parent = nullptr);
+        ScrollView(const Core::Rect & rect,SharedHandle<View> child,bool hasVericalScrollBar,bool hasHorizontalScrollBar,Composition::LayerTree *layerTree,View *parent = nullptr);
     };
 
     class OMEGAWTK_EXPORT ScrollViewDelegate : public Native::NativeEventProcessor {

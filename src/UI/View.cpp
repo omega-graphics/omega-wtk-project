@@ -6,6 +6,7 @@ namespace OmegaWTK {
 
     View::View(const Core::Rect & rect,Composition::LayerTree *layerTree,View *parent):
         renderTarget(std::make_shared<Composition::ViewRenderTarget>(Native::make_native_item(rect))),
+        proxy(std::static_pointer_cast<Composition::CompositionRenderTarget>(renderTarget)),
         widgetLayerTree(layerTree),
         parent_ptr(parent),
         rect(rect){
@@ -21,12 +22,18 @@ namespace OmegaWTK {
         else
             layerTree->setRootLimb(layerTreeLimb);
     };
-    View::View(const Core::Rect & rect,View *parent):renderTarget(std::make_unique<Composition::ViewRenderTarget>(Native::make_native_item(rect))),widgetLayerTree(nullptr),parent_ptr(parent),rect(rect){
-        renderTarget->getNativePtr()->event_emitter = this;
-        if(parent_ptr) {
-            parent->addSubView(this);
-        };
-    };
+//    View::View(const Core::Rect & rect,View *parent):
+//        renderTarget(std::make_shared<Composition::ViewRenderTarget>(Native::make_native_item(rect))),
+//        proxy(std::static_pointer_cast<Composition::CompositionRenderTarget>(renderTarget)),
+//        widgetLayerTree(nullptr),
+//        parent_ptr(parent),
+//        rect(rect){
+//
+//        renderTarget->getNativePtr()->event_emitter = this;
+//        if(parent_ptr) {
+//            parent->addSubView(this);
+//        };
+//    };
     bool View::hasDelegate(){
         return delegate != nullptr;
     };
@@ -57,7 +64,12 @@ namespace OmegaWTK {
         renderTarget->getNativePtr()->resize(newRect);
     };
 
-View::View(const Core::Rect & rect,Native::NativeItemPtr nativeItem,View *parent):rect(rect),widgetLayerTree(nullptr),renderTarget(std::make_unique<Composition::ViewRenderTarget>(nativeItem)),parent_ptr(parent){
+View::View(const Core::Rect & rect,Native::NativeItemPtr nativeItem,Composition::LayerTree *layerTree,View *parent):
+rect(rect),
+widgetLayerTree(layerTree),
+renderTarget(std::make_shared<Composition::ViewRenderTarget>(nativeItem)),
+proxy(std::static_pointer_cast<Composition::CompositionRenderTarget>(renderTarget)),
+parent_ptr(parent){
     if(parent_ptr) {
         parent->addSubView(this);
     };
@@ -70,7 +82,7 @@ SharedHandle<Composition::Layer> View::makeLayer(Core::Rect rect){
 };
 
 SharedHandle<Composition::Canvas> View::makeCanvas(SharedHandle<Composition::Layer> &targetLayer){
-    return std::make_shared<Composition::Canvas>(*this,*targetLayer);
+    return std::make_shared<Composition::Canvas>(proxy,*targetLayer);
 }
 
 View::~View(){
@@ -78,7 +90,7 @@ View::~View(){
 };
 
 void View::setFrontendRecurse(Composition::Compositor *frontend){
-    setFrontendPtr(frontend);
+    proxy.setFrontendPtr(frontend);
     for(auto & subView : subviews){
         subView->setFrontendRecurse(frontend);
     };
@@ -137,7 +149,10 @@ void ViewDelegate::onRecieveEvent(Native::NativeEventPtr event){
     }
 };
 
-ScrollView::ScrollView(const Core::Rect & rect,SharedHandle<View> child,bool hasVericalScrollBar,bool hasHorizontalScrollBar,View *parent):View(rect,Native::make_native_item(rect,Native::ScrollItem),parent),delegate(nullptr),hasHorizontalScrollBar(hasHorizontalScrollBar),hasVericalScrollBar(hasVericalScrollBar){
+ScrollView::ScrollView(const Core::Rect & rect,SharedHandle<View> child,bool hasVericalScrollBar,bool hasHorizontalScrollBar,Composition::LayerTree *layerTree,View *parent):
+View(rect,Native::make_native_item(rect,Native::ScrollItem),layerTree,parent),
+delegate(nullptr),
+hasHorizontalScrollBar(hasHorizontalScrollBar),hasVericalScrollBar(hasVericalScrollBar){
     renderTarget->getNativePtr()->event_emitter = this;
     Native::NativeItemPtr ptr = renderTarget->getNativePtr();
     ptr->setClippedView(child->renderTarget->getNativePtr());
