@@ -18,12 +18,13 @@ class DCVisualTree : public BackendVisualTree {
     typedef BackendVisualTree Parent;
     public:
     struct Visual : public Parent::Visual {
-        OmegaGTE::SharedHandle<OmegaGTE::GENativeRenderTarget> renderTarget;
         IDCompositionVisual2 * visual;
         IDCompositionVisual2 * shadowVisual = nullptr;
+        explicit Visual(Core::Position & pos,BackendRenderTargetContext &context, IDCompositionVisual2 * visual);
+        void resize(Core::Rect &newRect) override;
         ~Visual();
     };
-    DCVisualTree(SharedHandle<ViewRenderTarget> & view);
+    explicit DCVisualTree(SharedHandle<ViewRenderTarget> & view);
     void addVisual(Core::SharedPtr<Parent::Visual> & visual) override;
     Core::SharedPtr<Parent::Visual> makeVisual(Core::Rect & rect,Core::Position & pos) override;
     void setRootVisual(Core::SharedPtr<Parent::Visual> & visual) override;

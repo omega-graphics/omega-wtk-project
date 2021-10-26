@@ -20,12 +20,14 @@ namespace OmegaWTK::Native::Win {
         if(hwnd == NULL){
             MessageBoxA(HWND_DESKTOP,"Failed to Create Desktop Window",NULL,MB_OK);
         }
-        // else
-            // MessageBoxA(HWND_DESKTOP,"Registered Win Window!","NOTE",MB_OK);
         currentDpi = GetDpiForWindow(hwnd);
         isTracking = false;
         hovered = false;
     };
+
+    NativeItemPtr WinAppWindow::getRootView() {
+        return (NativeItemPtr)this;
+    }
 
     void WinAppWindow::addNativeItem(NativeItemPtr item){
        auto hwndItem = std::dynamic_pointer_cast<HWNDItem>(item);
@@ -193,7 +195,7 @@ namespace OmegaWTK::Native::Win {
 
                     RECT* const prcNewWindow = (RECT*)lParam;
                     SetWindowPos(hwnd,
-                        NULL,
+                        nullptr,
                         prcNewWindow ->left,
                         prcNewWindow ->top,
                         prcNewWindow->right - prcNewWindow->left,

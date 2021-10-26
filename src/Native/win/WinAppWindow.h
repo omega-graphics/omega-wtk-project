@@ -8,6 +8,7 @@ namespace OmegaWTK::Native::Win {
     class WinAppWindow : public NativeWindow, public HWNDItem {
         bool isReady;
         public:
+        NativeItemPtr getRootView() override;
         void enable() override; 
         void disable() override;
         void attachWidgets();

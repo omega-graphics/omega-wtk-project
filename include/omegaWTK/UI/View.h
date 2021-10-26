@@ -14,9 +14,11 @@
 #define OMEGAWTK_UI_VIEW_H
 
 namespace OmegaWTK {
+    namespace Composition {
+        class ViewAnimator;
+    }
     class Widget;
     class AppInst;
-    class ViewAnimator;
     class ViewDelegate;
     class ScrollView;
     /**
@@ -41,7 +43,7 @@ namespace OmegaWTK {
         void removeSubView(View * view);
         friend class AppWindow;
         SharedHandle<Composition::LayerTree::Limb> layerTreeLimb;
-        friend class ViewAnimator;
+        friend class Composition::ViewAnimator;
         friend class ScrollView;
     protected:
 //        /**

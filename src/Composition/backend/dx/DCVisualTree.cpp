@@ -28,12 +28,17 @@ namespace OmegaWTK::Composition {
         }
 
         auto hwndItem = std::dynamic_pointer_cast<Native::Win::HWNDItem>(view->getNativePtr());
-        HRESULT res = comp_device_desktop->CreateSurfaceFromHwnd(hwndItem->hwnd,&hwndTarget.comPtr);
+        HRESULT res = comp_device_desktop->CreateTargetForHwnd(hwndItem->hwnd,TRUE,&hwndTarget.comPtr);
     };
 
-    // DCVisualTree::Visual::Visual(IDCompositionVisual2 *v,Core::Position &pos):visual(v),img(img),pos(pos){
+     DCVisualTree::Visual::Visual(Core::Position &pos,BackendRenderTargetContext & context, IDCompositionVisual2 * visual):
+     Parent::Visual(pos,context),visual(visual){
         
-    // };
+     };
+
+    void DCVisualTree::Visual::resize(Core::Rect &newRect){
+
+    }
 
     DCVisualTree::Visual::~Visual(){
         visual->RemoveAllVisuals();
@@ -44,13 +49,14 @@ namespace OmegaWTK::Composition {
         
         OmegaGTE::NativeRenderTargetDescriptor desc {};
         desc.isHwnd = false;
-        desc.hwnd = NULL;
+        desc.hwnd = nullptr;
         desc.height = rect.h;
         desc.width = rect.w;
 
         auto target = gte.graphicsEngine->makeNativeRenderTarget(desc);
         auto swapChain = (IDXGISwapChain3 *)target->getSwapChain();
 
+        BackendRenderTargetContext context {rect,target};
         
         HRESULT hr;
         IDCompositionVisual2 *v;
@@ -66,25 +72,24 @@ namespace OmegaWTK::Composition {
             MessageBoxA(HWND_DESKTOP,(std::string("Failed to set Content of Visual. ERROR:") + ss.str()).c_str(),NULL,MB_OK);
         };
         // rc.visual = nullptr;
-        auto _v = new DCVisualTree::Visual {};
-        _v->pos = pos;
-        _v->visual = v;
-        _v->renderTarget = target;
-        return std::shared_ptr<BackendVisualTree::Visual>(_v);
+        return (SharedHandle<Parent::Visual>)new DCVisualTree::Visual {pos,context,v};
     };
 
     void DCVisualTree::setRootVisual(Core::SharedPtr<Parent::Visual> & visual){
         root = visual;
+        auto v = std::dynamic_pointer_cast<Visual>(visual);
+        hwndTarget->SetRoot(v->visual);
+        comp_device_desktop->Commit();
     };
 
 
     void DCVisualTree::addVisual(Core::SharedPtr<Parent::Visual> & visual){
         body.push_back(visual);
+        auto r = std::dynamic_pointer_cast<Visual>(root),v =  std::dynamic_pointer_cast<Visual>(visual);
+        r->visual->AddVisual(v->visual,TRUE,nullptr);
+        comp_device_desktop->Commit();
     };
 
 
-    // void BackendCompRenderTarget::renderVisualTree(){
-
-    // };
 
 };

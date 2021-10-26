@@ -205,7 +205,7 @@ namespace OmegaWTK::Native::Win {
 
 namespace OmegaWTK::Native {
     SharedHandle<NativeFSDialog> NativeFSDialog::Create(const Descriptor &desc, NWH nativeWindow){
-        auto is_read_or_write = desc.type == Read? true : false;
+        auto is_read_or_write = desc.type == Read;
         auto ptr = new Win::WinFSDialog(is_read_or_write,nativeWindow);
         return (SharedHandle<NativeFSDialog>)ptr;
     }
