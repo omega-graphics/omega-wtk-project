@@ -5,20 +5,10 @@
 
 namespace OmegaWTK::Composition {
 
-    /// Standard RBGA Color
+    /// @brief Represents a generic RGBA Color with a channel size from 8 to 32 bits.
     struct OMEGAWTK_EXPORT Color {
-        unsigned r,g,b,a;
+        float r,g,b,a;
     public:
-        typedef enum : std::uint32_t {
-            Black  = 0x000000,
-            White  = 0xFFFFFF,
-            Red    = 0xFF0000,
-            Green  = 0x00FF00,
-            Blue   = 0x0000FF,
-            Yellow = 0xFFFF00,
-            Orange = 0xFF8000,
-            Purple = 0xFF00FF
-        } STDColor;
         bool compare(const Color &other);
         bool operator!=(Color && other){
             return !compare(other);
@@ -32,39 +22,51 @@ namespace OmegaWTK::Composition {
         bool operator==(const Color &other){
             return compare(other);
         };
-        /**
-            Constructs a color!
-            @param red red amount
-            @param green green amount
-            @param blue blue amount
-            @param alpha alpha value
-        */
-        Color(unsigned red,unsigned green,unsigned blue,unsigned alpha);
-        /**
-         Constructs a Color using a 32bit uint (In hexadecimal form)!
-         @param hex_color Hexadecimal color
-
-        hex_color must be in the following form
-        --> 0xRRGGBB
-        */
-        Color(std::uint32_t hex_color,std::uint8_t alpha = 0xFF);
+        /// @brief 8 Bit Standard Colors
+        enum Eight : uint32_t {
+            Black8  = 0x000000,
+            White8  = 0xFFFFFF,
+            Red8    = 0xFF0000,
+            Green8  = 0x00FF00,
+            Blue8   = 0x0000FF,
+            Yellow8 = 0xFFFF00,
+            Orange8 = 0xFF8000,
+            Purple8 = 0xFF00FF
+        };
+        /// @brief 16 Bit Standard Colors
+        enum Sixteen : uint64_t {
+            Black16  = 0x000000000000,
+            White16  = 0xFFFFFFFFFFFF,
+            Red16    = 0xFFFF00000000,
+            Green16  = 0x0000FFFF0000,
+            Blue16   = 0x00000000FFFF,
+            Yellow16 = 0xFFFFFFFF0000,
+            Orange16 = 0xFFFF88000000,
+            Purple16 = 0xFFFF0000FFFF
+        };
+        static Color create8Bit(std::uint8_t r,std::uint8_t g,std::uint8_t b,std::uint8_t a);
+        static Color create8Bit(std::uint32_t rgb,std::uint8_t alpha = 0xFF);
+        static Color create16Bit(std::uint16_t r,std::uint16_t g,std::uint16_t b,std::uint16_t a);
+        static Color create16Bit(std::uint64_t rgb,std::uint16_t alpha = 0xFFFF);
+        static Color create32it(std::uint32_t r,std::uint32_t g,std::uint32_t b,std::uint32_t a);
         static const Color Transparent;
     };
 
+
     struct OMEGAWTK_EXPORT Gradient {
-        typedef enum : OPT_PARAM {
+        enum class Type : OPT_PARAM {
             Linear,
             Radial
-        } GradientType;
-        GradientType type;
+        } type;
+        float arg;
         struct GradientStop {
             float pos;
             Color color;
         };
         OmegaCommon::Vector<GradientStop> stops;
-        static GradientStop CreateStop(float pos,Color color);
-        static Gradient CreateLinear(std::initializer_list<GradientStop> stops);
-        static Gradient CreateRadial(std::initializer_list<GradientStop> stops);
+        static GradientStop Stop(float pos,Color color);
+        static Gradient Linear(std::initializer_list<GradientStop> stops,float angle);
+        static Gradient Radial(std::initializer_list<GradientStop> stops,float radius);
     };
 
     struct OMEGAWTK_EXPORT  Brush {

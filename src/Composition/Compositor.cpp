@@ -102,7 +102,7 @@ Compositor::Compositor():queueIsReady(false),queueCondition(),commandQueue(200),
 };
 
 Compositor::~Compositor(){
-     std::cout << "~Compositor" << std::endl;
+     std::cout << "~Compositor()" << std::endl;
 };
 
 void Compositor::scheduleCommand(SharedHandle<CompositorCommand> & command){

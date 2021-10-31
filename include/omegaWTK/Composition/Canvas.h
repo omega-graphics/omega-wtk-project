@@ -70,12 +70,9 @@ namespace OmegaWTK {
             Core::SharedPtr<Brush> brush;
             Core::Optional<Border> border;
         } EllipseParams;
-        // typedef struct {
-        //     Core::SharedPtr<TextRect> textRect;
-        //     Core::SharedPtr<Brush> brush;
-        // } TextParams;
         typedef struct {
             Core::SharedPtr<Media::BitmapImage> img;
+            Core::SharedPtr<OmegaGTE::GETexture> texture;
             Core::Rect rect;
         } BitmapParams;
         void * params;
@@ -121,7 +118,9 @@ namespace OmegaWTK {
 
         // void drawTextRect(SharedHandle<Composition::TextRect> & textRect,Core::SharedPtr<Brush> & brush);
 
-        void drawImage(SharedHandle<Media::BitmapImage> & img,Core::SharedPtr<Brush> & brush);
+        void drawImage(SharedHandle<Media::BitmapImage> & img,const Core::Rect & rect);
+
+        void drawGETexture(SharedHandle<OmegaGTE::GETexture> & img,const Core::Rect & rect);
 
         void applyEffect(SharedHandle<CanvasEffect> & effect);
 

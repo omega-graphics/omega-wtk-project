@@ -68,7 +68,7 @@ namespace Composition {
         public:
             LayerTree *getParentTree();
             using iterator = OmegaCommon::Vector<SharedHandle<Layer>>::iterator;
-            Layer *getRootLayer();
+            SharedHandle<Layer> & getRootLayer();
             void addLayer(SharedHandle<Layer> layer);
             /**
              Constructs a LayerTree::Limb
@@ -125,7 +125,21 @@ namespace Composition {
             Color color;
         } DropShadowParams;
         typedef struct {
-
+            struct {
+                float x;
+                float y;
+                float z;
+            } translate;
+            struct {
+                float pitch;
+                float yaw;
+                float roll;
+            } rotate;
+            struct {
+                float x;
+                float y;
+                float z;
+            } scale;
         } TransformationParams;
     };
 

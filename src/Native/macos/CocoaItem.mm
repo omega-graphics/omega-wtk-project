@@ -162,7 +162,7 @@ void CocoaItem::disable(){
         [_ptr setHidden:YES];
 };
 
-void CocoaItem::resize(Core::Rect &newRect){
+void CocoaItem::resize(const Core::Rect &newRect){
     rect = newRect;
     CGRect r = core_rect_to_cg_rect(newRect);
     if(_ptr != nil){

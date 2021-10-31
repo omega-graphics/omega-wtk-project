@@ -175,8 +175,86 @@ void ScrollView::setDelegate(ViewDelegate *_delegate){
 };
 
 void ScrollViewDelegate::onRecieveEvent(Native::NativeEventPtr event){
-    
+
 };
+
+SharedHandle<ClickableViewHandler> ClickableViewHandler::Create() {
+    return (SharedHandle<ClickableViewHandler>)new ClickableViewHandler();
+}
+
+void ClickableViewHandler::onClick(std::function<void()> handler) {
+    click_handler = handler;
+}
+
+void ClickableViewHandler::onHoverBegin(std::function<void()> handler) {
+    hover_begin_handler = handler;
+}
+
+void ClickableViewHandler::onHoverEnd(std::function<void()> handler) {
+    hover_end_handler = handler;
+}
+
+void ClickableViewHandler::onPress(std::function<void()> handler) {
+    press_handler = handler;
+}
+
+void ClickableViewHandler::onRelease(std::function<void()> handler) {
+    release_handler = handler;
+}
+
+void ClickableViewHandler::onMouseEnter(Native::NativeEventPtr event) {
+    hover_begin_handler();
+}
+
+void ClickableViewHandler::onMouseExit(Native::NativeEventPtr event) {
+    hover_end_handler();
+}
+
+void ClickableViewHandler::onLeftMouseDown(Native::NativeEventPtr event) {
+    press_handler();
+    click_handler();
+}
+
+void ClickableViewHandler::onLeftMouseUp(Native::NativeEventPtr event) {
+    release_handler();
+}
+
+TextView::TextView(const Core::Rect &rect,Composition::LayerTree * layerTree,View *parent, bool io) :
+View(rect,layerTree,parent),
+editMode(io),str(),
+textRect(
+        Composition::TextRect::Create(
+        rect,
+        Composition::TextLayoutDescriptor {
+            Composition::TextLayoutDescriptor::LeftUpper,
+            Composition::TextLayoutDescriptor::WrapByWord
+        })),
+        rootLayerCanvas(makeCanvas(getLayerTreeLimb()->getRootLayer())){
+
+}
+
+void TextView::pushChar(Unicode32Char &ch) {
+    str.append(ch);
+}
+
+void TextView::popChar() {
+    str.truncate(str.length() - 1);
+}
+
+void TextView::commitChanges() {
+    auto run = Composition::GlyphRun::fromUStringAndFont(str,font);
+    textRect->drawRun(run);
+    auto img = textRect->toBitmap();
+    rootLayerCanvas->drawGETexture(img,getRect());
+    rootLayerCanvas->sendFrame();
+}
+
+void TextView::updateFont(SharedHandle<Composition::Font> &font) {
+    this->font = font;
+}
+
+
+
 
 
 };

@@ -100,8 +100,8 @@ enabled(true){
     
 };
 
-Layer *LayerTree::Limb::getRootLayer() {
-    return limbRoot.get();
+SharedHandle<Layer> & LayerTree::Limb::getRootLayer() {
+    return limbRoot;
 }
 
 void LayerTree::Limb::addLayer(SharedHandle<Layer> layer){

@@ -9,7 +9,11 @@ subdir(path:"./gte")
 var third_party_dir = "$(root_out_dir)/third_party"
 var gen_third_party_dir = "$(gen_root_out_dir)/third_party"
 
-assert_expr(program_exists("cmake"))
+
+assert(expr:program_exists(cmd:"cmake"))
+
+var zlib_export
+
 if (is_win){
     zlib_export = [f"{gen_third_party_dir}/zlib/bin/zlib.dll",f"{gen_third_party_dir}/zlib/lib/zlib.lib"]
 }
@@ -31,10 +35,15 @@ ThirdParty(
     install_name="install_name_tool -id @rpath/libz.dylib ./lib/libz.dylib"
 )
 
-if is_win:
+var libpng_export
+
+
+if (is_win){
     libpng_export = [f"{gen_third_party_dir}/libpng/bin/libpng16.dll",f"{gen_third_party_dir}/libpng/lib/libpng16.lib"]
-elif is_mac:
+}
+elif (is_mac){
     libpng_export = [f"{gen_third_party_dir}/libpng/lib/libpng.dylib"]
+}
 
 ThirdParty(
     name="libpng",

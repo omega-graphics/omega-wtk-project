@@ -20,11 +20,13 @@ namespace OmegaWTK::Composition {
 
             }
             virtual void resize(Core::Rect & newRect) = 0;
+            virtual void updateShadowEffect(LayerEffect::DropShadowParams & params) = 0;
+            virtual void updateTransformEffect(LayerEffect::TransformationParams & params) = 0;
             virtual ~Visual() = default;
         };
+    public:
         Core::SharedPtr<Visual> root = nullptr;
         OmegaCommon::Vector<Core::SharedPtr<Visual>> body;
-    public:
         bool hasRootVisual(){
             return (bool)root;
         };

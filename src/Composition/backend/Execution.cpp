@@ -87,8 +87,45 @@ void Compositor::executeCurrentCommand(){
         else {
 
             auto viewRenderTarget = renderTargetStore.store.find(params->parentTarget);
-            /// Effect Command
+
+            auto s = viewRenderTarget->second.surfaceTargets[params->layer];
+            if(s == &(viewRenderTarget->second.visualTree->root->renderTarget)){
+                if(params->effect->type == LayerEffect::DropShadow){
+                    viewRenderTarget->second.visualTree->root->updateShadowEffect(*(LayerEffect::DropShadowParams *)params->effect->params);
+                }
+                else {
+                    viewRenderTarget->second.visualTree->root->updateTransformEffect(*(LayerEffect::TransformationParams *)params->effect->params);
+                }
+
+            }
+            else {
+                for(auto & v : viewRenderTarget->second.visualTree->body){
+                    if(s == &(v->renderTarget)){
+                        if(params->effect->type == LayerEffect::DropShadow){
+                            v->updateShadowEffect(*(LayerEffect::DropShadowParams *)params->effect->params);
+                        }
+                        else {
+                            v->updateTransformEffect(*(LayerEffect::TransformationParams *)params->effect->params);
+                        }
+                        break;
+                    }
+                }
+            }
         }
+    }
+    else if(currentCommand->type == CompositorCommand::View){
+        auto params = (CompositorViewCommand *)currentCommand.get();
+        if(params->subType == CompositorViewCommand::Resize){
+            auto rect = params->viewPtr->getRect();
+            params->viewPtr->resize(Core::Rect {Core::Position {rect.pos.x + params->delta_x,rect.pos.y + params->delta_y},rect.w + params->delta_w,rect.h + params->delta_h});
+        }
+    }
+    else if(currentCommand->type == CompositorCommand::Cancel){
+        auto params = (CompositorCancelCommand *)currentCommand.get();
+        /// Filter commands that have the id in order to cancel execution of them.
+        commandQueue.filter([&](SharedHandle<CompositorCommand> & command){
+            return command->id >= params->startID && command->id <= params->endID;
+        });
     }
 
     currentCommand->status.set(CommandStatus::Ok);

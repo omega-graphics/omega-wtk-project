@@ -52,10 +52,13 @@ private:
     Type type;
 public:
     bool isReady;
-    void resize(Core::Rect &newRect);
+    void resize(const Core::Rect &newRect) override;
     CALayer *getLayer(){ return [_ptr getCALayer];};
     void setNeedsDisplay();
-    void * getBinding();
+    void * getBinding() override;
+    Core::Rect & getRect() override {
+        return rect;
+    }
     explicit CocoaItem(const Core::Rect & rect,Type _type,SharedHandle<CocoaItem> parent);
     ~CocoaItem();
 };

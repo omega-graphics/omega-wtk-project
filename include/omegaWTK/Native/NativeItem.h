@@ -27,7 +27,9 @@ namespace OmegaWTK {
             bool hasEventEmitter();
             void setLayerTreeLimb(NativeLayerTreeLimb *limb){ layerTreelimb = limb;};
 
-            INTERFACE_METHOD void resize(Core::Rect & newRect) ABSTRACT;
+            INTERFACE_METHOD Core::Rect &getRect() ABSTRACT;
+
+            INTERFACE_METHOD void resize(const Core::Rect & newRect) ABSTRACT;
             INTERFACE_METHOD void * getBinding() ABSTRACT;
 
             INTERFACE_METHOD void enable() ABSTRACT;

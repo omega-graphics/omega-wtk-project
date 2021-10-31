@@ -81,7 +81,7 @@ namespace OmegaWTK {
         SharedHandle<Composition::Canvas> makeCanvas(SharedHandle<Composition::Layer> & targetLayer);
 
         Core::Rect & getRect(){ return rect;};
-        Composition::LayerTree::Limb * getLayerTreeLimb(){ return layerTreeLimb.get();};
+        SharedHandle<Composition::LayerTree::Limb> & getLayerTreeLimb(){ return layerTreeLimb;};
         bool isRootView(){return parent_ptr == nullptr;};
         virtual void setDelegate(ViewDelegate *_delegate);
         virtual void resize(Core::Rect newRect);
@@ -156,6 +156,7 @@ namespace OmegaWTK {
     
     class ScrollViewDelegate;
 
+    /// @brief ScrollView
     class OMEGAWTK_EXPORT ScrollView : public View {
         SharedHandle<View> child;
         Core::Rect * childViewRect;
@@ -173,16 +174,59 @@ namespace OmegaWTK {
         ScrollView(const Core::Rect & rect,SharedHandle<View> child,bool hasVericalScrollBar,bool hasHorizontalScrollBar,Composition::LayerTree *layerTree,View *parent = nullptr);
     };
 
-    class OMEGAWTK_EXPORT ScrollViewDelegate : public Native::NativeEventProcessor {
+    INTERFACE OMEGAWTK_EXPORT ScrollViewDelegate : public Native::NativeEventProcessor {
         void onRecieveEvent(Native::NativeEventPtr event);
         friend class ScrollView;
     protected:
         ScrollView *scrollView;
 
-        virtual void onScrollLeft(){};
-        virtual void onScrollRight(){};
-        virtual void onScrollDown(){};
-        virtual void onScrollUp(){};
+        INTERFACE_METHOD void onScrollLeft(){};
+        INTERFACE_METHOD void onScrollRight(){};
+        INTERFACE_METHOD void onScrollDown(){};
+        INTERFACE_METHOD void onScrollUp(){};
+    };
+
+    class OMEGAWTK_EXPORT ClickableViewHandler : public ViewDelegate {
+        std::function<void()> hover_begin_handler,hover_end_handler,click_handler,press_handler,release_handler;
+        void onMouseEnter(Native::NativeEventPtr event) override;
+        void onMouseExit(Native::NativeEventPtr event) override;
+        void onLeftMouseDown(Native::NativeEventPtr event) override;
+        void onLeftMouseUp(Native::NativeEventPtr event) override;
+    public:
+        static SharedHandle<ClickableViewHandler> Create();
+        void onHoverBegin(std::function<void()> handler);
+        void onHoverEnd(std::function<void()> handler);
+        void onPress(std::function<void()> handler);
+        void onRelease(std::function<void()> handler);
+        void onClick(std::function<void()> handler);
+    };
+
+
+    /// @brief TextView
+    class OMEGAWTK_EXPORT TextView : public View {
+
+        SharedHandle<Composition::TextRect> textRect;
+
+        SharedHandle<Composition::Font> font;
+
+        SharedHandle<Composition::Canvas> rootLayerCanvas;
+
+        OmegaWTK::UniString str;
+        bool editMode = false;
+        void pushChar(Unicode32Char & ch);
+        void popChar();
+        void commitChanges();
+        friend class TextViewDelegate;
+    public:
+        void updateFont(SharedHandle<Composition::Font> & font);
+        explicit TextView(const Core::Rect & rect,Composition::LayerTree * layerTree,View * parent,bool io);
+    };
+
+    class OMEGAWTK_EXPORT TextViewDelegate : public ViewDelegate {
+    public:
+        void toggleEdit();
+        bool editMode();
+        OmegaWTK::UniString & getString();
     };
 
 };
