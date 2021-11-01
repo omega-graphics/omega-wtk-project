@@ -1,7 +1,11 @@
 #include "omegaWTK/Core/Core.h"
+#include "Brush.h"
 
 #ifdef TARGET_WIN32
 #include <dwrite.h>
+
+struct ID3D12CommandQueue;
+struct ID3D11On12Device;
 #undef CreateFont
 #pragma comment(lib,"dwrite.lib")
 #endif
@@ -27,33 +31,9 @@
   Create from an Unicode String.
  */
  class OMEGAWTK_EXPORT GlyphRun {
-
-    UChar *content;
-    size_t length;
-
  public:
 
      virtual Core::Rect getBoundingRectOfGlyphAtIndex(size_t glyphIdx) = 0;
-
-
-     /**
-      @brief Updates the Glyph Run's Content
-      @param data[in] Unicode char buffer
-      @param length[in] Unicode char buffer length.
-     */
-     void update(UChar *data,size_t length){
-         this->content = data;
-         this->length = length;
-     };
-
-     /**
-      @brief Updates the Glyph Run's Content
-      @param str[in]
-     */
-     void update(const OmegaWTK::UniString & str){
-         content = (UChar *)str.getBuffer();
-         length = str.length();
-     };
 
      /**
       @brief Creates a Glyph Run from a Unicode String.
@@ -61,6 +41,7 @@
       @returns SharedPtr<GlyphRun>
      */
      static Core::SharedPtr<GlyphRun> fromUStringAndFont(const OmegaWTK::UniString & str,Core::SharedPtr<Font> & font);
+     virtual ~GlyphRun() = default;
  };
 
  /**
@@ -105,7 +86,7 @@
       @param glyphRun[in]
       @paragraph Starts the next glyph at the prior ending position of the last run.
      */
-     virtual void drawRun(Core::SharedPtr<GlyphRun> &glyphRun) = 0;
+     virtual void drawRun(Core::SharedPtr<GlyphRun> &glyphRun,const Composition::Color &color) = 0;
 
      /**
       @brief Creates an empty TextRect from a Rect and a TextLayoutDescriptor.
@@ -114,6 +95,7 @@
       @returns SharedPtr<TextRect>
      */
      static Core::SharedPtr<TextRect> Create(Core::Rect rect,const TextLayoutDescriptor & layoutDesc);
+     virtual ~TextRect() = default;
  protected:
      TextRect(Core::Rect & rect):rect(rect){};
  };
@@ -153,8 +135,11 @@
  */
  class OMEGAWTK_EXPORT  FontEngine {
  #ifdef TARGET_WIN32
+     Core::UniqueComPtr<ID3D11On12Device> d3d11_device;
+     Core::UniqueComPtr<ID3D12CommandQueue> d3d11_on_12_queue;
      Core::UniqueComPtr<IDWriteFactory> dwrite_factory;
      friend class DWriteTextRect;
+     friend class DWriteGlyphRun;
  #endif
  public:
      /**
@@ -179,6 +164,7 @@
      friend class ::OmegaWTK::AppInst;
      static void Create();
      static void Destroy();
+     ~FontEngine();
  };
 
  };

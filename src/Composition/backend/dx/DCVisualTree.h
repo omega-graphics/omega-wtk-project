@@ -18,11 +18,16 @@ class DCVisualTree : public BackendVisualTree {
     typedef BackendVisualTree Parent;
     public:
     struct Visual : public Parent::Visual {
-        IDCompositionVisual2 * visual;
+        IDXGISwapChain3 *swapChain;
+        IDCompositionVisual2 * visual,*parent = nullptr;
         IDCompositionVisual2 * shadowVisual = nullptr;
-        explicit Visual(Core::Position & pos,BackendRenderTargetContext &context, IDCompositionVisual2 * visual);
+        IDCompositionMatrixTransform3D *transformEffect = nullptr;
+        IDCompositionShadowEffect *shadowEffect = nullptr;
+        explicit Visual(Core::Position & pos,BackendRenderTargetContext &context, IDCompositionVisual2 * visual, IDXGISwapChain3 *swapChain);
+        void updateShadowEffect(LayerEffect::DropShadowParams &params) override;
+        void updateTransformEffect(LayerEffect::TransformationParams &params) override;
         void resize(Core::Rect &newRect) override;
-        ~Visual();
+        ~Visual() override;
     };
     explicit DCVisualTree(SharedHandle<ViewRenderTarget> & view);
     void addVisual(Core::SharedPtr<Parent::Visual> & visual) override;

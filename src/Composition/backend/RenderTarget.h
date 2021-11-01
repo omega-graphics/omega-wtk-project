@@ -1,4 +1,3 @@
-#include "omegaWTK/Core/Core.h"
 #include "omegaWTK/Composition/CompositorClient.h"
 #include "omegaWTK/Composition/Canvas.h"
 

@@ -1,6 +1,7 @@
 
 
 #include "../AudioVideoProcessor.h"
+#include "omegaWTK/Media/MediaPlaybackSession.h"
 
 #include <mfidl.h>
 #include <ShlObj.h>
@@ -15,6 +16,9 @@
 #pragma comment(lib,"mfuuid.lib")
 
 namespace OmegaWTK::Media {
+
+
+
 
     class WMFAudioVideoProcessor : public AudioVideoProcessor {
         IMFTransform * transform;
@@ -86,6 +90,7 @@ namespace OmegaWTK::Media {
     }
 
     UniqueHandle<AudioVideoProcessor> avProcessor;
+
 
 
 };

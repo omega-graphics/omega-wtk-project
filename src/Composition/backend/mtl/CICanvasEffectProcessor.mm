@@ -32,7 +32,6 @@ namespace OmegaWTK::Composition{
             [context render:image toMTLTexture:(__bridge id<MTLTexture>)dest->native() commandBuffer:(__bridge id<MTLCommandBuffer>)cb->native() bounds:image.extent colorSpace:CGColorSpaceCreateDeviceRGB()];
             textureTarget->submitCommandBuffer(cb);
             textureTarget->commit();
-            dest = textureTarget->underlyingTexture();
         }
     };
 

@@ -1,0 +1,21 @@
+# Target labels
+ libpng
+# Source files and their labels
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/CMakeFiles/libpng
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/CMakeFiles/libpng.rule
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/CMakeFiles/libpng-complete.rule
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/libpng-prefix/src/libpng-stamp/libpng-build.rule
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/libpng-prefix/src/libpng-stamp/libpng-configure.rule
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/libpng-prefix/src/libpng-stamp/libpng-download.rule
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/libpng-prefix/src/libpng-stamp/libpng-install.rule
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/libpng-prefix/src/libpng-stamp/libpng-mkdir.rule
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/libpng-prefix/src/libpng-stamp/libpng-patch.rule
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/libpng-prefix/src/libpng-stamp/libpng-update.rule
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/CMakeFiles/zlib-complete.rule
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-build.rule
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-configure.rule
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-download.rule
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-install.rule
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-mkdir.rule
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-patch.rule
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/zlib-prefix/src/zlib-stamp/zlib-update.rule
