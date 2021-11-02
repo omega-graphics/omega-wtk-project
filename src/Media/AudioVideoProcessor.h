@@ -9,7 +9,7 @@ namespace OmegaWTK::Media {
         H265
     };
 
-    struct EncodedAudioVideoFrame {
+    struct EncodedVideoFrame {
        void *encoded_core_data;
        size_t core_data_size;
     };
@@ -29,14 +29,14 @@ namespace OmegaWTK::Media {
         INTERFACE_METHOD void endDecode()ABSTRACT;
 
         struct EncodeFrameParams {
-            AudioVideoFrame & src;
-            EncodedAudioVideoFrame & dest;
+            VideoFrame & src;
+            EncodedVideoFrame & dest;
         };
         INTERFACE_METHOD void encodeFrame(EncodeFrameParams params)ABSTRACT;
 
         struct DecodeFrameParams {
-            EncodedAudioVideoFrame & src;
-            AudioVideoFrame & dest;
+            EncodedVideoFrame & src;
+            VideoFrame & dest;
         };
         INTERFACE_METHOD void decodeFrame(DecodeFrameParams params)ABSTRACT;
 

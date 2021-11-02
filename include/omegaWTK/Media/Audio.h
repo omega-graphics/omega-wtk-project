@@ -1,7 +1,9 @@
 #include "omegaWTK/Core/Core.h"
 
-#ifndef OMEGAWTK_MEDIA_AUDIOCAPTURE_H
-#define OMEGAWTK_MEDIA_AUDIOCAPTURE_H
+#include "MediaIO.h"
+
+#ifndef OMEGAWTK_MEDIA_AUDIO_H
+#define OMEGAWTK_MEDIA_AUDIO_H
 
 namespace OmegaWTK::Media {
     class AudioCaptureSession;
@@ -17,13 +19,10 @@ namespace OmegaWTK::Media {
 
     OMEGAWTK_EXPORT OmegaCommon::Vector<SharedHandle<AudioPlaybackDevice>> enumerateAudioPlaybackDevices();
 
-    typedef std::istream AudioInputStream;
-    typedef std::ostream AudioOutputStream;
-
     class AudioCaptureSession {
     public:
         virtual void setAudioPlaybackDeviceForPreview(SharedHandle<AudioPlaybackDevice> & device) = 0;
-        virtual void setAudioOutputStream(AudioOutputStream & outputStream) = 0;
+        virtual void setAudioOutputStream(MediaOutputStream & outputStream) = 0;
         virtual void startPreview() = 0;
         virtual void startRecord() = 0;
         virtual void stopRecord() = 0;

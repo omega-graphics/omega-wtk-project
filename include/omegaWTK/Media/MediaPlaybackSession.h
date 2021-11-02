@@ -7,10 +7,13 @@
 
 namespace OmegaWTK::Media {
 
-    INTERFACE OMEGAWTK_EXPORT AudioPlaybackSession {
+    class PlaybackDispatchQueue;
+    OMEGAWTK_EXPORT SharedHandle<PlaybackDispatchQueue> createPlaybackDispatchQueue();
+
+    INTERFACE OMEGAWTK_EXPORT AudioPlaybackSession : public AudioVideoProcessorContext{
     public:
-        static SharedHandle<AudioPlaybackSession> Create();
-        INTERFACE_METHOD void setAudioSource(AudioInputStream &inputStream) ABSTRACT;
+        static SharedHandle<AudioPlaybackSession> Create(SharedHandle<PlaybackDispatchQueue> & dispatchQueue);
+        INTERFACE_METHOD void setAudioSource(MediaInputStream &inputStream) ABSTRACT;
         INTERFACE_METHOD void setAudioPlaybackDevice(SharedHandle<AudioPlaybackDevice> & device) ABSTRACT;
         INTERFACE_METHOD void start() ABSTRACT;
         INTERFACE_METHOD void pause() ABSTRACT;
@@ -18,10 +21,10 @@ namespace OmegaWTK::Media {
         INTERFACE_METHOD ~AudioPlaybackSession() = default;
     };
 
-    INTERFACE OMEGAWTK_EXPORT VideoPlaybackSession {
+    INTERFACE OMEGAWTK_EXPORT VideoPlaybackSession  : public AudioVideoProcessorContext{
     public:
-        static SharedHandle<VideoPlaybackSession> Create();
-        INTERFACE_METHOD void setVideoSource(VideoInputStream & inputStream) ABSTRACT;
+        static SharedHandle<VideoPlaybackSession> Create(SharedHandle<PlaybackDispatchQueue> & dispatchQueue);
+        INTERFACE_METHOD void setVideoSource(MediaInputStream & inputStream) ABSTRACT;
         INTERFACE_METHOD void setVideoFrameSink(VideoFrameSink & sink) ABSTRACT
         INTERFACE_METHOD void setAudioPlaybackDevice(SharedHandle<AudioPlaybackDevice> & device) ABSTRACT;
         INTERFACE_METHOD void start() ABSTRACT;

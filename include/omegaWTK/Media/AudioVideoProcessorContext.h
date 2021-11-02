@@ -1,32 +1,36 @@
 #include "omegaWTK/Core/Core.h"
 #include "omegaWTK/Media/ImgCodec.h"
 
+#include <chrono>
+
 #ifndef OMEGAWTK_MEDIA_AUDIOVIDEOPROCESSORCONTEXT_H
 #define  OMEGAWTK_MEDIA_AUDIOVIDEOPROCESSORCONTEXT_H
 
 namespace OmegaWTK {
     namespace Media {
 
-        struct AudioVideoFrame {
+        typedef std::chrono::high_resolution_clock::time_point TimePoint;
+
+        struct VideoFrame {
             BitmapImage videoFrame;
-            struct {
-                void *data;
-                size_t length;
-            } audioFrame;
+            TimePoint decodeFinishTime;
+            TimePoint presentTime;
         };
 
         INTERFACE VideoFrameSink {
-
+        public:
+            INTERFACE_METHOD bool framebuffered() const ABSTRACT;
+            INTERFACE_METHOD void pushFrame(SharedHandle<VideoFrame> frame) ABSTRACT;
+            INTERFACE_METHOD void presentCurrentFrame() ABSTRACT;
+            INTERFACE_METHOD void flush() ABSTRACT;
         };
 
         class AudioVideoProcessor;
 
         class AudioVideoProcessorContext {
-            AudioVideoProcessor *processor;
         protected:
-            void setFrameSink(VideoFrameSink & sink);
+            AudioVideoProcessor *processor;
         };
-
     };
 };
 
