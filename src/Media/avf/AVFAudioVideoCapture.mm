@@ -5,6 +5,9 @@
 #import <AVFoundation/AVFoundation.h>
 #import <AVFAudio/AVFAudio.h>
 
+#include <mutex>
+#include <thread>
+
 
 @interface OmegaWTKMediaAVFAudioCaptureSampleBufferDelegate : NSObject <AVCaptureAudioDataOutputSampleBufferDelegate> {
     void *context;
@@ -61,9 +64,90 @@ namespace OmegaWTK::Media {
     }
 
 
+    typedef UniqueHandle<AudioVideoProcessor> & AudioVideoProcessorRef;
+
+    void AudioVideoProcessor_SetEncodeMode(AudioVideoProcessorRef processor,CMVideoCodecType codec);
+    void AudioVideoProcessor_SetDecodeMode(AudioVideoProcessorRef processor,CMVideoFormatDescriptionRef decodeFormat);
+    void AudioVideoProcessor_Encode(AudioVideoProcessorRef processor,CMSampleBufferRef input,CMSampleBufferRef *output);
+    void AudioVideoProcessor_Decode(AudioVideoProcessorRef processor,CMSampleBufferRef input,CMSampleBufferRef *output);
+
     class PlaybackDispatchQueue {
     public:
+        struct Client {
+            bool audioOrVideo;
+            bool skipPlease = true;
+            AVSampleBufferRequest *sampleBufferRequest;
+            AVSampleBufferGenerator *generator;
+            AVSampleBufferAudioRenderer *audioRenderer;
+            AVSampleCursor *cursor;
+            bool useProcessor;
+            AudioVideoProcessor *processor;
+            VideoFrameSink *videoSink;
+        };
+    private:
+        std::mutex mutex;
+        OmegaCommon::Vector<Client> clients;
+        bool finish = false;
+        std::thread t;
+    public:
+        void addClient(const Client &client){
+            std::lock_guard<std::mutex> lk(mutex);
+            clients.push_back(client);
+        }
+        void startPlaybackForClient(Client &client){
+            std::lock_guard<std::mutex> lk(mutex);
+            auto f = std::find(clients.begin(),clients.end(),client);
+            if(f != clients.end()){
+                f->skipPlease = false;
+            }
+        }
+        void stopPlaybackForClient(Client &client){
+            std::lock_guard<std::mutex> lk(mutex);
+            auto f = std::find(clients.begin(),clients.end(),client);
+            if(f != clients.end()){
+                f->skipPlease = true;
+            }
+        }
+        explicit PlaybackDispatchQueue():mutex(),t([&]{
 
+            while(!finish){
+                {
+                    std::unique_lock<std::mutex> lk(mutex);
+                    auto clients_size = clients.empty();
+                    if(!clients_size){
+                        for(auto & cl : clients){
+
+                            if(cl.skipPlease){
+                                continue;
+                            }
+
+                            CMSampleBufferRef sampleBuffer = [cl.generator createSampleBufferForRequest:cl.sampleBufferRequest];
+                            if(cl.audioOrVideo){
+                                /// Render Audio
+                                [cl.audioRenderer enqueueSampleBuffer:sampleBuffer];
+                            }
+                            else {
+                                /// Render Video
+                                if(cl.useProcessor){
+
+                                }
+                                else {
+
+                                }
+                            }
+                            [cl.cursor stepInDecodeOrderByCount:1];
+                        }
+                    }
+                    lk.unlock();
+                }
+            }
+        }){
+
+        }
+        ~PlaybackDispatchQueue(){
+            finish = true;
+            t.join();
+        }
     };
 
     SharedHandle<PlaybackDispatchQueue> createPlaybackDispatchQueue() {
