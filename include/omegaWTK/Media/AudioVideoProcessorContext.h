@@ -27,9 +27,14 @@ namespace OmegaWTK {
 
         class AudioVideoProcessor;
 
+        OMEGAWTK_EXPORT UniqueHandle<AudioVideoProcessor> createAudioVideoProcessor(bool useHardwareAccel,void *gteDevice);
+
         class AudioVideoProcessorContext {
         protected:
             AudioVideoProcessor *processor;
+            explicit AudioVideoProcessorContext(UniqueHandle<AudioVideoProcessor> & processor){
+                this->processor = processor.get();
+            };
         };
     };
 };

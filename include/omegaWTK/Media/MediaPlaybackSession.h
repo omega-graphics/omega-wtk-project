@@ -11,8 +11,11 @@ namespace OmegaWTK::Media {
     OMEGAWTK_EXPORT SharedHandle<PlaybackDispatchQueue> createPlaybackDispatchQueue();
 
     INTERFACE OMEGAWTK_EXPORT AudioPlaybackSession : public AudioVideoProcessorContext{
+    protected:
+        explicit AudioPlaybackSession(UniqueHandle<AudioVideoProcessor> & processor) : AudioVideoProcessorContext(processor){}
     public:
-        static SharedHandle<AudioPlaybackSession> Create(SharedHandle<PlaybackDispatchQueue> & dispatchQueue);
+        static SharedHandle<AudioPlaybackSession> Create(UniqueHandle<AudioVideoProcessor> & processor,
+                                                         SharedHandle<PlaybackDispatchQueue> & dispatchQueue);
         INTERFACE_METHOD void setAudioSource(MediaInputStream &inputStream) ABSTRACT;
         INTERFACE_METHOD void setAudioPlaybackDevice(SharedHandle<AudioPlaybackDevice> & device) ABSTRACT;
         INTERFACE_METHOD void start() ABSTRACT;
@@ -22,8 +25,11 @@ namespace OmegaWTK::Media {
     };
 
     INTERFACE OMEGAWTK_EXPORT VideoPlaybackSession  : public AudioVideoProcessorContext{
+    protected:
+        explicit VideoPlaybackSession(UniqueHandle<AudioVideoProcessor> & processor) : AudioVideoProcessorContext(processor){}
     public:
-        static SharedHandle<VideoPlaybackSession> Create(SharedHandle<PlaybackDispatchQueue> & dispatchQueue);
+        static SharedHandle<VideoPlaybackSession> Create(UniqueHandle<AudioVideoProcessor> & processor,
+                                                         SharedHandle<PlaybackDispatchQueue> & dispatchQueue);
         INTERFACE_METHOD void setVideoSource(MediaInputStream & inputStream) ABSTRACT;
         INTERFACE_METHOD void setVideoFrameSink(VideoFrameSink & sink) ABSTRACT
         INTERFACE_METHOD void setAudioPlaybackDevice(SharedHandle<AudioPlaybackDevice> & device) ABSTRACT;

@@ -1,0 +1,67 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/CMakeFiles/libxml2"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/CMakeFiles/libxml2.rule"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/CMakeFiles/libxml2-complete.rule"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/libxml2-prefix/src/libxml2-stamp/libxml2-build.rule"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/libxml2-prefix/src/libxml2-stamp/libxml2-configure.rule"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/libxml2-prefix/src/libxml2-stamp/libxml2-download.rule"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/libxml2-prefix/src/libxml2-stamp/libxml2-install.rule"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/libxml2-prefix/src/libxml2-stamp/libxml2-mkdir.rule"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/libxml2-prefix/src/libxml2-stamp/libxml2-patch.rule"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/libxml2-prefix/src/libxml2-stamp/libxml2-update.rule"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/CMakeFiles/icu-complete.rule"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-build.rule"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-configure.rule"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-download.rule"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-install.rule"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-mkdir.rule"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-patch.rule"
+		},
+		{
+			"file" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/icu-prefix/src/icu-stamp/icu-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"libxml2"
+		],
+		"name" : "libxml2"
+	}
+}

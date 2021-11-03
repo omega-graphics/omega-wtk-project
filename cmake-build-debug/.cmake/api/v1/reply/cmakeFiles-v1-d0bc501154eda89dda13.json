@@ -1,0 +1,220 @@
+{
+	"inputs" : 
+	[
+		{
+			"path" : "CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/alex/Documents/GitHub/autom/tools/cmake/OmegaGraphicsSuite.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/CMakeParseArguments.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/ExternalProject.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.20.2/CMakeSystem.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/CMakeSystemSpecificInitialize.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.20.2/CMakeCXXCompiler.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/CMakeSystemSpecificInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/CMakeGenericSystem.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/CMakeInitializeConfigs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/Platform/Windows.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/Platform/WindowsPaths.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/CMakeCXXInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/CMakeLanguageInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/Compiler/Clang-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/Compiler/Clang.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/Platform/Windows-Clang-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/Platform/Windows-Clang.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/Platform/Windows-MSVC.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.20.2/CMakeRCCompiler.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/CMakeRCInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/CMakeCommonLanguageInclude.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/icu-prefix/tmp/icu-cfgcmd.txt.in"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/libxml2-prefix/tmp/libxml2-cfgcmd.txt.in"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/zlib-prefix/tmp/zlib-cfgcmd.txt.in"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/libpng-prefix/tmp/libpng-cfgcmd.txt.in"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/libjpeg-turbo-prefix/tmp/libjpeg-turbo-cfgcmd.txt.in"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/libtiff-prefix/tmp/libtiff-cfgcmd.txt.in"
+		},
+		{
+			"path" : "src/Info.plist.in"
+		},
+		{
+			"path" : "gte/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/alex/Documents/GitHub/autom/tools/cmake/OmegaGraphicsSuite.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/CMakeParseArguments.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/ExternalProject.cmake"
+		},
+		{
+			"path" : "gte/OmegaGTE.cmake"
+		},
+		{
+			"path" : "gte/src/Info.plist.in"
+		},
+		{
+			"path" : "gte/common/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/alex/Documents/GitHub/autom/tools/cmake/OmegaGraphicsSuite.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/CMakeParseArguments.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/ExternalProject.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/alex/Documents/GitHub/autom/tools/cmake/OmegaGraphicsSuite.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/CMakeParseArguments.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/ExternalProject.cmake"
+		},
+		{
+			"path" : "gte/common/src/Info.plist.in"
+		},
+		{
+			"path" : "gte/tests/CMakeLists.txt"
+		},
+		{
+			"path" : "gte/tests/directx/CMakeLists.txt"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/alex/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/212.5457.51/bin/cmake/win/share/cmake-3.20/Modules/CMakeParseArguments.cmake"
+		}
+	],
+	"kind" : "cmakeFiles",
+	"paths" : 
+	{
+		"build" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug",
+		"source" : "C:/Users/alex/Documents/GitHub/wtk"
+	},
+	"version" : 
+	{
+		"major" : 1,
+		"minor" : 0
+	}
+}

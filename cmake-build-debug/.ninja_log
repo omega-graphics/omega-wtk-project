@@ -1,0 +1,10 @@
+# ninja log v5
+0	279	6575632152335130	icu-prefix/src/icu-stamp/icu-mkdir	523fba0dcb93ac1f
+392	502	6575632154522177	icu-prefix/src/icu-stamp/icu-update	3f9de3b9460adffd
+613	722	6575632156709158	icu-prefix/src/icu-stamp/icu-configure	cbdecd942a49b4a5
+281	392	6575632153428682	icu-prefix/src/icu-stamp/icu-download	67cf0ee1788d6e5e
+722	19946	6575632349026610	icu-prefix/src/icu-stamp/icu-build	d2101edf32df48d0
+502	613	6575632155615667	icu-prefix/src/icu-stamp/icu-patch	2c6d53fc90aadf3c
+19960	21155	6575632361055009	icu-prefix/src/icu-stamp/icu-install	9d84ab0cda2c491f
+21155	21202	6575632361523665	CMakeFiles/icu-complete	69c57f00b2c562b1
+21155	21202	6575632361523665	icu-prefix/src/icu-stamp/icu-done	69c57f00b2c562b1

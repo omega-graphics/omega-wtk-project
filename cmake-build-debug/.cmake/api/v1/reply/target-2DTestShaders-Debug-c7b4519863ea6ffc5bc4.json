@@ -1,0 +1,81 @@
+{
+	"backtrace" : 2,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_custom_target",
+			"add_omegasl_lib"
+		],
+		"files" : 
+		[
+			"gte/OmegaGTE.cmake",
+			"gte/tests/directx/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 13,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 9,
+				"parent" : 1
+			}
+		]
+	},
+	"id" : "2DTestShaders::@1068e990317ade5b2c22",
+	"name" : "2DTestShaders",
+	"paths" : 
+	{
+		"build" : "gte/tests/directx",
+		"source" : "gte/tests/directx"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		},
+		{
+			"name" : "CMake Rules",
+			"sourceIndexes" : 
+			[
+				1,
+				2
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 2,
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/gte/tests/directx/CMakeFiles/2DTestShaders",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/gte/tests/directx/CMakeFiles/2DTestShaders.rule",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/gte/tests/directx/shaders.omegasllib.rule",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "UTILITY"
+}
