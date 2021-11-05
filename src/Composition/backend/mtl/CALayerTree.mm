@@ -50,7 +50,7 @@ SharedHandle<BackendVisualTree> BackendVisualTree::Create(SharedHandle<ViewRende
      layer.anchorPoint = CGPointMake(0.f,0.f);
      layer.position = CGPointMake(pos.x,pos.y);
 
-     OmegaGTE::NativeRenderTargetDescriptor nativeRenderTargetDescriptor {layer};
+     OmegaGTE::NativeRenderTargetDescriptor nativeRenderTargetDescriptor {false,layer};
 
      auto target = gte.graphicsEngine->makeNativeRenderTarget(nativeRenderTargetDescriptor);
 

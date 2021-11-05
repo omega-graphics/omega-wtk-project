@@ -37,7 +37,7 @@ void Compositor::executeCurrentCommand(){
             auto v = target->visualTree->makeVisual(layer->getLayerRect(),layer->getLayerRect().pos);
             if(layer->isChildLayer()){
                 if(!target->visualTree->hasRootVisual()){
-                    auto * treeRoot = layer->getParentLimb()->getRootLayer();
+                    auto treeRoot = layer->getParentLimb()->getRootLayer();
                     auto root_v = target->visualTree->makeVisual(treeRoot->getLayerRect(),treeRoot->getLayerRect().pos);
                     target->visualTree->setRootVisual(root_v);
                 }

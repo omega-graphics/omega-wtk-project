@@ -52,7 +52,8 @@ add_third_party(
 	&& ${CMAKE_COMMAND} -E copy "${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/lib64/icuuc.lib" "${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/lib64/icudt.lib" "${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/lib64/icuin.lib" "${THIRD_PARTY_OUTPUT_DIR}/icu/lib")
 
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/icu/include")
-	
+
+	set(ICU_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/icu/lib/icuuc.lib" "${THIRD_PARTY_OUTPUT_DIR}/icu/lib/icudt.lib" "${THIRD_PARTY_OUTPUT_DIR}/icu/lib/icuin.lib")
 
 else()
 add_third_party(
@@ -66,6 +67,11 @@ add_third_party(
 	INSTALL make install)
 
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/icu/include")
+
+	if(TARGET_MACOS)
+		set(ICU_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/icu/lib/libicuuc.dylib" "${THIRD_PARTY_OUTPUT_DIR}/icu/lib/libicudata.dylib" "${THIRD_PARTY_OUTPUT_DIR}/icu/lib/libicui18n.dylib")
+	else()
+	endif()
 	
 endif()
 
@@ -75,7 +81,7 @@ add_third_party(
 	SOURCE_DIR "${THIRD_PARTY_SRC_DIR}/libxml2/code" 
 	BINARY_DIR "${THIRD_PARTY_OUTPUT_DIR}/temp/libxml2"
 	INSTALL_DIR "${THIRD_PARTY_OUTPUT_DIR}/libxml2"
-	CMAKE_BUILD_ARGS -DLIBXML2_WITH_PYTHON=FALSE -DLIBXML2_WITH_ICU=TRUE -DLIBXML2_WITH_ICONV=FALSE -DLIBXML2_WITH_LZMA=FALSE -DCMAKE_PREFIX_PATH=${THIRD_PARTY_OUTPUT_DIR}/zlib -DCMAKE_C_FLAGS="-I${THIRD_PARTY_OUTPUT_DIR}/icu/include"
+	CMAKE_BUILD_ARGS -DLIBXML2_WITH_PYTHON=FALSE -DLIBXML2_WITH_ICU=TRUE -DLIBXML2_WITH_ICONV=FALSE -DLIBXML2_WITH_LZMA=FALSE -DCMAKE_PREFIX_PATH=${THIRD_PARTY_OUTPUT_DIR}/icu -DCMAKE_C_FLAGS="-I${THIRD_PARTY_OUTPUT_DIR}/icu/include"
 	DEPS icu)
 	
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/libxml2/include/libxml2")
@@ -222,13 +228,13 @@ if(TARGET_MACOS)
 endif()
 target_include_directories("OmegaWTK" PUBLIC ${THIRD_PARTY_INCLUDEDIRS} $<TARGET_PROPERTY:OmegaCommon,INCLUDE_DIRECTORIES> )
 if(TARGET_MACOS)
-	target_link_system_frameworks("OmegaWTK" Metal Cocoa QuartzCore AVFoundation VideoToolbox AudioToolbox)
+	target_link_system_frameworks("OmegaWTK" Metal Cocoa QuartzCore AVFoundation VideoToolbox AudioToolbox CoreMedia CoreAudio)
 	target_link_frameworks("OmegaWTK" OmegaGTE)
 else()
 	target_link_libraries("OmegaWTK" PUBLIC OmegaGTE)
 	target_include_directories("OmegaWTK" PUBLIC $<TARGET_PROPERTY:OmegaGTE,INCLUDE_DIRECTORIES>)
 endif()
-target_link_libraries("OmegaWTK" PUBLIC "OmegaCommon" ${LIBXML2_EXPORT} ${LIBPNG_EXPORT} ${LIBJPEGTURBO_EXPORT} ${LIBTIFF_EXPORT})
+target_link_libraries("OmegaWTK" PUBLIC "OmegaCommon" ${ICU_EXPORT} ${LIBXML2_EXPORT} ${LIBPNG_EXPORT} ${LIBJPEGTURBO_EXPORT} ${LIBTIFF_EXPORT})
 
 if(TARGET_WIN32)
 	target_compile_definitions("OmegaWTK" PRIVATE WINDOWS_PRIVATE)
@@ -252,4 +258,4 @@ if(TARGET_LINUX)
 	target_link_libraries("OmegaWTK" PUBLIC ${GTK3_LIBRARIES} ${FFMPEG_LIBRARIES})
 endif()
 
-# add_subdirectory(tests)
+ add_subdirectory(tests)

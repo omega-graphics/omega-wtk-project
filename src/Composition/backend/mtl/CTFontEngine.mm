@@ -19,6 +19,8 @@ namespace OmegaWTK::Composition {
     
  };
 
+ FontEngine::~FontEngine() = default;
+
  void FontEngine::Create(){
          instance = new FontEngine();
      };
@@ -26,6 +28,8 @@ namespace OmegaWTK::Composition {
      void FontEngine::Destroy(){
          delete instance;
      };
+
+
 
  class CoreTextFont : public Font {
      CTFontRef native;
@@ -36,6 +40,25 @@ namespace OmegaWTK::Composition {
          return (void *)native;
      };
  };
+
+class CTGlyphRun : public GlyphRun {
+public:
+    NSAttributedString *str;
+    Core::SharedPtr<CoreTextFont> font;
+
+    Core::Rect getBoundingRectOfGlyphAtIndex(size_t glyphIdx) override {
+        return {};
+    }
+
+};
+
+Core::SharedPtr<GlyphRun>
+GlyphRun::fromUStringAndFont(const OmegaWTK::UniString &str, Core::SharedPtr<Font> &font) {
+    auto run = new CTGlyphRun();
+    run->str = [[NSAttributedString alloc] initWithString:[NSString stringWithCharacters:(const unichar *)str.getBuffer() length:str.length()]];
+    run->font = std::dynamic_pointer_cast<CoreTextFont>(font);
+    return (Core::SharedPtr<GlyphRun>)run;
+}
 
  class CTTextRect : public TextRect {
      CTFramesetterRef framesetterRef;
@@ -136,12 +159,18 @@ namespace OmegaWTK::Composition {
          // frame = CTFramesetterCreateFrame(framesetterRef,CFRangeMake(0,0),CGPathCreateWithRect(CGRectMake(ftextRect.pos.x,ftextRect.pos.y, ftextRect.w, ftextRect.h),NULL),NULL);
          // CFRetain(frame);
      };
+     void drawRun(Core::SharedPtr<GlyphRun> &glyphRun, const Composition::Color &color) override {
+          // Draw Text to CGBitmap!
+          framesetterRef = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)strData);
+          frame = CTFramesetterCreateFrame(framesetterRef,CFRangeMake(0,0),CGPathCreateWithRect(CGRectMake(rect.pos.x,rect.pos.y,rect.w,rect.h),NULL),NULL);
+          CFRetain(frame);
+     }
      void * getNative(){
          return (void *)frame;
      };
      void getGlyphBoundingBoxes(Core::Rect **rects, unsigned * count){
          *count = 0;
-         CoreTextFont *fontRef = (CoreTextFont *)font.get();
+         CoreTextFont *fontRef = nullptr;
          CFArrayRef lines = CTFrameGetLines(frame);
          for(unsigned idx = 0;idx < CFArrayGetCount(lines);idx++){
              CTLineRef line = (CTLineRef)CFArrayGetValueAtIndex(lines,idx);
@@ -158,7 +187,7 @@ namespace OmegaWTK::Composition {
      // void reload() {
         
      // };
-     OmegaGTE::SharedHandle<OmegaGTE::GETexture> toBitmap(){
+     OmegaGTE::SharedHandle<OmegaGTE::GETexture> toBitmap() override{
          CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
          void *data = new unsigned char[rect.w * rect.h * scaleFactor * scaleFactor];
          CGContextRef context = CGBitmapContextCreate(data,rect.w * scaleFactor,rect.h * scaleFactor,8,rect.w * 4 * 8,CGColorSpaceCreateDeviceRGB(),0);

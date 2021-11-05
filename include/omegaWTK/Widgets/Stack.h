@@ -1,7 +1,7 @@
 #include "omegaWTK/UI/Widget.h"
 
-#ifndef OMEGAWTK_UI_STACK_H
-#define OMEGAWTK_UI_STACK_H
+#ifndef OMEGAWTK_WIDGETS_STACK_H
+#define OMEGAWTK_WIDGETS_STACK_H
 
 namespace OmegaWTK::UI {
     template<class _Ty>

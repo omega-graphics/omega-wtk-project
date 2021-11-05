@@ -67,6 +67,14 @@ void Canvas::drawRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush){
     current->currentVisuals.push_back(VisualCommand {VisualCommand::Rect,new VisualCommand::RectParams {rect,brush}});
 };
 
+void Canvas::drawImage(SharedHandle<Media::BitmapImage> &img,const Core::Rect & rect) {
+
+}
+
+void Canvas::drawGETexture(OmegaGTE::SharedHandle<OmegaGTE::GETexture> &img,const Core::Rect & rect) {
+
+}
+
 SharedHandle<CanvasFrame> Canvas::getCurrentFrame() {
     return current;
 }

@@ -1,7 +1,7 @@
 #include "omegaWTK/UI/Widget.h"
 
-#ifndef OMEGAWTK_UI_LAYOUT_H
-#define OMEGAWTK_UI_LAYOUT_H
+#ifndef OMEGAWTK_WIDGETS_LAYOUT_H
+#define OMEGAWTK_WIDGETS_LAYOUT_H
 
 namespace OmegaWTK {
 

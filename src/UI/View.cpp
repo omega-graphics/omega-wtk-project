@@ -85,6 +85,14 @@ SharedHandle<Composition::Canvas> View::makeCanvas(SharedHandle<Composition::Lay
     return std::make_shared<Composition::Canvas>(proxy,*targetLayer);
 }
 
+void View::startCompositionSession(){
+    proxy.beginRecord();
+}
+
+void View::endCompositionSession(){
+    proxy.endRecord();
+}
+
 View::~View(){
     std::cout << "View will destruct" << std::endl;
 };
@@ -243,7 +251,7 @@ void TextView::popChar() {
 
 void TextView::commitChanges() {
     auto run = Composition::GlyphRun::fromUStringAndFont(str,font);
-    textRect->drawRun(run);
+    textRect->drawRun(run,Composition::Color::create8Bit(Composition::Color::Eight::Black8));
     auto img = textRect->toBitmap();
     rootLayerCanvas->drawGETexture(img,getRect());
     rootLayerCanvas->sendFrame();

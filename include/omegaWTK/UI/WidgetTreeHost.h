@@ -30,7 +30,7 @@ namespace OmegaWTK {
 
         Composition::Compositor *compPtr(){return compositor;};
 
-        static WidgetTreeHost * Create();
+        static SharedHandle<WidgetTreeHost> Create();
 
         /**
          @brief Set the root of the Widget tree.

@@ -6,6 +6,8 @@
 add_executable(BasicAppTest BasicAppTest/main.cpp)
 add_dependencies(BasicAppTest "OmegaWTK")
 if(TARGET_MACOS)
+    target_include_directories(BasicAppTest PRIVATE "include" "gte/include" "gte/common/include" "${CMAKE_BINARY_DIR}/deps/icu/include")
+    target_compile_definitions(BasicAppTest PRIVATE TARGET_MACOS)
     add_dependencies(BasicAppTest "OmegaWTK.framework")
     target_sources(BasicAppTest PRIVATE ${CMAKE_SOURCE_DIR}/target/macos/main.mm)
     target_link_frameworks(BasicAppTest "OmegaWTK")

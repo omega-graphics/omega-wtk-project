@@ -188,12 +188,12 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
         auto constBuffer = gte.graphicsEngine->makeBuffer(bufferDescriptor);
 
 
-        bufferWriter->setOutputBuffer(constBuffer);
-        bufferWriter->structBegin();
-        bufferWriter->writeFloat(gradient.angle);
-        bufferWriter->structEnd();
-        bufferWriter->sendToBuffer();
-        bufferWriter->flush();
+//        bufferWriter->setOutputBuffer(constBuffer);
+//        bufferWriter->structBegin();
+//        bufferWriter->writeFloat(gradient);
+//        bufferWriter->structEnd();
+//        bufferWriter->sendToBuffer();
+//        bufferWriter->flush();
 
         structSize =  OmegaGTE::omegaSLStructSize({OMEGASL_FLOAT,OMEGASL_FLOAT4});
 

@@ -12,8 +12,8 @@ namespace OmegaWTK {
         delete compositor;
     };
 
-    WidgetTreeHost * WidgetTreeHost::Create(){
-        return new WidgetTreeHost();
+    SharedHandle<WidgetTreeHost> WidgetTreeHost::Create(){
+        return SharedHandle<WidgetTreeHost>(new WidgetTreeHost());
     };
 
     void WidgetTreeHost::attachToWindow(AppWindow * window){

@@ -21,6 +21,7 @@ namespace OmegaWTK {
     class AppInst;
     class ViewDelegate;
     class ScrollView;
+
     /**
         @brief Controls all the basic functionality of a Widget!
         Sometimes referred to as the CanvasView.
@@ -75,17 +76,42 @@ namespace OmegaWTK {
          */
         View(const Core::Rect & rect,Composition::LayerTree *layerTree,View *parent = nullptr);
     public:
-
+        /**
+         * @brief Create A Layer
+         * @param rect The Rectangle defining the bounds of the layer.
+         * @returns Layer*/
         SharedHandle<Composition::Layer> makeLayer(Core::Rect rect);
 
+        /**
+         * @brief Create a Canvas that renders to CanvasFrames compatible with a Layer.
+         * @param targetLayer The Layer to target.
+         * @returns Canvas*/
         SharedHandle<Composition::Canvas> makeCanvas(SharedHandle<Composition::Layer> & targetLayer);
 
+        /// @brief Retrieves the Rect that defines the position and bounds of the View.
         Core::Rect & getRect(){ return rect;};
+        /// @brief Retrieves the corresponding limb bound to this View on the parent's Widget's LayerTree.
         SharedHandle<Composition::LayerTree::Limb> & getLayerTreeLimb(){ return layerTreeLimb;};
+        /// @brief Checks to see if this View is the root View of a Widget.
         bool isRootView(){return parent_ptr == nullptr;};
+
+        /// @brief Sets the object to recieve View related events.
         virtual void setDelegate(ViewDelegate *_delegate);
+
+        /// @brief Resize the view synchronously.
+        /// @note If you wish to animate the View resize, please use the ViewAnimator to perform that action.
         virtual void resize(Core::Rect newRect);
-        void commitRender();
+
+        /// @brief Starts a Composition Session for this View.
+        /// @paragraph Upon invocation, this will allow Canvases to render to child Layers in the corresponding LayerTree::Limb
+        /// and it will allow submission of render and animation commands from the child LayerAnimators and ViewAnimator.
+        /// If one attempts to try animate or render to the View or any child Layers without calling this method FIRST, will recieve an access error.
+        void startCompositionSession();
+
+        /// @brief Ends a Composition Session for this View.
+        /// @paragraph This method closes the submission queue of all render commands and submits them to the Compositor.
+        /// Any commands posted to the CompositorClientProxy after invocation of this method will be ignored and an access error will be thrown.
+        void endCompositionSession();
         ~View();
     };
 

@@ -3,7 +3,7 @@
 
 int main(int argc,const char * argv[]){
     auto * app = new OmegaWTK::AppInst(nullptr);
-    omegaWTKMain(app);
+    auto rc = omegaWTKMain(app);
     delete app;
-    return 0;
+    return rc;
 };

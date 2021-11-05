@@ -90,23 +90,21 @@ namespace OmegaWTK::Media {
         bool finish = false;
         std::thread t;
     public:
-        void addClient(const Client &client){
+        size_t addClient(const Client &client){
             std::lock_guard<std::mutex> lk(mutex);
             clients.push_back(client);
+            return clients.size() - 1;
         }
-        void startPlaybackForClient(Client &client){
+        void startPlaybackForClient(size_t idx){
             std::lock_guard<std::mutex> lk(mutex);
-            auto f = std::find(clients.begin(),clients.end(),client);
-            if(f != clients.end()){
-                f->skipPlease = false;
-            }
+            clients[idx].skipPlease = false;
         }
-        void stopPlaybackForClient(Client &client){
+        void stopPlaybackForClient(size_t idx){
             std::lock_guard<std::mutex> lk(mutex);
-            auto f = std::find(clients.begin(),clients.end(),client);
-            if(f != clients.end()){
-                f->skipPlease = true;
-            }
+            clients[idx].skipPlease = true;
+        }
+        void removeClient(size_t idx){
+            clients.erase(clients.cbegin() + idx);
         }
         explicit PlaybackDispatchQueue():mutex(),t([&]{
 
@@ -131,8 +129,27 @@ namespace OmegaWTK::Media {
                                 if(cl.useProcessor){
 
                                 }
-                                else {
 
+                                auto frame = std::make_shared<VideoFrame>();
+                                CMBlockBufferRef blockBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
+                                size_t offsetOut,length;
+                                ImgByte *data;
+                                CMBlockBufferGetDataPointer(blockBuffer,0,&offsetOut,&length,(char **)&data);
+                                frame->videoFrame.data = data;
+                                CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+                                auto size = CVImageBufferGetDisplaySize(imageBuffer);
+                                frame->videoFrame.header = std::make_unique<ImgHeader>();
+                                frame->videoFrame.header->width = (unsigned)size.width;
+                                frame->videoFrame.header->height = (unsigned)size.height;
+                                cl.videoSink->pushFrame(frame);
+                                CMTime currentTime = CMClockGetTime(CMClockGetHostTimeClock()),presentationTimeStamp = CMSampleBufferGetOutputPresentationTimeStamp(sampleBuffer);
+                                if(CMTIME_COMPARE_INLINE(currentTime,>,presentationTimeStamp)){
+                                    cl.videoSink->flush();
+                                }
+                                else {
+                                    auto millis = std::chrono::duration<double,std::milli>((double)CMTimeGetSeconds(CMTimeSubtract(presentationTimeStamp,currentTime)) * 1000.f);
+                                    std::this_thread::sleep_for(millis);
+                                    cl.videoSink->presentCurrentFrame();
                                 }
                             }
                             [cl.cursor stepInDecodeOrderByCount:1];
@@ -153,6 +170,8 @@ namespace OmegaWTK::Media {
     SharedHandle<PlaybackDispatchQueue> createPlaybackDispatchQueue() {
         return (SharedHandle<PlaybackDispatchQueue>)new PlaybackDispatchQueue();
     };
+
+    typedef SharedHandle<PlaybackDispatchQueue> & PlaybackDispatchQueueRef;
 
 
     struct AVFAudioCaptureDevice : public AudioCaptureDevice {
@@ -402,53 +421,55 @@ namespace OmegaWTK::Media {
 
     struct AVFAudioPlaybackSession :
             public AudioPlaybackSession{
-        SharedHandle<AVFAudioPlaybackDevice> playbackDevice = nullptr;
-        AVAssetReader *reader;
         AVSampleBufferAudioRenderer *renderer;
+        AVSampleBufferRequest *request = nil;
+        AVSampleBufferGenerator *generator = nil;
+        AVSampleCursor *cursor;
         AVSampleBufferRenderSynchronizer *synchronizer;
-        AVAudioPCMBuffer *buffer = nil;
-        CMSampleBufferRef sampleBuffer;
+        PlaybackDispatchQueueRef  playbackDispatchQueue;
+        size_t playbackClientIndex;
     public:
-        explicit AVFAudioPlaybackSession(){
-
+        explicit AVFAudioPlaybackSession(AudioVideoProcessorRef processor,PlaybackDispatchQueueRef dispatchQueue) : AudioPlaybackSession(processor),playbackDispatchQueue(dispatchQueue){
+            synchronizer = [[AVSampleBufferRenderSynchronizer alloc] init];
+            renderer = [[AVSampleBufferAudioRenderer alloc] init];
+            [synchronizer addRenderer:renderer];
         }
         void setAudioPlaybackDevice(SharedHandle<AudioPlaybackDevice> &device) override {
-            playbackDevice = std::dynamic_pointer_cast<AVFAudioPlaybackDevice>(device);
+            CFStringRef uid;
+            UInt32 uid_size = sizeof(CFStringRef);
+            AudioDeviceGetProperty(device->unit.deviceID,0,0,kAudioDevicePropertyDeviceUID,&uid_size,(void *)uid);
+            [renderer setAudioOutputDeviceUniqueID:(__bridge id)uid];
         }
         void setAudioSource(MediaInputStream &inputStream) override {
-            AVAsset *asset = [AVAsset assetWithURL:nil];
-            AVAssetTrack *audioTrack = [asset tracksWithMediaType:AVMediaTypeAudio].firstObject;
+            AVAsset *asset = [AVAsset assetWithURL:createURLFromMediaInputStream(inputStream)];
             NSError *error;
-            reader = [AVAssetReader assetReaderWithAsset:asset error:&error];
-            AVAssetReaderTrackOutput *trackOutput = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:audioTrack outputSettings:@{}];
-            [reader setTimeRange:audioTrack.timeRange];
-            trackOutput.alwaysCopiesSampleData = NO;
-            [reader addOutput:trackOutput];
-            [reader startReading];
-            auto frameRate = [audioTrack nominalFrameRate];
-
-
+            if(generator != nil){
+                [generator release];
+            }
+            generator = [[AVSampleBufferGenerator alloc] initWithAsset:asset timebase:NULL];
+            cursor = [[asset tracks].firstObject makeSampleCursorAtFirstSampleInDecodeOrder];
+            request = [[AVSampleBufferRequest alloc] initWithStartCursor:cursor];
+            request.preferredMinSampleCount = 1;
+            request.maxSampleCount = 1;
+            request.direction = AVSampleBufferRequestDirectionForward;
+            playbackClientIndex = playbackDispatchQueue->addClient({true,true});
         }
         void start() override {
-            assert(playbackDevice && "No playback device has been set. Exiting...");
-
+            playbackDispatchQueue->startPlaybackForClient(playbackClientIndex);
         }
         void pause() override {
-
+            playbackDispatchQueue->stopPlaybackForClient(playbackClientIndex);
         }
         void reset() override {
-
-            [buffer release];
-            CFRelease(sampleBuffer);
-            sampleBuffer = nil;
+            playbackDispatchQueue->removeClient(playbackClientIndex);
         }
         ~AVFAudioPlaybackSession() override {
 
         };
     };
 
-    SharedHandle<AudioPlaybackSession> AudioPlaybackSession::Create() {
-        return SharedHandle<AudioPlaybackSession>(new AVFAudioPlaybackSession());
+    SharedHandle<AudioPlaybackSession> AudioPlaybackSession::Create(AudioVideoProcessorRef processor,PlaybackDispatchQueueRef dispatchQueue) {
+        return SharedHandle<AudioPlaybackSession>(new AVFAudioPlaybackSession(processor,dispatchQueue));
     }
 
     struct AVFVideoPlaybackSession :
@@ -458,8 +479,9 @@ namespace OmegaWTK::Media {
         AVSampleBufferGenerator *sampleBufferGen = nil;
         AVSampleBufferRequest *videoSampleRequest,*audioSampleRequest;
         AVSampleCursor *videoCursor,*audioCursor;
+        PlaybackDispatchQueueRef dispatchQueue;
 
-        explicit AVFVideoPlaybackSession(){
+        explicit AVFVideoPlaybackSession(AudioVideoProcessorRef processor,PlaybackDispatchQueueRef dispatchQueue) : VideoPlaybackSession(processor),dispatchQueue(dispatchQueue){
 
         }
         void setAudioPlaybackDevice(SharedHandle<AudioPlaybackDevice> &device) override {
@@ -552,7 +574,15 @@ using namespace std::chrono_literals;
         OmegaWTK::Media::CMTimeToTimePoint(t,timePoint);
         frame->presentTime = timePoint;
         session->sink->pushFrame(frame);
-        session->sink->presentCurrentFrame();
+        auto currentTime = CMClockGetTime(CMClockGetHostTimeClock());
+        if(CMTIME_COMPARE_INLINE(currentTime,>,t)) {
+            session->sink->flush();
+        }
+        else {
+            auto millis = std::chrono::duration<double,std::milli>(CMTimeGetSeconds(CMTimeSubtract(t,currentTime)) * 1000.f);
+            std::this_thread::sleep_for(millis);
+            session->sink->presentCurrentFrame();
+        }
     }
     else {
         [session->bufferWriterVideoInput appendSampleBuffer:sampleBuffer];
