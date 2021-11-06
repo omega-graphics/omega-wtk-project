@@ -68,11 +68,11 @@ void Canvas::drawRect(Core::Rect &rect, Core::SharedPtr<Brush> &brush){
 };
 
 void Canvas::drawImage(SharedHandle<Media::BitmapImage> &img,const Core::Rect & rect) {
-
+    current->currentVisuals.push_back(VisualCommand {VisualCommand::Bitmap,new VisualCommand::BitmapParams {img,nullptr,rect}});
 }
 
 void Canvas::drawGETexture(OmegaGTE::SharedHandle<OmegaGTE::GETexture> &img,const Core::Rect & rect) {
-
+    current->currentVisuals.push_back(VisualCommand {VisualCommand::Bitmap,new VisualCommand::BitmapParams {nullptr,img,rect}});
 }
 
 SharedHandle<CanvasFrame> Canvas::getCurrentFrame() {

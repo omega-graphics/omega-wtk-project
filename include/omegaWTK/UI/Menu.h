@@ -9,10 +9,11 @@ namespace OmegaWTK {
 
 class Menu;
 
+
 class OMEGAWTK_EXPORT  MenuItem {
     OmegaCommon::String name;
     Native::NMI native;
-    Menu * subMenu;
+    SharedHandle<Menu> subMenu;
     bool hasSubMenu;
     Menu *parent;
     friend class Menu;
@@ -24,7 +25,7 @@ public:
     /**
      Constructs a Normal Menu Item!
      */
-    MenuItem(const OmegaCommon::String & name,bool hasSubMenu,Menu *subMenu);
+    MenuItem(const OmegaCommon::String & name,bool hasSubMenu,SharedHandle<Menu> subMenu);
     /**
      Constructs a Seperator Menu Item!
      */
@@ -36,15 +37,15 @@ class MenuDelegate;
  
  class OMEGAWTK_EXPORT  Menu {
     OmegaCommon::String name;
-    OmegaCommon::Vector<MenuItem *> menuItems;
+    OmegaCommon::Vector<SharedHandle<MenuItem>> menuItems;
     Native::NM native;
     MenuDelegate *delegate;
     bool hasDelegate;
     friend class MenuItem;
 public:
     Native::NM getNativeMenu(){ return native;};
-    MenuItem *getItemByIdx(unsigned idx){ return menuItems[idx];};
-    Menu(OmegaCommon::String name,std::initializer_list<MenuItem *> menu_items,MenuDelegate *delegate = nullptr);
+    SharedHandle<MenuItem> & getItemByIdx(unsigned idx){ return menuItems[idx];};
+    Menu(OmegaCommon::String name,std::initializer_list<SharedHandle<MenuItem>> menu_items,MenuDelegate *delegate = nullptr);
 //    ~Menu();
 };
 
@@ -59,17 +60,17 @@ public:
 /**
  Creates a Category Menu
  */
-OMEGAWTK_EXPORT MenuItem *CategoricalMenu(const OmegaCommon::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate = nullptr);
+OMEGAWTK_EXPORT SharedHandle<MenuItem> CategoricalMenu(const OmegaCommon::String & name,std::initializer_list<SharedHandle<MenuItem>> items,MenuDelegate *delegate = nullptr);
 /**
  Creates a SubMenu under a Categorical Menu
  */
-OMEGAWTK_EXPORT MenuItem *SubMenu(const OmegaCommon::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate = nullptr);
+OMEGAWTK_EXPORT SharedHandle<MenuItem> SubMenu(const OmegaCommon::String & name,std::initializer_list<SharedHandle<MenuItem>> items,MenuDelegate *delegate = nullptr);
 
-OMEGAWTK_EXPORT MenuItem *ButtonMenuItem(const OmegaCommon::String & name);
+OMEGAWTK_EXPORT SharedHandle<MenuItem> ButtonMenuItem(const OmegaCommon::String & name);
 /**
  Creates a Menu Seperator Item!
 */
-OMEGAWTK_EXPORT MenuItem *MenuItemSeperator();
+OMEGAWTK_EXPORT SharedHandle<MenuItem> MenuItemSeperator();
 
 };
 

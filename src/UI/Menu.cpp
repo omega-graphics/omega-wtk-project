@@ -2,7 +2,7 @@
 
 namespace OmegaWTK {
 
-MenuItem::MenuItem(const OmegaCommon::String & name,bool hasSubMenu,Menu *subMenu):name(name),native(nullptr),hasSubMenu(hasSubMenu),subMenu(subMenu),isSeperator(false){
+MenuItem::MenuItem(const OmegaCommon::String & name,bool hasSubMenu,SharedHandle<Menu> subMenu):name(name),native(nullptr),hasSubMenu(hasSubMenu),subMenu(subMenu),isSeperator(false){
     
 };
 
@@ -31,7 +31,7 @@ void MenuItem::disable(){
     native->setState(false);
 };
 
-Menu::Menu(OmegaCommon::String name,std::initializer_list<MenuItem *> menu_items,MenuDelegate * delegate):
+Menu::Menu(OmegaCommon::String name,std::initializer_list<SharedHandle<MenuItem>> menu_items,MenuDelegate * delegate):
 name(name),
 menuItems(menu_items),
 native(Native::make_native_menu(name)),
@@ -53,30 +53,30 @@ hasDelegate(delegate != nullptr){
 
 MenuDelegate::MenuDelegate(){};
 
-MenuItem *CategoricalMenu(const OmegaCommon::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate){
+SharedHandle<MenuItem> CategoricalMenu(const OmegaCommon::String & name,std::initializer_list<SharedHandle<MenuItem>> items,MenuDelegate *delegate){
 #ifdef TARGET_WIN32
     return new MenuItem(name,true,new Menu("",items,delegate));
 #endif
 #ifdef TARGET_MACOS
-    return new MenuItem("",true,new Menu(name,items,delegate));
+    return (SharedHandle<MenuItem>)new MenuItem("",true,(SharedHandle<Menu>)new Menu(name,items,delegate));
 #endif
 };
 
-MenuItem *ButtonMenuItem(const OmegaCommon::String & name){
-    return new MenuItem(name,false,nullptr);
+SharedHandle<MenuItem> ButtonMenuItem(const OmegaCommon::String & name){
+    return (SharedHandle<MenuItem>)new MenuItem(name,false,nullptr);
 };
 
-MenuItem *SubMenu(const OmegaCommon::String & name,std::initializer_list<MenuItem *> items,MenuDelegate *delegate){
+SharedHandle<MenuItem> SubMenu(const OmegaCommon::String & name,std::initializer_list<SharedHandle<MenuItem>> items,MenuDelegate *delegate){
     #ifdef TARGET_WIN32
-        return new MenuItem(name,true,new Menu("",items,delegate));
+        return (SharedHandle<MenuItem>) new MenuItem(name,true,new Menu("",items,delegate));
     #endif 
     #ifdef TARGET_MACOS 
-        return new MenuItem(name,true,new Menu("",items,delegate));
+        return (SharedHandle<MenuItem>) new MenuItem(name,true,(SharedHandle<Menu>)new Menu("",items,delegate));
     #endif
 };
 
-MenuItem *MenuItemSeperator(){
-    return new MenuItem();
+SharedHandle<MenuItem> MenuItemSeperator(){
+    return (SharedHandle<MenuItem>) new MenuItem();
 };
 
 };

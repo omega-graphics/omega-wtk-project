@@ -1,6 +1,5 @@
 
 include(CMakeParseArguments)
-include(${CMAKE_CURRENT_LIST_DIR}/../gn-utils/Utils.cmake)
 
 if(WIN32)
     add_compile_definitions("TARGET_WIN32")
@@ -11,11 +10,6 @@ if(CMAKE_HOST_APPLE)
     # if(NOT XCODE)
     #     set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_IDENTITY ${CODE_SIGNATURE})
     # endif()
-
-    if(NOT CODE_SIGNATURE)
-        message(FATAL_ERROR "Code Signature must be defined in order to Build an OmegaWTK App on Mac")
-    endif()
-   
     
 
     add_compile_definitions("TARGET_MACOS")
