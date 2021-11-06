@@ -55,7 +55,7 @@ MenuDelegate::MenuDelegate(){};
 
 SharedHandle<MenuItem> CategoricalMenu(const OmegaCommon::String & name,std::initializer_list<SharedHandle<MenuItem>> items,MenuDelegate *delegate){
 #ifdef TARGET_WIN32
-    return new MenuItem(name,true,new Menu("",items,delegate));
+    return (SharedHandle<MenuItem>)new MenuItem(name,true,(SharedHandle<Menu>)new Menu("",items,delegate));
 #endif
 #ifdef TARGET_MACOS
     return (SharedHandle<MenuItem>)new MenuItem("",true,(SharedHandle<Menu>)new Menu(name,items,delegate));
@@ -68,7 +68,7 @@ SharedHandle<MenuItem> ButtonMenuItem(const OmegaCommon::String & name){
 
 SharedHandle<MenuItem> SubMenu(const OmegaCommon::String & name,std::initializer_list<SharedHandle<MenuItem>> items,MenuDelegate *delegate){
     #ifdef TARGET_WIN32
-        return (SharedHandle<MenuItem>) new MenuItem(name,true,new Menu("",items,delegate));
+        return (SharedHandle<MenuItem>) new MenuItem(name,true,(SharedHandle<Menu>)new Menu("",items,delegate));
     #endif 
     #ifdef TARGET_MACOS 
         return (SharedHandle<MenuItem>) new MenuItem(name,true,(SharedHandle<Menu>)new Menu("",items,delegate));

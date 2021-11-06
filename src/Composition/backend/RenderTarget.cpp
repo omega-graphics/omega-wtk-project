@@ -93,7 +93,7 @@ fragment float4 fragmentTexture(OmegaGTETexturedRasterData raster){
 )";
 
     void loadGlobalRenderAssets(){
-        auto compiler = OmegaSLCompiler::Create();
+        auto & compiler = gte.omegaSlCompiler;
         auto library = compiler->compile({OmegaSLCompiler::Source::fromString(librarySource)});
         shaderLibrary = gte.graphicsEngine->loadShaderLibraryRuntime(library);
         OmegaGTE::RenderPipelineDescriptor renderPipelineDescriptor {};
@@ -112,6 +112,21 @@ fragment float4 fragmentTexture(OmegaGTETexturedRasterData raster){
         OmegaGTE::ComputePipelineDescriptor linearGradientPipelineDesc {};
         linearGradientPipelineDesc.computeFunc = shaderLibrary->shaders["linearGradient"];
         linearGradientPipelineState = gte.graphicsEngine->makeComputePipelineState(linearGradientPipelineDesc);
+    }
+
+    void destroyGlobalRenderAssets(){
+        shaderLibrary.reset();
+        renderPipelineState.reset();
+        textureRenderPipelineState.reset();
+        linearGradientPipelineState.reset();
+    }
+
+    void InitializeEngine(){
+        loadGlobalRenderAssets();
+    }
+
+    void CleanupEngine(){
+        destroyGlobalRenderAssets();
     }
 
 BackendRenderTargetContext::BackendRenderTargetContext(Core::Rect & rect,

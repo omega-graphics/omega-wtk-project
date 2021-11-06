@@ -231,7 +231,7 @@ namespace OmegaWTK::Native::Win {
             ++_hwnd_it;
         };
     };
-    void HWNDItem::resize(Core::Rect & newRect){
+    void HWNDItem::resize(const Core::Rect & newRect){
         this->wndrect = newRect;
 
         auto & rect = parent->wndrect;

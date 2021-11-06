@@ -14,6 +14,7 @@ namespace OmegaWTK::Native::Win {
         void attachWidgets();
         void initialDisplay() override;
         void close() override;
+        void setMenu(NM menu) override;
         void addNativeItem(NativeItemPtr item) override;
         LRESULT ProcessWndMsg(UINT,WPARAM,LPARAM) override;
         BOOL ProcessWndMsgImpl(HWND, UINT, WPARAM, LPARAM, LRESULT *) override;

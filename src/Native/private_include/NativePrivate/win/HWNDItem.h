@@ -32,7 +32,7 @@ namespace OmegaWTK::Native {
                 enabled = false;
                 // ShowWindow(hwnd,SW_HIDE);
             };
-            void resize(Core::Rect &newRect) override;
+            void resize(const Core::Rect &newRect) override;
             void addChildNativeItem(NativeItemPtr nativeItem) override;
             void removeChildNativeItem(NativeItemPtr nativeItem) override;
             public:
@@ -41,6 +41,9 @@ namespace OmegaWTK::Native {
             */
             HWNDItem(Core::Rect & rect);
             Core::Rect wndrect;
+            Core::Rect & getRect() override {
+                return wndrect;
+            }
             ATOM getAtom();
             HWND getHandle();
             bool isExtended();

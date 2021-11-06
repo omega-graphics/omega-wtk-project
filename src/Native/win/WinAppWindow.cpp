@@ -34,6 +34,12 @@ namespace OmegaWTK::Native::Win {
        SetParent(hwndItem->hwnd,hwnd);
     };
 
+    void WinAppWindow::setMenu(NM menu){
+        this->menu = menu;
+        auto nm = std::dynamic_pointer_cast<Win::WinMenu>(menu);
+        SetMenu(hwnd,(HMENU)nm->getNativeBinding());
+    }
+
     LRESULT WinAppWindow::ProcessWndMsg(UINT u_int,WPARAM wParam,LPARAM lParam){
         LRESULT result = 0;
         // MessageBoxA(HWND_DESKTOP,"WinAppWindow WndProc","NOTE",MB_OK);
@@ -218,7 +224,9 @@ namespace OmegaWTK::Native::Win {
         };
        if(menu) {
            HMENU hmenu = (HMENU)menu->getNativeBinding();
-            SetMenu(hwnd,hmenu);
+            if(SetMenu(hwnd,hmenu) == FALSE){
+                OMEGAWTK_DEBUG("Failed to Attach Menu to AppWindow");
+            };
        };
        isReady = true;
     };

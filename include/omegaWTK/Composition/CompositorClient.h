@@ -10,6 +10,9 @@
 namespace OmegaWTK::Composition {
     class ViewRenderTarget;
     class Compositor;
+
+    void InitializeEngine();
+    void CleanupEngine();
     
     struct CanvasFrame;
 

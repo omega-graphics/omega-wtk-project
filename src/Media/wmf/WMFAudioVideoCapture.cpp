@@ -296,6 +296,7 @@ namespace OmegaWTK::Media {
             ++activates;
         }
         Core::SafeRelease(&attrs);
+        return devs;
     }
 
     struct WMFVideoDevice : public VideoDevice {
@@ -321,6 +322,7 @@ namespace OmegaWTK::Media {
             ++activates;
         }
         Core::SafeRelease(&attrs);
+        return devs;
     }
 
     Microsoft::WRL::ComPtr<IMFCaptureEngineClassFactory> captureEngineFactory = nullptr;
@@ -384,10 +386,10 @@ namespace OmegaWTK::Media {
             return InterlockedIncrement(&refCount);
         }
         HRESULT QueryInterface(const GUID &iid,void **pData) override{
-
+            return S_OK;
         }
         HRESULT OnSample(IMFSample *pSample) override {
-
+            return S_OK;
         }
         ULONG Release() override{
             ULONG newCount = InterlockedDecrement(&refCount);

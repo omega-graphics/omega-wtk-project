@@ -38,50 +38,23 @@ namespace OmegaWTK::Native::Win {
         };
     };
 
-        class WinMenu : public NativeMenu {
-            HMENU hmenu;
-            MENUINFO info;
-            friend class WinMenuItem;
-            OmegaCommon::Vector<SharedHandle<WinMenuItem>> items;
-            void insertMenuItem(NMI menu_item, unsigned idx) override {
-                auto item = std::dynamic_pointer_cast<WinMenuItem>(menu_item);
-                item->idx = idx;
-                item->parent = this;
-                InsertMenuItem(hmenu,idx,TRUE,&item->info);
-                items.insert(items.begin() + idx,item);
-            };
-            void addMenuItem(NMI menu_item) override {
-                auto item = std::dynamic_pointer_cast<WinMenuItem>(menu_item);
-                InsertMenuItem(hmenu,items.size(),TRUE,&item->info);
-                item->idx = items.size();
-                item->parent = this;
-                items.push_back(item);
-            };
-            /**
-                Returns HMENU
-            */
-            void *getNativeBinding() override {
-                return hmenu;
-            };
-            public:
-            void onSelectItem(unsigned idx){
-                if(hasDelegate)
-                    delegate->onSelectItem(idx);
-            };
-            WinMenu(const OmegaCommon::String & name){
+    void WinMenu::insertMenuItem(NMI menu_item, unsigned int idx) {
+        auto item = std::dynamic_pointer_cast<WinMenuItem>(menu_item);
+        item->idx = idx;
+        item->parent = this;
+        InsertMenuItem(hmenu,idx,TRUE,&item->info);
+        items.insert(items.begin() + idx,item);
+    }
 
-                info.dwMenuData = (ULONG_PTR)this;
-                info.cbSize = sizeof(info);
-                info.fMask = MIM_MENUDATA | MIM_BACKGROUND | MIM_STYLE;
-                info.dwStyle = MNS_NOTIFYBYPOS;
-                info.hbrBack = (HBRUSH)COLOR_WINDOW;
-                // info.cyMax = 0;
-                hmenu = CreateMenu();
+    void WinMenu::addMenuItem(NMI menu_item) {
+        auto item = std::dynamic_pointer_cast<WinMenuItem>(menu_item);
+        InsertMenuItem(hmenu,items.size(),TRUE,&item->info);
+        item->idx = items.size();
+        item->parent = this;
+        items.push_back(item);
+    }
 
-                SetMenuInfo(hmenu,&info);    
-            };
-            ~WinMenu() override = default;
-        };
+
 
         WinMenuItem::WinMenuItem(const OmegaCommon::String &name,WinMenu *parent,bool hasSubMenu,WinMenu *subMenu):subMenu(subMenu),hasSubMenu(hasSubMenu),parent(parent){
             info.cbSize = sizeof(info);

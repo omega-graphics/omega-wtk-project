@@ -13,7 +13,10 @@
 #include <d3d12video.h>
 
 #pragma comment(lib,"mfplat.lib")
+#pragma comment(lib,"mf.lib")
 #pragma comment(lib,"mfuuid.lib")
+#pragma comment(lib,"d3d12.lib")
+#pragma comment(lib,"d3d11.lib")
 
 namespace OmegaWTK::Media {
 

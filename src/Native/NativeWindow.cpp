@@ -10,9 +10,9 @@ namespace OmegaWTK::Native {
         return eventEmitter != nullptr;
     };
     #endif
-    void NativeWindow::setMenu(NM menu){
-        this->menu = menu;
-    };
+//    void NativeWindow::setMenu(NM menu){
+//        this->menu = menu;
+//    };
     // void NativeWindow::addNativeItem(NativeItemPtr item){
     //     windowWidgetRootViews.push_back(item);
     // };
