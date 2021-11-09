@@ -8,7 +8,7 @@ android {
      * this API level and lower.
      */
 
-    compileSdkVersion 28
+    compileSdkVersion 31
 
     /**
      * buildToolsVersion specifies the version of the SDK build tools, command-line
@@ -107,8 +107,6 @@ android {
  */
 
 dependencies {
-    implementation project(":lib")
     implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 

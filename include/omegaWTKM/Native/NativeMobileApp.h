@@ -8,10 +8,11 @@ namespace OmegaWTK::Mobile {
 
         class NativeApp {
         public:
+            virtual int run()= 0;
             virtual void terminate() = 0;
         };
 
-        typedef NativeApp *NAP;
+        typedef SharedHandle<NativeApp> NAP;
         NAP make_native_app();
 
     }

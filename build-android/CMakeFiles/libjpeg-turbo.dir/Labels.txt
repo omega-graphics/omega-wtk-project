@@ -1,0 +1,21 @@
+# Target labels
+ libjpeg-turbo
+# Source files and their labels
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/CMakeFiles/libjpeg-turbo
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/CMakeFiles/libjpeg-turbo.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/CMakeFiles/libjpeg-turbo-complete.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/libjpeg-turbo-prefix/src/libjpeg-turbo-stamp/libjpeg-turbo-build.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/libjpeg-turbo-prefix/src/libjpeg-turbo-stamp/libjpeg-turbo-configure.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/libjpeg-turbo-prefix/src/libjpeg-turbo-stamp/libjpeg-turbo-download.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/libjpeg-turbo-prefix/src/libjpeg-turbo-stamp/libjpeg-turbo-install.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/libjpeg-turbo-prefix/src/libjpeg-turbo-stamp/libjpeg-turbo-mkdir.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/libjpeg-turbo-prefix/src/libjpeg-turbo-stamp/libjpeg-turbo-patch.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/libjpeg-turbo-prefix/src/libjpeg-turbo-stamp/libjpeg-turbo-update.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/CMakeFiles/zlib-complete.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/zlib-prefix/src/zlib-stamp/zlib-build.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/zlib-prefix/src/zlib-stamp/zlib-configure.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/zlib-prefix/src/zlib-stamp/zlib-download.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/zlib-prefix/src/zlib-stamp/zlib-install.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/zlib-prefix/src/zlib-stamp/zlib-mkdir.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/zlib-prefix/src/zlib-stamp/zlib-patch.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/zlib-prefix/src/zlib-stamp/zlib-update.rule

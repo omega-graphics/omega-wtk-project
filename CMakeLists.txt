@@ -2,18 +2,18 @@ cmake_minimum_required(VERSION 3.11)
 
 set(OMEGAWTK_VERSION "0.8")
 
+
+project(OmegaWTK VERSION ${OMEGAWTK_VERSION} LANGUAGES C CXX)
+
 include(OmegaGraphicsSuite)
 
-set(LANGS CXX)
-
 if(APPLE)
-	set(LANGS ${LANGS} OBJCXX)
+	enable_language(OBJCXX)
 endif()
-
-project(OmegaWTK VERSION ${OMEGAWTK_VERSION} LANGUAGES ${LANGS})
 
 omega_graphics_add_subdir(OmegaGTE gte)
 
+set(OMEGAWTK_MOBILE FALSE)
 
 if(WIN32)
 	set(TARGET_WIN32 TRUE)
@@ -21,9 +21,17 @@ if(WIN32)
 elseif(APPLE)
 	set(TARGET_MACOS TRUE)
 	add_compile_definitions(TARGET_MACOS)
+elseif(ANDROID)
+	set(TARGET_ANDROID TRUE)
+	add_compile_definitions(TARGET_ANDROID)
+	set(OMEGAWTK_MOBILE TRUE)
 elseif(UNIX AND NOT APPLE)
 	set(TARGET_LINUX TRUE)
 	add_compile_definitions(TARGET_GTK)
+endif()
+
+if(${OMEGAWTK_MOBILE})
+	add_compile_definitions(OMEGAWTK_MOBILE_API)
 endif()
 
 # Third Party Modules
@@ -70,6 +78,12 @@ add_third_party(
 
 	if(TARGET_MACOS)
 		set(ICU_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/icu/lib/libicuuc.dylib" "${THIRD_PARTY_OUTPUT_DIR}/icu/lib/libicudata.dylib" "${THIRD_PARTY_OUTPUT_DIR}/icu/lib/libicui18n.dylib")
+		set_library_install_name("${THIRD_PARTY_OUTPUT_DIR}/icu/lib/libicuuc.dylib" "@rpath/libicuuc.dylib")
+		set_library_install_name("${THIRD_PARTY_OUTPUT_DIR}/icu/lib/libicudata.dylib" "@rpath/libicudata.dylib")
+		set_library_install_name("${THIRD_PARTY_OUTPUT_DIR}/icu/lib/libicui18n.dylib" "@rpath/libicui18n.dylib")
+		reset_library_dependent_name("${THIRD_PARTY_OUTPUT_DIR}/icu/lib/libicuuc.dylib" "libicudata.69.dylib" "@rpath/libicudata.dylib")
+		reset_library_dependent_name("${THIRD_PARTY_OUTPUT_DIR}/icu/lib/libicui18n.dylib" "libicudata.69.dylib" "@rpath/libicudata.dylib")
+		reset_library_dependent_name("${THIRD_PARTY_OUTPUT_DIR}/icu/lib/libicui18n.dylib" "libicuuc.dylib" "@rpath/libicuuc.dylib")
 	else()
 	endif()
 	
@@ -90,6 +104,7 @@ add_third_party(
 		set(LIBXML2_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libxml2/lib/libxml2.lib")
 	elseif(TARGET_MACOS)
 		set(LIBXML2_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libxml2/lib/libxml2.dylib")
+		set_library_install_name(${LIBXML2_EXPORT} "@rpath/libxml2.dylib")
 	endif()
 
 add_third_party(
@@ -103,6 +118,7 @@ add_third_party(
 		set(ZLIB_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/zlib/lib/zlib.lib")
 	elseif(TARGET_MACOS)
 		set(ZLIB_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/zlib/lib/libz.dylib")
+		set_library_install_name(${ZLIB_EXPORT} "@rpath/libz.dylib")
 	endif()
 	
 add_third_party(
@@ -117,6 +133,7 @@ add_third_party(
 		set(LIBPNG_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libpng/lib/libpng16.lib")
 	elseif(TARGET_MACOS)
 		set(LIBPNG_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libpng/lib/libpng.dylib")
+		set_library_install_name(${LIBPNG_EXPORT} "@rpath/libpng.dylib")
 	endif()
 	
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/libpng/include")
@@ -133,6 +150,7 @@ add_third_party(
 		set(LIBJPEGTURBO_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libjpeg-turbo/lib/turbojpeg.lib")
 	elseif(TARGET_MACOS)
 		set(LIBJPEGTURBO_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libjpeg-turbo/lib/libturbojpeg.dylib")
+		set_library_install_name(${LIBJPEGTURBO_EXPORT} "@rpath/libturbojpeg.dylib")
 	endif()
 	
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/libjpeg-turbo/include")
@@ -149,6 +167,7 @@ add_third_party(
 		set(LIBTIFF_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libtiff/lib/tiff.lib")
 	elseif(TARGET_MACOS)
 		set(LIBTIFF_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libtiff/lib/libtiff.dylib")
+		set_library_install_name(${LIBTIFF_EXPORT} "@rpath/libtiff.dylib")
 	endif()
 	
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/libtiff/include")
@@ -159,6 +178,8 @@ add_third_party(
 file(GLOB CORE_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Core/*.cpp")
 set_source_files_properties(${CORE_SRCS} PROPERTIES INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/tools/assetc")
 source_group(OmegaWTKCore ${CORE_SRCS})
+
+if(NOT ${OMEGAWTK_MOBILE})
 
 #OmegaWTK Native SubModule
 
@@ -178,6 +199,17 @@ endif()
 
 source_group(OmegaWTKNative ${NATIVE_SRCS})
 set(NATIVE_PRIVATE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/Native/private_include")
+
+else()
+	file(GLOB NATIVE_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Mobile/Native/*.cpp")
+	if(TARGET_ANDROID)
+		file(GLOB ANDROID_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Mobile/Native/android/*.cpp")
+		set(NATIVE_SRCS ${NATIVE_SRCS} ${ANDROID_SRCS})
+	endif()
+	source_group(OmegaWTKNative ${NATIVE_SRCS})
+	set(NATIVE_PRIVATE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/Mobile/Native/private_include")
+endif()
+
 set_source_files_properties(${NATIVE_SRCS} PROPERTIES INCLUDE_DIRECTORIES ${NATIVE_PRIVATE_INCLUDE_DIR})
 
 #OmegaWTK Media SubModule
@@ -223,9 +255,30 @@ source_group(OmegaWTKWidgets ${WIDGETS_SRCS})
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist.in" ${CMAKE_CURRENT_BINARY_DIR}/Info.plist @ONLY)
 
-add_omega_graphics_module("OmegaWTK" FRAMEWORK INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" VERSION ${OMEGAWTK_VERSION} HEADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" DEPENDS OmegaGTE icu zlib libpng libjpeg-turbo libtiff libxml2 SOURCES ${CORE_SRCS} ${NATIVE_SRCS} ${MEDIA_SRCS} ${COMPOSITION_SRCS} ${UI_SRCS} ${WIDGETS_SRCS})
+add_omega_graphics_module("OmegaWTK" FRAMEWORK INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" VERSION ${OMEGAWTK_VERSION} HEADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" DEPENDS OmegaGTE icu zlib libpng libjpeg-turbo libtiff libxml2 EMBEDDED_LIBS ${ICU_EXPORT} ${LIBXML2_EXPORT} ${ZLIB_EXPORT} ${LIBPNG_EXPORT} ${LIBTURBOJPEG_EXPORT} ${LIBTIFF_EXPORT} SOURCES ${CORE_SRCS} ${NATIVE_SRCS} ${MEDIA_SRCS} ${COMPOSITION_SRCS} ${UI_SRCS} ${WIDGETS_SRCS})
+if(TARGET_ANDROID)
+	add_library( app-glue
+			STATIC
+			${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c )
+
+	# You need to link static libraries against your shared native library.
+	target_link_libraries("OmegaWTK" PRIVATE "app-glue")
+	target_include_directories("OmegaWTK" PRIVATE ${ANDROID_NDK}/sources/android/native_app_glue)
+endif()
 if(TARGET_MACOS)
+		add_custom_target("OmegaWTK_ThirdPartyInstallNames")
+		set(THIRD_PARTY_EXPORTS ${ICU_EXPORT} ${LIBXML2_EXPORT} ${ZLIB_EXPORT} ${LIBPNG_EXPORT} ${LIBTURBOJPEG_EXPORT} ${LIBTIFF_EXPORT})
+		foreach (lib ${THIRD_PARTY_EXPORTS})
+			get_filename_component(LIBNAME ${lib} NAME)
+			add_dependencies("OmegaWTK_ThirdPartyInstallNames" ${LIBNAME}_install_name)
+		endforeach ()
+		add_dependencies("OmegaWTK_ThirdPartyInstallNames" libicuuc.dylib_libicudata.69.dylib_reset_dependent_name)
+		add_dependencies("OmegaWTK_ThirdPartyInstallNames" libicui18n.dylib_libicudata.69.dylib_reset_dependent_name)
+		add_dependencies("OmegaWTK_ThirdPartyInstallNames" libicui18n.dylib_libicuuc.dylib_reset_dependent_name)
+
+
 	add_dependencies("OmegaWTK" OmegaGTE.framework)
+	add_dependencies("OmegaWTK" OmegaWTK_ThirdPartyInstallNames)
 endif()
 target_include_directories("OmegaWTK" PUBLIC ${THIRD_PARTY_INCLUDEDIRS} $<TARGET_PROPERTY:OmegaCommon,INCLUDE_DIRECTORIES> )
 if(TARGET_MACOS)

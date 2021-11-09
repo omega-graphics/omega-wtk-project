@@ -1,0 +1,10 @@
+#include "omegaWTKM/Native/NativeItem.h"
+
+#ifndef OMEGAWTK_MOBILE_NATIVE_NATIVEPRIVATE_ANDROID_ITEM_H
+#define OMEGAWTK_MOBILE_NATIVE_NATIVEPRIVATE_ANDROID_ITEM_H
+
+namespace OmegaWTK::Mobile {
+
+}
+
+#endif

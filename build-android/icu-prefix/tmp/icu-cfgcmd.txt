@@ -1,0 +1,1 @@
+cmd='./configure;-prefix;/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/deps/icu'

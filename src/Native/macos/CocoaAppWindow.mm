@@ -43,6 +43,21 @@ void CocoaAppWindow::enable(){
     };
 };
 
+void CocoaAppWindow::setMenu(NM menu) {
+     NSMenu * cocoa_menu = (NSMenu *)menu->getNativeBinding();
+     [windowController.window setMenu:cocoa_menu];
+}
+
+void CocoaAppWindow::setTitle(OmegaCommon::StrRef title){
+    windowController.window.styleMask |= NSWindowStyleMaskTitled;
+    [windowController.window setTitleVisibility:NSWindowTitleVisible];
+    [windowController.window setTitle:[NSString stringWithUTF8String:title.data()]];
+}
+
+void CocoaAppWindow::setEnableWindowHeader(bool &enable) {
+    [windowController.window setTitleVisibility:NSWindowTitleHidden];
+}
+
 void CocoaAppWindow::addNativeItem(NativeItemPtr item){
         // auto *cocoaitem = (CocoaItem *)item;
         NSViewController *viewC = (NSViewController *)item->getBinding();
@@ -61,6 +76,7 @@ void CocoaAppWindow::initialDisplay(){
     // //     [NSApp setMainMenu:windowMenu];
     // // };
     NSLog(@"Display Window");
+    NSApp.mainMenu = windowController.window.menu;
     [windowController showWindow:windowDelegate];
     [windowController.window makeKeyAndOrderFront:nil];
     NSLog(@"IS Visible :%d",[windowController.window isVisible]);
@@ -114,9 +130,10 @@ NativeItemPtr CocoaAppWindow::getRootView() {
 @implementation OmegaWTKNativeCocoaAppWindowController
 - (instancetype)initWithRect:(NSRect) rect delegate:(id<NSWindowDelegate>) delegate
 {
-    self = [super initWithWindow:[[NSWindow alloc] initWithContentRect:rect styleMask:NSWindowStyleMaskBorderless | NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable backing:NSBackingStoreBuffered defer:NO]];
+    self = [super initWithWindow:[[NSWindow alloc] initWithContentRect:rect styleMask: NSWindowStyleMaskTitled | NSWindowStyleMaskBorderless | NSWindowStyleMaskFullSizeContentView | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable backing:NSBackingStoreBuffered defer:NO]];
     if (self) {
         NSWindow *window = self.window;
+        self.window.titlebarAppearsTransparent = YES;
         window.delegate = delegate;
     }
     return self;

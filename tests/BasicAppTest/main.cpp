@@ -12,6 +12,8 @@ int omegaWTKMain(OmegaWTK::AppInst *app){
     }));
 
     window.setMenu(menu);
+//    window.setTitle("BasicAppTest");
+
 
     auto & windowManager = app->windowManager;
 

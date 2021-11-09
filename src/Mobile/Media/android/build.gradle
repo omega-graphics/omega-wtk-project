@@ -1,0 +1,24 @@
+apply plugin: "com.android.library"
+
+android {
+    compileSdkVersion 31
+
+    buildTypes {
+        release {
+            sourceSets {
+                main {
+                    manifest.srcFile "AndroidManifest.xml"
+                }
+            }
+        }
+    }
+}
+
+
+sourceSets {
+    main {
+        java {
+            srcDir "java"
+        }
+    }
+}

@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/CMakeFiles/icu"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/CMakeFiles/icu.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/CMakeFiles/icu-complete.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/icu-prefix/src/icu-stamp/icu-build.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/icu-prefix/src/icu-stamp/icu-configure.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/icu-prefix/src/icu-stamp/icu-download.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/icu-prefix/src/icu-stamp/icu-install.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/icu-prefix/src/icu-stamp/icu-mkdir.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/icu-prefix/src/icu-stamp/icu-patch.rule"
+		},
+		{
+			"file" : "/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/icu-prefix/src/icu-stamp/icu-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"icu"
+		],
+		"name" : "icu"
+	}
+}

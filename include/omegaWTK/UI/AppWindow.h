@@ -48,25 +48,16 @@ class AppWindowDelegate;
 
         // void drawWidgets();
     public:
-#if TARGET_WIN32
-        struct SystemButton {
-            SharedHandle<Composition::Layer> layer;
-            SharedHandle<Composition::Canvas> canvas;
-            SharedHandle<Composition::LayerAnimator> animator;
-        };
-        void setUseStandardSystemButtons(bool use);
-        void setCloseButton(SharedHandle<SystemButton> & button);
-        void setMaxmizeButton(SharedHandle<SystemButton> & button);
-        void setMinimizeButton(SharedHandle<SystemButton> & button);
-#endif
 
-#if TARGET_MACOS
-        void setCloseButtonPos(Core::Position pos); 
-        void setMaximizeButtonPos(Core::Position pos); 
-        void setMinimizeButtonPos(Core::Position pos); 
-#endif
         void add(Widget *widget);
         void setMenu(SharedHandle<Menu> & menu);
+        void setEnableWindowHeader(bool enable);
+#ifdef TARGET_WIN32
+        SharedHandle<View> getExitButton();
+        SharedHandle<View> getMaxmizeButton();
+        SharedHandle<View> getMinimizeButton();
+#endif
+        void setTitle(OmegaCommon::StrRef title);
         SharedHandle<Composition::WindowLayer> & getLayer();
         void close();
         SharedHandle<Native::NativeFSDialog> openFSDialog(const Native::NativeFSDialog::Descriptor & desc);

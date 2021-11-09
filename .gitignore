@@ -14,6 +14,10 @@ omega-common
 gte
 *.gn
 .cache
+gradle
+gradlew
+gradlew.bat
+.gradle
 
 # Compiled Object files
 *.slo

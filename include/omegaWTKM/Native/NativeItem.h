@@ -3,11 +3,7 @@
 #ifndef OMEGAWTKM_NATIVE_NATIVEITEM_H
 #define OMEGAWTKM_NATIVE_NATIVEITEM_H
 
-namespace OmegaWTK {
-namespace Mobile {
-namespace Native {
-
-
+namespace OmegaWTK::Mobile::Native {
 
 struct NativeEvent {
 
@@ -36,11 +32,15 @@ class OMEGAWTK_EXPORT NativeEventProcessor {
     ~NativeEventProcessor();
 };
 
+INTERFACE NativeItem {
+public:
+    INTERFACE_METHOD void enable() ABSTRACT;
+    INTERFACE_METHOD void disable() ABSTRACT;
+    INTERFACE_METHOD void addChildNativeItem(SharedHandle<NativeItem> &child) ABSTRACT;
+    INTERFACE_METHOD void removeChildNativeItem(SharedHandle<NativeItem> &child) ABSTRACT;
+};
 
-
-
-}
-}
+typedef SharedHandle<NativeItem> NativeItemPtr;
 }
 
 #endif

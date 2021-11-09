@@ -25,6 +25,14 @@ void AppWindow::setMenu(SharedHandle<Menu> & menu){
     layer->native_window_ptr->setMenu(this->menu->getNativeMenu());
 };
 
+void AppWindow::setTitle(OmegaCommon::StrRef title){
+    layer->native_window_ptr->setTitle(title);
+}
+
+void AppWindow::setEnableWindowHeader(bool enable) {
+    layer->native_window_ptr->setEnableWindowHeader(enable);
+}
+
 // void AppWindow::setLayerStyle(SharedHandle<Composition::WindowStyle> & style){
 //     layer->setWindowStyle(style);
 // };

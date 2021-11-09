@@ -1,0 +1,21 @@
+# Target labels
+ libpng
+# Source files and their labels
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/CMakeFiles/libpng
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/CMakeFiles/libpng.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/CMakeFiles/libpng-complete.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/libpng-prefix/src/libpng-stamp/libpng-build.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/libpng-prefix/src/libpng-stamp/libpng-configure.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/libpng-prefix/src/libpng-stamp/libpng-download.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/libpng-prefix/src/libpng-stamp/libpng-install.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/libpng-prefix/src/libpng-stamp/libpng-mkdir.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/libpng-prefix/src/libpng-stamp/libpng-patch.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/libpng-prefix/src/libpng-stamp/libpng-update.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/CMakeFiles/zlib-complete.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/zlib-prefix/src/zlib-stamp/zlib-build.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/zlib-prefix/src/zlib-stamp/zlib-configure.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/zlib-prefix/src/zlib-stamp/zlib-download.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/zlib-prefix/src/zlib-stamp/zlib-install.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/zlib-prefix/src/zlib-stamp/zlib-mkdir.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/zlib-prefix/src/zlib-stamp/zlib-patch.rule
+/Users/alextopper/Documents/OmegaGraphics/wtk/build-android/zlib-prefix/src/zlib-stamp/zlib-update.rule
