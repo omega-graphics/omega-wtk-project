@@ -18,6 +18,7 @@
 
 
 namespace OmegaWTK {
+
     // namespace Unicode = icu;
     typedef UChar UnicodeChar;
     typedef UChar32 Unicode32Char;

@@ -41,17 +41,15 @@ void AppWindow::setEnableWindowHeader(bool enable) {
 //     menuStyle = style;
 // };
 
-void AppWindow::_add_widget(Widget * handle){
-//    (*handle)->compositor->prepareDraw((*handle)->layerTree.get());
-    if(handle->rootView->renderTarget) {
-        layer->native_window_ptr->addNativeItem(handle->rootView->renderTarget->getNativePtr());
-    }
-};
+void AppWindow::_add_widget(Widget *widget){
+    layer->native_window_ptr->addNativeItem(widget->rootView->renderTarget->getNativePtr());
+}
 
 void AppWindow::add(Widget *widget){
     auto treeHost = WidgetTreeHost::Create();
     treeHost->setRoot(widget);
     treeHost->attachToWindow(this);
+    widgetTreeHosts.push_back(treeHost);
 };
 
 
@@ -70,9 +68,6 @@ void AppWindow::close(){
 AppWindow::~AppWindow(){
     std::cout << "Closing Window" << std::endl;
     close();
-    for(auto widgetHost : widgetTreeHosts){
-        delete widgetHost;
-    };
 };
 
 AppWindowManager::AppWindowManager():rootWindow(nullptr){};
@@ -86,6 +81,9 @@ AppWindow * AppWindowManager::getRootWindow(){
 };
 
 void AppWindowManager::displayRootWindow(){
+    for(auto & host : rootWindow->widgetTreeHosts){
+        host->initWidgetTree();
+    }
     rootWindow->layer->native_window_ptr->initialDisplay();
 };
 

@@ -11,5 +11,7 @@
     <mapping directory="$PROJECT_DIR$/external-libs/zlib/code" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/gte" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/gte/common" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/gte/external-libs/glm" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/gte/external-libs/vulkan-memory-allocator" vcs="Git" />
   </component>
 </project>

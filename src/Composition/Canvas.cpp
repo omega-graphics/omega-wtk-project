@@ -55,7 +55,7 @@ namespace OmegaWTK::Composition {
     
 // };
 
-Canvas::Canvas(CompositorClientProxy &proxy,Layer &layer): CompositorClient(proxy),rect(layer.getLayerRect()),layer(layer){
+Canvas::Canvas(CompositorClientProxy &proxy,Layer &layer): CompositorClient(proxy),rect(layer.getLayerRect()),layer(layer),current(new CanvasFrame {&layer,rect}){
 
 };
 
@@ -81,7 +81,7 @@ SharedHandle<CanvasFrame> Canvas::getCurrentFrame() {
 
 SharedHandle<CanvasFrame> Canvas::nextFrame() {
     auto frame = getCurrentFrame();
-    current.reset();
+    current.reset(new CanvasFrame {&layer,rect});
     return frame;
 }
 

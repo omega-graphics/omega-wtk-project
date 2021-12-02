@@ -26,6 +26,10 @@ namespace OmegaWTK {
         bool attachedToWindow;
 
         WidgetTreeHost();
+
+        friend class AppWindowManager;
+        void initWidgetRecurse(Widget *parent);
+        void initWidgetTree();
     public:
 
         Composition::Compositor *compPtr(){return compositor;};

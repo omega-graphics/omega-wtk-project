@@ -24,7 +24,7 @@ CocoaAppWindow::CocoaAppWindow(Core::Rect & rect,NativeEventEmitter *emitter):Na
 
     rootView = std::dynamic_pointer_cast<CocoaItem>(Native::make_native_item(rect));
 
-    [windowController.window setContentViewController:(NSViewController *)rootView->getBinding()];
+    [windowController.window setContentViewController:((NSViewController *)rootView->getBinding())];
 };
 
 NativeEventEmitter * CocoaAppWindow::getEmitter() {
@@ -61,7 +61,8 @@ void CocoaAppWindow::setEnableWindowHeader(bool &enable) {
 void CocoaAppWindow::addNativeItem(NativeItemPtr item){
         // auto *cocoaitem = (CocoaItem *)item;
         NSViewController *viewC = (NSViewController *)item->getBinding();
-        [windowController.window.contentViewController.view addSubview:viewC.view];
+        [windowController.window.contentViewController addChildViewController:viewC];
+        [windowController.window.contentView addSubview:viewC.view];
 };
 
 void CocoaAppWindow::initialDisplay(){
@@ -83,8 +84,8 @@ void CocoaAppWindow::initialDisplay(){
 };
 
 void CocoaAppWindow::close(){
-    if([windowController.window isVisible] == YES)
-        [windowController.window close];
+//    if([windowController.window isVisible] == YES)
+//        [windowController.window close];
 };
 
 NativeItemPtr CocoaAppWindow::getRootView() {

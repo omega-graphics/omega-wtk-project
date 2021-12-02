@@ -82,7 +82,7 @@ SharedHandle<Composition::Layer> View::makeLayer(Core::Rect rect){
 };
 
 SharedHandle<Composition::Canvas> View::makeCanvas(SharedHandle<Composition::Layer> &targetLayer){
-    return std::make_shared<Composition::Canvas>(proxy,*targetLayer);
+    return std::shared_ptr<Composition::Canvas>(new Composition::Canvas(proxy,*targetLayer));
 }
 
 void View::startCompositionSession(){

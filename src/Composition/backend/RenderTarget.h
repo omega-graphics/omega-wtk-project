@@ -19,6 +19,8 @@ namespace OmegaWTK::Composition {
     };
 
     class BackendRenderTargetContext {
+        OmegaGTE::SharedHandle<OmegaGTE::GETexture> targetTexture;
+        OmegaGTE::SharedHandle<OmegaGTE::GEFence> fence;
         OmegaGTE::SharedHandle<OmegaGTE::GETextureRenderTarget> preEffectTarget;
         OmegaGTE::SharedHandle<OmegaGTE::GENativeRenderTarget> renderTarget;
         OmegaGTE::SharedHandle<OmegaGTE::OmegaTessellationEngineContext> tessellationEngineContext;
@@ -49,7 +51,7 @@ namespace OmegaWTK::Composition {
 
     struct BackendCompRenderTarget {
         SharedHandle<BackendVisualTree> visualTree;
-        OmegaCommon::MapVec<Layer *,BackendRenderTargetContext *> surfaceTargets;
+        OmegaCommon::Map<Layer *,BackendRenderTargetContext *> surfaceTargets;
     };
 
 

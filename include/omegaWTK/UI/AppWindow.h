@@ -33,7 +33,7 @@ class AppWindowDelegate;
         SharedHandle<AppWindowDelegate> delegate;
         /// A list of all attached widget tree hosts. 
         /// (Only needed to keep widget tree hosts alive during application)
-        OmegaCommon::Vector<WidgetTreeHost *> widgetTreeHosts;
+        OmegaCommon::Vector<SharedHandle<WidgetTreeHost>> widgetTreeHosts;
 
         Core::Rect rect;
 
@@ -44,9 +44,8 @@ class AppWindowDelegate;
         friend class AppWindowDelegate;
         friend class AppWindowManager;
         friend class WidgetTreeHost;
-        void _add_widget(Widget * widget);
 
-        // void drawWidgets();
+        void _add_widget(Widget *widget);
     public:
 
         void add(Widget *widget);

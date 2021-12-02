@@ -43,18 +43,23 @@ SharedHandle<BackendVisualTree> BackendVisualTree::Create(SharedHandle<ViewRende
                                                              Core::Position & pos){
 
      CAMetalLayer *layer = [CAMetalLayer layer];
+     layer.opaque = NO;
      layer.autoresizingMask = kCALayerNotSizable;
      layer.layoutManager = nil;
      layer.contentsScale = [NSScreen mainScreen].backingScaleFactor;
      layer.frame = CGRectMake(0,0,rect.w,rect.h);
+     layer.bounds = CGRectMake(0,0,rect.w,rect.h);
      layer.anchorPoint = CGPointMake(0.f,0.f);
      layer.position = CGPointMake(pos.x,pos.y);
 
      OmegaGTE::NativeRenderTargetDescriptor nativeRenderTargetDescriptor {false,layer};
 
+     auto & engine = gte;
      auto target = gte.graphicsEngine->makeNativeRenderTarget(nativeRenderTargetDescriptor);
+    CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
 
-     BackendRenderTargetContext compTarget (rect,target);
+     Core::Rect r {{rect.pos},float(rect.w * scaleFactor),float(rect.h * scaleFactor)};
+     BackendRenderTargetContext compTarget (r,target);
 
      return std::shared_ptr<BackendVisualTree::Visual>(new MTLCALayerTree::Visual(pos,compTarget,layer,nil,false));
  };

@@ -7,7 +7,12 @@
 
 namespace OmegaWTK::Media {
 
+    /// @brief A threaded queue for scheduling and dispatching playback of media from playback sessions.
     class PlaybackDispatchQueue;
+
+    /** @brief Creates A PlaybackDispatchQueue
+       @returns A new PlaybackDispatchQueue.
+     */
     OMEGAWTK_EXPORT SharedHandle<PlaybackDispatchQueue> createPlaybackDispatchQueue();
 
     INTERFACE OMEGAWTK_EXPORT AudioPlaybackSession : public AudioVideoProcessorContext{

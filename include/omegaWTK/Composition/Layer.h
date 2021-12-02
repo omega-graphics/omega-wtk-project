@@ -143,6 +143,9 @@ namespace Composition {
         } TransformationParams;
     };
 
+    /**
+     @brief A resizable rectangular surface for displaying vector graphics.
+     */
     class OMEGAWTK_EXPORT Layer {
         unsigned id_gen = 0;
         LayerTree::Limb *parentLimb;
@@ -158,53 +161,72 @@ namespace Composition {
         void addSubLayer(SharedHandle<Layer> & layer);
         void removeSubLayer(SharedHandle<Layer> & layer);
     public:
-        LayerTree::Limb *getParentLimb();
-        /// @name Base Functions
-        /// @{
-//            Native::NativeItemPtr getTargetNativePtr(){return compTarget->native;};
-//            void setStyle(Style & style){
-//                compTarget->style.reset(new Style(std::move(style)));
-//            };
-//            auto & getStyle(){return *compTarget->style;};
 
-        /// Resize the Layer with the new rect
+        LayerTree::Limb *getParentLimb();
+
+        /**
+            @brief Resize the Layer with the new rect
+            @param newRect
+         */
         void resize(Core::Rect & newRect);
+
+        /**
+           @brief Retrieves the rect that defines the bounds.
+           @returns A reference to the Core::Rect.
+           */
         Core::Rect & getLayerRect(){return surface_rect;};
+
+        /**
+         @brief Enable the layer
+         @param state The boolean to use.
+         */
         void setEnabled(bool state){enabled = state;};
+
+        /**
+          @brief Checks if this layer is a child of another layer.
+          @returns bool
+          */
         bool isChildLayer(){return parent_ptr != nullptr;}
-        /// @}
    
-        
-        Layer(const Core::Rect & rect);
+        /** @brief Construct a Layer.
+           @param rect*/
+        explicit Layer(const Core::Rect & rect);
 //            Layer(Layer &layer);
         ~Layer();
     };
 
-    INTERFACE LayerTreeObserver {
+    /// @interface LayerTreeObserver
+    class LayerTreeObserver {
     public:
 
         /**
-         A method called when the Widget/LayerTree has detached from a WidgetTree.
+         * @fn virtual void LayerTreeObserver::hasDetached(LayerTree *tree) = 0
+         @brief A method called when the Widget/LayerTree has detached from a WidgetTree.
         */
         INTERFACE_METHOD void hasDetached(LayerTree *tree) ABSTRACT;
+
         /**
-         A method called when the target layer has resized within this LayerTree
+          @fn virtual void LayerTreeObserver::layerHasResized(Layer *layer) = 0
+         @brief A method called when the target layer has resized within this LayerTree
          @param layer
         */
         INTERFACE_METHOD void layerHasResized(Layer *layer) ABSTRACT;
 
         /**
-         A method called when the target layer has been disabled within this LayerTree
+         @fn virtual void LayerTreeObserver::layerHasDisabled(Layer *layer) = 0
+         @brief A method called when the target layer has been disabled within this LayerTree
          @param layer
         */
         INTERFACE_METHOD void layerHasDisabled(Layer *layer) ABSTRACT;
 
         /**
-         A method called when the target layer has been enabled within this LayerTree
+         @fn virtual void LayerTreeObserver::layerHasEnabled(Layer *layer) = 0
+         @brief A method called when the target layer has been enabled within this LayerTree
          @param layer
         */
         INTERFACE_METHOD void layerHasEnabled(Layer *layer) ABSTRACT;
 
+        /// @fn virtual LayerTreeObserver::~LayerTreeObserver() = default
         virtual ~LayerTreeObserver() = default;
     };
 

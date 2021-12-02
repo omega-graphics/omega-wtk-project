@@ -1,6 +1,4 @@
-#ifndef RUNTIME_SHADER_COMP_SUPPORT
-#define RUNTIME_SHADER_COMP_SUPPORT 1
-#endif
+
 
 #include "RenderTarget.h"
 #include "omegaWTK/Composition/Canvas.h"
@@ -30,14 +28,14 @@ buffer<GradientTextureConstParams> input : 5;
 buffer<LinearGradientStop> stops : 3;
 texture2d outputTex : 4;
 
-[in input,in stops,out outputTex]
-compute(x=1,y=1,z=1)
-void linearGradient(uint3 thread_id : GlobalThreadID){
-
-}
+// [in input,in stops,out outputTex]
+// compute(x=1,y=1,z=1)
+// void linearGradient(uint3 thread_id : GlobalThreadID){
+//
+// }
 
  struct OmegaWTKColoredVertex {
-   float3 pos;
+   float4 pos;
    float4 color;
  };
 
@@ -52,7 +50,7 @@ buffer<OmegaWTKColoredVertex> v_buffer : 0;
 vertex OmegaWTKColoredRasterData mainVertex(uint v_id : VertexID){
     OmegaWTKColoredVertex v = v_buffer[v_id];
     OmegaWTKColoredRasterData rasterData;
-    rasterData.pos = float4(v.pos,1.f);
+    rasterData.pos = v.pos;
     rasterData.color = v.color;
     return rasterData;
 }
@@ -62,7 +60,7 @@ fragment float4 mainFragment(OmegaWTKColoredRasterData raster){
 }
 
 struct OmegaWTKTexturedVertex {
-    float3 pos;
+    float4 pos;
     float2 texCoord;
 };
 
@@ -74,25 +72,28 @@ struct OmegaWTKTexturedRasterData internal {
 buffer<OmegaWTKTexturedVertex> v_buffer_1 : 1;
 
 [in v_buffer_1]
-vertex OmegaWTKTexturedRasterData vertexTexture(uint v_id : VertexID){
+vertex OmegaWTKTexturedRasterData textureVertex(uint v_id : VertexID){
     OmegaWTKTexturedVertex v = v_buffer_1[v_id];
     OmegaWTKTexturedRasterData rasterData;
-    rasterData.pos = float4(v.pos);
+    rasterData.pos = v.pos;
     rasterData.texCoord = v.texCoord;
     return rasterData;
 }
 
 texture2d tex : 2;
-static sampler2d mainSampler(filer=linear);
+static sampler2d mainSampler(filter=linear);
 
 [in tex,in mainSampler]
-fragment float4 fragmentTexture(OmegaGTETexturedRasterData raster){
+fragment float4 textureFragment(OmegaWTKTexturedRasterData raster){
     return sample(mainSampler,tex,raster.texCoord);
 }
 
 )";
 
+    static OmegaGTE::SharedHandle<OmegaGTE::GEBuffer> finalTextureDrawBuffer;
+
     void loadGlobalRenderAssets(){
+        bufferWriter = OmegaGTE::GEBufferWriter::Create();
         auto & compiler = gte.omegaSlCompiler;
         auto library = compiler->compile({OmegaSLCompiler::Source::fromString(librarySource)});
         shaderLibrary = gte.graphicsEngine->loadShaderLibraryRuntime(library);
@@ -109,9 +110,80 @@ fragment float4 fragmentTexture(OmegaGTETexturedRasterData raster){
         renderPipelineDescriptor.fragmentFunc = shaderLibrary->shaders["textureFragment"];
         textureRenderPipelineState = gte.graphicsEngine->makeRenderPipelineState(renderPipelineDescriptor);
 
-        OmegaGTE::ComputePipelineDescriptor linearGradientPipelineDesc {};
-        linearGradientPipelineDesc.computeFunc = shaderLibrary->shaders["linearGradient"];
-        linearGradientPipelineState = gte.graphicsEngine->makeComputePipelineState(linearGradientPipelineDesc);
+//        OmegaGTE::ComputePipelineDescriptor linearGradientPipelineDesc {};
+//        linearGradientPipelineDesc.computeFunc = shaderLibrary->shaders["linearGradient"];
+//        linearGradientPipelineState = gte.graphicsEngine->makeComputePipelineState(linearGradientPipelineDesc);
+        auto struct_size = OmegaGTE::omegaSLStructSize({OMEGASL_FLOAT4,OMEGASL_FLOAT2});
+
+        auto pos = OmegaGTE::FVec<4>::Create();
+        auto texCoord = OmegaGTE::FVec<2>::Create();
+        pos[0][0] = -1.f;
+        pos[1][0] = 1.f;
+        pos[2][0] = 0.f;
+        pos[3][0] = 1.f;
+
+        texCoord[0][0] = 0.f;
+        texCoord[1][0] = 0.f;
+
+        finalTextureDrawBuffer = gte.graphicsEngine->makeBuffer({OmegaGTE::BufferDescriptor::Upload,struct_size * 6,struct_size});
+        bufferWriter->setOutputBuffer(finalTextureDrawBuffer);
+        /// Triangle 1
+        bufferWriter->structBegin();
+        bufferWriter->writeFloat4(pos);
+        bufferWriter->writeFloat2(texCoord);
+        bufferWriter->structEnd();
+        bufferWriter->sendToBuffer();
+
+        texCoord[1][0] = 1.f;
+        pos[1][0] = -1.f;
+
+        bufferWriter->structBegin();
+        bufferWriter->writeFloat4(pos);
+        bufferWriter->writeFloat2(texCoord);
+        bufferWriter->structEnd();
+        bufferWriter->sendToBuffer();
+
+        texCoord[0][0] = 1.f;
+        pos[0][0] = 1.f;
+
+        bufferWriter->structBegin();
+        bufferWriter->writeFloat4(pos);
+        bufferWriter->writeFloat2(texCoord);
+        bufferWriter->structEnd();
+        bufferWriter->sendToBuffer();
+
+
+        /// Triangle 2
+
+        texCoord[0][0] = texCoord[1][0] = 0.f;
+        pos[1][0] = 1.f;
+        pos[0][0] = -1.f;
+
+        bufferWriter->structBegin();
+        bufferWriter->writeFloat4(pos);
+        bufferWriter->writeFloat2(texCoord);
+        bufferWriter->structEnd();
+        bufferWriter->sendToBuffer();
+
+        texCoord[0][0] = 1.f;
+        pos[0][0] = 1.f;
+
+        bufferWriter->structBegin();
+        bufferWriter->writeFloat4(pos);
+        bufferWriter->writeFloat2(texCoord);
+        bufferWriter->structEnd();
+        bufferWriter->sendToBuffer();
+
+        texCoord[1][0] = 1.f;
+        pos[1][0] = -1.f;
+
+        bufferWriter->structBegin();
+        bufferWriter->writeFloat4(pos);
+        bufferWriter->writeFloat2(texCoord);
+        bufferWriter->structEnd();
+        bufferWriter->sendToBuffer();
+
+        bufferWriter->flush();
     }
 
     void destroyGlobalRenderAssets(){
@@ -119,6 +191,8 @@ fragment float4 fragmentTexture(OmegaGTETexturedRasterData raster){
         renderPipelineState.reset();
         textureRenderPipelineState.reset();
         linearGradientPipelineState.reset();
+        bufferWriter.reset();
+        finalTextureDrawBuffer.reset();
     }
 
     void InitializeEngine(){
@@ -132,12 +206,27 @@ fragment float4 fragmentTexture(OmegaGTETexturedRasterData raster){
 BackendRenderTargetContext::BackendRenderTargetContext(Core::Rect & rect,
         OmegaGTE::SharedHandle<OmegaGTE::GENativeRenderTarget> &renderTarget):
         renderTarget(renderTarget),
-        tessellationEngineContext(gte.tessalationEngine->createTEContextFromNativeRenderTarget(renderTarget)),
-        renderTargetSize(rect)
+        renderTargetSize(rect),
+        fence(gte.graphicsEngine->makeFence())
         {
     if(!bufferWriter){
         bufferWriter = OmegaGTE::GEBufferWriter::Create();
     }
+    OmegaGTE::TextureDescriptor textureDescriptor {};
+    textureDescriptor.usage = OmegaGTE::GETexture::RenderTarget;
+    textureDescriptor.storage_opts = OmegaGTE::Shared;
+    textureDescriptor.width = (unsigned)renderTargetSize.w;
+    textureDescriptor.height = (unsigned)renderTargetSize.h;
+    textureDescriptor.type = OmegaGTE::GETexture::Texture2D;
+    textureDescriptor.pixelFormat = OmegaGTE::TexturePixelFormat::RGBA8Unorm;
+
+    targetTexture = gte.graphicsEngine->makeTexture(textureDescriptor);
+
+    preEffectTarget = gte.graphicsEngine->makeTextureRenderTarget({true,targetTexture});
+
+    tessellationEngineContext = gte.tessalationEngine->createTEContextFromTextureRenderTarget(preEffectTarget);
+
+    imageProcessor = BackendCanvasEffectProcessor::Create(fence);
 }
 
     void BackendRenderTargetContext::setRenderTargetSize(Core::Rect &rect) {
@@ -145,7 +234,7 @@ BackendRenderTargetContext::BackendRenderTargetContext(Core::Rect & rect,
     }
 
 void BackendRenderTargetContext::clear(float r, float g, float b, float a) {
-    auto cb = renderTarget->commandBuffer();
+    auto cb = preEffectTarget->commandBuffer();
 
     OmegaGTE::GERenderTarget::RenderPassDesc renderPassDesc {};
     renderPassDesc.colorAttachment = new OmegaGTE::GERenderTarget::RenderPassDesc::ColorAttachment(
@@ -154,33 +243,26 @@ void BackendRenderTargetContext::clear(float r, float g, float b, float a) {
     renderPassDesc.depthStencilAttachment.disabled = true;
     cb->startRenderPass(renderPassDesc);
     cb->endRenderPass();
+    preEffectTarget->submitCommandBuffer(cb);
 }
 
 void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, void *params) {
     effectQueue.push_back(std::make_pair(type,params));
 }
 
-    struct FinalTextureDrawVertex {
-        OmegaGTE::FVec<3> pos;
-        OmegaGTE::FVec<2> coord;
-    };
-
-    const FinalTextureDrawVertex vertices[] = {
-            {
-                OmegaGTE::FVec<3>::Create(),
-                OmegaGTE::FVec<2>::Create()
-            }
-    };
-
-    static OmegaGTE::SharedHandle<OmegaGTE::GEBuffer> finalTextureDrawBuffer;
 
     void BackendRenderTargetContext::commit(){
-        OmegaGTE::SharedHandle<OmegaGTE::GETexture> dest;
-        imageProcessor->applyEffects(dest,preEffectTarget,effectQueue);
-        effectQueue.clear();
+        preEffectTarget->commit();
         auto cb = renderTarget->commandBuffer();
-        renderTarget->notifyCommandBuffer(cb,imageProcessor->fence);
+        OmegaGTE::SharedHandle<OmegaGTE::GETexture> & dest = targetTexture;
+        if(!effectQueue.empty()) {
+            imageProcessor->applyEffects(dest, preEffectTarget, effectQueue);
+            effectQueue.clear();
+            renderTarget->notifyCommandBuffer(cb, fence);
+        }
         OmegaGTE::GERenderTarget::RenderPassDesc renderPassDesc {};
+        renderPassDesc.depthStencilAttachment.disabled = true;
+        renderPassDesc.colorAttachment = new OmegaGTE::GERenderTarget::RenderPassDesc::ColorAttachment{{0.f,0.f,0.f,0.f},OmegaGTE::GERenderTarget::RenderPassDesc::ColorAttachment::LoadAction::LoadPreserve};
         cb->startRenderPass(renderPassDesc);
         cb->setRenderPipelineState(textureRenderPipelineState);
         cb->bindResourceAtVertexShader(finalTextureDrawBuffer,1);
@@ -242,6 +324,12 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
     void BackendRenderTargetContext::renderToTarget(VisualCommand::Type type, void *params) {
         OmegaGTE::TETessellationResult result;
 
+        OmegaGTE::GEViewport viewPort {};
+        viewPort.x = viewPort.y = viewPort.nearDepth = 0.f;
+        viewPort.farDepth = 1.f;
+        viewPort.width = renderTargetSize.w;
+        viewPort.height = renderTargetSize.h;
+
         size_t struct_size;
         bool useTextureRenderPipeline = false;
 
@@ -249,34 +337,55 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
             case VisualCommand::Rect : {
                 auto _params = (VisualCommand::RectParams *)params;
                 auto te_params = OmegaGTE::TETessellationParams::Rect(_params->rect);
-                result = tessellationEngineContext->tessalateSync(te_params);
 
-                useTextureRenderPipeline = _params->brush->isColor;
+                useTextureRenderPipeline = !_params->brush->isColor;
+
+                if(!useTextureRenderPipeline){
+                    auto color = OmegaGTE::makeColor(_params->brush->color.r,
+                                                     _params->brush->color.g,
+                                                     _params->brush->color.b,
+                                                     _params->brush->color.a);
+                    te_params.addAttachment(OmegaGTE::TETessellationParams::Attachment::makeColor(color));
+                }
+
+                result = tessellationEngineContext->tessalateSync(te_params,OmegaGTE::GTEPolygonFrontFaceRotation::Clockwise,&viewPort);
+
 
                 break;
             }
             case VisualCommand::RoundedRect : {
                 auto _params = (VisualCommand::RoundedRectParams *)params;
                 auto te_params = OmegaGTE::TETessellationParams::RoundedRect(_params->rect);
-                result = tessellationEngineContext->tessalateSync(te_params);
 
-                useTextureRenderPipeline = _params->brush->isColor;
+                useTextureRenderPipeline = !_params->brush->isColor;
+
+                if(!useTextureRenderPipeline){
+                    auto color = OmegaGTE::makeColor(_params->brush->color.r,
+                                                     _params->brush->color.g,
+                                                     _params->brush->color.b,
+                                                     _params->brush->color.a);
+                    te_params.addAttachment(OmegaGTE::TETessellationParams::Attachment::makeColor(color));
+                }
+                result = tessellationEngineContext->tessalateSync(te_params,OmegaGTE::GTEPolygonFrontFaceRotation::Clockwise,&viewPort);
+
 
                 break;
             }
         }
 
         if(useTextureRenderPipeline){
-            struct_size = OmegaGTE::omegaSLStructSize({OMEGASL_FLOAT3,OMEGASL_FLOAT2});
+            struct_size = OmegaGTE::omegaSLStructSize({OMEGASL_FLOAT4,OMEGASL_FLOAT2});
         }
         else {
-            struct_size = OmegaGTE::omegaSLStructSize({OMEGASL_FLOAT3,OMEGASL_FLOAT4});
+            struct_size = OmegaGTE::omegaSLStructSize({OMEGASL_FLOAT4,OMEGASL_FLOAT4});
         }
 
         OmegaGTE::BufferDescriptor bufferDesc {OmegaGTE::BufferDescriptor::Upload,result.totalVertexCount() *struct_size,struct_size};
         auto buffer = gte.graphicsEngine->makeBuffer(bufferDesc);
 
-        auto cb = renderTarget->commandBuffer();
+        bufferWriter->setOutputBuffer(buffer);
+
+        auto cb = preEffectTarget->commandBuffer();
         OmegaGTE::GERenderTarget::RenderPassDesc renderPassDesc {};
 
         OmegaGTE::GEViewport viewport {};
@@ -295,7 +404,26 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
         cb->setViewports({viewport});
         cb->setScissorRects({scissorRect});
         unsigned startVertexIndex = 0;
+
+        auto writeVertexToBuffer = [&](OmegaGTE::GPoint3D & pt,OmegaGTE::FVec<4> & color){
+            auto pos = OmegaGTE::FVec<4>::Create();
+            pos[0][0] = pt.x;
+            pos[1][0] = pt.y;
+            pos[2][0] = pt.z;
+            pos[3][0] = 1.f;
+            bufferWriter->structBegin();
+            bufferWriter->writeFloat4(pos);
+            bufferWriter->writeFloat4(color);
+            bufferWriter->structEnd();
+            bufferWriter->sendToBuffer();
+        };
+
         for(auto & m : result.meshes) {
+            for(auto & v : m.vertexPolygons){
+                writeVertexToBuffer(v.a.pt,v.a.attachment->color);
+                writeVertexToBuffer(v.b.pt,v.b.attachment->color);
+                writeVertexToBuffer(v.c.pt,v.c.attachment->color);
+            }
             OmegaGTE::GERenderTarget::CommandBuffer::PolygonType topology;
             if(m.topology == OmegaGTE::TETessellationResult::TEMesh::TopologyTriangleStrip){
                 topology = OmegaGTE::GERenderTarget::CommandBuffer::TriangleStrip;
@@ -306,8 +434,9 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
             cb->drawPolygons(topology, m.vertexCount(), startVertexIndex);
             startVertexIndex += m.vertexCount();
         }
+        bufferWriter->flush();
         cb->endRenderPass();
-        renderTarget->submitCommandBuffer(cb);
+        preEffectTarget->submitCommandBuffer(cb);
     }
 
 

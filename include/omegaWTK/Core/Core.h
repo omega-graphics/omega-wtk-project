@@ -25,7 +25,7 @@
 /// A cross platform user interface api.
 namespace OmegaWTK {
 
-    static OmegaGTE::GTE gte;
+    extern OmegaGTE::GTE gte;
 
     #ifdef INTERFACE 
     #undef INTERFACE

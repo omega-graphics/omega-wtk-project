@@ -200,6 +200,22 @@ endif()
 source_group(OmegaWTKNative ${NATIVE_SRCS})
 set(NATIVE_PRIVATE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/Native/private_include")
 
+#OmegaWTK Media SubModule
+
+file(GLOB MEDIA_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/*.cpp")
+source_group(OmegaWTKMedia ${NATIVE_SRCS})
+if(TARGET_WIN32)
+	file(GLOB WIN_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/wmf/*.cpp")
+	set(MEDIA_SRCS ${MEDIA_SRCS} ${WIN_SRCS})
+
+elseif(TARGET_MACOS)
+	file(GLOB MACOS_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/avf/*.mm")
+	set(MEDIA_SRCS ${MEDIA_SRCS} ${MACOS_SRCS})
+else()
+	file(GLOB FFMPEG_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/ffmpeg/*.cpp")
+	set(MEDIA_SRCS ${MEDIA_SRCS} ${FFMPEG_SRCS})
+endif()
+
 else()
 	file(GLOB NATIVE_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Mobile/Native/*.cpp")
 	if(TARGET_ANDROID)
@@ -208,25 +224,19 @@ else()
 	endif()
 	source_group(OmegaWTKNative ${NATIVE_SRCS})
 	set(NATIVE_PRIVATE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/Mobile/Native/private_include")
+
+	#OmegaWTK Media SubModule
+
+	file(GLOB MEDIA_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/*.cpp")
+	source_group(OmegaWTKMedia ${NATIVE_SRCS})
+	if(TARGET_ANDROID)
+		file(GLOB ANDROID_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Mobile/Media/android/*.cpp")
+		set(MEDIA_SRCS ${MEDIA_SRCS} ${ANDROID_SRCS})
+	endif()
 endif()
 
 set_source_files_properties(${NATIVE_SRCS} PROPERTIES INCLUDE_DIRECTORIES ${NATIVE_PRIVATE_INCLUDE_DIR})
 
-#OmegaWTK Media SubModule
-
-file(GLOB MEDIA_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/*.cpp")
-source_group(OmegaWTKMedia ${NATIVE_SRCS})
-if(TARGET_WIN32)
-	file(GLOB WIN_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/wmf/*.cpp")
-	set(MEDIA_SRCS ${MEDIA_SRCS} ${WIN_SRCS})
-	
-elseif(TARGET_MACOS)
-	file(GLOB MACOS_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/avf/*.mm")
-	set(MEDIA_SRCS ${MEDIA_SRCS} ${MACOS_SRCS})
-else()
-	file(GLOB FFMPEG_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/ffmpeg/*.cpp")
-	set(MEDIA_SRCS ${MEDIA_SRCS} ${FFMPEG_SRCS})
-endif()
 #OmegaWTK Composition SubModule
 
 file(GLOB COMPOSITION_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Composition/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/Composition/backend/*.cpp")
@@ -282,6 +292,7 @@ if(TARGET_MACOS)
 endif()
 target_include_directories("OmegaWTK" PUBLIC ${THIRD_PARTY_INCLUDEDIRS} $<TARGET_PROPERTY:OmegaCommon,INCLUDE_DIRECTORIES> )
 if(TARGET_MACOS)
+	target_compile_definitions("OmegaWTK" PUBLIC RUNTIME_SHADER_COMP_SUPPORT)
 	target_link_system_frameworks("OmegaWTK" Metal Cocoa QuartzCore AVFoundation VideoToolbox AudioToolbox CoreMedia CoreAudio)
 	target_link_frameworks("OmegaWTK" OmegaGTE)
 else()

@@ -1,7 +1,7 @@
 #import <Cocoa/Cocoa.h>
 #include "omegaWTK/Native/NativeApp.h"
 
-
+#import <Metal/Metal.h>
 
 namespace OmegaWTK::Native::Cocoa {
 
@@ -19,14 +19,17 @@ public:
 		    object:NSApp];
 
     };
-    void terminate(){
+    void terminate() override{
         [NSApp performSelector:@selector(terminate:) withObject:nil afterDelay:0];
     };
-    int runEventLoop() {
+    int runEventLoop() override {
         [NSApp run];
         return 0;
     };
-    ~CocoaApp() = default;
+    ~CocoaApp() override {
+        MTLCaptureManager *manager = [MTLCaptureManager sharedCaptureManager];
+        [manager stopCapture];
+    };
 };
 
 };

@@ -10,12 +10,13 @@ namespace OmegaWTK {
 
 
 Widget::Widget(const Core::Rect & rect,Widget * parent):parent(parent){
-    parent->children.push_back(this);
     layerTree = std::make_shared<Composition::LayerTree>();
     rootView = SharedHandle<CanvasView>(new CanvasView(rect,layerTree.get(),nullptr));
     // std::cout << "Constructing View for Widget" << std::endl;
-    if(parent)
+    if(parent != nullptr) {
         parent->rootView->addSubView(this->rootView.get());
+        parent->children.push_back(this);
+    }
 //    std::cout << "RenderTargetPtr:" << rootView->renderTarget.get() << std::endl;
 };
 

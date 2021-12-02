@@ -23,7 +23,7 @@ void Compositor::executeCurrentCommand(){
              auto renderTarget = std::dynamic_pointer_cast<ViewRenderTarget>(comm->renderTarget);
              auto visualTree = BackendVisualTree::Create(renderTarget);
              BackendCompRenderTarget compRenderTarget {visualTree};
-             renderTargetStore.store.insert(std::make_pair(comm->renderTarget,compRenderTarget));
+             target = &renderTargetStore.store.insert(std::make_pair(comm->renderTarget,compRenderTarget)).first->second;
         } else {
             target = &renderTargetStore.store[comm->renderTarget];
         };
@@ -48,7 +48,7 @@ void Compositor::executeCurrentCommand(){
             else {
                 target->visualTree->setRootVisual(v);
             }
-            target->surfaceTargets.insert(std::make_pair(layer,&v->renderTarget));
+            targetContext = target->surfaceTargets.insert(std::make_pair(layer,&v->renderTarget)).first->second;
         }
         else {
             targetContext = layer_found->second;

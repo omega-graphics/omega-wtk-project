@@ -21,10 +21,8 @@ void CompositorScheduler::processCommand(SharedHandle<CompositorCommand> & comma
     if(command->thresholdParams.hasThreshold) {
         if(command->thresholdParams.threshold >= _now){
             /// Command will execute on time.
-            auto command = compositor->commandQueue.first();
-            compositor->commandQueue.pop();
-
             compositor->currentCommand = command;
+            compositor->commandQueue.pop();
             
             std::chrono::nanoseconds diff = command->thresholdParams.threshold - command->thresholdParams.timeStamp;
             std::this_thread::sleep_for(diff);
@@ -34,7 +32,6 @@ void CompositorScheduler::processCommand(SharedHandle<CompositorCommand> & comma
         }
         else {
             // Command is late!!
-            auto command = compositor->commandQueue.first();
             compositor->currentCommand = command;
             compositor->commandQueue.pop();
             compositor->executeCurrentCommand();
@@ -52,19 +49,21 @@ void CompositorScheduler::processCommand(SharedHandle<CompositorCommand> & comma
 
 
 
-CompositorScheduler::CompositorScheduler(Compositor * compositor):compositor(compositor),shutdown(false),t([&](){
-        std::cout << "--> Starting Up" << std::endl;
+CompositorScheduler::CompositorScheduler(Compositor * compositor):compositor(compositor),shutdown(false),t([this](Compositor *compositor){
+//        std::cout << "--> Starting Up" << std::endl;
         while(true){
             {
-                bool hasCommands = false;
                 {
                     std::unique_lock<std::mutex> lk(compositor->mutex);
                     compositor->queueCondition.wait(lk,[&]{ return !compositor->commandQueue.empty();});
                     lk.unlock();
                 }
-                
-                auto & command = compositor->commandQueue.first();
-                processCommand(command);
+
+                {
+                    std::lock_guard<std::mutex> lk(compositor->mutex);
+                    auto command = compositor->commandQueue.first();
+                    processCommand(command);
+                }
             
             }
             {
@@ -83,7 +82,7 @@ CompositorScheduler::CompositorScheduler(Compositor * compositor):compositor(com
         }
         
         std::cout << "--> Shutting Down" << std::endl;
-    }){
+    },compositor){
 
 };
 
@@ -106,10 +105,9 @@ Compositor::~Compositor(){
 };
 
 void Compositor::scheduleCommand(SharedHandle<CompositorCommand> & command){
-
     {
-        std::unique_lock<std::mutex> lk(mutex);
-        commandQueue.push(command);
+        std::lock_guard<std::mutex> lk(mutex);
+        commandQueue.push(std::move(command));
     }
     queueCondition.notify_one();
 };

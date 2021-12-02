@@ -22,7 +22,7 @@ namespace OmegaWTK::Composition {
         bool operator==(const Color &other){
             return compare(other);
         };
-        /// @brief 8 Bit Standard Colors
+        /// @brief 8 Bit Standard Colors (32bit color)
         enum Eight : uint32_t {
             Black8  = 0x000000,
             White8  = 0xFFFFFF,
@@ -33,7 +33,7 @@ namespace OmegaWTK::Composition {
             Orange8 = 0xFF8000,
             Purple8 = 0xFF00FF
         };
-        /// @brief 16 Bit Standard Colors
+        /// @brief 16 Bit Standard Colors (64bit color)
         enum Sixteen : uint64_t {
             Black16  = 0x000000000000,
             White16  = 0xFFFFFFFFFFFF,
@@ -69,17 +69,18 @@ namespace OmegaWTK::Composition {
         static Gradient Radial(std::initializer_list<GradientStop> stops,float radius);
     };
 
+    /// @brief Represents a Brush used for filling in color or texture of vector graphics.
     struct OMEGAWTK_EXPORT  Brush {
         bool isColor;
         Color color;
         bool isGradient;
         Gradient gradient;
         /**
-         Constructs a Color Brush!
+         @brief Constructs a Color Brush!
          */
         Brush(const Color & color);
         /**
-         Constructs a Gradient Brush!
+         @brief Constructs a Gradient Brush!
          */
         Brush(const Gradient & gradient);
     };

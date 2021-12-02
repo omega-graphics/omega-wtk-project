@@ -15,10 +15,11 @@
 #include <windows.h>
 #include <Shlwapi.h>
 #endif
-
+namespace OmegaWTK {
+    OmegaGTE::GTE gte;
+}
 
 namespace OmegaWTK::Core {
-
 
 // bool Rect::compare(Rect & other){
 //     return (pos.x == other.pos.x) && (pos.y == other.pos.y) && (dimen.minWidth == other.dimen.minWidth) && (dimen.minHeight == other.dimen.minHeight);

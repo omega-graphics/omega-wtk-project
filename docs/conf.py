@@ -10,7 +10,7 @@ version = "0.6"
 
 extensions = ["sphinx.ext.viewcode"]
 
-html_theme = 'sphinx_material'
+html_theme = 'alabaster'
 
 
 

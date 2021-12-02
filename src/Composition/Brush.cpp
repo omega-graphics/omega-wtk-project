@@ -34,7 +34,7 @@ Color Color::create8Bit(std::uint32_t hex_color,std::uint8_t alpha){
     /// RR
     c.r = float(hex_color & mask)/float(mask);
 
-    c.a = alpha;
+    c.a = float(alpha)/float(mask);
     return c;
 };
 
@@ -50,7 +50,7 @@ Color Color::create16Bit(std::uint64_t hex_color,std::uint16_t alpha){
     /// RR
     c.r = float(hex_color & mask)/float(mask);
 
-    c.a = alpha;
+    c.a = float(alpha)/float(mask);
     return c;
 };
 

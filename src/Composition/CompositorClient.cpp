@@ -47,7 +47,7 @@ namespace OmegaWTK::Composition {
             CompositionRenderCommand{
                                 id,client,CompositorCommand::Type::Render,
                                  CompositorCommand::Priority::Low,
-                                 {false,start,start},std::move(status),renderTarget,frame});
+                                 {false,start,start},std::move(status),std::static_pointer_cast<CompositionRenderTarget>(renderTarget),frame});
         return async;
     };
 
@@ -133,8 +133,8 @@ namespace OmegaWTK::Composition {
     void CompositorClientProxy::submit(){
        while(!commandQueue.empty()){
            auto comm = commandQueue.front();
-           frontend->scheduleCommand(comm);
            commandQueue.pop();
+           frontend->scheduleCommand(comm);
        }
     };
 

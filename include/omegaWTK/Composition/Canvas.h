@@ -13,6 +13,7 @@
 #define OMEGAWTK_COMPOSITION_CANVAS_H
 
 namespace OmegaWTK {
+    class View;
     namespace Composition {
 
     struct OMEGAWTK_EXPORT  Border {
@@ -85,16 +86,16 @@ namespace OmegaWTK {
     /// @brief A frozen state of visual items drawn to a Canvas.
     struct CanvasFrame {
         Layer *targetLayer;
-        struct {
-            float r,g,b,a;
-        } background;
         Core::Rect & rect;
+        struct {
+            float r = 0.f,g = 0.f,b = 0.f,a = 0.f;
+        } background;
         OmegaCommon::Vector<VisualCommand> currentVisuals;
         OmegaCommon::Vector<CanvasEffect> currentEffects;
     };
 
     /**
-     
+     @brief Renders 2D vector graphics to a Layer.
     */
     class OMEGAWTK_EXPORT Canvas : public CompositorClient {
 
@@ -104,24 +105,55 @@ namespace OmegaWTK {
 
         Layer &layer;
 
-    public:
+        friend class ::OmegaWTK::View;
 
         explicit Canvas(CompositorClientProxy &proxy,Layer &layer);
 
+    public:
+        /**
+         @brief Draw a Path.
+         */
         void drawPath(Path & path);
 
+        /**
+         @brief Draw a Rect.
+         @param rect The Rect.
+         @param brush The Brush to fill the Rect with.
+         */
         void drawRect(Core::Rect & rect,Core::SharedPtr<Brush> & brush);
 
+        /**
+         @brief Draw a Rounded Rect.
+         @param rect The Rounded Rect.
+         @param brush The Brush to fill the Rect with.
+         */
         void drawRoundedRect(Core::RoundedRect & rect,Core::SharedPtr<Brush> & brush);
 
+        /**
+         @brief Draw an Ellipse.
+         @param ellipse The Ellipse.
+         @param brush The Brush to fill the Rect with.
+         */
         void drawEllipse(Core::Ellipse & ellipse,Core::SharedPtr<Brush> & brush);
 
-        // void drawTextRect(SharedHandle<Composition::TextRect> & textRect,Core::SharedPtr<Brush> & brush);
-
+        /**
+            @brief Draw an Image to the corresponding rect.
+            @param img The Image.
+            @param rect The Rect to bound the image to.
+           */
         void drawImage(SharedHandle<Media::BitmapImage> & img,const Core::Rect & rect);
 
+        /**
+           @brief Draw a GETexture to the corresponding rect.
+           @param img The GETExture.
+           @param rect The Rect to bound the image to.
+          */
         void drawGETexture(SharedHandle<OmegaGTE::GETexture> & img,const Core::Rect & rect);
 
+        /**
+           @brief Apply an effect to the current frame.
+           @param effect The CanvasEffect to apply.
+          */
         void applyEffect(SharedHandle<CanvasEffect> & effect);
 
         /// @brief Sends current frame to CompositorClientProxy to be drawn.

@@ -7,12 +7,12 @@ namespace OmegaWTK::Composition {
 
 Layer::Layer(const Core::Rect &rect)
     :
-        surface_rect(rect), needsNativeResize(false){
+        surface_rect(rect), needsNativeResize(false),parent_ptr(nullptr){
           
 };
 
 void Layer::addSubLayer(SharedHandle<Layer> &layer) {
-  layer->parent_ptr = (this);
+  layer->parent_ptr = this;
   children.push_back(layer);
 //  compTarget->native->addChildNativeItem(layer->getTargetNativePtr());
 };
@@ -97,7 +97,7 @@ void LayerTree::notifyObserversOfWidgetDetach(){
 LayerTree::Limb::Limb(const Core::Rect &rect):
 limbRoot(new Layer(rect)),
 enabled(true){
-    
+    limbRoot->parentLimb = this;
 };
 
 SharedHandle<Layer> & LayerTree::Limb::getRootLayer() {
@@ -105,6 +105,7 @@ SharedHandle<Layer> & LayerTree::Limb::getRootLayer() {
 }
 
 void LayerTree::Limb::addLayer(SharedHandle<Layer> layer){
+    layer->parentLimb = this;
     limbRoot->addSubLayer(layer);
 };
 

@@ -1,3 +1,4 @@
+
 #include "omegaWTK/Core/Core.h"
 #include "View.h"
 
@@ -70,6 +71,10 @@ protected:
         Attach
     } WidgetEventType;
     void notifyObservers(WidgetEventType eventType,void* params);
+    /**
+    @brief Initial render of the Widget
+    @note MUST be implemented by all Widgets*/
+    virtual void init() = 0;
 private:
     friend class AppWindow;
     friend class AppWindowManager;
@@ -140,48 +145,48 @@ public:
     virtual void onWidgetDidShow(){};
 };
 
-template<class _Ty>
+template<class Ty>
 class WidgetState;
 
 
-template<class _State_Ty>
+template<class State_Ty>
 class WidgetStateObserver;
 
-template<class _Ty>
-class WidgetStateObserver<WidgetState<_Ty>> {
+template<class Ty>
+class WidgetStateObserver<WidgetState<Ty>> {
 protected:
-    virtual void stateHasChanged(_Ty & newVal){
+    virtual void stateHasChanged(Ty & newVal){
         /// TO BE IMPLEMENTED BY SUBCLASSES!!
     };
 };
 
 
-template<class _Ty>
+template<class Ty>
 class WidgetState {
-    Core::Optional<_Ty> val;
-    OmegaCommon::Vector<WidgetStateObserver<WidgetState<_Ty>> *> observers;
+    Core::Optional<Ty> val;
+    OmegaCommon::Vector<WidgetStateObserver<WidgetState<Ty>> *> observers;
 public: 
-    void setValue(_Ty newVal){
+    void setValue(Ty newVal){
         val = newVal;
         for(auto & observer : observers){
             observer->stateHasChanged(newVal);
         };
     };
-    static SharedHandle<WidgetState<_Ty>> Create(Core::Optional<_Ty> initalValue = {}){
-        SharedHandle<WidgetState<_Ty>> rc(new WidgetState<_Ty>);
+    static SharedHandle<WidgetState<Ty>> Create(Core::Optional<Ty> initalValue = {}){
+        SharedHandle<WidgetState<Ty>> rc(new WidgetState<Ty>);
         rc->val = initalValue;
         return rc;
     };
 
-    void addObserver(SharedHandle<WidgetStateObserver<WidgetState<_Ty>>> observer){
+    void addObserver(SharedHandle<WidgetStateObserver<WidgetState<Ty>>> observer){
         observers.push_back(observer.get());
     };
 
-    void addObserver(WidgetStateObserver<WidgetState<_Ty>> *observer){
+    void addObserver(WidgetStateObserver<WidgetState<Ty>> *observer){
         observers.push_back(observer);
     };
 
-    void removeObserver(WidgetStateObserver<WidgetState<_Ty>> *observer){
+    void removeObserver(WidgetStateObserver<WidgetState<Ty>> *observer){
         auto ob_it = observers.begin();
         while(ob_it != observers.end()){
             if(*ob_it == observer){

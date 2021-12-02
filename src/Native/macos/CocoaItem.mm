@@ -15,12 +15,10 @@
     if(self = [super initWithFrame:rect]){
         self.wantsLayer = YES;
         self.layer = [CALayer layer];
-        self.layer.backgroundColor = [NSColor clearColor].CGColor;
-        self.layer.masksToBounds = NO;
-        self.layer.frame = rect;
-        self.layer.bounds = CGRectMake(0.0,0.0,rect.size.width,rect.size.height);
+        self.layer.masksToBounds = YES;
+        self.layer.bounds = rect;
         self.autoresizesSubviews = NO;
-        // self.layer.autoresizingMask = kCALayerHeightSizable | kCALayerWidthSizable;
+         self.layer.autoresizingMask = kCALayerHeightSizable | kCALayerWidthSizable;
         NSLog(@"Old Origin: { x:%f, y:%f}",self.layer.anchorPoint.x,self.layer.anchorPoint.y);
         self.layer.anchorPoint = CGPointMake(0.0,0.0);
         self.layer.position = rect.origin;
