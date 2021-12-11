@@ -1,7 +1,0 @@
-C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/zlib/lib/zlib.lib
-C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/zlib/bin/zlib.dll
-C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/zlib/lib/zlibstatic.lib
-C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/zlib/include/zconf.h
-C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/zlib/include/zlib.h
-C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/zlib/share/man/man3/zlib.3
-C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/zlib/share/pkgconfig/zlib.pc
