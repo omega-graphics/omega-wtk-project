@@ -1,0 +1,410 @@
+Performing C SOURCE FILE Test HAVE_LD_VERSION_SCRIPT failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_2d47e && [1/2] Building C object CMakeFiles\cmTC_2d47e.dir\src.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_2d47e.dir/src.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo -DHAVE_LD_VERSION_SCRIPT  /DWIN32 /D_WINDOWS /W3 /W3 -Wl,--version-script=C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/conftest.map /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\cmTC_2d47e.dir\src.c.obj /FdCMakeFiles\cmTC_2d47e.dir\ /FS -c src.c
+cl : Command line error D8021 : invalid numeric argument '/Wl,--version-script=C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/conftest.map'
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+int main(void){return 0;}
+Determining if the include file strings.h exists failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_d5373 && [1/2] Building C object CMakeFiles\cmTC_d5373.dir\CheckIncludeFile.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_d5373.dir/CheckIncludeFile.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3 /W3  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\cmTC_d5373.dir\CheckIncludeFile.c.obj /FdCMakeFiles\cmTC_d5373.dir\ /FS -c CheckIncludeFile.c
+CheckIncludeFile.c(1): fatal error C1083: Cannot open include file: 'strings.h': No such file or directory
+ninja: build stopped: subcommand failed.
+
+
+
+Determining if the include file sys/time.h exists failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_b3b1f && [1/2] Building C object CMakeFiles\cmTC_b3b1f.dir\CheckIncludeFile.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_b3b1f.dir/CheckIncludeFile.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3 /W3  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\cmTC_b3b1f.dir\CheckIncludeFile.c.obj /FdCMakeFiles\cmTC_b3b1f.dir\ /FS -c CheckIncludeFile.c
+CheckIncludeFile.c(1): fatal error C1083: Cannot open include file: 'sys/time.h': No such file or directory
+ninja: build stopped: subcommand failed.
+
+
+
+Determining if the include file unistd.h exists failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_0cec9 && [1/2] Building C object CMakeFiles\cmTC_0cec9.dir\CheckIncludeFile.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_0cec9.dir/CheckIncludeFile.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3 /W3  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\cmTC_0cec9.dir\CheckIncludeFile.c.obj /FdCMakeFiles\cmTC_0cec9.dir\ /FS -c CheckIncludeFile.c
+CheckIncludeFile.c(1): fatal error C1083: Cannot open include file: 'unistd.h': No such file or directory
+ninja: build stopped: subcommand failed.
+
+
+
+Determining if the getopt exist failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_0a3b5 && [1/2] Building C object CMakeFiles\cmTC_0a3b5.dir\CheckSymbolExists.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_0a3b5.dir/CheckSymbolExists.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3 /W3  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\cmTC_0a3b5.dir\CheckSymbolExists.c.obj /FdCMakeFiles\cmTC_0a3b5.dir\ /FS -c CheckSymbolExists.c
+CheckSymbolExists.c(2): fatal error C1083: Cannot open include file: 'unistd.h': No such file or directory
+ninja: build stopped: subcommand failed.
+
+
+File C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <unistd.h>
+#include <stdio.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef getopt
+  return ((int*)(&getopt))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the optarg exist failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_8862d && [1/2] Building C object CMakeFiles\cmTC_8862d.dir\CheckSymbolExists.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_8862d.dir/CheckSymbolExists.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3 /W3  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\cmTC_8862d.dir\CheckSymbolExists.c.obj /FdCMakeFiles\cmTC_8862d.dir\ /FS -c CheckSymbolExists.c
+CheckSymbolExists.c(2): fatal error C1083: Cannot open include file: 'getopt.h': No such file or directory
+ninja: build stopped: subcommand failed.
+
+
+File C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <getopt.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef optarg
+  return ((int*)(&optarg))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the mmap exist failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_6de94 && [1/2] Building C object CMakeFiles\cmTC_6de94.dir\CheckSymbolExists.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_6de94.dir/CheckSymbolExists.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3 /W3  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\cmTC_6de94.dir\CheckSymbolExists.c.obj /FdCMakeFiles\cmTC_6de94.dir\ /FS -c CheckSymbolExists.c
+CheckSymbolExists.c(2): fatal error C1083: Cannot open include file: 'sys/mman.h': No such file or directory
+ninja: build stopped: subcommand failed.
+
+
+File C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <sys/mman.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef mmap
+  return ((int*)(&mmap))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the setmode exist failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_e2ee5 && [1/2] Building C object CMakeFiles\cmTC_e2ee5.dir\CheckSymbolExists.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_e2ee5.dir/CheckSymbolExists.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3 /W3  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\cmTC_e2ee5.dir\CheckSymbolExists.c.obj /FdCMakeFiles\cmTC_e2ee5.dir\ /FS -c CheckSymbolExists.c
+CheckSymbolExists.c(2): fatal error C1083: Cannot open include file: 'unistd.h': No such file or directory
+ninja: build stopped: subcommand failed.
+
+
+File C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <unistd.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef setmode
+  return ((int*)(&setmode))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the include file GL/gl.h exists failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_08c56 && [1/2] Building C object CMakeFiles\cmTC_08c56.dir\CheckIncludeFile.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_08c56.dir/CheckIncludeFile.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3 /W3  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\cmTC_08c56.dir\CheckIncludeFile.c.obj /FdCMakeFiles\cmTC_08c56.dir\ /FS -c CheckIncludeFile.c
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1157): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1157): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1157): error C2146: syntax error: missing ',' before identifier 'glAccum'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1157): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1157): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1158): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1158): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1158): error C2146: syntax error: missing ',' before identifier 'glAlphaFunc'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1158): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1158): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1159): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1159): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1159): error C2146: syntax error: missing ',' before identifier 'glAreTexturesResident'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1159): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1159): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1160): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1160): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1160): error C2146: syntax error: missing ',' before identifier 'glArrayElement'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1160): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1160): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1161): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1161): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1161): error C2146: syntax error: missing ',' before identifier 'glBegin'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1161): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1161): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1162): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1162): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1162): error C2146: syntax error: missing ',' before identifier 'glBindTexture'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1162): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1162): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1163): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1163): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1163): error C2146: syntax error: missing ',' before identifier 'glBitmap'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1163): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1163): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1164): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1164): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1164): error C2146: syntax error: missing ',' before identifier 'glBlendFunc'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1164): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1164): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1165): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1165): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1165): error C2146: syntax error: missing ',' before identifier 'glCallList'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1165): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1165): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1166): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1166): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1166): error C2146: syntax error: missing ',' before identifier 'glCallLists'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1166): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1166): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1167): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1167): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1167): error C2146: syntax error: missing ',' before identifier 'glClear'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1167): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1167): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1168): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1168): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1168): error C2146: syntax error: missing ',' before identifier 'glClearAccum'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1168): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1168): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1169): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1169): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1169): error C2146: syntax error: missing ',' before identifier 'glClearColor'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1169): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1169): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1170): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1170): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1170): error C2146: syntax error: missing ',' before identifier 'glClearDepth'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1170): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1170): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1171): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1171): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1171): error C2146: syntax error: missing ',' before identifier 'glClearIndex'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1171): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1171): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1172): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1172): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1172): error C2146: syntax error: missing ',' before identifier 'glClearStencil'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1172): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1172): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1173): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1173): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1173): error C2146: syntax error: missing ',' before identifier 'glClipPlane'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1173): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1173): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1174): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1174): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1174): error C2146: syntax error: missing ',' before identifier 'glColor3b'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1174): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1174): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1175): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1175): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1175): error C2146: syntax error: missing ',' before identifier 'glColor3bv'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1175): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1175): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1176): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1176): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1176): error C2146: syntax error: missing ',' before identifier 'glColor3d'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1176): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1176): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1177): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1177): fatal error C1003: error count exceeds 100; stopping compilation
+ninja: build stopped: subcommand failed.
+
+
+
+Determining if the include file GL/glu.h exists failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_98026 && [1/2] Building C object CMakeFiles\cmTC_98026.dir\CheckIncludeFile.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_98026.dir/CheckIncludeFile.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3 /W3  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\cmTC_98026.dir\CheckIncludeFile.c.obj /FdCMakeFiles\cmTC_98026.dir\ /FS -c CheckIncludeFile.c
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1157): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1157): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1157): error C2146: syntax error: missing ',' before identifier 'glAccum'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1157): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1157): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1158): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1158): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1158): error C2146: syntax error: missing ',' before identifier 'glAlphaFunc'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1158): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1158): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1159): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1159): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1159): error C2146: syntax error: missing ',' before identifier 'glAreTexturesResident'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1159): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1159): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1160): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1160): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1160): error C2146: syntax error: missing ',' before identifier 'glArrayElement'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1160): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1160): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1161): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1161): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1161): error C2146: syntax error: missing ',' before identifier 'glBegin'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1161): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1161): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1162): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1162): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1162): error C2146: syntax error: missing ',' before identifier 'glBindTexture'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1162): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1162): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1163): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1163): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1163): error C2146: syntax error: missing ',' before identifier 'glBitmap'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1163): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1163): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1164): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1164): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1164): error C2146: syntax error: missing ',' before identifier 'glBlendFunc'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1164): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1164): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1165): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1165): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1165): error C2146: syntax error: missing ',' before identifier 'glCallList'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1165): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1165): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1166): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1166): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1166): error C2146: syntax error: missing ',' before identifier 'glCallLists'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1166): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1166): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1167): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1167): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1167): error C2146: syntax error: missing ',' before identifier 'glClear'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1167): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1167): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1168): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1168): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1168): error C2146: syntax error: missing ',' before identifier 'glClearAccum'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1168): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1168): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1169): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1169): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1169): error C2146: syntax error: missing ',' before identifier 'glClearColor'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1169): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1169): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1170): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1170): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1170): error C2146: syntax error: missing ',' before identifier 'glClearDepth'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1170): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1170): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1171): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1171): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1171): error C2146: syntax error: missing ',' before identifier 'glClearIndex'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1171): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1171): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1172): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1172): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1172): error C2146: syntax error: missing ',' before identifier 'glClearStencil'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1172): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1172): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1173): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1173): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1173): error C2146: syntax error: missing ',' before identifier 'glClipPlane'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1173): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1173): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1174): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1174): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1174): error C2146: syntax error: missing ',' before identifier 'glColor3b'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1174): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1174): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1175): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1175): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1175): error C2146: syntax error: missing ',' before identifier 'glColor3bv'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1175): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1175): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1176): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1176): error C2085: 'APIENTRY': not in formal parameter list
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1176): error C2146: syntax error: missing ',' before identifier 'glColor3d'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1176): error C2143: syntax error: missing ';' before '('
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1176): error C2059: syntax error: ')'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1177): error C2054: expected '(' to follow 'WINGDIAPI'
+C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um\GL/gl.h(1177): fatal error C1003: error count exceeds 100; stopping compilation
+ninja: build stopped: subcommand failed.
+
+
+
+Determining if the include file GL/glut.h exists failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_109ac && [1/2] Building C object CMakeFiles\cmTC_109ac.dir\CheckIncludeFile.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_109ac.dir/CheckIncludeFile.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3 /W3  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\cmTC_109ac.dir\CheckIncludeFile.c.obj /FdCMakeFiles\cmTC_109ac.dir\ /FS -c CheckIncludeFile.c
+CheckIncludeFile.c(1): fatal error C1083: Cannot open include file: 'GL/glut.h': No such file or directory
+ninja: build stopped: subcommand failed.
+
+
+
+Determining if the include file GLUT/glut.h exists failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_21958 && [1/2] Building C object CMakeFiles\cmTC_21958.dir\CheckIncludeFile.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_21958.dir/CheckIncludeFile.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3 /W3  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\cmTC_21958.dir\CheckIncludeFile.c.obj /FdCMakeFiles\cmTC_21958.dir\ /FS -c CheckIncludeFile.c
+CheckIncludeFile.c(1): fatal error C1083: Cannot open include file: 'GLUT/glut.h': No such file or directory
+ninja: build stopped: subcommand failed.
+
+
+
+Determining if the include file OpenGL/gl.h exists failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_e72e2 && [1/2] Building C object CMakeFiles\cmTC_e72e2.dir\CheckIncludeFile.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_e72e2.dir/CheckIncludeFile.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3 /W3  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\cmTC_e72e2.dir\CheckIncludeFile.c.obj /FdCMakeFiles\cmTC_e72e2.dir\ /FS -c CheckIncludeFile.c
+CheckIncludeFile.c(1): fatal error C1083: Cannot open include file: 'OpenGL/gl.h': No such file or directory
+ninja: build stopped: subcommand failed.
+
+
+
+Determining if the include file OpenGL/glu.h exists failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libtiff/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_560ec && [1/2] Building C object CMakeFiles\cmTC_560ec.dir\CheckIncludeFile.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_560ec.dir/CheckIncludeFile.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3 /W3  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\cmTC_560ec.dir\CheckIncludeFile.c.obj /FdCMakeFiles\cmTC_560ec.dir\ /FS -c CheckIncludeFile.c
+CheckIncludeFile.c(1): fatal error C1083: Cannot open include file: 'OpenGL/glu.h': No such file or directory
+ninja: build stopped: subcommand failed.
+
+
+

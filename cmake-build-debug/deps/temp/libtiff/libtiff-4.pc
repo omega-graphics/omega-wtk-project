@@ -1,0 +1,12 @@
+prefix=C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libtiff
+exec_prefix=C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libtiff
+libdir=C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libtiff/lib
+includedir=C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libtiff/include
+
+Name: libtiff
+Description:  Tag Image File Format (TIFF) library.
+Version: 4.3.0
+Libs: -LC:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libtiff/lib -ltiff
+Libs.private: 
+Cflags: -IC:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libtiff/include
+Requires.private:  zlib

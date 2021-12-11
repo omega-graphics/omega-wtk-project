@@ -1,0 +1,28 @@
+The system is: Windows - 10.0.19043 - AMD64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x64/cl.exe 
+Build flags: "-IC:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/icu/include"
+Id flags: -c 
+
+The output was:
+0
+Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30136 for x64
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+cl : Command line warning D9024 : unrecognized source file type '"-IC:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/icu/include"', object file assumed
+cl : Command line warning D9027 : source file '"-IC:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/icu/include"' ignored
+CMakeCCompilerId.c
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.obj"
+
+The C compiler identification is MSVC, found in "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libxml2/CMakeFiles/3.20.2/CompilerIdC/CMakeCCompilerId.obj"
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libxml2/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_6ccaa && [1/2] Building C object CMakeFiles\cmTC_6ccaa.dir\CMakeCCompilerABI.c.obj
+[2/2] Linking C executable cmTC_6ccaa.exe
+
+
+

@@ -1,0 +1,99 @@
+The system is: Windows - 10.0.19043 - AMD64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x64/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30136 for x64
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+CMakeCCompilerId.c
+Microsoft (R) Incremental Linker Version 14.29.30136.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+/out:CMakeCCompilerId.exe 
+CMakeCCompilerId.obj 
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.exe"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.obj"
+
+The C compiler identification is MSVC, found in "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libjpeg-turbo/CMakeFiles/3.20.2/CompilerIdC/CMakeCCompilerId.exe"
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libjpeg-turbo/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_726eb && [1/2] Building C object CMakeFiles\cmTC_726eb.dir\CMakeCCompilerABI.c.obj
+[2/2] Linking C executable cmTC_726eb.exe
+
+
+
+Determining if the include file sys/types.h exists passed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libjpeg-turbo/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_5af79 && [1/2] Building C object CMakeFiles\cmTC_5af79.dir\CheckIncludeFile.c.obj
+[2/2] Linking C executable cmTC_5af79.exe
+
+
+
+Determining if the include file stdint.h exists passed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libjpeg-turbo/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_5576d && [1/2] Building C object CMakeFiles\cmTC_5576d.dir\CheckIncludeFile.c.obj
+[2/2] Linking C executable cmTC_5576d.exe
+
+
+
+Determining if the include file stddef.h exists passed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libjpeg-turbo/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_27278 && [1/2] Building C object CMakeFiles\cmTC_27278.dir\CheckIncludeFile.c.obj
+[2/2] Linking C executable cmTC_27278.exe
+
+
+
+Determining size of size_t passed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libjpeg-turbo/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_33513 && [1/2] Building C object CMakeFiles\cmTC_33513.dir\SIZE_T.c.obj
+[2/2] Linking C executable cmTC_33513.exe
+
+
+
+Determining size of unsigned long passed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libjpeg-turbo/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_b7854 && [1/2] Building C object CMakeFiles\cmTC_b7854.dir\UNSIGNED_LONG.c.obj
+[2/2] Linking C executable cmTC_b7854.exe
+
+
+
+Determining if files intrin.h exist passed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libjpeg-turbo/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_df5ac && [1/2] Building C object CMakeFiles\cmTC_df5ac.dir\HAVE_INTRIN_H.c.obj
+[2/2] Linking C executable cmTC_df5ac.exe
+
+
+
+Performing C SOURCE FILE Test INLINE_WORKS succeeded with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libjpeg-turbo/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_fd09d && [1/2] Building C object CMakeFiles\cmTC_fd09d.dir\src.c.obj
+[2/2] Linking C executable cmTC_fd09d.exe
+
+
+Source file was:
+__forceinline static int foo(void) { return 0; } int main(void) { return foo(); }
+Performing C SOURCE FILE Test HAVE_THREAD_LOCAL succeeded with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libjpeg-turbo/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_47ce3 && [1/2] Building C object CMakeFiles\cmTC_47ce3.dir\src.c.obj
+[2/2] Linking C executable cmTC_47ce3.exe
+
+
+Source file was:
+__declspec(thread) int i;  int main(void) { i = 0;  return i; }

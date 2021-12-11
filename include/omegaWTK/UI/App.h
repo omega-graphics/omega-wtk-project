@@ -13,9 +13,7 @@ class OMEGAWTK_EXPORT AppInst {
     Native::NAP ptr;
     static AppInst *instance;
 public:
-    static  AppInst * const inst() {
-        return instance;
-    };
+    static  AppInst * const inst();
     UniqueHandle<AppWindowManager> windowManager;
     AppInst(void *data);
     static int start();

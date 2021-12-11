@@ -1,0 +1,83 @@
+Checking whether the ASM compiler is GNU using "--version" did not match "(GNU assembler)|(GCC)|(Free Software Foundation)":
+Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30136 for x64
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+cl : Command line warning D9002 : ignoring unknown option '--version'
+cl : Command line error D8003 : missing source filename
+Checking whether the ASM compiler is Clang using "--version" did not match "(clang version)":
+Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30136 for x64
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+cl : Command line warning D9002 : ignoring unknown option '--version'
+cl : Command line error D8003 : missing source filename
+Checking whether the ASM compiler is AppleClang using "--version" did not match "(Apple LLVM version)":
+Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30136 for x64
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+cl : Command line warning D9002 : ignoring unknown option '--version'
+cl : Command line error D8003 : missing source filename
+Checking whether the ASM compiler is ARMClang using "--version" did not match "armclang":
+Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30136 for x64
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+cl : Command line warning D9002 : ignoring unknown option '--version'
+cl : Command line error D8003 : missing source filename
+Checking whether the ASM compiler is HP using "-V" did not match "HP C":
+Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30136 for x64
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+cl : Command line error D8004 : '/V' requires an argument
+Checking whether the ASM compiler is Intel using "--version" did not match "(ICC)":
+Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30136 for x64
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+cl : Command line warning D9002 : ignoring unknown option '--version'
+cl : Command line error D8003 : missing source filename
+Checking whether the ASM compiler is IntelLLVM using "--version" did not match "(Intel[^
+]+oneAPI)":
+Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30136 for x64
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+cl : Command line warning D9002 : ignoring unknown option '--version'
+cl : Command line error D8003 : missing source filename
+Checking whether the ASM compiler is SunPro using "-V" did not match "Sun C":
+Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30136 for x64
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+cl : Command line error D8004 : '/V' requires an argument
+Checking whether the ASM compiler is XL using "-qversion" did not match "XL C":
+Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30136 for x64
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+cl : Command line warning D9002 : ignoring unknown option '-qversion'
+cl : Command line error D8003 : missing source filename
+Performing C SOURCE FILE Test HAVE_LD_VERSION_SCRIPT failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libpng/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_b27a0 && [1/2] Building C object CMakeFiles\cmTC_b27a0.dir\src.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_b27a0.dir/src.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo -DHAVE_LD_VERSION_SCRIPT  /DWIN32 /D_WINDOWS /W3 -Wl,--version-script='C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libpng/conftest.map' /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\cmTC_b27a0.dir\src.c.obj /FdCMakeFiles\cmTC_b27a0.dir\ /FS -c src.c
+cl : Command line error D8021 : invalid numeric argument '/Wl,--version-script='C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libpng/conftest.map''
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+void sym(void) {}
+void sym2(void) {}
+int main(void) {return 0;}
+
+Performing C SOURCE FILE Test HAVE_SOLARIS_LD_VERSION_SCRIPT failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libpng/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_6f107 && [1/2] Building C object CMakeFiles\cmTC_6f107.dir\src.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_6f107.dir/src.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo -DHAVE_SOLARIS_LD_VERSION_SCRIPT  /DWIN32 /D_WINDOWS /W3 -Wl,-M -Wl,C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libpng/conftest.map /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\cmTC_6f107.dir\src.c.obj /FdCMakeFiles\cmTC_6f107.dir\ /FS -c src.c
+cl : Command line error D8021 : invalid numeric argument '/Wl,-M'
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+void sym(void) {}
+void sym2(void) {}
+int main(void) {return 0;}
+

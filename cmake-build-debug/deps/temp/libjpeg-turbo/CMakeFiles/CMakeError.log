@@ -1,0 +1,15 @@
+Looking for a ASM_NASM compiler failed with the following output:
+-- The ASM_NASM compiler identification is unknown
+-- Didn't find assembler
+CMake Error at CMakeLists.txt:2 (project):
+  No CMAKE_ASM_NASM_COMPILER could be found.
+
+  Tell CMake where to find the compiler by setting either the environment
+  variable "ASM_NASM" or the CMake cache entry CMAKE_ASM_NASM_COMPILER to the
+  full path to the compiler, or to the compiler name if it is in the PATH.
+
+
+-- Configuring incomplete, errors occurred!
+See also "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libjpeg-turbo/simd/CMakeFiles/CheckASM_NASM/CMakeFiles/CMakeOutput.log".
+See also "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libjpeg-turbo/simd/CMakeFiles/CheckASM_NASM/CMakeFiles/CMakeError.log".
+

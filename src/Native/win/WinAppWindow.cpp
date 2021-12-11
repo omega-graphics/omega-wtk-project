@@ -40,6 +40,20 @@ namespace OmegaWTK::Native::Win {
         SetMenu(hwnd,(HMENU)nm->getNativeBinding());
     }
 
+    void WinAppWindow::setTitle(OmegaCommon::StrRef title){
+        SetWindowTextA(hwnd,title.data());
+    }
+
+    void WinAppWindow::setEnableWindowHeader(bool &enable) {
+        if(!enable){
+            MARGINS margins {0,0,0,0};
+            HRESULT hr = DwmExtendFrameIntoClientArea(hwnd,&margins);
+            if(FAILED(hr)){
+                OMEGAWTK_DEBUG("Failed to Extend Window Frame!")
+            }
+        }
+    }
+
     LRESULT WinAppWindow::ProcessWndMsg(UINT u_int,WPARAM wParam,LPARAM lParam){
         LRESULT result = 0;
         // MessageBoxA(HWND_DESKTOP,"WinAppWindow WndProc","NOTE",MB_OK);
@@ -223,7 +237,7 @@ namespace OmegaWTK::Native::Win {
             ++it;
         };
        if(menu) {
-           HMENU hmenu = (HMENU)menu->getNativeBinding();
+           auto hmenu = (HMENU)menu->getNativeBinding();
             if(SetMenu(hwnd,hmenu) == FALSE){
                 OMEGAWTK_DEBUG("Failed to Attach Menu to AppWindow");
             };

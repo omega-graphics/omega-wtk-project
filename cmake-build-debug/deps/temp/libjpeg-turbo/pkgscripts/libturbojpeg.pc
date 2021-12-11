@@ -1,0 +1,10 @@
+prefix=C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libjpeg-turbo
+exec_prefix=C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libjpeg-turbo
+libdir=C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libjpeg-turbo/lib
+includedir=C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libjpeg-turbo/include
+
+Name: libturbojpeg
+Description: A SIMD-accelerated JPEG codec that provides the TurboJPEG API
+Version: 2.0.7
+Libs: -L${libdir} -lturbojpeg
+Cflags: -I${includedir}

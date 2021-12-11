@@ -1,0 +1,32 @@
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x64/cl.exe 
+Build flags: "-IC:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/icu/include"
+Id flags:  
+
+The output was:
+2
+Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30136 for x64
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+cl : Command line warning D9024 : unrecognized source file type '"-IC:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/icu/include"', object file assumed
+CMakeCCompilerId.c
+Microsoft (R) Incremental Linker Version 14.29.30136.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+/out:include\.exe 
+"\-IC:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/icu/include\" 
+CMakeCCompilerId.obj 
+LINK : fatal error LNK1104: cannot open file 'include\.exe'
+
+
+Determining if the include file pthread.h exists failed with the following output:
+Change Dir: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/temp/libxml2/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/alex/Documents/Tools/ninja.exe cmTC_cf1da && [1/2] Building C object CMakeFiles\cmTC_cf1da.dir\CheckIncludeFile.c.obj
+[31mFAILED: [0mCMakeFiles/cmTC_cf1da.dir/CheckIncludeFile.c.obj 
+C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe  /nologo   "-IC:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/icu/include"  /Zi /Ob0 /Od /RTC1 -MDd /showIncludes /FoCMakeFiles\cmTC_cf1da.dir\CheckIncludeFile.c.obj /FdCMakeFiles\cmTC_cf1da.dir\ /FS -c CheckIncludeFile.c
+CheckIncludeFile.c(1): fatal error C1083: Cannot open include file: 'pthread.h': No such file or directory
+ninja: build stopped: subcommand failed.
+
+
+

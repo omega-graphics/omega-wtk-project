@@ -1,0 +1,16 @@
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libpng/lib/libpng16.lib
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libpng/bin/libpng16.dll
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libpng/lib/libpng16_static.lib
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libpng/include/png.h
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libpng/include/pngconf.h
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libpng/include/pnglibconf.h
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libpng/include/libpng16/png.h
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libpng/include/libpng16/pngconf.h
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libpng/include/libpng16/pnglibconf.h
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libpng/bin/pngfix.exe
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libpng/bin/png-fix-itxt.exe
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libpng/share/man/man3/libpng.3
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libpng/share/man/man3/libpngpf.3
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libpng/share/man/man5/png.5
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libpng/lib/libpng/libpng16.cmake
+C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug/deps/libpng/lib/libpng/libpng16-release.cmake

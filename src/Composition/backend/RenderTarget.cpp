@@ -252,14 +252,18 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
 
 
     void BackendRenderTargetContext::commit(){
+        auto _l_cb = preEffectTarget->commandBuffer();
+        preEffectTarget->submitCommandBuffer(_l_cb,fence);
         preEffectTarget->commit();
         auto cb = renderTarget->commandBuffer();
         OmegaGTE::SharedHandle<OmegaGTE::GETexture> & dest = targetTexture;
+
         if(!effectQueue.empty()) {
             imageProcessor->applyEffects(dest, preEffectTarget, effectQueue);
             effectQueue.clear();
-            renderTarget->notifyCommandBuffer(cb, fence);
         }
+
+        renderTarget->notifyCommandBuffer(cb, fence);
         OmegaGTE::GERenderTarget::RenderPassDesc renderPassDesc {};
         renderPassDesc.depthStencilAttachment.disabled = true;
         renderPassDesc.colorAttachment = new OmegaGTE::GERenderTarget::RenderPassDesc::ColorAttachment{{0.f,0.f,0.f,0.f},OmegaGTE::GERenderTarget::RenderPassDesc::ColorAttachment::LoadAction::LoadPreserve};

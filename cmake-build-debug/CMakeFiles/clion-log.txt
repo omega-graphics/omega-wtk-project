@@ -1,0 +1,17 @@
+C:\Users\alex\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\212.5457.51\bin\cmake\win\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MODULE_PATH=C:/Users/alex/Documents/GitHub/autom/tools/cmake -GNinja -DCMAKE_C_FLAGS=-m64 -DCMAKE_CXX_FLAGS=-m64 C:\Users\alex\Documents\GitHub\wtk
+Found Python3
+Found Python3
+Found Python3
+Found Python3
+-- Adding Module:OmegaCommon
+-- Adding Module:OmegaGTE
+CUSTOM PROJECT:icu
+CMAKE PROJECT:libxml2
+CMAKE PROJECT:zlib
+CMAKE PROJECT:libpng
+CMAKE PROJECT:libjpeg-turbo
+CMAKE PROJECT:libtiff
+-- Adding Module:OmegaWTK
+-- Configuring done
+-- Generating done
+-- Build files have been written to: C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug

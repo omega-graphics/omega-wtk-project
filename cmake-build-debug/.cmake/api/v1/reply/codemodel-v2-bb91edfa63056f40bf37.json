@@ -1,0 +1,301 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						5
+					],
+					"hasInstallRule" : true,
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.11"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						5,
+						6,
+						8,
+						9,
+						10,
+						11,
+						16
+					]
+				},
+				{
+					"build" : "gte",
+					"childIndexes" : 
+					[
+						2,
+						3
+					],
+					"hasInstallRule" : true,
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "gte",
+					"targetIndexes" : 
+					[
+						4,
+						14
+					]
+				},
+				{
+					"build" : "gte/common",
+					"hasInstallRule" : true,
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "gte/common",
+					"targetIndexes" : 
+					[
+						3,
+						7,
+						12,
+						13,
+						15
+					]
+				},
+				{
+					"build" : "gte/tests",
+					"childIndexes" : 
+					[
+						4
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "gte/tests"
+				},
+				{
+					"build" : "gte/tests/directx",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 1,
+					"source" : "gte/tests/directx",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				},
+				{
+					"build" : "tests",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.11"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "tests",
+					"targetIndexes" : 
+					[
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0,
+						5
+					],
+					"name" : "OmegaWTK",
+					"targetIndexes" : 
+					[
+						2,
+						5,
+						6,
+						8,
+						9,
+						10,
+						11,
+						16
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4
+					],
+					"name" : "OmegaGTE",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						3,
+						4,
+						7,
+						12,
+						13,
+						14,
+						15
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 4,
+					"id" : "2DTest::@1068e990317ade5b2c22",
+					"jsonFile" : "target-2DTest-Debug-990ea986484ea457ab53.json",
+					"name" : "2DTest",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "2DTestShaders::@1068e990317ade5b2c22",
+					"jsonFile" : "target-2DTestShaders-Debug-c7b4519863ea6ffc5bc4.json",
+					"name" : "2DTestShaders",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "BasicAppTest::@a44f0ac069e85531cdee",
+					"jsonFile" : "target-BasicAppTest-Debug-bc0683f85f2f9dbc5dca.json",
+					"name" : "BasicAppTest",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "OmegaCommon::@ddc4bd2ef539ade4a587",
+					"jsonFile" : "target-OmegaCommon-Debug-de2a138646b652fe0171.json",
+					"name" : "OmegaCommon",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "OmegaGTE::@6c98914a554788ca2f10",
+					"jsonFile" : "target-OmegaGTE-Debug-68afd32f9cabe3c286d3.json",
+					"name" : "OmegaGTE",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "OmegaWTK::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-OmegaWTK-Debug-c0559c8c57f81386f00a.json",
+					"name" : "OmegaWTK",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "icu::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-icu-Debug-1bf138cf52b5f1ecf479.json",
+					"name" : "icu",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "lex-test::@ddc4bd2ef539ade4a587",
+					"jsonFile" : "target-lex-test-Debug-18cb5d2563c58aa158a4.json",
+					"name" : "lex-test",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "libjpeg-turbo::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-libjpeg-turbo-Debug-a65616b2cc9bd2e91e69.json",
+					"name" : "libjpeg-turbo",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "libpng::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-libpng-Debug-fa5d553cbd884c2b76f7.json",
+					"name" : "libpng",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "libtiff::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-libtiff-Debug-aae388b0e555e0d5786e.json",
+					"name" : "libtiff",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "libxml2::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-libxml2-Debug-c6fe660ba600267dc86b.json",
+					"name" : "libxml2",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "omega-ebin::@ddc4bd2ef539ade4a587",
+					"jsonFile" : "target-omega-ebin-Debug-bf03c9c03df24e0144d4.json",
+					"name" : "omega-ebin",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "omega-wrapgen::@ddc4bd2ef539ade4a587",
+					"jsonFile" : "target-omega-wrapgen-Debug-2266b40b873c15c52765.json",
+					"name" : "omega-wrapgen",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "omegaslc::@6c98914a554788ca2f10",
+					"jsonFile" : "target-omegaslc-Debug-53cd899759b1fb5b9588.json",
+					"name" : "omegaslc",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "parse-test::@ddc4bd2ef539ade4a587",
+					"jsonFile" : "target-parse-test-Debug-577716cc4558404b1971.json",
+					"name" : "parse-test",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "zlib::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-zlib-Debug-f9a6cc997fb75666a80c.json",
+					"name" : "zlib",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/alex/Documents/GitHub/wtk/cmake-build-debug",
+		"source" : "C:/Users/alex/Documents/GitHub/wtk"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 2
+	}
+}

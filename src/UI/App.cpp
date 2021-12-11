@@ -10,6 +10,10 @@ namespace OmegaWTK {
 
 AppInst * AppInst::instance;
 
+AppInst *const AppInst::inst() {
+    return instance;
+}
+
 AppInst::AppInst(void *data):ptr(Native::make_native_app(data)),windowManager(std::make_unique<AppWindowManager>()){
     instance = this;
     gte = OmegaGTE::InitWithDefaultDevice();
