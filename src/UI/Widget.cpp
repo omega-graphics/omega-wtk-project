@@ -24,6 +24,13 @@ Widget::Widget(const Core::Rect & rect,Widget * parent):parent(parent){
 //    
 //};
 
+void Widget::onThemeSetRecurse(Native::ThemeDesc &desc){
+    onThemeSet(desc);
+    for(auto & child : children){
+        child->onThemeSetRecurse(desc);
+    }
+}
+
 SharedHandle<View> Widget::makeCanvasView(const Core::Rect & rect,View *parent){
     return SharedHandle<CanvasView>(new CanvasView(rect,layerTree.get(),parent));
 };

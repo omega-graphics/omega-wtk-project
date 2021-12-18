@@ -9,13 +9,14 @@
 namespace OmegaWTK {
 
 
-class OMEGAWTK_EXPORT AppInst {
+class OMEGAWTK_EXPORT AppInst : public Native::NativeThemeObserver {
     Native::NAP ptr;
     static AppInst *instance;
 public:
-    static  AppInst * const inst();
+    void onThemeSet(Native::ThemeDesc &desc) override;
+    static  AppInst * inst();
     UniqueHandle<AppWindowManager> windowManager;
-    AppInst(void *data);
+    explicit AppInst(void *data);
     static int start();
     static void terminate();
 
@@ -24,7 +25,7 @@ public:
 //     AppInst(void * windows_inst);
 // #endif
     Native::NAP & getNAP(){ return ptr;};
-    ~AppInst();
+    ~AppInst() override;
 };
 
 

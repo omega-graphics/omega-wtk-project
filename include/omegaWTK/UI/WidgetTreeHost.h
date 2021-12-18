@@ -28,6 +28,8 @@ namespace OmegaWTK {
         WidgetTreeHost();
 
         friend class AppWindowManager;
+        friend class AppWindow;
+
         void initWidgetRecurse(Widget *parent);
         void initWidgetTree();
     public:

@@ -2,6 +2,7 @@
 #include "omegaWTK/Native/NativeApp.h"
 #include "omegaWTK/UI/Menu.h"
 #include "omegaWTK/Composition/FontEngine.h"
+#include "omegaWTK/Native/NativeTheme.h"
 
 
 namespace OmegaWTK {
@@ -10,7 +11,7 @@ namespace OmegaWTK {
 
 AppInst * AppInst::instance;
 
-AppInst *const AppInst::inst() {
+AppInst *AppInst::inst() {
     return instance;
 }
 
@@ -34,10 +35,9 @@ void AppInst::terminate() {
     instance->ptr->terminate();
 };
 
-// void AppInst::updateRootWidget()
-// {
-//     rootWidget->compositor->prepareUpdate();
-// };
+void AppInst::onThemeSet(Native::ThemeDesc &desc) {
+
+}
 
 AppInst::~AppInst(){
     instance = nullptr;

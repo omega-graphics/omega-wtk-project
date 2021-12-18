@@ -9,7 +9,7 @@ namespace OmegaWTK::Native {
         
     };
 
-    typedef NativeNoteCenter *NNCP;
+    typedef SharedHandle<NativeNoteCenter> NNCP;
     NNCP make_native_note_center();
 
 }

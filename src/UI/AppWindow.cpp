@@ -41,6 +41,12 @@ void AppWindow::setEnableWindowHeader(bool enable) {
 //     menuStyle = style;
 // };
 
+void AppWindow::onThemeSet(Native::ThemeDesc &desc){
+    for(auto &host : widgetTreeHosts){
+        host->root->onThemeSetRecurse(desc);
+    }
+}
+
 void AppWindow::_add_widget(Widget *widget){
     layer->native_window_ptr->addNativeItem(widget->rootView->renderTarget->getNativePtr());
 }
@@ -75,6 +81,10 @@ AppWindowManager::AppWindowManager():rootWindow(nullptr){};
 void AppWindowManager::setRootWindow(AppWindow * handle){
     rootWindow = handle;
 };
+
+void AppWindowManager::onThemeSet(Native::ThemeDesc & desc){
+    rootWindow->onThemeSet(desc);
+}
 
 AppWindow * AppWindowManager::getRootWindow(){
     return rootWindow;

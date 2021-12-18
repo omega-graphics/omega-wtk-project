@@ -1,6 +1,7 @@
 
 #include "omegaWTK/Core/Core.h"
 #include "View.h"
+#include "omegaWTK/Native/NativeTheme.h"
 
 #ifndef OMEGAWTK_UI_WIDGET_H
 #define OMEGAWTK_UI_WIDGET_H
@@ -21,8 +22,14 @@ class WidgetTreeHost;
 
  @see AppWindow
 */
-class OMEGAWTK_EXPORT  Widget {
+class OMEGAWTK_EXPORT  Widget : public Native::NativeThemeObserver {
     bool initialDrawComplete = false;
+
+    void onThemeSetRecurse(Native::ThemeDesc &desc);
+
+    virtual void onThemeSet(Native::ThemeDesc &desc) {
+
+    };
 protected:
 
     SharedHandle<CanvasView> rootView;

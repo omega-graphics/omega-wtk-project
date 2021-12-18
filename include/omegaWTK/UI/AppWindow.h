@@ -3,6 +3,7 @@
 #include "Menu.h"
 #include "omegaWTK/Composition/Layer.h"
 #include "omegaWTK/Native/NativeDialog.h"
+#include "omegaWTK/Native/NativeTheme.h"
 
 #ifndef OMEGAWTK_UI_APPWINDOW_H
 #define OMEGAWTK_UI_APPWINDOW_H
@@ -21,7 +22,8 @@ class AppWindowDelegate;
     In order to display any widgets on this window a WidgetTreeHost must be created,
     than attached to an instance of this class.
 */
- class OMEGAWTK_EXPORT AppWindow : public Native::NativeEventEmitter {
+ class OMEGAWTK_EXPORT AppWindow : public Native::NativeEventEmitter,
+                                    public Native::NativeThemeObserver {
 
         /// Its Window Layer
         UniqueHandle<Composition::WindowLayer> layer;
@@ -45,6 +47,7 @@ class AppWindowDelegate;
         friend class AppWindowManager;
         friend class WidgetTreeHost;
 
+        void onThemeSet(Native::ThemeDesc &desc) override;
         void _add_widget(Widget *widget);
     public:
 
@@ -63,20 +66,22 @@ class AppWindowDelegate;
         SharedHandle<Native::NativeNoteDialog> openNoteDialog(const Native::NativeNoteDialog::Descriptor & desc);
         
         explicit AppWindow(Core::Rect rect,AppWindowDelegate * delegate = nullptr);
-        ~AppWindow();
+        ~AppWindow() override;
     };
 /**
  @brief Manages the displaying of AppWindows as well as the window heirarchy for a single application.
 */
- class OMEGAWTK_EXPORT  AppWindowManager {
+class OMEGAWTK_EXPORT  AppWindowManager : public Native::NativeThemeObserver {
         AppWindow * rootWindow;
         void closeAllWindows();
         friend class AppInst;
+        void onThemeSet(Native::ThemeDesc &desc) override;
         public:
         AppWindowManager();
         void setRootWindow(AppWindow * handle);
         AppWindow * getRootWindow();
         void displayRootWindow();
+        ~AppWindowManager() override = default;
     };
     
 /**
