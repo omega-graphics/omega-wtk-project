@@ -112,6 +112,12 @@ namespace OmegaWTK {
         /// @paragraph This method closes the submission queue of all render commands and submits them to the Compositor.
         /// Any commands posted to the CompositorClientProxy after invocation of this method will be ignored and an access error will be thrown.
         void endCompositionSession();
+
+        /// @brief Make the View visible.
+        void enable();
+
+        /// @brief Make the View invisible.
+        void disable();
         ~View();
     };
 
@@ -188,16 +194,16 @@ namespace OmegaWTK {
         Core::Rect * childViewRect;
         ScrollViewDelegate *delegate = nullptr;
         bool hasDelegate();
-        bool hasVericalScrollBar,hasHorizontalScrollBar;
+        bool hasVerticalScrollBar,hasHorizontalScrollBar;
     public:
         void toggleVerticalScrollBar();
         void toggleHorizontalScrollBar();
-        void setDelegate(ViewDelegate *_delegate);
+        void setDelegate(ScrollViewDelegate *_delegate);
         /**
             @param rect The Rect to use
             @returns A ScrollView!
          */
-        ScrollView(const Core::Rect & rect,SharedHandle<View> child,bool hasVericalScrollBar,bool hasHorizontalScrollBar,Composition::LayerTree *layerTree,View *parent = nullptr);
+        explicit ScrollView(const Core::Rect & rect, SharedHandle<View> child, bool hasVerticalScrollBar, bool hasHorizontalScrollBar, Composition::LayerTree *layerTree, View *parent = nullptr);
     };
 
     INTERFACE OMEGAWTK_EXPORT ScrollViewDelegate : public Native::NativeEventProcessor {
@@ -206,10 +212,10 @@ namespace OmegaWTK {
     protected:
         ScrollView *scrollView;
 
-        INTERFACE_METHOD void onScrollLeft(){};
-        INTERFACE_METHOD void onScrollRight(){};
-        INTERFACE_METHOD void onScrollDown(){};
-        INTERFACE_METHOD void onScrollUp(){};
+        INTERFACE_METHOD void onScrollLeft() DEFAULT;
+        INTERFACE_METHOD void onScrollRight() DEFAULT;
+        INTERFACE_METHOD void onScrollDown() DEFAULT;
+        INTERFACE_METHOD void onScrollUp() DEFAULT;
     };
 
     class OMEGAWTK_EXPORT ClickableViewHandler : public ViewDelegate {

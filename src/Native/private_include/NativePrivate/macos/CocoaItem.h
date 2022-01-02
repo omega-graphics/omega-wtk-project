@@ -22,6 +22,9 @@ class CocoaItem;
 -(void)setClass:(Class)cls;
 @end
 
+@interface OmegaWTKCocoaScrollViewDelegate : NSObject
+@end
+
 @class CALayer;
 
 
@@ -33,6 +36,7 @@ class CocoaItem : public NativeItem {
     OmegaWTKCocoaView * _ptr;
     OmegaWTKCocoaViewController *cont;
     NSScrollView *scrollView;
+    OmegaWTKCocoaScrollViewDelegate *scrollViewDelegate;
     friend class CocoaEventHandler;
     void enable() override;
     void disable() override;

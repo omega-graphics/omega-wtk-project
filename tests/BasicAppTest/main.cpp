@@ -6,6 +6,9 @@ static SharedHandle<OmegaWTK::Composition::Brush> colorBrush;
 class MyWidget : public OmegaWTK::Widget {
     SharedHandle<OmegaWTK::Composition::Canvas> canvas;
 protected:
+    void onThemeSet(OmegaWTK::Native::ThemeDesc & desc) override{
+
+    }
     void init() override {
         rootView->startCompositionSession();
         canvas->drawRect(this->rect(),colorBrush);

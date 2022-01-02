@@ -49,6 +49,12 @@ public:
     OmegaWTK::Native::ThemeDesc desc;
     OmegaWTK::AppInst::inst()->onThemeSet(desc);
 };
+
+- (void)didChangeValueForKey:(NSString *)key {
+    if([key isEqualToString:@"effectiveAppearance"]) {
+        [self onThemeChange:NSApp.effectiveAppearance];
+    }
+}
 @end
 
 namespace OmegaWTK::Native {

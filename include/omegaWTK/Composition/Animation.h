@@ -15,6 +15,50 @@ namespace OmegaWTK {
 }
 namespace OmegaWTK::Composition {
 
+    /// @brief Traverse any 2D scalar.
+    class OMEGAWTK_EXPORT ScalarTraverse {
+        OmegaGTE::GPoint2D start_pt;
+        OmegaGTE::GPoint2D end_pt;
+        OmegaGTE::GPoint2D cur;
+        float delta_x;
+        float delta_y;
+        unsigned speed;
+    public:
+        /// @brief Start a Traversal along the provided scalar.
+        /// @param start Start Point of Scalar.
+        /// @param end End Point of Scalar.
+        /// @param speed The Speed of Traversal. (In units per step.)
+        explicit ScalarTraverse(OmegaGTE::GPoint2D start,OmegaGTE::GPoint2D end,unsigned speed = 1);
+
+        /// @brief Retrieve the current position of the traversal along the scalar.
+        /// @returns A 2D Point.
+        OmegaGTE::GPoint2D get();
+
+        /// @brief Step forward in the curve by `speed` number of units.
+        void forward();
+
+        /// @brief Step backward in the curve by `speed` number of units.
+        void back();
+
+        /// @brief Check if current position in traversal is at start point.
+        bool begin() const;
+
+        /// @brief Check if current position in traversal is at end point.
+        bool end() const;
+
+        /// @brief Modify the scalar being traversed.
+        /// @note Will only change scalar if current position intersects new scalar.
+        /// @param start The New Start Point.
+        /// @param end The New End Point.
+        void changeScalar(OmegaGTE::GPoint2D start,OmegaGTE::GPoint2D end);
+    };
+
+    /// @brief Represents a generic mathematical linear or bezier curve used for animation.
+    /// It is defined in 1 x 1 float-based coordinate space allowing it to be transposed to any 2D coordinate space.
+    /// @paragraph There are three types of curves.
+    /// \n - Linear -> A double point curve with a start and end point. (0,0 --- 1,1)
+    /// \n - Quadratic -> A bezier curve with one control point in addition to a start and end.
+    /// \n - Cubic -> A bezier with two additional control points.
     struct OMEGAWTK_EXPORT AnimationCurve {
         enum class Type : int {
             Linear,
@@ -27,31 +71,38 @@ namespace OmegaWTK::Composition {
 
         OmegaGTE::GPoint2D a = {0,0},b = {0,0};
     public:
+
+        /// @brief Traversal of an AnimationCurve in a scaled integral 2D coordinate space.
         class Traversal {
             AnimationCurve & curve;
-            OmegaGTE::GPoint2D _start;
-            OmegaGTE::GPoint2D _end;
 
-            OmegaGTE::GPoint2D cur = {0.0,0.0};
-            float viewport_h;
-            float viewport_w;
-            float curve_h;
-
-            struct {
-                OmegaGTE::GPoint2D _a_cur;
-                OmegaGTE::GPoint2D _b_cur;
-            } quadraticBezierT;
         public:
             OmegaGTE::GPoint2D get();
             void next();
             bool end();
             void reset();
-            explicit Traversal(AnimationCurve & curve,OmegaGTE::GPoint2D & st,OmegaGTE::GPoint2D & end,float & h);
+            explicit Traversal(AnimationCurve & curve,OmegaGTE::GPoint2D & st,OmegaGTE::GPoint2D & end,float & space_w,float & space_h);
         };
-        Traversal traverse(OmegaGTE::GPoint2D st,OmegaGTE::GPoint2D end,float h);
+        /// @brief Create a TraversalContext using this AnimationCurve.
+        /// @param st The Start Point.
+        /// @param end The End Point.
+        Traversal traverse(OmegaGTE::GPoint2D st,OmegaGTE::GPoint2D end,float space_w,float space_h);
+
+        /// @brief Create a Linear AnimationCurve.
+        /// @returns AnimationCurve
         static SharedHandle<AnimationCurve> Linear();
+
+        /// @brief Create a Quadratic Bezier AnimationCurve.
+        /// @param a The 'A' control point used in the curve.
+        /// @returns AnimationCurve
         static SharedHandle<AnimationCurve> Quadratic(OmegaGTE::GPoint2D a);
+
+        /// @brief Create a Cubic Bezier AnimationCurve.
+        /// @param a The 'A' control point used in the curve.
+        /// @param b The 'B' control point used in the curve.
+        /// @returns AnimationCurve
         static SharedHandle<AnimationCurve> Cubic(OmegaGTE::GPoint2D a,OmegaGTE::GPoint2D b);
+
     };
 
     /// @brief A generic keyframe-based animation timeline for any given duration of time.

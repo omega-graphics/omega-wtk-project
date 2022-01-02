@@ -35,6 +35,10 @@ namespace OmegaWTK {
     #define INTERFACE_METHOD virtual
 
     #define ABSTRACT = 0;
+
+    #define FALLTHROUGH = default;
+
+    #define DEFAULT {};
 //
 //    #define DELEGATE INTERFACE
 //

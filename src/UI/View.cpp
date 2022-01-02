@@ -1,4 +1,6 @@
 #include "omegaWTK/UI/View.h"
+
+#include <utility>
 #include "omegaWTK/Composition/CompositorClient.h"
 
 namespace OmegaWTK {
@@ -93,6 +95,14 @@ void View::endCompositionSession(){
     proxy.endRecord();
 }
 
+void View::enable() {
+    renderTarget->getNativePtr()->enable();
+}
+
+void View::disable() {
+    renderTarget->getNativePtr()->disable();
+}
+
 View::~View(){
     std::cout << "View will destruct" << std::endl;
 };
@@ -157,27 +167,33 @@ void ViewDelegate::onRecieveEvent(Native::NativeEventPtr event){
     }
 };
 
-ScrollView::ScrollView(const Core::Rect & rect,SharedHandle<View> child,bool hasVericalScrollBar,bool hasHorizontalScrollBar,Composition::LayerTree *layerTree,View *parent):
-View(rect,Native::make_native_item(rect,Native::ScrollItem),layerTree,parent),
-delegate(nullptr),
-hasHorizontalScrollBar(hasHorizontalScrollBar),hasVericalScrollBar(hasVericalScrollBar){
+ScrollView::ScrollView(const Core::Rect & rect, SharedHandle<View> child, bool hasVerticalScrollBar, bool hasHorizontalScrollBar, Composition::LayerTree *layerTree, View *parent):
+        View(rect,Native::make_native_item(rect,Native::ScrollItem),layerTree,parent),
+        delegate(nullptr),
+        hasHorizontalScrollBar(hasHorizontalScrollBar), hasVerticalScrollBar(hasVerticalScrollBar){
     renderTarget->getNativePtr()->event_emitter = this;
     Native::NativeItemPtr ptr = renderTarget->getNativePtr();
     ptr->setClippedView(child->renderTarget->getNativePtr());
     if(hasHorizontalScrollBar)
         ptr->toggleHorizontalScrollBar(hasHorizontalScrollBar);
-    if(hasVericalScrollBar)
-        ptr->toggleVerticalScrollBar(hasVericalScrollBar);
+    if(hasVerticalScrollBar)
+        ptr->toggleVerticalScrollBar(hasVerticalScrollBar);
 };
 
 bool ScrollView::hasDelegate(){
     return delegate != nullptr;
 };
 
-void ScrollView::setDelegate(ViewDelegate *_delegate){
-    ScrollViewDelegate *d = (ScrollViewDelegate *)_delegate;
+void ScrollView::toggleVerticalScrollBar(){
+    renderTarget->getNativePtr()->toggleVerticalScrollBar(hasVerticalScrollBar);
+}
 
-    delegate = d;
+void ScrollView::toggleHorizontalScrollBar(){
+    renderTarget->getNativePtr()->toggleHorizontalScrollBar(hasHorizontalScrollBar);
+}
+
+void ScrollView::setDelegate(ScrollViewDelegate *_delegate){
+    delegate = _delegate;
     delegate->scrollView = this;
     setReciever(delegate);
 };
@@ -191,7 +207,7 @@ SharedHandle<ClickableViewHandler> ClickableViewHandler::Create() {
 }
 
 void ClickableViewHandler::onClick(std::function<void()> handler) {
-    click_handler = handler;
+    click_handler = std::move(handler);
 }
 
 void ClickableViewHandler::onHoverBegin(std::function<void()> handler) {

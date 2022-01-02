@@ -49,12 +49,12 @@ Core::Rect & Widget::rect(){
 
 void Widget::show(){
 
-    rootView->renderTarget->getNativePtr()->enable();
+    rootView->enable();
     WIDGET_NOTIFY_OBSERVERS_SHOW();
 
 };
 void Widget::hide(){
-    rootView->renderTarget->getNativePtr()->disable();
+    rootView->disable();
     WIDGET_NOTIFY_OBSERVERS_HIDE();
 };
 
@@ -137,9 +137,6 @@ void Widget::setParentWidget( Widget * widget){
     notifyObservers(Attach,(void *)widget);
 };
 
-Widget::~Widget(){
-  
-};
 
 WidgetObserver::WidgetObserver():hasAssignment(false),widget(nullptr){
 

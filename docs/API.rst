@@ -199,3 +199,16 @@ Widgets
 Widgets are modular UI components consisting of one or a hierarchy of Views.
 This section will cover how to implement a Widget class.
 
+First, declare a class with as a subclass of the Widget class.
+NOTE:
+
+One Constructor is REQUIRED and is expected to conform to super constructor's format.
+
+Two other meth
+
+.. code-block:: cpp
+
+    class MyWidget : public OmegaWTK::Widget {
+
+    };
+

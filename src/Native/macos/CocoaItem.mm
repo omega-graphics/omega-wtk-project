@@ -117,6 +117,14 @@
 
 @end
 
+@interface OmegaWTKCocoaScrollViewDelegate ()
+-(instancetype)init;
+-(void)onScrollLeft;
+-(void)onScrollRight;
+-(void)onScrollUp;
+-(void)onScrollDown;
+@end
+
 namespace OmegaWTK::Native::Cocoa {
 
 CocoaItem::CocoaItem(const Core::Rect & rect,CocoaItem::Type _type,SharedHandle<CocoaItem> parent):rect(rect),type(_type),isReady(false){
@@ -133,9 +141,13 @@ CocoaItem::CocoaItem(const Core::Rect & rect,CocoaItem::Type _type,SharedHandle<
         _ptr = nil;
         cont = [[OmegaWTKCocoaViewController alloc] initWithFrame:core_rect_to_cg_rect(rect) delegate:this];
         [cont setClass:[NSScrollView class]];
+        scrollViewDelegate = [[OmegaWTKCocoaScrollViewDelegate alloc] init];
         scrollView = (NSScrollView *)cont.view;
-        scrollView.autohidesScrollers = NO;
+        scrollView.autohidesScrollers = YES;
         scrollView.borderType = NSNoBorder;
+
+        [scrollView addObserver:scrollViewDelegate forKeyPath:@"horizontalLineScroll" options:NSKeyValueObservingOptionNew context:nil];
+        [scrollView addObserver:scrollViewDelegate forKeyPath:@"verticalLineScroll" options:NSKeyValueObservingOptionNew context:nil];
         if(parent != nullptr){
             parent->addChildNativeItem((NativeItemPtr)this);
         };
@@ -228,6 +240,12 @@ void CocoaItem::setNeedsDisplay(){
 
 
 };
+
+@implementation OmegaWTKCocoaScrollViewDelegate
+- (void)didChangeValueForKey:(NSString *)key {
+
+}
+@end
 
 namespace OmegaWTK::Native {
     NativeItemPtr make_native_item(Core::Rect rect,ItemType type,NativeItemPtr parent){

@@ -27,9 +27,7 @@ class OMEGAWTK_EXPORT  Widget : public Native::NativeThemeObserver {
 
     void onThemeSetRecurse(Native::ThemeDesc &desc);
 
-    virtual void onThemeSet(Native::ThemeDesc &desc) {
-
-    };
+    using Native::NativeThemeObserver::onThemeSet;
 protected:
 
     SharedHandle<CanvasView> rootView;
@@ -81,7 +79,7 @@ protected:
     /**
     @brief Initial render of the Widget
     @note MUST be implemented by all Widgets*/
-    virtual void init() = 0;
+    INTERFACE_METHOD void init() ABSTRACT;
 private:
     friend class AppWindow;
     friend class AppWindowManager;
@@ -115,7 +113,7 @@ public:
 protected:
     Widget(const Core::Rect & rect,Widget * parent);
 public:
-    virtual ~Widget();
+    ~Widget() override FALLTHROUGH;
 };
 
 // #define WIDGET_TEMPLATE_BEGIN()
@@ -125,7 +123,7 @@ public:
 
 #define WIDGET_NOTIFY_OBSERVERS_SHOW() notifyObservers(Widget::Show,nullptr)
 #define WIDGET_NOTIFY_OBSERVERS_HIDE() notifyObservers(Widget::Hide,nullptr)
-#define WIDGET_NOTIFY_OBSERVERS_RESIZE(rect) notifyObservers(Widget::Resize,&rect)
+#define WIDGET_NOTIFY_OBSERVERS_RESIZE(rect) notifyObservers(Widget::Resize,&(rect))
 
 
 /** 
@@ -141,15 +139,17 @@ public:
     WidgetObserver();
     /// Implement in subclasses!
     /// Called when the Widget has been attached to a WidgetTree.
-    virtual void onWidgetAttach(Widget *parent){};
+    INTERFACE_METHOD void onWidgetAttach(Widget *parent) DEFAULT;
      /// Called when the Widget has been dettached from a WidgetTree.
-    virtual void onWidgetDetach(Widget *parent){};
+    INTERFACE_METHOD void onWidgetDetach(Widget *parent) DEFAULT;
     /// Called when the Widget has changed size.
-    virtual void onWidgetChangeSize(Core::Rect oldRect,Core::Rect & newRect){};
+    INTERFACE_METHOD void onWidgetChangeSize(Core::Rect oldRect,Core::Rect & newRect) DEFAULT;
     /// Called when the Widget has just been Hidden.
-    virtual void onWidgetDidHide(){};
+    INTERFACE_METHOD void onWidgetDidHide() DEFAULT;
     /// Called when the Widget has just been Shown.
-    virtual void onWidgetDidShow(){};
+    INTERFACE_METHOD void onWidgetDidShow() DEFAULT;
+
+    INTERFACE_METHOD ~WidgetObserver() FALLTHROUGH;
 };
 
 template<class Ty>
@@ -162,9 +162,7 @@ class WidgetStateObserver;
 template<class Ty>
 class WidgetStateObserver<WidgetState<Ty>> {
 protected:
-    virtual void stateHasChanged(Ty & newVal){
-        /// TO BE IMPLEMENTED BY SUBCLASSES!!
-    };
+    INTERFACE_METHOD void stateHasChanged(Ty & newVal) DEFAULT;
 };
 
 
