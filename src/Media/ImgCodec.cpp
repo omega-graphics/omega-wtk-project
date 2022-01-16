@@ -1,6 +1,8 @@
 #include "omegaWTK/Media/ImgCodec.h"
 #include "omegaWTK/Core/Core.h"
 
+#include "omega-common/net.h"
+
 #include "../Core/AssetsPriv.h"
 
 #include <sstream>
@@ -90,6 +92,16 @@ Core::UniquePtr<ImgCodec> obtainCodecForImageFormat(BitmapImage::Format &format,
         else
             return {"Failed to Load Image from File"};
     };
+
+    std::shared_ptr<OmegaCommon::HttpClientContext> http_client;
+
+    StatusWithObj<BitmapImage> loadImageFromURL(OmegaCommon::StrRef url,BitmapImage::Format format){
+        if(!http_client){
+            http_client = OmegaCommon::HttpClientContext::Create();
+        }
+        auto resp = http_client->makeRequest({url}).get();
+        return loadImageFromBuffer((ImgByte *)resp.data,resp.size,format);
+    }
 
     StatusWithObj<BitmapImage> loadImageFromBuffer(ImgByte *bufferData,size_t bufferSize,BitmapImage::Format f){
         BitmapImage img;

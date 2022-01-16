@@ -24,6 +24,7 @@
 /// @brief OmegaWTK
 /// A cross platform user interface api.
 namespace OmegaWTK {
+    
 
     extern OmegaGTE::GTE gte;
 

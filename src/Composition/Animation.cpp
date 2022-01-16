@@ -2,6 +2,7 @@
 #include "omegaWTK/Composition/CompositorClient.h"
 #include <chrono>
 #include <memory>
+#include <cassert>
 
 namespace OmegaWTK::Composition {
 
@@ -44,9 +45,8 @@ void ScalarTraverse::back() {
 void ScalarTraverse::changeScalar(OmegaGTE::GPoint2D start, OmegaGTE::GPoint2D end) {
     start_pt = start;
     end_pt = end;
+
     auto slope = (end_pt.y - start_pt.y)/(end_pt.x - start_pt.x);
-    auto currentPt_to_end_slope = (end_pt.y - cur.y)/(end_pt.x - cur.x);
-    assert(slope == currentPt_to_end_slope && "Invalid scalar replacement");
 
     auto alpha = std::atan(slope);
     delta_x = std::cos(alpha) * float(speed);
@@ -55,62 +55,179 @@ void ScalarTraverse::changeScalar(OmegaGTE::GPoint2D start, OmegaGTE::GPoint2D e
 
 
 
-SharedHandle<AnimationCurve> AnimationCurve::Linear() {
-    auto curve = SharedHandle<AnimationCurve>(new AnimationCurve{Type::Linear});
+SharedHandle<AnimationCurve> AnimationCurve::Linear(float start_h,float end_h) {
+    auto curve = SharedHandle<AnimationCurve>(new AnimationCurve{Type::Linear,start_h,end_h});
     return curve;
 }
 
+struct AnimationCurveLinearTraversal{
+    ScalarTraverse traversal;
+};
+struct AnimationCurveQuadraticTraversal {
+
+    ScalarTraverse start_to_A;
+    ScalarTraverse A_to_end;
+
+    ScalarTraverse intermed;
+} ;
+struct AnimationCurveCubicTraversal {
+    ScalarTraverse start_to_A;
+    ScalarTraverse A_to_B;
+    ScalarTraverse B_to_end;
+
+    ScalarTraverse intermed_0;
+    ScalarTraverse intermed_1;
+    ScalarTraverse intermed_final;
+};
+
 
 AnimationCurve::Traversal::Traversal(AnimationCurve &curve,
-                                     OmegaGTE::GPoint2D &st,
-                                     OmegaGTE::GPoint2D &end,
-                                     float &h):
-                                     curve(curve),
-                                     _start(st),
-                                     _end(end),
-                                     viewport_h(h),viewport_w(end.x - st.x){
+                                     float & space_w,float & space_h):
+                                     curve(curve),data(nullptr)
+                                    {
+    
     if(curve.type == Type::Linear){
-        curve_h = _end.y - _start.y;
+        data = new AnimationCurveLinearTraversal {
+            ScalarTraverse( 
+            OmegaGTE::GPoint2D {0.f,curve.start_h * space_h},
+            OmegaGTE::GPoint2D {space_w,curve.end_h * space_h}
+            )
+        };
     }
     else if(curve.type == Type::QuadraticBezier){
-        quadraticBezierT._a_cur = st;
-        quadraticBezierT._b_cur = curve.a;
+        data = new AnimationCurveQuadraticTraversal{
+            ScalarTraverse(
+                OmegaGTE::GPoint2D{0.f,curve.start_h * space_h},
+                OmegaGTE::GPoint2D{curve.a.x * space_w,curve.a.y * space_h}
+            ),
+            ScalarTraverse(
+                OmegaGTE::GPoint2D{curve.a.x * space_w,curve.a.y * space_h},
+                OmegaGTE::GPoint2D{space_w,curve.end_h * space_h}
+            ),
+
+
+            ScalarTraverse(
+                OmegaGTE::GPoint2D{0.f,curve.start_h * space_h},
+                OmegaGTE::GPoint2D{curve.a.x * space_w,curve.a.y * space_h}
+            )
+        };
     }
-    cur = OmegaGTE::GPoint2D{_start.x/viewport_w,_start.y/viewport_h};
+    else {
+        data = new AnimationCurveCubicTraversal{
+                    ScalarTraverse(
+                        OmegaGTE::GPoint2D{0.f,curve.start_h * space_h},
+                        OmegaGTE::GPoint2D{curve.a.x * space_w,curve.a.y * space_h}
+                    ),
+                    ScalarTraverse(
+                        OmegaGTE::GPoint2D{curve.a.x * space_w,curve.a.y * space_h},
+                        OmegaGTE::GPoint2D{curve.b.x * space_w,curve.b.y * space_h}
+                    ),
+                    ScalarTraverse(
+                        OmegaGTE::GPoint2D{curve.a.x * space_w,curve.a.y * space_h},
+                        OmegaGTE::GPoint2D{space_w,curve.end_h * space_h}
+                    ),
+
+
+                    ScalarTraverse(
+                        OmegaGTE::GPoint2D{0.f,curve.start_h * space_h},
+                        OmegaGTE::GPoint2D{curve.a.x * space_w,curve.a.y * space_h}
+                    ),
+                    ScalarTraverse(
+                        OmegaGTE::GPoint2D{curve.a.x * space_w,curve.a.y * space_h},
+                        OmegaGTE::GPoint2D{curve.b.x * space_w,curve.b.y * space_h}
+                    ),
+
+                    ScalarTraverse(
+                        OmegaGTE::GPoint2D{0.f,curve.start_h * space_h},
+                        OmegaGTE::GPoint2D{curve.a.x * space_w,curve.a.y * space_h}
+                    ),
+        };
+    }
 }
 
 void AnimationCurve::Traversal::next() {
     if(curve.type == Type::Linear){
-        cur.x += (1.f/viewport_w);
-        cur.y += (1.f/viewport_h);
+       auto d = (AnimationCurveLinearTraversal *)data;
+       d->traversal.forward();
     }
     else if(curve.type == Type::QuadraticBezier){
+        auto d = (AnimationCurveQuadraticTraversal *)data;
+        d->start_to_A.forward();
+        d->A_to_end.forward();
+        d->intermed.changeScalar(d->start_to_A.get(),d->A_to_end.get());
+        d->intermed.forward();
+    }
+    else {
+        auto d = (AnimationCurveCubicTraversal *)data;
+        d->start_to_A.forward();
+        d->A_to_B.forward();
+        d->B_to_end.forward();
 
+        d->intermed_0.changeScalar(d->start_to_A.get(),d->A_to_B.get());
+        d->intermed_1.changeScalar(d->A_to_B.get(),d->B_to_end.get());
+        d->intermed_0.forward();
+        d->intermed_1.forward();
 
+        d->intermed_final.changeScalar(d->intermed_0.get(),d->intermed_1.get());
+        d->intermed_final.forward();
     }
 }
 
 OmegaGTE::GPoint2D AnimationCurve::Traversal::get() {
-    return OmegaGTE::GPoint2D{cur.x * viewport_w,cur.y * viewport_h};
+    if(curve.type == Type::Linear){
+       auto d = (AnimationCurveLinearTraversal *)data;
+       return d->traversal.get();
+    }
+    else if(curve.type == Type::QuadraticBezier){
+        auto d = (AnimationCurveQuadraticTraversal *)data;
+        return d->intermed.get();
+    }
+    else {
+        auto d = (AnimationCurveCubicTraversal *)data;
+        return d->intermed_final.get();
+    }
 }
 
 bool AnimationCurve::Traversal::end() {
-    return cur.x == 1.f;
+    if(curve.type == Type::Linear){
+       auto d = (AnimationCurveLinearTraversal *)data;
+       return d->traversal.end();
+    }
+    else if(curve.type == Type::QuadraticBezier){
+        auto d = (AnimationCurveQuadraticTraversal *)data;
+        return d->intermed.end();
+    }
+    else {
+        auto d = (AnimationCurveCubicTraversal *)data;
+        return d->intermed_final.end();
+    }
 }
 
 void AnimationCurve::Traversal::reset() {
-    cur = OmegaGTE::GPoint2D {0.f,0.f};
+   
 }
 
-AnimationCurve::Traversal AnimationCurve::traverse(OmegaGTE::GPoint2D st, OmegaGTE::GPoint2D end, float h) {
-    return Traversal(*this,st,end,h);
+AnimationCurve::Traversal::~Traversal(){
+    if(curve.type == Type::Linear){
+        delete (AnimationCurveLinearTraversal *)data;
+    }
+    else if(curve.type == Type::QuadraticBezier){
+        delete (AnimationCurveQuadraticTraversal *)data;
+    }
+    else {
+        delete (AnimationCurveCubicTraversal *)data;
+    }
+}
+
+AnimationCurve::Traversal AnimationCurve::traverse(float space_w,float space_h) {
+    return Traversal(*this,space_w,space_h);
 }
 
 AnimationTimeline::Keyframe AnimationTimeline::Keyframe::CanvasFrameStop(float time, SharedHandle<AnimationCurve> curve,
                                                           SharedHandle<CanvasFrame> &frame) {
     Keyframe k {};
     k.time = time;
-    k.curve = curve;
+    k.curve = std::move(curve);
     k.frame = frame;
     k.effect = nullptr;
     return k;

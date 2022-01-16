@@ -1,4 +1,5 @@
 #include "omegaWTK/Core/Core.h"
+#include "NativeWindowNavigator.h"
 
 #ifndef OMEGAWTKM_NATIVE_NATIVEMOBILEAPP_H
 #define OMEGAWTKM_NATIVE_NATIVEMOBILEAPP_H
@@ -6,10 +7,12 @@
 namespace OmegaWTK::Mobile {
     namespace Native {
 
-        class NativeApp {
+        INTERFACE NativeApp {
         public:
-            virtual int run()= 0;
-            virtual void terminate() = 0;
+            INTERFACE_METHOD SharedHandle<NativeWindowNavigator> createNavigator() ABSTRACT;
+            INTERFACE_METHOD void setDefaultNavigator(SharedHandle<NativeWindowNavigator> & navigator) ABSTRACT;
+            INTERFACE_METHOD int run() ABSTRACT;
+            INTERFACE_METHOD void terminate() ABSTRACT;
         };
 
         typedef SharedHandle<NativeApp> NAP;

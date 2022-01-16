@@ -66,8 +66,8 @@ namespace OmegaWTK::Composition {
             QuadraticBezier
         } type;
 
-        OmegaGTE::GPoint2D st_pt = {0,0};
-        OmegaGTE::GPoint2D end_pt {1.0,1.0};
+        float start_h;
+        float end_h;
 
         OmegaGTE::GPoint2D a = {0,0},b = {0,0};
     public:
@@ -75,22 +75,24 @@ namespace OmegaWTK::Composition {
         /// @brief Traversal of an AnimationCurve in a scaled integral 2D coordinate space.
         class Traversal {
             AnimationCurve & curve;
+            void *data;
 
         public:
             OmegaGTE::GPoint2D get();
             void next();
             bool end();
             void reset();
-            explicit Traversal(AnimationCurve & curve,OmegaGTE::GPoint2D & st,OmegaGTE::GPoint2D & end,float & space_w,float & space_h);
+            explicit Traversal(AnimationCurve & curve,float & space_w,float & space_h);
+            ~Traversal();
         };
         /// @brief Create a TraversalContext using this AnimationCurve.
         /// @param st The Start Point.
         /// @param end The End Point.
-        Traversal traverse(OmegaGTE::GPoint2D st,OmegaGTE::GPoint2D end,float space_w,float space_h);
+        Traversal traverse(float space_w,float space_h);
 
         /// @brief Create a Linear AnimationCurve.
         /// @returns AnimationCurve
-        static SharedHandle<AnimationCurve> Linear();
+        static SharedHandle<AnimationCurve> Linear(float start_h,float end_h);
 
         /// @brief Create a Quadratic Bezier AnimationCurve.
         /// @param a The 'A' control point used in the curve.
@@ -141,21 +143,21 @@ namespace OmegaWTK::Composition {
         void pause();
         void resume();
         void resizeTransition(unsigned delta_x,unsigned delta_y,unsigned delta_w,unsigned delta_h,unsigned duration,
-                              const SharedHandle<AnimationCurve> & curve = AnimationCurve::Linear());
+                              const SharedHandle<AnimationCurve> & curve = AnimationCurve::Linear(0.f,1.f));
         void applyShadow(const LayerEffect::DropShadowParams & params);
         void applyTransformation(const LayerEffect::TransformationParams & params);
         void shadowTransition(const LayerEffect::DropShadowParams & from,
                               const LayerEffect::DropShadowParams &to,
                               unsigned duration,
-                              const SharedHandle<AnimationCurve> & curve = AnimationCurve::Linear());
+                              const SharedHandle<AnimationCurve> & curve = AnimationCurve::Linear(0.f,1.f));
         void transformationTransition(const LayerEffect::TransformationParams & from,
                                       const LayerEffect::TransformationParams &to,
                                       unsigned duration,
-                                      const SharedHandle<AnimationCurve> & curve = AnimationCurve::Linear());
+                                      const SharedHandle<AnimationCurve> & curve = AnimationCurve::Linear(0.f,1.f));
         void transition(SharedHandle<CanvasFrame> & from,
                         SharedHandle<CanvasFrame> & to,
                         unsigned duration,
-                        const SharedHandle<AnimationCurve> & curve = AnimationCurve::Linear());
+                        const SharedHandle<AnimationCurve> & curve = AnimationCurve::Linear(0.f,1.f));
         ~LayerAnimator() = default;
     };
 

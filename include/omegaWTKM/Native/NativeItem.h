@@ -5,42 +5,34 @@
 
 namespace OmegaWTK::Mobile::Native {
 
-struct NativeEvent {
 
-};
-
-typedef NativeEvent *NativeEventPtr;
-
-class NativeEventProcessor;
-
-class OMEGAWTK_EXPORT NativeEventEmitter {
-    NativeEventProcessor *message_reciever;
-    friend class NativeEventProcessor;
-public:
-    NativeEventEmitter();
-    bool hasReciever();
-    void setReciever(NativeEventProcessor *_responder);
-    void emit(NativeEventPtr event);
-    ~NativeEventEmitter();
-};
-
-/// Listens for native events! (Only some types!)
-class OMEGAWTK_EXPORT NativeEventProcessor {
-    public:
-    virtual void onRecieveEvent(NativeEventPtr event) = 0;
-    NativeEventProcessor();
-    ~NativeEventProcessor();
-};
+INTERFACE NativeItem;
+typedef SharedHandle<NativeItem> NativeItemPtr;
 
 INTERFACE NativeItem {
+    Core::Rect rect;
+protected:
+    explicit NativeItem(const Core::Rect & rect):rect(rect){ };
 public:
+
     INTERFACE_METHOD void enable() ABSTRACT;
+
     INTERFACE_METHOD void disable() ABSTRACT;
+
+    INTERFACE_METHOD void resize(const Core::Rect & newRect) ABSTRACT;
+
     INTERFACE_METHOD void addChildNativeItem(SharedHandle<NativeItem> &child) ABSTRACT;
+
     INTERFACE_METHOD void removeChildNativeItem(SharedHandle<NativeItem> &child) ABSTRACT;
+
+    INTERFACE_METHOD ~NativeItem() FALLTHROUGH;
+
+   static NativeItemPtr Create(const Core::Rect & rect);
 };
 
-typedef SharedHandle<NativeItem> NativeItemPtr;
+
+
+
 }
 
 #endif

@@ -18,9 +18,13 @@ set(OMEGAWTK_MOBILE FALSE)
 if(WIN32)
 	set(TARGET_WIN32 TRUE)
 	add_compile_definitions(TARGET_WIN32)
-elseif(APPLE)
+elseif(APPLE AND NOT IOS)
 	set(TARGET_MACOS TRUE)
 	add_compile_definitions(TARGET_MACOS)
+elseif(IOS)
+	set(TARGET_IOS TRUE)
+	add_compile_definitions(TARGET_IOS)
+	set(OMEGAWTK_MOBILE TRUE)
 elseif(ANDROID)
 	set(TARGET_ANDROID TRUE)
 	add_compile_definitions(TARGET_ANDROID)
@@ -64,15 +68,43 @@ add_third_party(
 	set(ICU_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/icu/lib/icuuc.lib" "${THIRD_PARTY_OUTPUT_DIR}/icu/lib/icudt.lib" "${THIRD_PARTY_OUTPUT_DIR}/icu/lib/icuin.lib")
 
 else()
-add_third_party(
-	CUSTOM_PROJECT
-	NAME icu 
-	SOURCE_DIR "${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/source" 
-	BINARY_DIR "${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/source"
-	INSTALL_DIR "${THIRD_PARTY_OUTPUT_DIR}/icu"
-	CONF ./configure -prefix ${THIRD_PARTY_OUTPUT_DIR}/icu
-	BUILD make all
-	INSTALL make install)
+
+if(TARGET_IOS)
+	add_third_party(
+		CUSTOM_PROJECT
+		NAME icu_tools 
+		SOURCE_DIR "${THIRD_PARTY_SRC_DIR}/icu-69" 
+		BINARY_DIR "${THIRD_PARTY_OUTPUT_DIR}/intermed/icu_mac"
+		INSTALL_DIR "${THIRD_PARTY_OUTPUT_DIR}/intermed/icu_mac"
+		CONF cd "${THIRD_PARTY_OUTPUT_DIR}/intermed/icu_mac" &&  ${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/source/configure -prefix ${THIRD_PARTY_OUTPUT_DIR}/icu
+		BUILD make all
+		INSTALL echo "ICU Cross Tools Complete")
+		
+	# message("SYSROOT:${CMAKE_OSX_SYSROOT}")
+	add_third_party(
+		CUSTOM_PROJECT
+		NAME icu 
+		SOURCE_DIR "${THIRD_PARTY_SRC_DIR}/icu-69" 
+		BINARY_DIR "${THIRD_PARTY_OUTPUT_DIR}/intermed/icu_ios"
+		INSTALL_DIR "${THIRD_PARTY_OUTPUT_DIR}/icu"
+		CONF 
+		export CFLAGS=--sysroot=${CMAKE_OSX_SYSROOT} && 
+		export CXXFLAGS=--sysroot=${CMAKE_OSX_SYSROOT} &&
+		${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/source/configure -prefix ${THIRD_PARTY_OUTPUT_DIR}/icu --with-cross-build=${THIRD_PARTY_OUTPUT_DIR}/intermed/icu_mac
+		BUILD make all
+		INSTALL make install
+		DEPS icu_tools)
+else()
+	add_third_party(
+		CUSTOM_PROJECT
+		NAME icu 
+		SOURCE_DIR "${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/source" 
+		BINARY_DIR "${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/source"
+		INSTALL_DIR "${THIRD_PARTY_OUTPUT_DIR}/icu"
+		CONF  ${THIRD_PARTY_SRC_DIR}/icu-69/code/icu4c/source/configure -prefix ${THIRD_PARTY_OUTPUT_DIR}/icu
+		BUILD make all
+		INSTALL make install)
+endif()
 
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/icu/include")
 
@@ -96,7 +128,7 @@ add_third_party(
 	SOURCE_DIR "${THIRD_PARTY_SRC_DIR}/libxml2/code" 
 	BINARY_DIR "${THIRD_PARTY_OUTPUT_DIR}/temp/libxml2"
 	INSTALL_DIR "${THIRD_PARTY_OUTPUT_DIR}/libxml2"
-	CMAKE_BUILD_ARGS -DLIBXML2_WITH_PYTHON=FALSE -DLIBXML2_WITH_ICU=FALSE -DLIBXML2_WITH_ICONV=FALSE -DLIBXML2_WITH_LZMA=FALSE -DCMAKE_PREFIX_PATH=${PREFIX_PATH} -DCMAKE_C_FLAGS="-I${THIRD_PARTY_OUTPUT_DIR}/icu/include"
+	CMAKE_BUILD_ARGS -DCMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME} -DLIBXML2_WITH_PYTHON=FALSE -DLIBXML2_WITH_ICU=FALSE -DLIBXML2_WITH_ICONV=FALSE -DLIBXML2_WITH_LZMA=FALSE -DCMAKE_PREFIX_PATH=${PREFIX_PATH} -DCMAKE_C_FLAGS="-I${THIRD_PARTY_OUTPUT_DIR}/icu/include"
 	DEPS icu)
 	
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/libxml2/include/libxml2")
@@ -126,7 +158,7 @@ add_third_party(
 	SOURCE_DIR "${THIRD_PARTY_SRC_DIR}/libpng/code"
 	BINARY_DIR "${THIRD_PARTY_OUTPUT_DIR}/temp/libpng"
 	INSTALL_DIR "${THIRD_PARTY_OUTPUT_DIR}/libpng"
-	CMAKE_BUILD_ARGS -DCMAKE_PREFIX_PATH=${THIRD_PARTY_OUTPUT_DIR}/zlib
+	CMAKE_BUILD_ARGS -DCMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME} -DCMAKE_PREFIX_PATH=${THIRD_PARTY_OUTPUT_DIR}/zlib -DPNG_HARDWARE_OPTIMIZATIONS=FALSE
 	DEPS zlib)
 
 	if(TARGET_WIN32)
@@ -143,7 +175,7 @@ add_third_party(
 	SOURCE_DIR "${THIRD_PARTY_SRC_DIR}/libjpeg-turbo/code"
 	BINARY_DIR ${THIRD_PARTY_OUTPUT_DIR}/temp/libjpeg-turbo
 	INSTALL_DIR ${THIRD_PARTY_OUTPUT_DIR}/libjpeg-turbo
-	CMAKE_BUILD_ARGS -DCMAKE_PREFIX_PATH=${THIRD_PARTY_OUTPUT_DIR}/zlib
+	CMAKE_BUILD_ARGS -DCMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME} -DCMAKE_PREFIX_PATH=${THIRD_PARTY_OUTPUT_DIR}/zlib
 	DEPS zlib)
 
 	if(TARGET_WIN32)
@@ -160,7 +192,7 @@ add_third_party(
 	SOURCE_DIR ${THIRD_PARTY_SRC_DIR}/libtiff/code
 	BINARY_DIR ${THIRD_PARTY_OUTPUT_DIR}/temp/libtiff
 	INSTALL_DIR ${THIRD_PARTY_OUTPUT_DIR}/libtiff
-	CMAKE_BUILD_ARGS -DCMAKE_PREFIX_PATH=${THIRD_PARTY_OUTPUT_DIR}/zlib;${THIRD_PARTY_OUTPUT_DIR}/libjpeg-turbo
+	CMAKE_BUILD_ARGS -DCMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME} -DCMAKE_PREFIX_PATH=${THIRD_PARTY_OUTPUT_DIR}/zlib;${THIRD_PARTY_OUTPUT_DIR}/libjpeg-turbo
 	DEPS zlib libjpeg-turbo)
 
 	if(TARGET_WIN32)
@@ -203,7 +235,7 @@ set(NATIVE_PRIVATE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/Native/private_i
 #OmegaWTK Media SubModule
 
 file(GLOB MEDIA_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/*.cpp")
-source_group(OmegaWTKMedia ${NATIVE_SRCS})
+source_group(OmegaWTKMedia ${MEDIA_SRCS})
 if(TARGET_WIN32)
 	file(GLOB WIN_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/wmf/*.cpp")
 	set(MEDIA_SRCS ${MEDIA_SRCS} ${WIN_SRCS})
@@ -217,10 +249,14 @@ else()
 endif()
 
 else()
+
 	file(GLOB NATIVE_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Mobile/Native/*.cpp")
 	if(TARGET_ANDROID)
 		file(GLOB ANDROID_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Mobile/Native/android/*.cpp")
 		set(NATIVE_SRCS ${NATIVE_SRCS} ${ANDROID_SRCS})
+	else()
+		file(GLOB IOS_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Mobile/Native/ios/*.mm")
+		set(NATIVE_SRCS ${NATIVE_SRCS} ${IOS_SRCS})
 	endif()
 	source_group(OmegaWTKNative ${NATIVE_SRCS})
 	set(NATIVE_PRIVATE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/Mobile/Native/private_include")
@@ -228,10 +264,13 @@ else()
 	#OmegaWTK Media SubModule
 
 	file(GLOB MEDIA_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Media/*.cpp")
-	source_group(OmegaWTKMedia ${NATIVE_SRCS})
+	source_group(OmegaWTKMedia ${MEDIA_SRCS})
 	if(TARGET_ANDROID)
 		file(GLOB ANDROID_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Mobile/Media/android/*.cpp")
 		set(MEDIA_SRCS ${MEDIA_SRCS} ${ANDROID_SRCS})
+	else()
+		file(GLOB IOS_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Mobile/Media/ios/*.mm")
+		set(MEDIA_SRCS ${MEDIA_SRCS} ${IOS_SRCS})
 	endif()
 endif()
 
