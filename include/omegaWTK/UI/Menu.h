@@ -20,6 +20,7 @@ class OMEGAWTK_EXPORT  MenuItem {
     void setParentAndInit(Menu *menu);
     bool isSeperator;
 public:
+    OMEGACOMMON_CLASS("OmegaWTK.UI.MenuItem")
     void disable();
     void enable();
     /**
@@ -43,8 +44,12 @@ class MenuDelegate;
     bool hasDelegate;
     friend class MenuItem;
 public:
+    OMEGACOMMON_CLASS("OmegaWTK.UI.Menu")
+
     Native::NM getNativeMenu(){ return native;};
+
     SharedHandle<MenuItem> & getItemByIdx(unsigned idx){ return menuItems[idx];};
+
     Menu(OmegaCommon::String name,std::initializer_list<SharedHandle<MenuItem>> menu_items,MenuDelegate *delegate = nullptr);
 //    ~Menu();
 };

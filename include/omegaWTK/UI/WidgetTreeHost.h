@@ -33,6 +33,7 @@ namespace OmegaWTK {
         void initWidgetRecurse(Widget *parent);
         void initWidgetTree();
     public:
+        OMEGACOMMON_CLASS("OmegaWTK.WidgetTreeHost")
 
         Composition::Compositor *compPtr(){return compositor;};
 

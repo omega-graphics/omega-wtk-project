@@ -17,6 +17,8 @@ namespace OmegaWTK {
         explicit SVGView(const Core::Rect & rect,Composition::LayerTree *layerTree,View * parent);
         friend class Widget;
         friend class SVGSession;
+    public:
+        OMEGACOMMON_CLASS("OmegaWTK.UI.SVGView")
     };
 
     class OMEGAWTK_EXPORT SVGSession {
@@ -25,6 +27,7 @@ namespace OmegaWTK {
     private:
         explicit SVGSession(SharedHandle<SVGView> & view);
     public:
+        OMEGACOMMON_CLASS("OmegaWTK.UI.SVGSession")
         static SharedHandle<SVGSession> Create(SharedHandle<SVGView> & view);
         void setSVGSource(SVGDocument & document);
         void start();

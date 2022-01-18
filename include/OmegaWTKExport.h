@@ -1,4 +1,5 @@
-
+#ifndef OMEGAWTKEXPORT_H
+#define OMEGAWTKEXPORT_H
 #if defined(OMEGAWTK_BUILD_MODULE) && __cplusplus >= 202002L
 #define OMEGAWTK_EXPORT export
 #else
@@ -29,4 +30,6 @@
 #elif defined(_MSC_VER)
 /// Below c++14, for MSVC
 #define OMEGAWTK_DEPRECATED __declspec(deprecated)
+#endif
+
 #endif

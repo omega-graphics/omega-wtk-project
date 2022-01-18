@@ -180,7 +180,7 @@ namespace OmegaWTK::Native::Win {
                         emitIfPossible((NativeEventPtr)new NativeEvent(NativeEvent::WindowWillClose,nullptr));
                     };
                     break;
-                };
+                }
                 case WM_SIZE : {
                     if(isReady) {
                         FLOAT scaleFactor = currentDpi/96.f;

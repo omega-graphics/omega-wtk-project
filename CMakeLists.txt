@@ -67,6 +67,7 @@ add_third_party(
 
 	set(ICU_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/icu/lib/icuuc.lib" "${THIRD_PARTY_OUTPUT_DIR}/icu/lib/icudt.lib" "${THIRD_PARTY_OUTPUT_DIR}/icu/lib/icuin.lib")
 
+	set(ICU_DLLS "${THIRD_PARTY_OUTPUT_DIR}/icu/bin/icuuc69.dll" "${THIRD_PARTY_OUTPUT_DIR}/icu/bin/icudt69.dll" "${THIRD_PARTY_OUTPUT_DIR}/icu/bin/icuin69.dll")
 else()
 
 if(TARGET_IOS)
@@ -134,6 +135,8 @@ add_third_party(
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/libxml2/include/libxml2")
 	if(TARGET_WIN32)
 		set(LIBXML2_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libxml2/lib/libxml2.lib")
+
+		set(LIBXML2_DLL "${THIRD_PARTY_OUTPUT_DIR}/libxml2/bin/libxml2.dll")
 	elseif(TARGET_MACOS)
 		set(LIBXML2_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libxml2/lib/libxml2.dylib")
 		set_library_install_name(${LIBXML2_EXPORT} "@rpath/libxml2.dylib")
@@ -148,6 +151,8 @@ add_third_party(
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/zlib/include")
 	if(TARGET_WIN32)
 		set(ZLIB_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/zlib/lib/zlib.lib")
+
+		set(ZLIB_DLL "${THIRD_PARTY_OUTPUT_DIR}/zlib/bin/zlib.dll")
 	elseif(TARGET_MACOS)
 		set(ZLIB_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/zlib/lib/libz.dylib")
 		set_library_install_name(${ZLIB_EXPORT} "@rpath/libz.dylib")
@@ -163,6 +168,8 @@ add_third_party(
 
 	if(TARGET_WIN32)
 		set(LIBPNG_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libpng/lib/libpng16.lib")
+
+		set(LIBPNG_DLL "${THIRD_PARTY_OUTPUT_DIR}/libpng/bin/libpng16.dll")
 	elseif(TARGET_MACOS)
 		set(LIBPNG_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libpng/lib/libpng.dylib")
 		set_library_install_name(${LIBPNG_EXPORT} "@rpath/libpng.dylib")
@@ -180,6 +187,8 @@ add_third_party(
 
 	if(TARGET_WIN32)
 		set(LIBJPEGTURBO_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libjpeg-turbo/lib/turbojpeg.lib")
+
+		set(LIBJPEGTURBO_DLL "${THIRD_PARTY_OUTPUT_DIR}/libjpeg-turbo/bin/turbojpeg.dll")
 	elseif(TARGET_MACOS)
 		set(LIBJPEGTURBO_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libjpeg-turbo/lib/libturbojpeg.dylib")
 		set_library_install_name(${LIBJPEGTURBO_EXPORT} "@rpath/libturbojpeg.dylib")
@@ -197,6 +206,8 @@ add_third_party(
 
 	if(TARGET_WIN32)
 		set(LIBTIFF_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libtiff/lib/tiff.lib")
+
+		set(LIBTIFF_DLL "${THIRD_PARTY_OUTPUT_DIR}/libtiff/bin/tiff.dll")
 	elseif(TARGET_MACOS)
 		set(LIBTIFF_EXPORT "${THIRD_PARTY_OUTPUT_DIR}/libtiff/lib/libtiff.dylib")
 		set_library_install_name(${LIBTIFF_EXPORT} "@rpath/libtiff.dylib")
@@ -315,8 +326,8 @@ if(TARGET_ANDROID)
 	target_include_directories("OmegaWTK" PRIVATE ${ANDROID_NDK}/sources/android/native_app_glue)
 endif()
 if(TARGET_MACOS)
+	set(THIRD_PARTY_EXPORTS ${ICU_EXPORT} ${LIBXML2_EXPORT} ${ZLIB_EXPORT} ${LIBPNG_EXPORT} ${LIBTURBOJPEG_EXPORT} ${LIBTIFF_EXPORT})
 		add_custom_target("OmegaWTK_ThirdPartyInstallNames")
-		set(THIRD_PARTY_EXPORTS ${ICU_EXPORT} ${LIBXML2_EXPORT} ${ZLIB_EXPORT} ${LIBPNG_EXPORT} ${LIBTURBOJPEG_EXPORT} ${LIBTIFF_EXPORT})
 		foreach (lib ${THIRD_PARTY_EXPORTS})
 			get_filename_component(LIBNAME ${lib} NAME)
 			add_dependencies("OmegaWTK_ThirdPartyInstallNames" ${LIBNAME}_install_name)
@@ -328,6 +339,8 @@ if(TARGET_MACOS)
 
 	add_dependencies("OmegaWTK" OmegaGTE.framework)
 	add_dependencies("OmegaWTK" "OmegaWTK_ThirdPartyInstallNames")
+elseif(TARGET_WIN32)
+	set(THIRD_PARTY_DLLS ${ICU_DLLS} ${LIBXML2_DLL} ${ZLIB_DLL} ${LIBPNG_DLL} ${LIBTURBOJPEG_DLL} ${LIBTIFF_DLL})
 endif()
 target_include_directories("OmegaWTK" PUBLIC ${THIRD_PARTY_INCLUDEDIRS} $<TARGET_PROPERTY:OmegaCommon,INCLUDE_DIRECTORIES> )
 if(TARGET_MACOS)
@@ -361,5 +374,7 @@ if(TARGET_LINUX)
 	target_link_directories("OmegaWTK" PUBLIC ${GTK3_LIBRARY_DIRS} ${FFMPEG_LIBRARY_DIRS})
 	target_link_libraries("OmegaWTK" PUBLIC ${GTK3_LIBRARIES} ${FFMPEG_LIBRARIES})
 endif()
+
+include(cmake/OmegaWTKApp.cmake)
 
  add_subdirectory(tests)

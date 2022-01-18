@@ -161,6 +161,7 @@ namespace Composition {
         void addSubLayer(SharedHandle<Layer> & layer);
         void removeSubLayer(SharedHandle<Layer> & layer);
     public:
+        OMEGACOMMON_CLASS("OmegaWTK.Composition.Layer")
 
         LayerTree::Limb *getParentLimb();
 

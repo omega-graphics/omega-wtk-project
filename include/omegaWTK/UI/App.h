@@ -13,6 +13,7 @@ class OMEGAWTK_EXPORT AppInst : public Native::NativeThemeObserver {
     Native::NAP ptr;
     static AppInst *instance;
 public:
+    OMEGACOMMON_CLASS("OmegaWTK.AppInst")
     void onThemeSet(Native::ThemeDesc &desc) override;
     static  AppInst * inst();
     UniqueHandle<AppWindowManager> windowManager;

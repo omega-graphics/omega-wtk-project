@@ -28,13 +28,14 @@ namespace OmegaWTK::Native {
     class  WinNotificationCenter 
     : public NativeNoteCenter {
     public:
+        
         WinNotificationCenter(){
            
         }
     };
 
     NNCP make_native_note_center(){
-        return new WinNotificationCenter();
+        return (NNCP)new WinNotificationCenter();
     };
 
 

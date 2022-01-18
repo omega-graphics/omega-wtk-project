@@ -110,6 +110,7 @@ namespace OmegaWTK {
         explicit Canvas(CompositorClientProxy &proxy,Layer &layer);
 
     public:
+        OMEGACOMMON_CLASS("OmegaWTK.Composition.Canvas")
         /**
          @brief Draw a Path.
          */

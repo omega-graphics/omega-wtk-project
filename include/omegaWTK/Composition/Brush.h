@@ -71,6 +71,7 @@ namespace OmegaWTK::Composition {
 
     /// @brief Represents a Brush used for filling in color or texture of vector graphics.
     struct OMEGAWTK_EXPORT  Brush {
+        OMEGACOMMON_CLASS("OmegaWTK.Composition.Brush")
         bool isColor;
         Color color;
         bool isGradient;

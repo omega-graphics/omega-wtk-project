@@ -12,8 +12,8 @@
 	<string>MacOS/@APPNAME@</string>
 	<key>CFBundleName</key>
 	<string>@APPNAME@</string>
-	<!-- <key>CFBundleIconFile</key>
-	<string>$(ASSETCATALOG_COMPILER_APPICON_NAME)</string> -->
+	<key>CFBundleIconFile</key>
+	<string>@BUNDLE_ICON</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleLongVersionString</key>
