@@ -50,6 +50,7 @@ class AppWindowDelegate;
         void onThemeSet(Native::ThemeDesc &desc) override;
         void _add_widget(Widget *widget);
     public:
+        OMEGACOMMON_CLASS("OmegaWTK.AppWindow")
 
         void add(Widget *widget);
         void setMenu(SharedHandle<Menu> & menu);

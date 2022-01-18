@@ -14,7 +14,7 @@ namespace OmegaWTK {
     delegate(delegate),
     rect(rect){
         // MessageBoxA(HWND_DESKTOP,"Create Window Layer!","NOTE",MB_OK);
-        if(delegate) {
+        if(delegate != nullptr) {
             setReciever(delegate);
             delegate->window = this;
         }

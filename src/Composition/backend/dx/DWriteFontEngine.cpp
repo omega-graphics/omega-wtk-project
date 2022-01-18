@@ -211,7 +211,7 @@ namespace OmegaWTK::Composition {
              textureDesc.width = rect.w * scaleFactor;
              textureDesc.storage_opts = OmegaGTE::Shared;
              target = gte.graphicsEngine->makeTexture(textureDesc);
-             FontEngine::instance->d3d11_device->CreateWrappedResource((IUnknown *)target.get(),nullptr,D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE,D3D12_RESOURCE_STATE_RENDER_TARGET,IID_PPV_ARGS(&resource));
+             FontEngine::instance->d3d11_device->CreateWrappedResource((IUnknown *)target.get(),nullptr,D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,D3D12_RESOURCE_STATE_RENDER_TARGET,IID_PPV_ARGS(&resource));
              resource->QueryInterface(IID_PPV_ARGS(&surface));
              D2D1CreateDeviceContext(surface,D2D1::CreationProperties(D2D1_THREADING_MODE_MULTI_THREADED,D2D1_DEBUG_LEVEL_WARNING,D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS),&context);
              context->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE);

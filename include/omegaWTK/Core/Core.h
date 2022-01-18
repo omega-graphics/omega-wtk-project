@@ -6,9 +6,6 @@
 #include <iomanip>
 #include <memory>
 
-/// Regex Lib
-// #define PCRE2_CODE_UNIT_WIDTH 8
-// #include <pcre2.h>
 
 #include "OmegaWTKExport.h"
 #include "Unicode.h"

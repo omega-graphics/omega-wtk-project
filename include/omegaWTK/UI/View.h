@@ -76,6 +76,7 @@ namespace OmegaWTK {
          */
         View(const Core::Rect & rect,Composition::LayerTree *layerTree,View *parent = nullptr);
     public:
+        OMEGACOMMON_CLASS("OmegaWTK.View")
         /**
          * @brief Create A Layer
          * @param rect The Rectangle defining the bounds of the layer.

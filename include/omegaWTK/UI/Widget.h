@@ -85,6 +85,7 @@ private:
     friend class AppWindowManager;
     friend class WidgetTreeHost;
 public:
+    OMEGACOMMON_CLASS("OmegaWTK.Widget")
     /**
      Get the Widget's root View's rect
     */

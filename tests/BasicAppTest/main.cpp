@@ -29,6 +29,7 @@ public:
 
     }
     void windowWillClose(OmegaWTK::Native::NativeEventPtr event) override {
+        std::cout << "Closing" << std::endl;
         OmegaWTK::AppInst::inst()->terminate();
     }
 };
@@ -36,6 +37,9 @@ public:
 int omegaWTKMain(OmegaWTK::AppInst *app){
 
     colorBrush = OmegaWTK::Composition::ColorBrush(OmegaWTK::Composition::Color::create8Bit(OmegaWTK::Composition::Color::Red8,0xFF));
+
+    
+    OmegaCommon::LogV("Hello World @{0}",colorBrush);
 
     OmegaWTK::AppWindow window(OmegaWTK::Core::Rect {{0,0},500,500},new MyWindowDelegate());
 

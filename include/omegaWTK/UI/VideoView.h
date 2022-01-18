@@ -25,7 +25,9 @@ class OMEGAWTK_EXPORT VideoView :  public View,
     void pushFrame(SharedHandle<Media::VideoFrame> frame) override;
     void presentCurrentFrame() override;
 public:
+    OMEGACOMMON_CLASS("OmegaWTK.VideoView")
     friend class Widget;
+
    VideoView(const Core::Rect & rect,Composition::LayerTree * layerTree,View *parent = nullptr);
 };
 /**

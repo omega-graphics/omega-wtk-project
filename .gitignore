@@ -9,6 +9,7 @@ conf_out
 third_party
 build-*
 *out
+*.properties
 # Prerequisites
 *.d
 omega-common

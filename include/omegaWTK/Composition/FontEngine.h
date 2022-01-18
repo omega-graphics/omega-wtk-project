@@ -4,9 +4,6 @@
 #ifdef TARGET_WIN32
 #include <dwrite.h>
 
-struct ID3D12CommandQueue;
-struct ID3D11On12Device;
-#undef CreateFont
 #pragma comment(lib,"dwrite.lib")
 #endif
 
@@ -16,6 +13,14 @@ struct ID3D11On12Device;
 
 #ifndef OMEGAWTK_COMPOSITION_FONTENGINE_H
 #define OMEGAWTK_COMPOSITION_FONTENGINE_H
+
+#ifdef TARGET_WIN32
+
+struct ID3D12CommandQueue;
+struct ID3D11On12Device;
+#undef CreateFont
+
+#endif
 
  namespace OmegaWTK {
     class AppInst;

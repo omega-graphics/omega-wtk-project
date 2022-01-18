@@ -38,13 +38,14 @@ namespace OmegaWTK::Native::Win {
             // HACCEL hAccelTable = LoadAccelerators(hInstance,MAKEINTRESOURCE(IDC_@APPNAME@));
 
             MSG msg = {};
-            while (GetMessage(&msg,nullptr,0,0))
+            while (GetMessage(&msg,NULL,0,0))
             {
-                // if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-                // {
-                    TranslateMessage(&msg);
-                    DispatchMessage(&msg);
-                // }
+                if(msg.message == WM_QUIT){
+                    break;
+                }
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+              
             }
             return msg.wParam;
         };

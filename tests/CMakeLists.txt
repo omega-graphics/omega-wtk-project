@@ -2,28 +2,11 @@
 # # if(SWIFT_BUILD)
 # #     add_subdirectory("SwiftImport")
 # # endif()
-if(TARGET_MACOS)
-    set(BUNDLE_ID "org.omegagraphics.BasicAppTest")
-    set(APPNAME "BasicAppTest")
-    configure_file(${CMAKE_SOURCE_DIR}/target/macos/Info.plist.in ${CMAKE_CURRENT_BINARY_DIR}/Info.plist @ONLY)
-    add_app_bundle(NAME "BasicAppTest" PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" DEPS OmegaWTK.framework OmegaGTE.framework EMBEDDED_FRAMEWORKS OmegaWTK OmegaGTE SOURCES BasicAppTest/main.cpp)
-    add_dependencies("BasicAppTest" OmegaWTK.framework)
-    target_link_frameworks(BasicAppTest OmegaGTE OmegaWTK)
-    target_link_options("BasicAppTest" PRIVATE -rpath @loader_path/../Frameworks/OmegaWTK.framework/Libraries)
-else()
-add_executable(BasicAppTest BasicAppTest/main.cpp)
-add_dependencies(BasicAppTest "OmegaWTK")
-endif()
-if(TARGET_MACOS)
-    target_include_directories(BasicAppTest PRIVATE "include" "gte/include" "gte/common/include" "${CMAKE_BINARY_DIR}/deps/icu/include")
-    target_compile_definitions(BasicAppTest PRIVATE TARGET_MACOS TARGET_METAL)
-    target_sources(BasicAppTest PRIVATE ${CMAKE_SOURCE_DIR}/target/macos/main.mm)
-elseif(TARGET_WIN32)
-    target_include_directories(BasicAppTest PRIVATE "include" "gte/include" "gte/common/include" "${CMAKE_BINARY_DIR}/deps/icu/include")
-    target_compile_definitions(BasicAppTest PRIVATE WINDOWS_PRIVATE TARGET_WIN32 TARGET_DIRECTX)
-    set(EMBED ${CMAKE_SOURCE_DIR}/target/windows/app.exe.manifest)
-    configure_file(${CMAKE_SOURCE_DIR}/target/windows/manifest.rc.in ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
-    target_sources(BasicAppTest PRIVATE ${CMAKE_SOURCE_DIR}/target/windows/mmain.cpp ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
-    target_link_libraries(BasicAppTest PUBLIC OmegaWTK)
-    target_link_options(BasicAppTest PRIVATE /SUBSYSTEM:CONSOLE /ENTRY:WinMainCRTStartup /MANIFEST:NO)
-endif()
+
+OmegaWTKApp(
+    NAME 
+    BasicAppTest 
+    BUNDLE_ID 
+    "org.omegagraphics.BasicAppTest"
+    SOURCES 
+    BasicAppTest/main.cpp)
