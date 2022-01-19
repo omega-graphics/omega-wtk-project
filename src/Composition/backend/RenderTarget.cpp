@@ -205,13 +205,13 @@ fragment float4 textureFragment(OmegaWTKTexturedRasterData raster){
 
 BackendRenderTargetContext::BackendRenderTargetContext(Core::Rect & rect,
         OmegaGTE::SharedHandle<OmegaGTE::GENativeRenderTarget> &renderTarget):
+        fence(gte.graphicsEngine->makeFence()),
         renderTarget(renderTarget),
-        renderTargetSize(rect),
-        fence(gte.graphicsEngine->makeFence())
+        renderTargetSize(rect)
         {
-    if(!bufferWriter){
-        bufferWriter = OmegaGTE::GEBufferWriter::Create();
-    }
+    // if(!bufferWriter){
+    //     bufferWriter = OmegaGTE::GEBufferWriter::Create();
+    // }
     OmegaGTE::TextureDescriptor textureDescriptor {};
     textureDescriptor.usage = OmegaGTE::GETexture::RenderTarget;
     textureDescriptor.storage_opts = OmegaGTE::Shared;
@@ -256,21 +256,34 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
         preEffectTarget->submitCommandBuffer(_l_cb,fence);
         preEffectTarget->commit();
         auto cb = renderTarget->commandBuffer();
-        OmegaGTE::SharedHandle<OmegaGTE::GETexture> & dest = targetTexture;
+        // OmegaGTE::SharedHandle<OmegaGTE::GETexture> & dest = targetTexture;
 
-        if(!effectQueue.empty()) {
-            imageProcessor->applyEffects(dest, preEffectTarget, effectQueue);
-            effectQueue.clear();
-        }
+        // if(!effectQueue.empty()) {
+        //     imageProcessor->applyEffects(dest, preEffectTarget, effectQueue);
+        //     effectQueue.clear();
+        // }
 
         renderTarget->notifyCommandBuffer(cb, fence);
         OmegaGTE::GERenderTarget::RenderPassDesc renderPassDesc {};
         renderPassDesc.depthStencilAttachment.disabled = true;
+
+        OmegaGTE::GEViewport viewport {};
+        viewport.x = 0;
+        viewport.y = 0;
+        viewport.farDepth = 1.f;
+        viewport.nearDepth = 0.f;
+        viewport.width = renderTargetSize.w;
+        viewport.height = renderTargetSize.h;
+        OmegaGTE::GEScissorRect scissorRect {0,0,renderTargetSize.w,renderTargetSize.h};
+
         renderPassDesc.colorAttachment = new OmegaGTE::GERenderTarget::RenderPassDesc::ColorAttachment{{0.f,0.f,0.f,0.f},OmegaGTE::GERenderTarget::RenderPassDesc::ColorAttachment::LoadAction::LoadPreserve};
         cb->startRenderPass(renderPassDesc);
+        cb->setViewports({viewport});
+        cb->setScissorRects({scissorRect});
         cb->setRenderPipelineState(textureRenderPipelineState);
         cb->bindResourceAtVertexShader(finalTextureDrawBuffer,1);
-        cb->bindResourceAtFragmentShader(dest,2);
+        auto t = preEffectTarget->underlyingTexture();
+        cb->bindResourceAtFragmentShader(t,2);
         cb->drawPolygons(OmegaGTE::GERenderTarget::CommandBuffer::Triangle,6,0);
         cb->endRenderPass();
         renderTarget->submitCommandBuffer(cb);

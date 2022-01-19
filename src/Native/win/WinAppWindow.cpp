@@ -32,6 +32,7 @@ namespace OmegaWTK::Native::Win {
     void WinAppWindow::addNativeItem(NativeItemPtr item){
        auto hwndItem = std::dynamic_pointer_cast<HWNDItem>(item);
        SetParent(hwndItem->hwnd,hwnd);
+       ShowWindow(hwndItem->hwnd,SW_SHOW);
     };
 
     void WinAppWindow::setMenu(NM menu){

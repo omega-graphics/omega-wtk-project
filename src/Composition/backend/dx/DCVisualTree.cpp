@@ -29,6 +29,9 @@ namespace OmegaWTK::Composition {
 
         auto hwndItem = std::dynamic_pointer_cast<Native::Win::HWNDItem>(view->getNativePtr());
         HRESULT res = comp_device_desktop->CreateTargetForHwnd(hwndItem->hwnd,TRUE,&hwndTarget.comPtr);
+        if(FAILED(res)){
+            OMEGAWTK_DEBUG("Failed to Create Render Target for HWND");
+        }
     };
 
      DCVisualTree::Visual::Visual(Core::Position &pos,BackendRenderTargetContext & context, IDCompositionVisual2 * visual, IDXGISwapChain3 *swapChain):
@@ -100,7 +103,7 @@ namespace OmegaWTK::Composition {
         IDCompositionVisual2 *v;
         hr = comp_device->CreateVisual(&v);
         if(FAILED(hr)){
-
+            OMEGAWTK_DEBUG("Failed to Create Visual For DCVisualTree");
         };
 
         hr = v->SetContent(swapChain);

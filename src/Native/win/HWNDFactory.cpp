@@ -117,7 +117,7 @@ namespace OmegaWTK::Native::Win {
         // unsigned wndHeight = rc.bottom - rc.top;
         // unsigned height = rect.dimen.minHeight * scaleFactor;
         HWND hwnd = CreateWindowExA(ext_style,MAKEINTATOM(atom),name,base_style,rect.pos.x *scaleFactor,(rc.bottom - (rect.h) * scaleFactor) - (rect.pos.y * scaleFactor),rect.w * scaleFactor,rect.h * scaleFactor,wind_parent,NULL,hInst,custom_params);
-        // UpdateWindow(hwnd);
+       
         BLENDFUNCTION blend = { 0 };
         blend.BlendOp = AC_SRC_OVER;
         blend.SourceConstantAlpha = 255;
@@ -126,7 +126,8 @@ namespace OmegaWTK::Native::Win {
         HDC hdcMem = CreateCompatibleDC(hdcScreen);
         UpdateLayeredWindow(hwnd,hdcScreen,NULL,NULL,hdcMem,NULL,RGB(0xFF,0xFF,0xFF),&blend,ULW_ALPHA);
         DeleteDC(hdcMem);
-        // ShowWindow(hwnd,SW_SHOWDEFAULT);
+        
+
         return hwnd;
         #undef DEFAULT_DPI
         
@@ -160,7 +161,7 @@ namespace OmegaWTK::Native::Win {
         ex.lpszMenuName = NULL;
         ex.cbClsExtra = 0;
         ex.cbWndExtra = 0;
-        ex.hbrBackground = (HBRUSH)COLOR_WINDOW+2;
+        ex.hbrBackground = (HBRUSH)COLOR_WINDOW+1;
         ex.hInstance = hInst;
         ex.hCursor = LoadCursor(NULL,IDC_ARROW);
         ex.hIcon = NULL;

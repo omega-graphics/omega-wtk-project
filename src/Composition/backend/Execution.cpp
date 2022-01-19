@@ -8,11 +8,13 @@ namespace OmegaWTK::Composition {
 void Compositor::executeCurrentCommand(){
 
     if(currentCommand->type == CompositorCommand::Render) {
+
+        OMEGAWTK_DEBUG("Rendering Frame!!")
         
         auto comm = (CompositionRenderCommand *)currentCommand.get();
 
 
-        BackendCompRenderTarget *target;
+        BackendCompRenderTarget *target = nullptr;
         bool _buildVisualTree = false;
 
         /// 1. Locate / Create View Render Target for Layer Render
@@ -72,6 +74,7 @@ void Compositor::executeCurrentCommand(){
         }
 
         targetContext->commit();
+        OMEGAWTK_DEBUG("Committed Data!")
     }
     else if(currentCommand->type == CompositorCommand::Layer){
         auto params = (CompositorLayerCommand *)currentCommand.get();

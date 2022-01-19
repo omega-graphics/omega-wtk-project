@@ -24,8 +24,9 @@ void CompositorScheduler::processCommand(SharedHandle<CompositorCommand> & comma
             compositor->currentCommand = command;
             compositor->commandQueue.pop();
             
-            std::chrono::nanoseconds diff = command->thresholdParams.threshold - command->thresholdParams.timeStamp;
-            std::this_thread::sleep_for(diff);
+            
+             std::this_thread::sleep_until(command->thresholdParams.threshold);
+            
 
             compositor->executeCurrentCommand();
             
@@ -39,7 +40,6 @@ void CompositorScheduler::processCommand(SharedHandle<CompositorCommand> & comma
     }
     else {
         /// Command will be executed right away.
-        auto command = compositor->commandQueue.first();
         compositor->currentCommand = command;
         compositor->commandQueue.pop();
         compositor->executeCurrentCommand();
