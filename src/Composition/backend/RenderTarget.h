@@ -25,7 +25,7 @@ namespace OmegaWTK::Composition {
         OmegaGTE::SharedHandle<OmegaGTE::GENativeRenderTarget> renderTarget;
         OmegaGTE::SharedHandle<OmegaGTE::OmegaTessellationEngineContext> tessellationEngineContext;
         SharedHandle<BackendCanvasEffectProcessor> imageProcessor;
-        Core::Rect & renderTargetSize;
+        Core::Rect renderTargetSize;
         OmegaCommon::Vector<std::pair<CanvasEffect::Type,void *>> effectQueue;
         void createGradientTexture(bool linearOrRadial,Gradient & gradient,OmegaGTE::GRect & rect,OmegaGTE::SharedHandle<OmegaGTE::GETexture> & dest);
     public:

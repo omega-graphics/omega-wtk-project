@@ -4,6 +4,9 @@
 #include "omegaWTK/Composition/Canvas.h"
 
 namespace OmegaWTK::Composition {
+    #ifdef TARGET_MACOS
+    void stopMTLCapture();
+    #endif
 
     static OmegaGTE::SharedHandle<OmegaGTE::GTEShaderLibrary> shaderLibrary;
     static OmegaGTE::SharedHandle<OmegaGTE::GEBufferWriter> bufferWriter;
@@ -255,6 +258,8 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
         auto _l_cb = preEffectTarget->commandBuffer();
         preEffectTarget->submitCommandBuffer(_l_cb,fence);
         preEffectTarget->commit();
+
+        // @brief FIX Metal Render Target First then Try This Block
         auto cb = renderTarget->commandBuffer();
         // OmegaGTE::SharedHandle<OmegaGTE::GETexture> & dest = targetTexture;
 
@@ -288,6 +293,12 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
         cb->endRenderPass();
         renderTarget->submitCommandBuffer(cb);
         renderTarget->commitAndPresent();
+
+        #ifdef TARGET_MACOS
+
+        stopMTLCapture();
+        
+        #endif
     }
 
     void
@@ -346,6 +357,8 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
         viewPort.farDepth = 1.f;
         viewPort.width = renderTargetSize.w;
         viewPort.height = renderTargetSize.h;
+
+        std::cout << "W:" << renderTargetSize.w << " H:" << renderTargetSize.h << std::endl;
 
         size_t struct_size;
         bool useTextureRenderPipeline = false;
@@ -415,11 +428,7 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
         OmegaGTE::GEScissorRect scissorRect {0,0,renderTargetSize.w,renderTargetSize.h};
 
         renderPassDesc.colorAttachment = new OmegaGTE::GERenderTarget::RenderPassDesc::ColorAttachment(OmegaGTE::GERenderTarget::RenderPassDesc::ColorAttachment::ClearColor(1.f,1.f,1.f,1.f),OmegaGTE::GERenderTarget::RenderPassDesc::ColorAttachment::Load);
-        cb->startRenderPass(renderPassDesc);
-        cb->setRenderPipelineState(renderPipelineState);
-        cb->bindResourceAtVertexShader(buffer,0);
-        cb->setViewports({viewport});
-        cb->setScissorRects({scissorRect});
+
         unsigned startVertexIndex = 0;
 
         auto writeVertexToBuffer = [&](OmegaGTE::GPoint3D & pt,OmegaGTE::FVec<4> & color){
@@ -435,12 +444,23 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
             bufferWriter->sendToBuffer();
         };
 
+
         for(auto & m : result.meshes) {
             for(auto & v : m.vertexPolygons){
                 writeVertexToBuffer(v.a.pt,v.a.attachment->color);
                 writeVertexToBuffer(v.b.pt,v.b.attachment->color);
                 writeVertexToBuffer(v.c.pt,v.c.attachment->color);
             }
+        }
+
+        cb->startRenderPass(renderPassDesc);
+        cb->setRenderPipelineState(renderPipelineState);
+        cb->bindResourceAtVertexShader(buffer,0);
+        cb->setViewports({viewport});
+        cb->setScissorRects({scissorRect});
+
+
+        for(auto & m : result.meshes){
             OmegaGTE::GERenderTarget::CommandBuffer::PolygonType topology;
             if(m.topology == OmegaGTE::TETessellationResult::TEMesh::TopologyTriangleStrip){
                 topology = OmegaGTE::GERenderTarget::CommandBuffer::TriangleStrip;

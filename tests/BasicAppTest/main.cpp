@@ -1,5 +1,7 @@
 
 #include <OmegaWTK.h>
+#include <chrono>
+#include <thread>
 
 static SharedHandle<OmegaWTK::Composition::Brush> colorBrush;
 
@@ -38,6 +40,7 @@ int omegaWTKMain(OmegaWTK::AppInst *app){
 
     colorBrush = OmegaWTK::Composition::ColorBrush(OmegaWTK::Composition::Color::create8Bit(OmegaWTK::Composition::Color::Red8,0xFF));
 
+    // std::this_thread::sleep_for(std::chrono::seconds(35));
     
     OmegaCommon::LogV("Hello World @{0}",colorBrush);
 

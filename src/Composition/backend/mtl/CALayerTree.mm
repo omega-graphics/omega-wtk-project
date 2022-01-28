@@ -7,10 +7,17 @@
 
 #include "NativePrivate/macos/CocoaUtils.h"
 #include "NativePrivate/macos/CocoaItem.h"
+#import <Metal/Metal.h>
+
+
 
 
 
 namespace OmegaWTK::Composition {
+
+    void stopMTLCapture(){
+        [[MTLCaptureManager sharedCaptureManager] stopCapture];
+    }
 
 
 // OmegaGTE::NativeRenderTargetDescriptor * makeDescForViewRenderTarget(
@@ -48,26 +55,28 @@ SharedHandle<BackendVisualTree> BackendVisualTree::Create(SharedHandle<ViewRende
      layer.layoutManager = nil;
      layer.contentsScale = [NSScreen mainScreen].backingScaleFactor;
      layer.frame = CGRectMake(0,0,rect.w,rect.h);
-     layer.bounds = CGRectMake(0,0,rect.w,rect.h);
+    //  layer.bounds = CGRectMake(0,0,rect.w,rect.h);
      layer.anchorPoint = CGPointMake(0.f,0.f);
-     layer.position = CGPointMake(pos.x,pos.y);
+    //  layer.position = CGPointMake(pos.x,pos.y);
+
+
 
      OmegaGTE::NativeRenderTargetDescriptor nativeRenderTargetDescriptor {false,layer};
 
-     auto & engine = gte;
      auto target = gte.graphicsEngine->makeNativeRenderTarget(nativeRenderTargetDescriptor);
     CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
 
      Core::Rect r {{rect.pos},float(rect.w * scaleFactor),float(rect.h * scaleFactor)};
+
+       NSLog(@"Layer: W:%f H:%f",r.w,r.h);
      BackendRenderTargetContext compTarget (r,target);
 
      return std::shared_ptr<BackendVisualTree::Visual>(new MTLCALayerTree::Visual(pos,compTarget,layer,nil,false));
  };
 
- void MTLCALayerTree::setRootVisual(Core::SharedPtr<BackendVisualTree::Visual> & visual){
+ void MTLCALayerTree::setRootVisual(Core::SharedPtr<Parent::Visual> & visual){
      root = visual;
-     auto r = std::dynamic_pointer_cast<Native::Cocoa::CocoaItem>(view);
-     CALayer *parentLayer = r->getLayer();
+     CALayer *parentLayer = view->getLayer();
      auto v = std::dynamic_pointer_cast<Visual>(visual);
      [parentLayer addSublayer:v->metalLayer];
  };
