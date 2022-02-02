@@ -21,6 +21,10 @@ namespace OmegaWTK::Composition {
 
  FontEngine::~FontEngine() = default;
 
+FontEngine *FontEngine::inst() {
+    return instance;
+}
+
  void FontEngine::Create(){
          instance = new FontEngine();
      };
@@ -69,6 +73,7 @@ GlyphRun::fromUStringAndFont(const OmegaWTK::UniString &str, Core::SharedPtr<Fon
      };
  public:
      CTTextRect(Core::Rect & rect,const TextLayoutDescriptor &layoutDesc):TextRect(rect){
+         NSLog(@"CTTextRect Create With W: %f H: %f",rect.w,rect.h);
          NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
         
          /// Initalize Text with Settings!
@@ -196,11 +201,10 @@ GlyphRun::fromUStringAndFont(const OmegaWTK::UniString &str, Core::SharedPtr<Fon
          CTFrameDraw(frame,context);
          CGContextRelease(context);
 
-         OmegaGTE::TextureDescriptor desc;
-         desc.depth = 0;
+         OmegaGTE::TextureDescriptor desc {};
          desc.type = OmegaGTE::GETexture::Texture2D;
-         desc.width = rect.w * scaleFactor;
-         desc.height = rect.h * scaleFactor;
+         desc.width = rect.w;
+         desc.height = rect.h;
          desc.storage_opts = OmegaGTE::Shared;
 
          auto texture = gte.graphicsEngine->makeTexture(desc);

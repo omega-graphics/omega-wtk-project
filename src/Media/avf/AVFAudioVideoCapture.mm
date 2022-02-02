@@ -138,9 +138,8 @@ namespace OmegaWTK::Media {
                                 frame->videoFrame.data = data;
                                 CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
                                 auto size = CVImageBufferGetDisplaySize(imageBuffer);
-                                frame->videoFrame.header = std::make_unique<ImgHeader>();
-                                frame->videoFrame.header->width = (unsigned)size.width;
-                                frame->videoFrame.header->height = (unsigned)size.height;
+                                frame->videoFrame.header.width = (unsigned)size.width;
+                                frame->videoFrame.header.height = (unsigned)size.height;
                                 cl.videoSink->pushFrame(frame);
                                 CMTime currentTime = CMClockGetTime(CMClockGetHostTimeClock()),presentationTimeStamp = CMSampleBufferGetOutputPresentationTimeStamp(sampleBuffer);
                                 if(CMTIME_COMPARE_INLINE(currentTime,>,presentationTimeStamp)){
