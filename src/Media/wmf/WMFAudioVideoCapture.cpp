@@ -224,13 +224,12 @@ namespace OmegaWTK::Media {
             frame->decodeFinishTime = TimePoint(std::chrono::nanoseconds(time * 100));
             frame->presentTime = TimePoint(std::chrono::nanoseconds(llSampleTime * 100));
             frame->videoFrame.data = (ImgByte *)pSampleBuffer;
-            frame->videoFrame.header = std::make_unique<ImgHeader>();
-            frame->videoFrame.header->height = (uint32_t)frameRect.h;
-            frame->videoFrame.header->width = (uint32_t)frameRect.w;
-            frame->videoFrame.header->color_format = BitmapImage::ColorFormat::RGBA;
-            frame->videoFrame.header->bitDepth = 8;
-            frame->videoFrame.header->channels = 4;
-            frame->videoFrame.header->alpha_format = BitmapImage::AlphaFormat::Straight;
+            frame->videoFrame.header.height = (uint32_t)frameRect.h;
+            frame->videoFrame.header.width = (uint32_t)frameRect.w;
+            frame->videoFrame.header.color_format = BitmapImage::ColorFormat::RGBA;
+            frame->videoFrame.header.bitDepth = 8;
+            frame->videoFrame.header.channels = 4;
+            frame->videoFrame.header.alpha_format = BitmapImage::AlphaFormat::Straight;
             visualSink->pushFrame(frame);
 
             if(time > llSampleTime){

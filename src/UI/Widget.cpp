@@ -35,6 +35,10 @@ SharedHandle<View> Widget::makeCanvasView(const Core::Rect & rect,View *parent){
     return SharedHandle<CanvasView>(new CanvasView(rect,layerTree.get(),parent));
 };
 
+SharedHandle<TextView> Widget::makeTextView(const Core::Rect & rect,View *parent){
+    return SharedHandle<TextView>(new TextView(rect,layerTree.get(),parent,false));
+};
+
 SharedHandle<SVGView> Widget::makeSVGView(const Core::Rect & rect,View *parent){
     return SharedHandle<SVGView>(new SVGView(rect,layerTree.get(),parent));
 }

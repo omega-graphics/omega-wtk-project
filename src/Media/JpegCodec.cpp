@@ -27,8 +27,8 @@ namespace OmegaWTK::Media {
         void readToStorage(){
             if(!load_jpeg_from_file()){
                 storage->data = nullptr;
-                storage->header = nullptr;
-                storage->profile = nullptr;
+                // storage->header = nullptr;
+                // storage->profile = nullptr;
             };
         };
         JPEGCodec(Core::IStream & stream,BitmapImage *res):ImgCodec(stream,res){};

@@ -180,13 +180,8 @@ namespace OmegaWTK {
      template<class Ty>
     class StatusWithObj {
         StatusCode code;
-        Ty * data;
+        std::shared_ptr<Ty> data;
         char * message;
-        void _construct(const Ty & obj){
-            code = CodeOk;
-            data = ::new Ty;
-            memmove(data,&obj,sizeof(Ty));
-        };
 
     public:
         operator bool(){
@@ -195,16 +190,14 @@ namespace OmegaWTK {
         StatusCode getCode(){ return code;};
         const char * getError(){ return message;};
         Core::SharedPtr<Ty> getValue(){
-            auto transfer = data;
-            data = nullptr;
-            return std::make_shared<Ty>(std::move(*transfer));
+           return data;
         };
         StatusWithObj(const Ty & obj):message(nullptr){
-            _construct(obj);
+            data = std::make_shared<Ty>(std::move(obj));
         };
 
         StatusWithObj(Ty && obj):message(nullptr){
-            _construct(obj);
+             data = std::make_shared<Ty>(obj);
         };
 
         StatusWithObj(const char * message):data(nullptr){
@@ -218,9 +211,6 @@ namespace OmegaWTK {
             //     data->~_Ty();
             //     delete data;
             // }
-            if(message != nullptr) {
-                delete message;
-            };
         };
     };
 

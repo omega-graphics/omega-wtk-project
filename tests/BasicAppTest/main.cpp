@@ -4,23 +4,24 @@
 #include <thread>
 
 static SharedHandle<OmegaWTK::Composition::Brush> colorBrush;
+static SharedHandle<OmegaWTK::Composition::Font> font;
 
 class MyWidget : public OmegaWTK::Widget {
-    SharedHandle<OmegaWTK::Composition::Canvas> canvas;
 protected:
+    SharedHandle<OmegaWTK::TextView> textView;
     void onThemeSet(OmegaWTK::Native::ThemeDesc & desc) override{
 
     }
     void init() override {
-        rootView->startCompositionSession();
-        canvas->drawRect(this->rect(),colorBrush);
-        canvas->sendFrame();
-        rootView->endCompositionSession();
+        textView->startCompositionSession();
+        textView->updateFont(font);
+        textView->setContent(u"Hello World");
+        textView->endCompositionSession();
     }
 public:
     explicit MyWidget(const OmegaWTK::Core::Rect & rect,OmegaWTK::Widget *parent) : OmegaWTK::Widget(rect,parent){
         auto layer = rootView->getLayerTreeLimb()->getRootLayer();
-        canvas = rootView->makeCanvas(layer);
+        textView = makeTextView(rect,rootView.get());
     }
 };
 
@@ -37,9 +38,13 @@ public:
 };
 
 int omegaWTKMain(OmegaWTK::AppInst *app){
+    OmegaWTK::Composition::FontDescriptor font_desc("Arial",15);
+    font = OmegaWTK::Composition::FontEngine::inst()->CreateFont(font_desc);
 
-    colorBrush = OmegaWTK::Composition::ColorBrush(OmegaWTK::Composition::Color::create8Bit(OmegaWTK::Composition::Color::Red8,0xFF));
-
+    colorBrush = OmegaWTK::Composition::ColorBrush(OmegaWTK::Composition::Color::create8Bit(OmegaWTK::Composition::Color::Green8));
+    
+ 
+    // img = OmegaWTK::Media::loadImageFromFile("./test.png").getValue();
     // std::this_thread::sleep_for(std::chrono::seconds(35));
     
     OmegaCommon::LogV("Hello World @{0}",colorBrush);
@@ -52,7 +57,7 @@ int omegaWTKMain(OmegaWTK::AppInst *app){
         })
     }));
 
-    MyWidget widget(OmegaWTK::Core::Rect {{0,0},200,200},nullptr);
+    MyWidget widget(OmegaWTK::Core::Rect {{0,0},400,400},nullptr);
 
     window.add(&widget);
     window.setMenu(menu);

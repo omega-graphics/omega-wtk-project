@@ -196,6 +196,8 @@ namespace OmegaWTK {
         ScrollViewDelegate *delegate = nullptr;
         bool hasDelegate();
         bool hasVerticalScrollBar,hasHorizontalScrollBar;
+        friend class Widget;
+        explicit ScrollView(const Core::Rect & rect, SharedHandle<View> child, bool hasVerticalScrollBar, bool hasHorizontalScrollBar, Composition::LayerTree *layerTree, View *parent = nullptr);
     public:
         void toggleVerticalScrollBar();
         void toggleHorizontalScrollBar();
@@ -204,7 +206,7 @@ namespace OmegaWTK {
             @param rect The Rect to use
             @returns A ScrollView!
          */
-        explicit ScrollView(const Core::Rect & rect, SharedHandle<View> child, bool hasVerticalScrollBar, bool hasHorizontalScrollBar, Composition::LayerTree *layerTree, View *parent = nullptr);
+       
     };
 
     INTERFACE OMEGAWTK_EXPORT ScrollViewDelegate : public Native::NativeEventProcessor {
@@ -250,9 +252,11 @@ namespace OmegaWTK {
         void popChar();
         void commitChanges();
         friend class TextViewDelegate;
+        friend class Widget;
+        explicit TextView(const Core::Rect & rect,Composition::LayerTree * layerTree,View * parent,bool io);
     public:
         void updateFont(SharedHandle<Composition::Font> & font);
-        explicit TextView(const Core::Rect & rect,Composition::LayerTree * layerTree,View * parent,bool io);
+        void setContent(const UChar * str);
     };
 
     class OMEGAWTK_EXPORT TextViewDelegate : public ViewDelegate {

@@ -146,6 +146,7 @@ struct ID3D11On12Device;
      friend class DWriteTextRect;
      friend class DWriteGlyphRun;
  #endif
+      static FontEngine * instance;
  public:
      /**
       @brief Create a Font.
@@ -157,7 +158,7 @@ struct ID3D11On12Device;
      */
      Core::SharedPtr<Font> CreateFont(FontDescriptor & desc);
      Core::SharedPtr<Font> CreateFontFromFile(OmegaCommon::FS::Path path,FontDescriptor & desc);
-     static FontEngine * instance;
+     static FontEngine *inst();
      /// @name Duplication Prevention Method Rules
      /// @{
      FontEngine(FontEngine &&) = delete;

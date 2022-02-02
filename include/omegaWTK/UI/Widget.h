@@ -45,6 +45,14 @@ protected:
      */
     SharedHandle<CanvasView> makeCanvasView(const Core::Rect & rect,View *parent);
 
+       /**
+     Makes a Canvas View attached to this widget and returns it.
+     @param rect The Rectangle to use
+     @param parent The Parent View (NOTE: This view MUST be within this widget's view heirarchy)
+     @returns A standard View
+     */
+    SharedHandle<TextView> makeTextView(const Core::Rect & rect,View *parent);
+
     /**
      Makes an SVG View attached to this widget and returns it.
      @param rect The Rectangle to use

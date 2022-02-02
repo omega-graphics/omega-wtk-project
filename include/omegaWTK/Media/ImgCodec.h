@@ -9,13 +9,12 @@ namespace OmegaWTK {
             OmegaCommon::String name;
             int compression_type;
         };
-        struct ImgHeader;
 
         typedef unsigned char ImgByte;
     
         struct OMEGAWTK_EXPORT BitmapImage {
-            Core::UniquePtr<ImgProfile> profile;
-            Core::UniquePtr<ImgHeader> header;
+            ImgProfile profile;
+            
             ImgByte *data;
             
             enum class ColorFormat : OPT_PARAM {
@@ -30,6 +29,19 @@ namespace OmegaWTK {
                 Ingore,
                 Unknown
             };
+
+            struct ImgHeader {
+                uint32_t width;
+                uint32_t height;
+                int channels;
+                int bitDepth;
+                int compression_method;
+                int interlace_type;
+                BitmapImage::ColorFormat color_format;
+                BitmapImage::AlphaFormat alpha_format;
+                size_t stride;
+            } header;
+           
             bool sRGB;
             bool hasGamma;
             double gamma;
@@ -39,18 +51,10 @@ namespace OmegaWTK {
                 JPEG
             } Format;
         };
+
+        typedef BitmapImage::ImgHeader ImgHeader;
     
-        struct ImgHeader {
-            uint32_t width;
-            uint32_t height;
-            int channels;
-            int bitDepth;
-            int compression_method;
-            int interlace_type;
-            BitmapImage::ColorFormat color_format;
-            BitmapImage::AlphaFormat alpha_format;
-            size_t stride;
-        };
+    
         
         OMEGAWTK_EXPORT StatusWithObj<BitmapImage> loadImageFromFile(OmegaCommon::FS::Path path);
         OMEGAWTK_EXPORT StatusWithObj<BitmapImage> loadImageFromAssets(OmegaCommon::FS::Path path);

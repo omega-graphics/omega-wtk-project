@@ -27,7 +27,7 @@ namespace OmegaWTK::Media {
             return png_check_sig(sig,SIG_SIZE);
         };
         
-        Core::UniquePtr<ImgHeader> read_header(png_structp png_ptr,png_infop info_ptr){
+        ImgHeader read_header(png_structp png_ptr,png_infop info_ptr){
             BitmapImage::ColorFormat colorFormat;
             BitmapImage::AlphaFormat alphaFormat;
             
@@ -96,10 +96,10 @@ namespace OmegaWTK::Media {
             std::cout << ss.str();
             // MessageBoxA(GetForegroundWindow(),ss.str().c_str(),"NOTE",MB_OK);
             
-            return std::make_unique<ImgHeader>(ImgHeader({width,height,channels,bitDepth,compression_method,interlace_type,colorFormat,alphaFormat,rowBytes}));
+            return ImgHeader{width,height,channels,bitDepth,compression_method,interlace_type,colorFormat,alphaFormat,rowBytes};
         };
             
-        Core::UniquePtr<ImgProfile> read_profile(png_structp png_ptr,png_infop info_ptr){
+        ImgProfile read_profile(png_structp png_ptr,png_infop info_ptr){
             png_charp name;
             int compression_ty;
             png_bytep profile;
@@ -108,7 +108,7 @@ namespace OmegaWTK::Media {
             if(png_get_iCCP(png_ptr,info_ptr,&name,&compression_ty,&profile,&length) == PNG_INFO_iCCP){
                 std::cout << "iCCP Chunk:{" << "name:" << name << ", compression:" << compression_ty << ", length:" << length << "}" << std::endl;
                 storage->sRGB = false;
-                return std::make_unique<ImgProfile>(ImgProfile({name,compression_ty}));
+                return ImgProfile({name,compression_ty});
             }
             /// Else use SRGB!
             int srgb_intent;
@@ -118,7 +118,7 @@ namespace OmegaWTK::Media {
                 this->srgb_intent = srgb_intent;
                 // png_set_sRGB_gAMA_and_cHRM(png_ptr,info_ptr,srgb_intent);
             }
-            return nullptr;
+            return {};
         };
 
 
@@ -251,9 +251,9 @@ namespace OmegaWTK::Media {
                     std::cout << "tIME Chunk:{" << "time:" << std::endl;
                 };
                 
-                rowPtrs = new png_bytep[header->height];
-                data = new char[(header->width * header->height * header->bitDepth * header->channels)/8];
-                unsigned int stride = (header->width * header->bitDepth * header->channels)/8;
+                rowPtrs = new png_bytep[header.height];
+                data = new char[(header.width * header.height * header.bitDepth * header.channels)/8];
+                unsigned int stride = (header.width * header.bitDepth * header.channels)/8;
                 
     //               #ifdef TARGET_MACOS
     //               for(size_t i = 0;i < header->height;i++){
@@ -264,10 +264,10 @@ namespace OmegaWTK::Media {
     //               #endif
 
                 // #ifdef TARGET_WIN32
-                for(size_t i = 0;i < header->height;i++){
-                    png_uint_32 ptr = (header->height - i - 1) * stride;
+                for(size_t i = 0;i < header.height;i++){
+                    png_uint_32 ptr = (header.height - i - 1) * stride;
                     /// Read from top to bottom!
-                    rowPtrs[header->height - 1 - i] = (png_bytep)data + ptr;
+                    rowPtrs[header.height - 1 - i] = (png_bytep)data + ptr;
                 };
                 // #endif
 
@@ -283,8 +283,8 @@ namespace OmegaWTK::Media {
                 //    };
                 
                 storage->data = (ImgByte *)data;
-                storage->header = std::move(header);
-                storage->profile = std::move(profile);
+                storage->header = header;
+                storage->profile = profile;
                 
                 return true;
 
@@ -298,8 +298,8 @@ namespace OmegaWTK::Media {
         void readToStorage() {
             if(!load_png_from_file()){
                 storage->data = nullptr;
-                storage->header = nullptr;
-                storage->profile = nullptr;
+                // storage->header = nullptr;
+                // storage->profile = nullptr;
             };
         };
         PNGCodec(Core::IStream & stream,BitmapImage *res):ImgCodec(stream,res){};

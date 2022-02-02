@@ -73,7 +73,7 @@ Core::UniquePtr<ImgCodec> obtainCodecForImageFormat(BitmapImage::Format &format,
         return std::move(img);
     };
     
-    StatusWithObj<BitmapImage>loadImageFromFile(OmegaCommon::FS::Path path) {
+    StatusWithObj<BitmapImage> loadImageFromFile(OmegaCommon::FS::Path path) {
         BitmapImage img;
         auto ext = path.ext();
         BitmapImage::Format f;
@@ -85,7 +85,7 @@ Core::UniquePtr<ImgCodec> obtainCodecForImageFormat(BitmapImage::Format &format,
         if(in.is_open()){
             Core::UniquePtr<ImgCodec> codec = obtainCodecForImageFormat(f,in,&img);
             codec->readToStorage();
-            if(!img.data)
+            if(img.data == nullptr)
                 return {"Failed to Load Image from File"};
             return std::move(img);
         }

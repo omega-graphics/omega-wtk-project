@@ -363,10 +363,13 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
         size_t struct_size;
         bool useTextureRenderPipeline = false;
 
+        OmegaGTE::SharedHandle<OmegaGTE::GETexture> texturePaint;
+
         switch (type) {
             case VisualCommand::Rect : {
                 auto _params = (VisualCommand::RectParams *)params;
-                auto te_params = OmegaGTE::TETessellationParams::Rect(_params->rect);
+                OmegaGTE::GRect r{OmegaGTE::GPoint2D {0,0},_params->rect.w,_params->rect.h};
+                auto te_params = OmegaGTE::TETessellationParams::Rect(r);
 
                 useTextureRenderPipeline = !_params->brush->isColor;
 
@@ -379,7 +382,39 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
                 }
 
                 result = tessellationEngineContext->tessalateSync(te_params,OmegaGTE::GTEPolygonFrontFaceRotation::Clockwise,&viewPort);
+                result.translate(-((viewPort.width/2) - _params->rect.pos.x),
+                                 -((viewPort.height/2) - _params->rect.pos.y),
+                                 0,
+                                 viewPort);
 
+                break;
+            }
+            case VisualCommand::Bitmap : {
+                auto _params = (VisualCommand::BitmapParams *)params;
+                OmegaGTE::GRect r{OmegaGTE::GPoint2D {0,0},_params->rect.w,_params->rect.h};
+                auto te_params = OmegaGTE::TETessellationParams::Rect(r);
+
+                useTextureRenderPipeline = true;
+                if(_params->texture){
+                    texturePaint = _params->texture;
+                }
+                else {
+                    OmegaGTE::TextureDescriptor texDesc {OmegaGTE::GETexture::Texture2D};
+                    texDesc.usage = OmegaGTE::GETexture::ToGPU;
+                    texDesc.width = _params->img->header.width;
+                    texDesc.height = _params->img->header.height;
+                    std::cout << "TEX W:" << texDesc.width << "TEX H:" << texDesc.height << std::endl;
+                    texturePaint = gte.graphicsEngine->makeTexture(texDesc);
+                    texturePaint->copyBytes((void *)_params->img->data,_params->img->header.stride);
+                }
+
+                te_params.addAttachment(OmegaGTE::TETessellationParams::Attachment::makeTexture2D(r.w,r.h));
+
+                result = tessellationEngineContext->tessalateSync(te_params,OmegaGTE::GTEPolygonFrontFaceRotation::Clockwise,&viewPort);
+                result.translate(-((viewPort.width/2) - _params->rect.pos.x),
+                                 -((viewPort.height/2) - _params->rect.pos.y),
+                                 0,
+                                 viewPort);
 
                 break;
             }
@@ -397,7 +432,10 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
                     te_params.addAttachment(OmegaGTE::TETessellationParams::Attachment::makeColor(color));
                 }
                 result = tessellationEngineContext->tessalateSync(te_params,OmegaGTE::GTEPolygonFrontFaceRotation::Clockwise,&viewPort);
-
+                result.translate(-((viewPort.width/2) - _params->rect.pos.x),
+                                 -((viewPort.height/2) - _params->rect.pos.y),
+                                 0,
+                                 viewPort);
 
                 break;
             }
@@ -431,7 +469,7 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
 
         unsigned startVertexIndex = 0;
 
-        auto writeVertexToBuffer = [&](OmegaGTE::GPoint3D & pt,OmegaGTE::FVec<4> & color){
+        auto writeColorVertexToBuffer = [&](OmegaGTE::GPoint3D & pt,OmegaGTE::FVec<4> & color){
             auto pos = OmegaGTE::FVec<4>::Create();
             pos[0][0] = pt.x;
             pos[1][0] = pt.y;
@@ -444,18 +482,45 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
             bufferWriter->sendToBuffer();
         };
 
+         auto writeTexVertexToBuffer = [&](OmegaGTE::GPoint3D & pt,OmegaGTE::FVec<2> & coord){
+            auto pos = OmegaGTE::FVec<4>::Create();
+            pos[0][0] = pt.x;
+            pos[1][0] = pt.y;
+            pos[2][0] = pt.z;
+            pos[3][0] = 1.f;
+            bufferWriter->structBegin();
+            bufferWriter->writeFloat4(pos);
+            bufferWriter->writeFloat2(coord);
+            bufferWriter->structEnd();
+            bufferWriter->sendToBuffer();
+        };
+
 
         for(auto & m : result.meshes) {
             for(auto & v : m.vertexPolygons){
-                writeVertexToBuffer(v.a.pt,v.a.attachment->color);
-                writeVertexToBuffer(v.b.pt,v.b.attachment->color);
-                writeVertexToBuffer(v.c.pt,v.c.attachment->color);
+                if(useTextureRenderPipeline){
+                    writeTexVertexToBuffer(v.a.pt,v.a.attachment->texture2Dcoord);
+                    writeTexVertexToBuffer(v.b.pt,v.b.attachment->texture2Dcoord);
+                    writeTexVertexToBuffer(v.c.pt,v.c.attachment->texture2Dcoord);
+                }
+                else {
+                    writeColorVertexToBuffer(v.a.pt,v.a.attachment->color);
+                    writeColorVertexToBuffer(v.b.pt,v.b.attachment->color);
+                    writeColorVertexToBuffer(v.c.pt,v.c.attachment->color);
+                }
             }
         }
 
         cb->startRenderPass(renderPassDesc);
-        cb->setRenderPipelineState(renderPipelineState);
-        cb->bindResourceAtVertexShader(buffer,0);
+        if(useTextureRenderPipeline){
+            cb->setRenderPipelineState(textureRenderPipelineState);
+            cb->bindResourceAtVertexShader(buffer,1);
+            cb->bindResourceAtFragmentShader(texturePaint,2);
+        }
+        else {
+             cb->setRenderPipelineState(renderPipelineState);
+             cb->bindResourceAtVertexShader(buffer,0);
+        }
         cb->setViewports({viewport});
         cb->setScissorRects({scissorRect});
 

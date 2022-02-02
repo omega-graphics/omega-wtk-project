@@ -90,12 +90,16 @@ namespace OmegaWTK::Composition {
 
     };
 
-     FontEngine * FontEngine::instance;
+     FontEngine * FontEngine::instance = nullptr;
      SharedHandle<FontLoader> font_loader;
 
      void FontEngine::Create(){
          instance = new FontEngine();
      };
+
+     FontEngine * FontEngine::inst(){
+         return instance;
+     }
 
      void FontEngine::Destroy(){
          delete instance;
@@ -123,10 +127,13 @@ namespace OmegaWTK::Composition {
          desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
          desc.NodeMask = d3d12_dev->GetNodeCount();
          desc.Priority = 0;
-         d3d12_dev->CreateCommandQueue(&desc,IID_PPV_ARGS(&d3d11_on_12_queue));
+         hr = d3d12_dev->CreateCommandQueue(&desc,IID_PPV_ARGS(&d3d11_on_12_queue));
 
          hr = D3D11On12CreateDevice(d3d12_dev,0,levels,1,(IUnknown *const *)&d3d11_on_12_queue,1,d3d12_dev->GetNodeCount(),(ID3D11Device **)&d3d11_device,nullptr,nullptr);
-
+         if(FAILED(hr)){
+             OMEGAWTK_DEBUG("Failed to create D3D11On12");
+             exit(1);
+         }
          dwrite_factory->RegisterFontCollectionLoader(font_loader.get());
      };
 
@@ -165,11 +172,11 @@ namespace OmegaWTK::Composition {
         DWRITE_WORD_WRAPPING wrapping;
         DWRITE_FLOW_DIRECTION flowDirection;
         OmegaGTE::SharedHandle<OmegaGTE::GETexture> target;
-        ID3D11Texture2D *resource;
+        ID3D11Resource *resource;
         IDXGISurface *surface;
         ID2D1DeviceContext *context;
      public:
-         OmegaGTE::SharedHandle<OmegaGTE::GETexture> toBitmap() {
+         OmegaGTE::SharedHandle<OmegaGTE::GETexture> toBitmap() override {
              return target;
          };
          void drawRun(Core::SharedPtr<GlyphRun> &glyphRun,const Composition::Color &color) override {
@@ -197,24 +204,46 @@ namespace OmegaWTK::Composition {
          void * getNative() override{
             return nullptr;
          };
-         explicit DWriteTextRect(Core::Rect & rect,const TextLayoutDescriptor & layoutDesc): TextRect(rect){
+         explicit DWriteTextRect(Core::Rect & rect,const TextLayoutDescriptor & layoutDesc): TextRect(rect),target(nullptr){
              HRESULT hr;
 
-             UINT dpi = GetDpiFromDpiAwarenessContext(GetThreadDpiAwarenessContext());
-             FLOAT scaleFactor = FLOAT(dpi)/96.f;
+             OmegaGTE::TextureDescriptor textureDesc {OmegaGTE::GETexture::Texture2D};
+             textureDesc.usage = OmegaGTE::GETexture::RenderTarget;
+             textureDesc.height = (unsigned)rect.h;
+             textureDesc.width = (unsigned)rect.w;             
 
-             OmegaGTE::TextureDescriptor textureDesc;
-             textureDesc.depth = 0;
-             textureDesc.usage = OmegaGTE::GETexture::GPUAccessOnly;
-             textureDesc.type = OmegaGTE::GETexture::Texture2D;
-             textureDesc.height = rect.h * scaleFactor;
-             textureDesc.width = rect.w * scaleFactor;
-             textureDesc.storage_opts = OmegaGTE::Shared;
              target = gte.graphicsEngine->makeTexture(textureDesc);
-             FontEngine::instance->d3d11_device->CreateWrappedResource((IUnknown *)target.get(),nullptr,D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,D3D12_RESOURCE_STATE_RENDER_TARGET,IID_PPV_ARGS(&resource));
-             resource->QueryInterface(IID_PPV_ARGS(&surface));
-             D2D1CreateDeviceContext(surface,D2D1::CreationProperties(D2D1_THREADING_MODE_MULTI_THREADED,D2D1_DEBUG_LEVEL_WARNING,D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS),&context);
+             
+             D3D11_RESOURCE_FLAGS fgs{};
+             fgs.BindFlags = D3D11_BIND_RENDER_TARGET;
+             fgs.MiscFlags = 0;
+             fgs.CPUAccessFlags = 0;
+             fgs.StructureByteStride = 0.f;
+
+             OMEGAWTK_DEBUG("Definitely the Problem!");
+
+             if(FontEngine::inst()->d3d11_device.get() == nullptr){
+                 OMEGAWTK_DEBUG("D3D11On12Device Does not Exist!");
+                 exit(1);
+             }
+
+             hr = FontEngine::inst()->d3d11_device->CreateWrappedResource((IUnknown *)target->native(),&fgs,D3D12_RESOURCE_STATE_RENDER_TARGET,D3D12_RESOURCE_STATE_RENDER_TARGET,IID_PPV_ARGS(&resource));
+             if(FAILED(hr)){
+                 OMEGAWTK_DEBUG("Failed to Create Wrapped Resource. ERR:" << std::hex << hr << std::dec);
+                 exit(1);
+             }
+             hr = resource->QueryInterface(IID_PPV_ARGS(&surface));
+             if(FAILED(hr)){
+                  OMEGAWTK_DEBUG("Failed to get DXGISurface. ERR:" << std::hex << hr << std::dec);
+                 exit(1);
+             }
+             hr = D2D1CreateDeviceContext(surface,D2D1::CreationProperties(D2D1_THREADING_MODE_MULTI_THREADED,D2D1_DEBUG_LEVEL_WARNING,D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS),&context);
+             if(FAILED(hr)){
+                  OMEGAWTK_DEBUG("Failed to create D2D1DeviceContext ERR:" << std::hex << hr << std::dec);
+                 exit(1);
+             }
              context->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE);
+              OMEGAWTK_DEBUG("DWriteTextRect Successfully Created");
          };
          ~DWriteTextRect() override {
              FontEngine::instance->d3d11_device->ReleaseWrappedResources((ID3D11Resource *const *)&resource,1);

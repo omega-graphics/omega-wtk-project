@@ -2,6 +2,7 @@
 
 #include <utility>
 #include "omegaWTK/Composition/CompositorClient.h"
+#include "unicode/urename.h"
 
 namespace OmegaWTK {
 
@@ -245,7 +246,6 @@ void ClickableViewHandler::onLeftMouseUp(Native::NativeEventPtr event) {
 
 TextView::TextView(const Core::Rect &rect,Composition::LayerTree * layerTree,View *parent, bool io) :
 View(rect,layerTree,parent),
-editMode(io),str(),
 textRect(
         Composition::TextRect::Create(
         rect,
@@ -253,7 +253,9 @@ textRect(
             Composition::TextLayoutDescriptor::LeftUpper,
             Composition::TextLayoutDescriptor::WrapByWord
         })),
-        rootLayerCanvas(makeCanvas(getLayerTreeLimb()->getRootLayer())){
+        rootLayerCanvas(makeCanvas(getLayerTreeLimb()->getRootLayer())),
+        str(),
+        editMode(io){
 
 }
 
@@ -275,6 +277,11 @@ void TextView::commitChanges() {
 
 void TextView::updateFont(SharedHandle<Composition::Font> &font) {
     this->font = font;
+}
+
+void TextView::setContent(const UChar *str){
+    this->str.setTo(str,u_strlen(str));
+    commitChanges();
 }
 
 

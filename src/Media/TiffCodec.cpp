@@ -110,8 +110,8 @@ namespace OmegaWTK::Media {
             if(buffer != nullptr){
                 if(TIFFReadRGBAImage(tiff,width,height,buffer,0)){
                     storage->data = (ImgByte *)buffer;
-                    storage->header =std::make_unique<ImgHeader>(std::move(header));
-                    storage->profile = nullptr;
+                    storage->header = header;
+                    // storage->profile;
                     rc = true;
                 };
     //            _TIFFfree(buffer);
@@ -123,8 +123,8 @@ namespace OmegaWTK::Media {
         void readToStorage(){
             if(!load_tiff_from_file()){
                 storage->data = nullptr;
-                storage->header = nullptr;
-                storage->profile = nullptr;
+                // storage->header = nullptr;
+                // storage->profile = nullptr;
             };
         };
         TiffCodec(Core::IStream & stream,BitmapImage *res):ImgCodec(stream,res){};
