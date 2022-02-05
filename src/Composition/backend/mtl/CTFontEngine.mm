@@ -4,14 +4,12 @@
 #include "omegaWTK/Core/Unicode.h"
 
 #import <CoreText/CoreText.h>
+#include <memory>
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
 namespace OmegaWTK::Composition {
 
- CFStringRef core_string_to_cf_string_ref(OmegaCommon::String & str){
-     return CFStringCreateWithCString(kCFAllocatorDefault,str.c_str(),CFStringGetSystemEncoding());
- };
 
  FontEngine * FontEngine::instance;
 
@@ -165,12 +163,16 @@ GlyphRun::fromUStringAndFont(const OmegaWTK::UniString &str, Core::SharedPtr<Fon
          // CFRetain(frame);
      };
      void drawRun(Core::SharedPtr<GlyphRun> &glyphRun, const Composition::Color &color) override {
+          auto gr = std::dynamic_pointer_cast<CTGlyphRun>(glyphRun);
+          strData = gr->str;
           // Draw Text to CGBitmap!
+           CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
+
           framesetterRef = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)strData);
-          frame = CTFramesetterCreateFrame(framesetterRef,CFRangeMake(0,0),CGPathCreateWithRect(CGRectMake(rect.pos.x,rect.pos.y,rect.w,rect.h),NULL),NULL);
+          frame = CTFramesetterCreateFrame(framesetterRef,CFRangeMake(0,strData.length),CGPathCreateWithRect(CGRectMake(rect.pos.x,rect.pos.y,rect.w * scaleFactor,rect.h * scaleFactor),NULL),NULL);
           CFRetain(frame);
      }
-     void * getNative(){
+     void * getNative() override{
          return (void *)frame;
      };
      void getGlyphBoundingBoxes(Core::Rect **rects, unsigned * count){
@@ -194,22 +196,33 @@ GlyphRun::fromUStringAndFont(const OmegaWTK::UniString &str, Core::SharedPtr<Fon
      // };
      OmegaGTE::SharedHandle<OmegaGTE::GETexture> toBitmap() override{
          CGFloat scaleFactor = [NSScreen mainScreen].backingScaleFactor;
-         void *data = new unsigned char[rect.w * rect.h * scaleFactor * scaleFactor];
-         CGContextRef context = CGBitmapContextCreate(data,rect.w * scaleFactor,rect.h * scaleFactor,8,rect.w * 4 * 8,CGColorSpaceCreateDeviceRGB(),0);
+         void *data = new unsigned char[rect.w * 4 * rect.h * scaleFactor * scaleFactor];
+         
+         CGContextRef context = CGBitmapContextCreateWithData(data,rect.w * scaleFactor,rect.h * scaleFactor,8,rect.w * 4 * scaleFactor,CGColorSpaceCreateDeviceRGB(),kCGImageAlphaPremultipliedLast,NULL,NULL);
          CGContextSetTextMatrix(context,CGAffineTransformIdentity);
          CGContextScaleCTM(context,1,-1);
+         CGContextTranslateCTM(context,0,-(rect.h * scaleFactor));
+         CGContextSetStrokeColorWithColor(context,[NSColor greenColor].CGColor);
          CTFrameDraw(frame,context);
-         CGContextRelease(context);
+         CGContextFlush(context);
+         
 
          OmegaGTE::TextureDescriptor desc {};
+         desc.usage = OmegaGTE::GETexture::ToGPU;
+         desc.pixelFormat = OmegaGTE::TexturePixelFormat::RGBA8Unorm;
          desc.type = OmegaGTE::GETexture::Texture2D;
-         desc.width = rect.w;
-         desc.height = rect.h;
+         desc.width = (unsigned)(rect.w * scaleFactor);
+         desc.height = (unsigned)(rect.h * scaleFactor);
          desc.storage_opts = OmegaGTE::Shared;
-
+         
          auto texture = gte.graphicsEngine->makeTexture(desc);
-     
-         texture->copyBytes(data,rect.w * rect.h * scaleFactor * scaleFactor);
+         NSLog(@"CGBitmapContextData: %p",data);
+         texture->copyBytes(data,rect.w * 4 * scaleFactor);
+
+        CGContextRelease(context);
+
+
+         delete [](unsigned char *) data;
       
          return texture;
      };
@@ -225,7 +238,7 @@ GlyphRun::fromUStringAndFont(const OmegaWTK::UniString &str, Core::SharedPtr<Fon
  };
 
  Core::SharedPtr<Font> FontEngine::CreateFont(FontDescriptor & desc){
-     CTFontRef ref = CTFontCreateWithNameAndOptions(core_string_to_cf_string_ref(desc.family),CGFloat(desc.size),NULL,kCTFontOptionsPreferSystemFont);
+     CTFontRef ref = CTFontCreateWithNameAndOptions((__bridge CFStringRef)[NSString stringWithUTF8String:desc.family.c_str()],CGFloat(desc.size),NULL,kCTFontOptionsPreferSystemFont);
      CTFontSymbolicTraits fontTraits;
     
      switch (desc.style) {
