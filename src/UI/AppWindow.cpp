@@ -5,6 +5,9 @@
 #include "omegaWTK/Composition/CompositorClient.h"
 #include "omegaWTK/UI/WidgetTreeHost.h"
 
+#include "omegaWTK/UI/Menu.h"
+#include "omegaWTK/UI/View.h"
+
 namespace OmegaWTK {
 
     AppWindow::AppWindow(Core::Rect rect,AppWindowDelegate *delegate):

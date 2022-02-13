@@ -1,6 +1,6 @@
 #include "omegaWTK/Core/Core.h"
 #include "omegaWTK/Native/NativeApp.h"
-#include "AppWindow.h"
+#include "omegaWTK/Native/NativeTheme.h"
 
 #ifndef OMEGAWTK_UI_APP_H
 #define OMEGAWTK_UI_APP_H
@@ -8,6 +8,7 @@
 
 namespace OmegaWTK {
 
+class AppWindowManager;
 
 class OMEGAWTK_EXPORT AppInst : public Native::NativeThemeObserver {
     Native::NAP ptr;

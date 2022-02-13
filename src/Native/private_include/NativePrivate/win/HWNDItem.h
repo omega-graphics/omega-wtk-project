@@ -26,11 +26,11 @@ namespace OmegaWTK::Native {
             friend class HWNDFactory;
             void enable() override{
                 enabled = true;
-                // ShowWindow(hwnd,SW_SHOWDEFAULT);
+                ShowWindow(hwnd,SW_SHOW);
             };
             void disable() override{
                 enabled = false;
-                // ShowWindow(hwnd,SW_HIDE);
+                ShowWindow(hwnd,SW_HIDE);
             };
             void resize(const Core::Rect &newRect) override;
             void addChildNativeItem(NativeItemPtr nativeItem) override;

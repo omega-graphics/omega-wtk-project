@@ -3,10 +3,10 @@
 --------------------
 
 - [x]  App Windows
-- [ ]  SVG Parse Support
+- [x]  SVG Parse Support
 - [ ]  Video Views.
 - [ ]  Scroll Views (Native or Customizable ScrollBars)
-- [ ]  Dialogs (Half done. Still buggy on Windows)
-- [ ]  Window Canvas Surface (For composing on Window Layers)
+- [x]  Dialogs (Half done. Still buggy on Windows)
+- [x]  Window Canvas Surface (For composing on Window Layers)
 - [ ]  Video/Audio Capture
-- [ ]  Animation/Transtions.
+- [x]  Animation/Transtions.

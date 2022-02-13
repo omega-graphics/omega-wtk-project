@@ -1,6 +1,5 @@
 
 #include "omegaWTK/Core/Core.h"
-#include "View.h"
 #include "omegaWTK/Native/NativeTheme.h"
 
 #ifndef OMEGAWTK_UI_WIDGET_H
@@ -8,10 +7,19 @@
 
 namespace OmegaWTK {
 
+namespace Composition {
+    class LayerTree;
+}
+
 class AppWindow;
 class AppWindowManager;
+
+class View;
+typedef View CanvasView;
 class VideoView;
 class SVGView;
+class TextView;
+
 class WidgetObserver;
 class WidgetTreeHost;
 

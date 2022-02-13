@@ -3,6 +3,8 @@
 #include "RenderTarget.h"
 #include "omegaWTK/Composition/Canvas.h"
 
+#include "omegaWTK/Media/ImgCodec.h"
+
 namespace OmegaWTK::Composition {
     #ifdef TARGET_MACOS
     void stopMTLCapture();
@@ -365,6 +367,8 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
 
         OmegaGTE::SharedHandle<OmegaGTE::GETexture> texturePaint;
 
+        OmegaGTE::SharedHandle<OmegaGTE::GEFence> textureFence;
+
         switch (type) {
             case VisualCommand::Rect : {
                 auto _params = (VisualCommand::RectParams *)params;
@@ -397,6 +401,7 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
                 useTextureRenderPipeline = true;
                 if(_params->texture){
                     texturePaint = _params->texture;
+                    textureFence = _params->textureFence;
                 }
                 else {
                     OmegaGTE::TextureDescriptor texDesc {OmegaGTE::GETexture::Texture2D};
@@ -454,6 +459,11 @@ void BackendRenderTargetContext::applyEffectToTarget(CanvasEffect::Type type, vo
         bufferWriter->setOutputBuffer(buffer);
 
         auto cb = preEffectTarget->commandBuffer();
+
+        if(textureFence != nullptr){
+            preEffectTarget->notifyCommandBuffer(cb,textureFence);
+        }
+        
         OmegaGTE::GERenderTarget::RenderPassDesc renderPassDesc {};
 
         OmegaGTE::GEViewport viewport {};

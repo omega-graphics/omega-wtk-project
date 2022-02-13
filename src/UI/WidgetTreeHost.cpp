@@ -1,6 +1,9 @@
 #include "omegaWTK/UI/WidgetTreeHost.h"
 #include "../Composition/Compositor.h"
 
+#include "omegaWTK/UI/Widget.h"
+#include "omegaWTK/UI/AppWindow.h"
+
 namespace OmegaWTK {
     WidgetTreeHost::WidgetTreeHost():
     compositor(new Composition::Compositor()),attachedToWindow(false)

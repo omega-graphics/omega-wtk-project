@@ -2,7 +2,7 @@
 
 #include <utility>
 #include "omegaWTK/Composition/CompositorClient.h"
-#include "unicode/urename.h"
+#include "omegaWTK/Composition/Canvas.h"
 
 namespace OmegaWTK {
 
@@ -271,7 +271,7 @@ void TextView::commitChanges() {
     auto run = Composition::GlyphRun::fromUStringAndFont(str,font);
     textRect->drawRun(run,Composition::Color::create8Bit(Composition::Color::Eight::Black8));
     auto img = textRect->toBitmap();
-    rootLayerCanvas->drawGETexture(img,getRect());
+    rootLayerCanvas->drawGETexture(img.s,getRect(),img.textureFence);
     rootLayerCanvas->sendFrame();
 }
 

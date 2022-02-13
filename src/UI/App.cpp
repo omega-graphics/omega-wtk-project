@@ -1,9 +1,10 @@
 #include "omegaWTK/UI/App.h"
-#include "omegaWTK/Native/NativeApp.h"
 #include "omegaWTK/UI/Menu.h"
 #include "omegaWTK/Composition/FontEngine.h"
 #include "omegaWTK/Native/NativeTheme.h"
 
+#include "omegaWTK/Composition/CompositorClient.h"
+#include "omegaWTK/UI/AppWindow.h"
 
 namespace OmegaWTK {
 

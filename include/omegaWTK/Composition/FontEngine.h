@@ -18,6 +18,8 @@
 
 struct ID3D12CommandQueue;
 struct ID3D11On12Device;
+struct ID3D11DeviceContext;
+struct ID2D1Device;
 #undef CreateFont
 
 #endif
@@ -80,7 +82,11 @@ struct ID3D11On12Device;
 
  class OMEGAWTK_EXPORT  TextRect {
  public:
-     virtual OmegaGTE::SharedHandle<OmegaGTE::GETexture>  toBitmap() = 0;
+    struct BitmapRes {
+        OmegaGTE::SharedHandle<OmegaGTE::GETexture> s;
+        Core::SharedPtr<OmegaGTE::GEFence> textureFence;
+        };
+     virtual BitmapRes toBitmap() = 0;
 
      Core::Rect rect;
 
@@ -141,7 +147,9 @@ struct ID3D11On12Device;
  class OMEGAWTK_EXPORT  FontEngine {
  #ifdef TARGET_WIN32
      Core::UniqueComPtr<ID3D11On12Device> d3d11_device;
+     Core::UniqueComPtr<ID3D11DeviceContext> d3d11_devicecontext;
      Core::UniqueComPtr<ID3D12CommandQueue> d3d11_on_12_queue;
+     Core::UniqueComPtr<ID2D1Device> d2d1device;
      Core::UniqueComPtr<IDWriteFactory> dwrite_factory;
      friend class DWriteTextRect;
      friend class DWriteGlyphRun;

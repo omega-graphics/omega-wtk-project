@@ -1,7 +1,6 @@
 #include "omegaWTK/Core/Core.h"
-#include "View.h"
-#include "Menu.h"
-#include "omegaWTK/Composition/Layer.h"
+
+#include "omegaWTK/Composition/CompositorClient.h"
 #include "omegaWTK/Native/NativeDialog.h"
 #include "omegaWTK/Native/NativeTheme.h"
 
@@ -9,11 +8,18 @@
 #define OMEGAWTK_UI_APPWINDOW_H
 
 namespace OmegaWTK {
-   
 
+namespace Composition {
+    class WindowLayer;
+    class ViewRenderTarget;
+}
+
+class Menu;
+   
 class AppWindow;
 class AppWindowManager;
 class WidgetTreeHost;
+class Widget;
 
 class AppWindowDelegate;
 /**

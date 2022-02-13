@@ -98,10 +98,12 @@ namespace OmegaWTK::Native::Win {
     };
     HWND HWNDFactory::makeWindow(ATOM atom,LPCSTR name,Core::Rect rect,DWORD base_style,LPVOID custom_params,HWND parent,DWORD ext_style){
         HWND wind_parent;
-        if(parent != nullptr)
+        if(parent != nullptr) {
             wind_parent = parent;
-        else 
+        }
+        else {
             wind_parent = GetForegroundWindow();
+        }
 
         UINT dpi = GetDpiForWindow(wind_parent);
 

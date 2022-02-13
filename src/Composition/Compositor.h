@@ -60,7 +60,7 @@ namespace OmegaWTK::Composition {
     /**
      OmegaWTK's Composition Engine Frontend Interface
      */
-    class OMEGAWTK_EXPORT Compositor {
+    class Compositor {
 
         OmegaCommon::Vector<LayerTree *> targetLayerTrees;
 

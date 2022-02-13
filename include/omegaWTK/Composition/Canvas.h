@@ -1,9 +1,6 @@
 #include "omegaWTK/Core/Core.h"
-#include "Brush.h"
 #include "Path.h"
 #include "FontEngine.h"
-#include "Brush.h"
-#include "omegaWTK/Media/ImgCodec.h"
 
 #include "CompositorClient.h"
 
@@ -14,32 +11,37 @@
 
 namespace OmegaWTK {
     class View;
+
+    namespace Media {
+        struct BitmapImage;
+    }
     namespace Composition {
+        struct Brush;
 
-    struct OMEGAWTK_EXPORT  Border {
-        Core::SharedPtr<Brush> brush;
-        unsigned width;
+        struct OMEGAWTK_EXPORT  Border {
+            Core::SharedPtr<Brush> brush;
+            unsigned width;
 
-        Border() = delete;
+            Border() = delete;
 
-        Border(Core::SharedPtr<Brush> &_brush, unsigned _width) : brush(_brush), width(_width) {};
-    };
+            Border(Core::SharedPtr<Brush> &_brush, unsigned _width) : brush(_brush), width(_width) {};
+        };
 
-    struct OMEGAWTK_EXPORT  CanvasEffect {
-        typedef enum : OPT_PARAM {
-            DirectionalBlur,
-            GaussianBlur
-        } Type;
-        Type type;
-        void *params;
-        typedef struct {
-        float radius;
-        } GaussianBlurParams;
-        typedef struct {
+        struct OMEGAWTK_EXPORT  CanvasEffect {
+            typedef enum : OPT_PARAM {
+                DirectionalBlur,
+                GaussianBlur
+            } Type;
+            Type type;
+            void *params;
+            typedef struct {
             float radius;
-            float angle;
-        } DirectionalBlurParams;
-    };
+            } GaussianBlurParams;
+            typedef struct {
+                float radius;
+                float angle;
+            } DirectionalBlurParams;
+        };
 ///   
 
 
@@ -74,6 +76,7 @@ namespace OmegaWTK {
         typedef struct {
             Core::SharedPtr<Media::BitmapImage> img;
             Core::SharedPtr<OmegaGTE::GETexture> texture;
+            Core::SharedPtr<OmegaGTE::GEFence> textureFence;
             Core::Rect rect;
         } BitmapParams;
         void * params;
@@ -148,8 +151,9 @@ namespace OmegaWTK {
            @brief Draw a GETexture to the corresponding rect.
            @param img The GETExture.
            @param rect The Rect to bound the image to.
+           @param fence
           */
-        void drawGETexture(SharedHandle<OmegaGTE::GETexture> & img,const Core::Rect & rect);
+        void drawGETexture(SharedHandle<OmegaGTE::GETexture> & img,const Core::Rect & rect,SharedHandle<OmegaGTE::GEFence> fence = nullptr);
 
         /**
            @brief Apply an effect to the current frame.

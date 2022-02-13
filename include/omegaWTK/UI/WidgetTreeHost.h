@@ -1,12 +1,18 @@
 #include "omegaWTK/Core/Core.h"
-#include "Widget.h"
-#include "AppWindow.h"
 #include <type_traits>
 
 #ifndef OMEGAWTK_UI_WIDGETTREEHOST_H
 #define OMEGAWTK_UI_WIDGETTREEHOST_H
 
 namespace OmegaWTK {
+
+    namespace Composition {
+        class Compositor;
+    }
+
+
+    class AppWindow;
+    class Widget;
     /**
      @brief Owns a widget tree. (Owns the Widget tree's Compositor, and the Compositor's Scheduler)
      @paragraph An instance of this class gets attached to an AppWindow directly and the root widget
@@ -29,13 +35,14 @@ namespace OmegaWTK {
 
         friend class AppWindowManager;
         friend class AppWindow;
+        friend class Widget;
 
         void initWidgetRecurse(Widget *parent);
         void initWidgetTree();
+        Composition::Compositor *compPtr(){return compositor;};
     public:
         OMEGACOMMON_CLASS("OmegaWTK.WidgetTreeHost")
 
-        Composition::Compositor *compPtr(){return compositor;};
 
         static SharedHandle<WidgetTreeHost> Create();
 

@@ -17,11 +17,12 @@ protected:
         textView->updateFont(font);
         textView->setContent(u"Hello World");
         textView->endCompositionSession();
+        textView->enable();
     }
 public:
     explicit MyWidget(const OmegaWTK::Core::Rect & rect,OmegaWTK::Widget *parent) : OmegaWTK::Widget(rect,parent){
         auto layer = rootView->getLayerTreeLimb()->getRootLayer();
-        textView = makeTextView(rect,rootView.get());
+        textView = makeTextView(OmegaWTK::Core::Rect{{0,0},200,200},rootView.get());
     }
 };
 

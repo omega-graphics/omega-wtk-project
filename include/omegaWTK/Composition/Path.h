@@ -1,11 +1,11 @@
 #include "omegaWTK/Core/Core.h"
-#include "Brush.h"
 
 #ifndef OMEGAWTK_COMPOSITION_PATH_H
 #define OMEGAWTK_COMPOSITION_PATH_H
 
 namespace OmegaWTK::Composition {
 
+struct Brush;
 
 class OMEGAWTK_EXPORT  Path {
     struct Segment {

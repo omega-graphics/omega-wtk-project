@@ -1,8 +1,14 @@
+#include "omegaWTk/Media/ImgCodec.h"
 
+#include "omegaWTK/Composition/Layer.h"
+#include "omegaWTK/Composition/Canvas.h"
+#include "omegaWTK/Composition/FontEngine.h"
 
+#include "omegaWTK/UI/View.h"
 #include "omegaWTK/UI/Widget.h"
 #include "omegaWTK/UI/App.h"
 #include "omegaWTK/UI/AppWindow.h"
+#include "omegaWTK/UI/Menu.h"
 
 
 #include "omegaWTK/Main.h"

@@ -2,10 +2,10 @@
 #include "omegaWTK/Core/MultiThreading.h"
 
 #include "omegaWTK/Native/NativeItem.h"
-
+#include "CompositorClient.h"
 
 #include "Layer.h"
-#include "Canvas.h"
+
 
 #ifndef OMEGAWTK_COMPOSITION_ANIMATION_H
 #define  OMEGAWTK_COMPOSITION_ANIMATION_H
@@ -14,6 +14,7 @@ namespace OmegaWTK {
     class View;
 }
 namespace OmegaWTK::Composition {
+    struct CanvasFrame;
 
     /// @brief Traverse any 2D scalar.
     class OMEGAWTK_EXPORT ScalarTraverse {
