@@ -102,6 +102,9 @@ fragment float4 textureFragment(OmegaWTKTexturedRasterData raster){
         auto & compiler = gte.omegaSlCompiler;
         auto library = compiler->compile({OmegaSLCompiler::Source::fromString(librarySource)});
         shaderLibrary = gte.graphicsEngine->loadShaderLibraryRuntime(library);
+
+        OMEGAWTK_DEBUG("Phase 1");
+
         OmegaGTE::RenderPipelineDescriptor renderPipelineDescriptor {};
         renderPipelineDescriptor.cullMode = OmegaGTE::RasterCullMode::None;
         renderPipelineDescriptor.depthAndStencilDesc = {false,false};
@@ -109,11 +112,16 @@ fragment float4 textureFragment(OmegaWTKTexturedRasterData raster){
         renderPipelineDescriptor.rasterSampleCount = 1;
         renderPipelineDescriptor.vertexFunc = shaderLibrary->shaders["mainVertex"];
         renderPipelineDescriptor.fragmentFunc = shaderLibrary->shaders["mainFragment"];
+
         renderPipelineState = gte.graphicsEngine->makeRenderPipelineState(renderPipelineDescriptor);
+
+        OMEGAWTK_DEBUG("Phase 2");
 
         renderPipelineDescriptor.vertexFunc = shaderLibrary->shaders["textureVertex"];
         renderPipelineDescriptor.fragmentFunc = shaderLibrary->shaders["textureFragment"];
         textureRenderPipelineState = gte.graphicsEngine->makeRenderPipelineState(renderPipelineDescriptor);
+
+        OMEGAWTK_DEBUG("Phase 3");
 
 //        OmegaGTE::ComputePipelineDescriptor linearGradientPipelineDesc {};
 //        linearGradientPipelineDesc.computeFunc = shaderLibrary->shaders["linearGradient"];
@@ -132,6 +140,8 @@ fragment float4 textureFragment(OmegaWTKTexturedRasterData raster){
 
         finalTextureDrawBuffer = gte.graphicsEngine->makeBuffer({OmegaGTE::BufferDescriptor::Upload,struct_size * 6,struct_size});
         bufferWriter->setOutputBuffer(finalTextureDrawBuffer);
+
+        OMEGAWTK_DEBUG("Phase 4");
         /// Triangle 1
         bufferWriter->structBegin();
         bufferWriter->writeFloat4(pos);
