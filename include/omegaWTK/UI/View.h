@@ -136,9 +136,12 @@ namespace OmegaWTK {
      */
     INTERFACE OMEGAWTK_EXPORT ViewDelegate : public Native::NativeEventProcessor {
         void onRecieveEvent(Native::NativeEventPtr event);
+        ViewDelegate *forwardDelegate = nullptr;
         friend class View;
         protected:
         View * view;
+
+        void setForwardDelegate(ViewDelegate *delegate);
         /**
             @name Interface Methods
          
@@ -151,35 +154,35 @@ namespace OmegaWTK {
         /**
             Called when the Mouse Enters the View
          */
-        virtual void onMouseEnter(Native::NativeEventPtr event) {};
+        virtual void onMouseEnter(Native::NativeEventPtr event) DEFAULT;
         /**
             Called when the Mouse Exits the View
          */
-        virtual void onMouseExit(Native::NativeEventPtr event) {};
+        virtual void onMouseExit(Native::NativeEventPtr event) DEFAULT;
         /**
             Called when the Left Mouse Button is pressed
          */
-        virtual void onLeftMouseDown(Native::NativeEventPtr event) {};
+        virtual void onLeftMouseDown(Native::NativeEventPtr event) DEFAULT;
         /**
             Called when the Left Mouse Button is raised after being pressed
          */
-        virtual void onLeftMouseUp(Native::NativeEventPtr event) {};
+        virtual void onLeftMouseUp(Native::NativeEventPtr event) DEFAULT;
         /**
             Called when the Right Mouse Button is pressed
          */
-        virtual void onRightMouseDown(Native::NativeEventPtr event) {};
+        virtual void onRightMouseDown(Native::NativeEventPtr event) DEFAULT;
         /**
             Called when the Right Mouse Button is raised after being pressed
          */
-        virtual void onRightMouseUp(Native::NativeEventPtr event) {};
+        virtual void onRightMouseUp(Native::NativeEventPtr event) DEFAULT;
         /**
             Called when a key on a keyboard is pressed
          */
-        virtual void onKeyDown(Native::NativeEventPtr event) {};
+        virtual void onKeyDown(Native::NativeEventPtr event) DEFAULT;
         /**
             Called when a key on a keyboard is raised after being pressed
          */
-        virtual void onKeyUp(Native::NativeEventPtr event) {};
+        virtual void onKeyUp(Native::NativeEventPtr event) DEFAULT;
         /// @}
         public:
         ViewDelegate();
@@ -215,7 +218,7 @@ namespace OmegaWTK {
        
     };
 
-    INTERFACE OMEGAWTK_EXPORT ScrollViewDelegate : public Native::NativeEventProcessor {
+    class OMEGAWTK_EXPORT ScrollViewDelegate : public Native::NativeEventProcessor {
         void onRecieveEvent(Native::NativeEventPtr event);
         friend class ScrollView;
     protected:
@@ -252,8 +255,17 @@ namespace OmegaWTK {
 
         SharedHandle<Composition::Canvas> rootLayerCanvas;
 
+        UniqueHandle<ClickableViewHandler> clickableHandler;
+
+         SharedHandle<Composition::Layer> cursorLayer;
+
+        SharedHandle<Composition::Canvas> cursorCanvas;
+
         OmegaWTK::UniString str;
         bool editMode = false;
+        void moveTextCursorToMousePoint(Core::Position & pos);
+        void enableCursor();
+        void disableCursor();
         void pushChar(Unicode32Char & ch);
         void popChar();
         void commitChanges();
@@ -265,8 +277,14 @@ namespace OmegaWTK {
         void setContent(const UChar * str);
     };
 
-    class OMEGAWTK_EXPORT TextViewDelegate : public ViewDelegate {
+    class OMEGAWTK_EXPORT TextViewDelegate : public ViewDelegate { 
+
+        UniqueHandle<ClickableViewHandler> clickHandler;
+
+        void onKeyDown(Native::NativeEventPtr event) override;
+        void onKeyUp(Native::NativeEventPtr event) override;
     public:
+        TextViewDelegate(TextView *view);
         void toggleEdit();
         bool editMode();
         OmegaWTK::UniString & getString();

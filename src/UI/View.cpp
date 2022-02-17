@@ -81,6 +81,7 @@ parent_ptr(parent){
 SharedHandle<Composition::Layer> View::makeLayer(Core::Rect rect){
     auto layer = std::make_shared<Composition::Layer>(rect);
     layer->parentLimb = layerTreeLimb.get();
+    layerTreeLimb->addLayer(layer);
     return layer;
 };
 
@@ -121,6 +122,10 @@ void View::setFrontendRecurse(Composition::Compositor *frontend){
 
 ViewDelegate::ViewDelegate(){};
 
+void ViewDelegate::setForwardDelegate(ViewDelegate *delegate){
+    forwardDelegate = delegate;
+};
+
 ViewDelegate::~ViewDelegate(){};
 
 void ViewDelegate::onRecieveEvent(Native::NativeEventPtr event){
@@ -132,34 +137,63 @@ void ViewDelegate::onRecieveEvent(Native::NativeEventPtr event){
 //        }
         case NativeEvent::CursorEnter : {
             onMouseEnter(event);
+            if(forwardDelegate != nullptr){
+                forwardDelegate->onMouseEnter(event);
+            }
             break;
         }
         case NativeEvent::CursorExit : {
             onMouseExit(event);
+            if(forwardDelegate != nullptr){
+                forwardDelegate->onMouseExit(event);
+            }
             break;
         }
         case NativeEvent::LMouseDown : {
             onLeftMouseDown(event);
+            if(forwardDelegate != nullptr){
+                forwardDelegate->onLeftMouseDown(event);
+            }
             break;
         }
         case NativeEvent::LMouseUp : {
             onLeftMouseUp(event);
+            if(forwardDelegate != nullptr){
+                forwardDelegate->onLeftMouseUp(event);
+            }
             break;
         }
         case NativeEvent::RMouseDown : {
             onRightMouseDown(event);
+            if(forwardDelegate != nullptr){
+                forwardDelegate->onRightMouseDown(event);
+            }
             break;
         };
         case NativeEvent::RMouseUp : {
             onRightMouseUp(event);
+            if(forwardDelegate != nullptr){
+                forwardDelegate->onRightMouseUp(event);
+            }
             break;
         }
         case NativeEvent::KeyDown : {
             onKeyDown(event);
+            if(forwardDelegate != nullptr){
+                forwardDelegate->onKeyDown(event);
+            }
             break;
         };
         case NativeEvent::KeyUp : {
             onKeyUp(event);
+            if(forwardDelegate != nullptr){
+                forwardDelegate->onKeyUp(event);
+            }
+            break;
+        }
+        case Native::NativeEvent::ViewResize : {
+            auto params = (Native::ViewResize *)event->params;
+            view->getRect() = params->rect;
             break;
         }
         
@@ -244,6 +278,8 @@ void ClickableViewHandler::onLeftMouseUp(Native::NativeEventPtr event) {
     release_handler();
 }
 
+SharedHandle<Composition::Brush> cursorBrush = Composition::ColorBrush({Composition::Color::Black8});
+
 TextView::TextView(const Core::Rect &rect,Composition::LayerTree * layerTree,View *parent, bool io) :
 View(rect,layerTree,parent),
 textRect(
@@ -255,8 +291,29 @@ textRect(
         })),
         rootLayerCanvas(makeCanvas(getLayerTreeLimb()->getRootLayer())),
         str(),
-        editMode(io){
+        editMode(io),cursorLayer(makeLayer({{0,0},100,100})),
+        cursorCanvas(makeCanvas(cursorLayer)){
 
+        
+}
+
+void TextView::moveTextCursorToMousePoint(Core::Position & pos){
+    
+}
+
+void TextView::enableCursor(){
+    if(font){
+        cursorLayer->setEnabled(true);
+        auto &r = cursorLayer->getLayerRect();
+        cursorCanvas->drawRect(r,cursorBrush);
+        cursorCanvas->sendFrame();
+    }
+}
+
+void TextView::disableCursor(){
+    if(font){
+        cursorLayer->setEnabled(false);
+    }
 }
 
 void TextView::pushChar(Unicode32Char &ch) {
@@ -282,6 +339,34 @@ void TextView::updateFont(SharedHandle<Composition::Font> &font) {
 void TextView::setContent(const UChar *str){
     this->str.setTo(str,u_strlen(str));
     commitChanges();
+}
+
+TextViewDelegate::TextViewDelegate(TextView *view) : ViewDelegate(){
+    view->setDelegate(this);
+    clickHandler = std::make_unique<ClickableViewHandler>();
+    setForwardDelegate(clickHandler.get());
+     clickHandler->onClick([&](){
+         auto _v = (TextView *)this->view;
+        Core::Position pos {};
+        _v->startCompositionSession();
+        _v->moveTextCursorToMousePoint(pos);
+        _v->enableCursor();
+        _v->endCompositionSession();
+    });
+}
+
+
+void TextViewDelegate::onKeyDown(Native::NativeEventPtr event){
+    auto _v = (TextView *)this->view;
+    UChar32 ch;
+    _v->startCompositionSession();
+    _v->pushChar(ch);
+    _v->commitChanges();
+    _v->endCompositionSession();
+}
+
+void TextViewDelegate::onKeyUp(Native::NativeEventPtr event){
+    
 }
 
 

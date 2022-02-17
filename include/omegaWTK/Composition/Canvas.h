@@ -5,6 +5,7 @@
 #include "CompositorClient.h"
 
 #include <algorithm>
+#include <type_traits>
 
 #ifndef OMEGAWTK_COMPOSITION_CANVAS_H
 #define OMEGAWTK_COMPOSITION_CANVAS_H
@@ -56,32 +57,64 @@ namespace OmegaWTK {
             Bitmap
         } Type;
         Type type;
-        typedef struct {
-            Core::Rect rect;
-            Core::SharedPtr<Brush> brush;
-            Core::Optional<Border> border;
-        } RectParams;
-        
-        typedef struct {
-            Core::RoundedRect rect;
-            Core::SharedPtr<Brush> brush;
-            Core::Optional<Border> border;
-        } RoundedRectParams;
-        
-        typedef struct {
-            Core::Ellipse ellipse;
-            Core::SharedPtr<Brush> brush;
-            Core::Optional<Border> border;
-        } EllipseParams;
-        typedef struct {
-            Core::SharedPtr<Media::BitmapImage> img;
-            Core::SharedPtr<OmegaGTE::GETexture> texture;
-            Core::SharedPtr<OmegaGTE::GEFence> textureFence;
-            Core::Rect rect;
-        } BitmapParams;
-        void * params;
+        union Data {
+            struct {
+                Core::Rect rect;
+                Core::SharedPtr<Brush> brush;
+                Core::Optional<Border> border;
+            } rectParams;
+            
+            struct {
+                Core::RoundedRect rect;
+                Core::SharedPtr<Brush> brush;
+                Core::Optional<Border> border;
+            } roundedRectParams;
+            
+            struct {
+                Core::Ellipse ellipse;
+                Core::SharedPtr<Brush> brush;
+                Core::Optional<Border> border;
+            } ellipseParams;
+            struct {
+                Core::SharedPtr<Media::BitmapImage> img;
+                Core::SharedPtr<OmegaGTE::GETexture> texture;
+                Core::SharedPtr<OmegaGTE::GEFence> textureFence;
+                Core::Rect rect;
+            } bitmapParams;
+
+
+            Data(const Core::Rect & rect,Core::SharedPtr<Brush> brush,Core::Optional<Border> border);
+
+            Data(const Core::RoundedRect & rect,Core::SharedPtr<Brush> brush,Core::Optional<Border> border);
+
+            Data(const Core::Ellipse & ellipse,Core::SharedPtr<Brush> brush,Core::Optional<Border> border);
+
+            Data(Core::SharedPtr<Media::BitmapImage> img,const Core::Rect &rect);
+
+            Data(Core::SharedPtr<OmegaGTE::GETexture> texture,Core::SharedPtr<OmegaGTE::GEFence> textureFence,const Core::Rect &rect);
+            
+         } params;
         VisualCommand() = delete;
-        VisualCommand(Type type,void * params):type(type),params(params){};
+
+        #define VISUAL_COMMAND_ARGS_CHECK(SUBJECT,OBJECT...) std::enable_if_t<std::is_same_v<std::tuple<std::remove_reference_t<SUBJECT>...>,std::tuple<OBJECT>>,int> = 0
+
+        template<class ..._Args,VISUAL_COMMAND_ARGS_CHECK(_Args,Core::Rect,Core::SharedPtr<Brush>,Core::Optional<Border>)>
+        VisualCommand(_Args && ...args):type(Rect),params(args...){};
+
+        template<class ..._Args,VISUAL_COMMAND_ARGS_CHECK(_Args,Core::RoundedRect,Core::SharedPtr<Brush>,Core::Optional<Border>)>
+        VisualCommand(_Args && ...args):type(RoundedRect),params(args...){};
+
+        template<class ..._Args,VISUAL_COMMAND_ARGS_CHECK(_Args,Core::Ellipse,Core::SharedPtr<Brush>,Core::Optional<Border>)>
+        VisualCommand(_Args && ...args):type(Ellipse),params(args...){};
+
+        template<class ..._Args,VISUAL_COMMAND_ARGS_CHECK(_Args,Core::SharedPtr<Media::BitmapImage>,Core::Rect)>
+        VisualCommand(_Args && ...args):type(Bitmap),params(args...){};
+
+        template<class ..._Args,VISUAL_COMMAND_ARGS_CHECK(_Args,Core::SharedPtr<OmegaGTE::GETexture>,Core::SharedPtr<OmegaGTE::GEFence>,Core::Rect)>
+        VisualCommand(_Args && ...args):type(Bitmap),params(args...){};
+
+
+        #undef VISUAL_COMMAND_ARGS_CHECK
     };
 
     class Layer;

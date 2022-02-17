@@ -1,5 +1,6 @@
 #include "omegaWTK/Composition/Animation.h"
 #include "omegaWTK/Composition/CompositorClient.h"
+#include "omegaWTK/Composition/Canvas.h"
 #include <chrono>
 #include <memory>
 #include <cassert>
@@ -292,9 +293,12 @@ LayerAnimator::LayerAnimator(Layer &layer,ViewAnimator & parentAnimator):Composi
     
 }
 
+
 void LayerAnimator::transition(SharedHandle<CanvasFrame> &from, SharedHandle<CanvasFrame> &to, unsigned duration,
                                    const SharedHandle<AnimationCurve> &curve) {
     assert(duration > 0 && "Cannot have null duration");
+    auto totalFrames = parentAnimator.calculateTotalFrames(duration);
+
 
 }
 

@@ -23,6 +23,7 @@ public:
         RMouseUp,
         KeyDown,
         KeyUp,
+        ViewResize,
         /** Window Events*/
         WindowWillClose,
         WindowWillResize,
@@ -45,6 +46,10 @@ struct WindowWillResize {
 typedef struct {
     
 } ViewHasLoaded;
+
+typedef struct {
+    Core::Rect rect;
+} ViewResize;
 
 typedef struct {
     

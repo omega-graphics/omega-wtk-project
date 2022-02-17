@@ -4,6 +4,7 @@
 #include <memory>
 #include <windowsx.h>
 #include <iostream>
+#include <winuser.h>
 
 namespace OmegaWTK::Native::Win {
     HWNDItem::HWNDItem(Core::Rect & rect):wndrect(rect){
@@ -167,14 +168,16 @@ namespace OmegaWTK::Native::Win {
             emitIfPossible(button_event_to_native_event(NativeEvent::RMouseUp,&pt));
             break;
         };
-        // case WM_SIZE : {
-        //     FLOAT scaleFactor = currentDpi/96.f;
-        //     UINT width = LOWORD(lParam);
-        //     UINT height = HIWORD(lParam);
-        //     wndrect.dimen.minHeight = height/scaleFactor;
-        //     wndrect.dimen.minHeight = width/scaleFactor;
-        //     break;
-        // }
+        case WM_SIZE : {
+            FLOAT scaleFactor = currentDpi/96.f;
+            UINT width = LOWORD(lParam);
+            UINT height = HIWORD(lParam);
+
+             Core::Rect rect {{wndrect.pos},FLOAT(width)/scaleFactor,FLOAT(height)/scaleFactor};
+            
+            emitIfPossible(std::shared_ptr<NativeEvent>(new NativeEvent{NativeEvent::ViewResize,new ViewResize{rect}}));
+            break;
+        }
         case WM_PAINT : {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd,&ps);
@@ -210,7 +213,9 @@ namespace OmegaWTK::Native::Win {
         HWND child = hwndItem->hwnd;
         raw_children.push_back(child);
         SetParent(child,hwnd);
+        auto scaleFactor = FLOAT(GetDpiForWindow(child))/96.f;
         hwndItem->parent = this;
+        SetWindowPos(child,NULL,hwndItem->wndrect.pos.x * scaleFactor,(wndrect.h - hwndItem->wndrect.pos.y) * scaleFactor,hwndItem->wndrect.w *scaleFactor,hwndItem->wndrect.h *scaleFactor,SWP_NOZORDER);
     };
     void HWNDItem::removeChildNativeItem(NativeItemPtr nativeItem){
          auto hwndItem = std::dynamic_pointer_cast<HWNDItem>(nativeItem);
@@ -240,6 +245,8 @@ namespace OmegaWTK::Native::Win {
         HDWP dp = BeginDeferWindowPos(1);
         DeferWindowPos(dp,hwnd,hwnd,wndrect.pos.x * scaleFactor,(rect.h - wndrect.pos.y - wndrect.h) * scaleFactor,wndrect.w * scaleFactor,wndrect.h * scaleFactor,SWP_NOZORDER);
         EndDeferWindowPos(dp);
+
+        emitIfPossible(std::shared_ptr<NativeEvent>(new NativeEvent{NativeEvent::ViewResize,new ViewResize{rect}}));
     };
     RECT HWNDItem::getClientRect(){
         RECT r;
