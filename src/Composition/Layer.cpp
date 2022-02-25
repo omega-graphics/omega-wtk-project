@@ -48,6 +48,12 @@ LayerTree::Limb * Layer::getParentLimb(){
 
 Layer::~Layer() { };
 
+LayerEffect::~LayerEffect(){
+    if(type == DropShadow){
+        dropShadow.color.~Color();
+    }
+}
+
 
 LayerTree::LayerTree():rootLimb(nullptr){};
 

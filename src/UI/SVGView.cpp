@@ -1,5 +1,6 @@
 #include "omegaWTK/UI/SVGView.h"
 #include "omegaWTK/Composition/Animation.h"
+#include "omegaWTK/Composition/Path.h"
 
 namespace OmegaWTK {
 
@@ -25,7 +26,36 @@ namespace OmegaWTK {
             float stroke_opacity;
             Composition::Color stroke_color;
         } style;
-        void *params;
+        union D {
+            Core::Ellipse e;
+            Core::Rect r;
+            Core::RoundedRect rr;
+            Composition::Path p;
+            void _destroy(Type t){
+                if(t == Type::Path){
+                    p.~Path();
+                }
+            };
+            ~D() DEFAULT;
+        }params;
+
+        ~SVGObject(){
+            params._destroy(type);
+        };
+    };
+
+    string_enum SVGObjectTagName {
+
+        string_enum_field circle = "circle";
+
+        string_enum_field group = "g";
+        
+        string_enum_field def = "def";
+
+        string_enum_field rect = "rect";
+
+        string_enum_field path = "path";
+
     };
 
     /**
@@ -37,8 +67,17 @@ namespace OmegaWTK {
         OmegaCommon::Vector<SharedHandle<Composition::Layer>> svgLayers;
         OmegaCommon::Vector<SharedHandle<Composition::Canvas>> svgCanvases;
     public:
-        explicit SVGRenderState(SVGView & dest):dest(dest){
-
+        explicit SVGRenderState(SVGView & dest,SVGDocument &doc):dest(dest){
+            auto tag = doc.root();
+            auto children = tag.children();
+            for(auto & t : children){
+                if(t.name() == SVGObjectTagName::circle){
+                    
+                }
+                else if(t.name() == SVGObjectTagName::path){
+                    auto d = t.attribute("d");
+                }
+            }
         };
 
         void start(){
@@ -66,7 +105,8 @@ namespace OmegaWTK {
     }
 
     void SVGSession::setSVGSource(SVGDocument &document) {
-
+        currentRenderState = std::make_shared<SVGRenderState>(*view,document);
+        
     }
 
     void SVGSession::start() {

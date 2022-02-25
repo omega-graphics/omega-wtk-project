@@ -80,13 +80,22 @@ Gradient Gradient::Radial(std::initializer_list<GradientStop> stops,float radius
     return grad;
 };
 
-Brush::Brush(const Color & color):isColor(true),color(color),isGradient(false){
+Brush::Brush(const Color & color):isColor(true),isGradient(false),color(color){
     
 };
 
-Brush::Brush(const Gradient & gradient):isColor(false),color(Color::create8Bit(0,0)),isGradient(true),gradient(gradient){
+Brush::Brush(const Gradient & gradient):isColor(false),isGradient(true),gradient(gradient){
     
 };
+
+Brush::~Brush(){
+    if(isColor){
+        color.~Color();
+    }
+    else {
+        gradient.~Gradient();
+    }
+}
 
 Core::SharedPtr<Brush> ColorBrush(const Color & color){
     return std::make_shared<Brush>(color);

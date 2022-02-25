@@ -147,6 +147,12 @@ namespace OmegaWTK::Composition {
         pathBrush = brush;
     }
 
+    void Path::close(){
+        if(segments.back().path.size() >= 3){
+            segments.back().closed = true;
+        }
+    }
+
 
 
 Core::SharedPtr<Path> RoundedRectFrame(Core::RoundedRect rect,unsigned width){

@@ -241,8 +241,8 @@ AnimationTimeline::Keyframe AnimationTimeline::Keyframe::DropShadowStop(float ti
     k.curve = std::move(curve);
     k.frame = nullptr;
 
-    k.effect = std::make_shared<LayerEffect>(LayerEffect{LayerEffect::DropShadow,nullptr});
-    k.effect->params = new LayerEffect::DropShadowParams(params);
+    k.effect = std::make_shared<LayerEffect>(LayerEffect{LayerEffect::DropShadow});
+    k.effect->dropShadow = params;
 
     return k;
 }
@@ -255,8 +255,8 @@ AnimationTimeline::Keyframe AnimationTimeline::Keyframe::TransformationStop(floa
     k.curve = std::move(curve);
     k.frame = nullptr;
 
-    k.effect = std::make_shared<LayerEffect>(LayerEffect{LayerEffect::Transformation,nullptr});
-    k.effect->params = new LayerEffect::TransformationParams(params);
+    k.effect = std::make_shared<LayerEffect>(LayerEffect{LayerEffect::Transformation});
+    k.effect->transform = params;
 
     return k;
 }
@@ -299,12 +299,26 @@ void LayerAnimator::transition(SharedHandle<CanvasFrame> &from, SharedHandle<Can
     assert(duration > 0 && "Cannot have null duration");
     auto totalFrames = parentAnimator.calculateTotalFrames(duration);
 
+    
+
+    Timestamp timestamp = std::chrono::high_resolution_clock::now();
+    auto frameInterval = std::chrono::milliseconds(duration/totalFrames);
+    Timestamp deadline = timestamp + frameInterval;
+    for(;totalFrames > 0;totalFrames--){
+        
+        {
+
+        }
+
+        deadline += frameInterval;
+    }
 
 }
 
 void LayerAnimator::resizeTransition(unsigned int delta_x, unsigned int delta_y, unsigned int delta_w,
                                          unsigned int delta_h, unsigned duration,
                                          const SharedHandle<AnimationCurve> &curve) {
+    assert(duration > 0 && "Cannot have null duration");
     auto totalFrames = parentAnimator.calculateTotalFrames(duration);
     Timestamp timestamp = std::chrono::high_resolution_clock::now();
     auto frameInterval = std::chrono::milliseconds(duration/totalFrames);

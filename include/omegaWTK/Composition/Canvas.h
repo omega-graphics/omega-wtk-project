@@ -64,7 +64,7 @@ namespace OmegaWTK {
                 Core::Optional<Border> border;
             } rectParams;
             
-            struct {
+            struct  {
                 Core::RoundedRect rect;
                 Core::SharedPtr<Brush> brush;
                 Core::Optional<Border> border;
@@ -92,11 +92,15 @@ namespace OmegaWTK {
             Data(Core::SharedPtr<Media::BitmapImage> img,const Core::Rect &rect);
 
             Data(Core::SharedPtr<OmegaGTE::GETexture> texture,Core::SharedPtr<OmegaGTE::GEFence> textureFence,const Core::Rect &rect);
+
+            void _destroy(Type t);
+
+            ~Data() DEFAULT;
             
          } params;
         VisualCommand() = delete;
 
-        #define VISUAL_COMMAND_ARGS_CHECK(SUBJECT,OBJECT...) std::enable_if_t<std::is_same_v<std::tuple<std::remove_reference_t<SUBJECT>...>,std::tuple<OBJECT>>,int> = 0
+        #define VISUAL_COMMAND_ARGS_CHECK(SUBJECT,OBJECT...) std::enable_if_t<std::is_same_v<std::tuple<std::remove_cv_t<std::remove_reference_t<SUBJECT>>...>,std::tuple<OBJECT>>,int> = 0
 
         template<class ..._Args,VISUAL_COMMAND_ARGS_CHECK(_Args,Core::Rect,Core::SharedPtr<Brush>,Core::Optional<Border>)>
         VisualCommand(_Args && ...args):type(Rect),params(args...){};
@@ -113,6 +117,7 @@ namespace OmegaWTK {
         template<class ..._Args,VISUAL_COMMAND_ARGS_CHECK(_Args,Core::SharedPtr<OmegaGTE::GETexture>,Core::SharedPtr<OmegaGTE::GEFence>,Core::Rect)>
         VisualCommand(_Args && ...args):type(Bitmap),params(args...){};
 
+        ~VisualCommand();
 
         #undef VISUAL_COMMAND_ARGS_CHECK
     };

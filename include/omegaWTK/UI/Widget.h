@@ -19,6 +19,7 @@ typedef View CanvasView;
 class VideoView;
 class SVGView;
 class TextView;
+class ScrollView;
 
 class WidgetObserver;
 class WidgetTreeHost;

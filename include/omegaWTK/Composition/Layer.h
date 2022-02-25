@@ -116,14 +116,14 @@ namespace Composition {
             DropShadow,
             Transformation,
         } type;
-        void *params;
-        typedef struct {
+         typedef struct {
             float x_offset, y_offset;
             float radius;
             float blurAmount;
             float opacity;
             Color color;
         } DropShadowParams;
+
         typedef struct {
             struct {
                 float x;
@@ -141,6 +141,13 @@ namespace Composition {
                 float z;
             } scale;
         } TransformationParams;
+        union {
+           
+            DropShadowParams dropShadow;
+
+            TransformationParams transform;
+        };
+        ~LayerEffect();
     };
 
     /**

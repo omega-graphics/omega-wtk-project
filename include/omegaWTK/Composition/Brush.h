@@ -50,6 +50,7 @@ namespace OmegaWTK::Composition {
         static Color create16Bit(std::uint64_t rgb,std::uint16_t alpha = 0xFFFF);
         static Color create32it(std::uint32_t r,std::uint32_t g,std::uint32_t b,std::uint32_t a);
         static const Color Transparent;
+        ~Color() = default;
     };
 
 
@@ -67,15 +68,18 @@ namespace OmegaWTK::Composition {
         static GradientStop Stop(float pos,Color color);
         static Gradient Linear(std::initializer_list<GradientStop> stops,float angle);
         static Gradient Radial(std::initializer_list<GradientStop> stops,float radius);
+        ~Gradient() = default;
     };
 
     /// @brief Represents a Brush used for filling in color or texture of vector graphics.
     struct OMEGAWTK_EXPORT  Brush {
         OMEGACOMMON_CLASS("OmegaWTK.Composition.Brush")
         bool isColor;
-        Color color;
         bool isGradient;
-        Gradient gradient;
+        union {
+            Color color;
+            Gradient gradient;
+        };
         /**
          @brief Constructs a Color Brush!
          */
@@ -84,6 +88,8 @@ namespace OmegaWTK::Composition {
          @brief Constructs a Gradient Brush!
          */
         Brush(const Gradient & gradient);
+
+        ~Brush();
     };
 
 OMEGAWTK_EXPORT Core::SharedPtr<Brush> ColorBrush(const Color &color);

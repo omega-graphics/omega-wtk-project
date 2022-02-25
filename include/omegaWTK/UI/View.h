@@ -189,11 +189,11 @@ namespace OmegaWTK {
         ~ViewDelegate();
     };
 
-    class ViewTreeChildObserver {
-        SharedHandle<View> view;
-    public:
+    // class ViewTreeChildObserver {
+    //     SharedHandle<View> view;
+    // public:
         
-    };
+    // };
 
     
     class ScrollViewDelegate;
