@@ -29,6 +29,13 @@ namespace OmegaWTK {
     class ScrollView;
     class View;
     OMEGACOMMON_SHARED_CLASS(View);
+
+    /**
+     * @brief CanvasViewTag. 
+     Used for tagging the entire CanvasView.
+     * 
+     */
+    typedef OmegaCommon::String CanvasViewTag;
     
 
     /**

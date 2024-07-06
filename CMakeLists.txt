@@ -216,6 +216,10 @@ add_third_party(
 	set(THIRD_PARTY_INCLUDEDIRS ${THIRD_PARTY_INCLUDEDIRS} "${THIRD_PARTY_OUTPUT_DIR}/libtiff/include")
 
 
+# For Building ThirdParty, so one can edit code through IDE with all code symbols.
+
+add_custom_target(ThirdParty)
+add_dependencies(ThirdParty icu zlib libpng libjpeg-turbo libtiff libxml2)
 #Omega WTK Core SubModule
 
 file(GLOB CORE_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/Core/*.cpp")
@@ -315,7 +319,10 @@ source_group(OmegaWTKWidgets ${WIDGETS_SRCS})
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist.in" ${CMAKE_CURRENT_BINARY_DIR}/Info.plist @ONLY)
 
-add_omega_graphics_module("OmegaWTK" FRAMEWORK INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" VERSION ${OMEGAWTK_VERSION} HEADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" DEPENDS OmegaGTE icu zlib libpng libjpeg-turbo libtiff libxml2 EMBEDDED_LIBS ${ICU_EXPORT} ${LIBXML2_EXPORT} ${ZLIB_EXPORT} ${LIBPNG_EXPORT} ${LIBTURBOJPEG_EXPORT} ${LIBTIFF_EXPORT} SOURCES ${CORE_SRCS} ${NATIVE_SRCS} ${MEDIA_SRCS} ${COMPOSITION_SRCS} ${UI_SRCS} ${WIDGETS_SRCS})
+add_omega_graphics_module("OmegaWTK" FRAMEWORK INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist" VERSION ${OMEGAWTK_VERSION} HEADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" 
+DEPENDS OmegaGTE icu zlib libpng libjpeg-turbo libtiff libxml2 
+EMBEDDED_LIBS ${ICU_EXPORT} ${LIBXML2_EXPORT} ${ZLIB_EXPORT} ${LIBPNG_EXPORT} ${LIBTURBOJPEG_EXPORT} ${LIBTIFF_EXPORT} 
+SOURCES ${CORE_SRCS} ${NATIVE_SRCS} ${MEDIA_SRCS} ${COMPOSITION_SRCS} ${UI_SRCS} ${WIDGETS_SRCS})
 if(TARGET_ANDROID)
 	add_library( app-glue
 			STATIC

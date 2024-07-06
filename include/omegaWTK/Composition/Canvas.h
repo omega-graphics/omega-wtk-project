@@ -47,6 +47,15 @@ namespace OmegaWTK {
 
 
     class Canvas;
+
+     /**
+     * @brief CanvasElementTag. 
+     Used for tagging visual elements on a 2D canvas
+     * 
+     */
+    typedef OmegaCommon::String CanvasElementTag;
+
+    
     /// An object drawn by a Compositor.
     struct  OMEGAWTK_EXPORT VisualCommand {
         typedef enum : OPT_PARAM {
@@ -134,6 +143,7 @@ namespace OmegaWTK {
         OmegaCommon::Vector<VisualCommand> currentVisuals;
         OmegaCommon::Vector<CanvasEffect> currentEffects;
     };
+   
 
     /**
      @brief Renders 2D vector graphics to a Layer.

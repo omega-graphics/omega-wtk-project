@@ -81,7 +81,7 @@ AppWindow::~AppWindow(){
 
 AppWindowManager::AppWindowManager():rootWindow(nullptr){};
 
-void AppWindowManager::setRootWindow(AppWindow * handle){
+void AppWindowManager::setRootWindow(AppWindowPtr handle){
     rootWindow = handle;
 };
 
@@ -89,7 +89,7 @@ void AppWindowManager::onThemeSet(Native::ThemeDesc & desc){
     rootWindow->onThemeSet(desc);
 }
 
-AppWindow * AppWindowManager::getRootWindow(){
+AppWindowPtr AppWindowManager::getRootWindow(){
     return rootWindow;
 };
 

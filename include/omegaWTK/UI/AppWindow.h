@@ -17,9 +17,11 @@ namespace Composition {
 class Menu;
    
 class AppWindow;
+OMEGACOMMON_SHARED_CLASS(AppWindow);
 class AppWindowManager;
 class WidgetTreeHost;
 class Widget;
+OMEGACOMMON_SHARED_CLASS(Widget);
 
 class AppWindowDelegate;
 /**
@@ -58,7 +60,7 @@ class AppWindowDelegate;
     public:
         OMEGACOMMON_CLASS("OmegaWTK.AppWindow")
 
-        void add(Widget *widget);
+        void add(WidgetPtr widget);
         void setMenu(SharedHandle<Menu> & menu);
         void setEnableWindowHeader(bool enable);
 #ifdef TARGET_WIN32
@@ -79,14 +81,16 @@ class AppWindowDelegate;
  @brief Manages the displaying of AppWindows as well as the window heirarchy for a single application.
 */
 class OMEGAWTK_EXPORT  AppWindowManager : public Native::NativeThemeObserver {
-        AppWindow * rootWindow;
+        AppWindowPtr rootWindow;
+
         void closeAllWindows();
+
         friend class AppInst;
         void onThemeSet(Native::ThemeDesc &desc) override;
         public:
         AppWindowManager();
-        void setRootWindow(AppWindow * handle);
-        AppWindow * getRootWindow();
+        void setRootWindow(AppWindowPtr handle);
+        AppWindowPtr getRootWindow();
         void displayRootWindow();
         ~AppWindowManager() override = default;
     };

@@ -50,7 +50,7 @@ int omegaWTKMain(OmegaWTK::AppInst *app){
     
     OmegaCommon::LogV("Hello World @{0}",colorBrush);
 
-    OmegaWTK::AppWindow window(OmegaWTK::Core::Rect {{0,0},500,500},new MyWindowDelegate());
+    auto window = make<OmegaWTK::AppWindow>(OmegaWTK::Core::Rect {{0,0},500,500},new MyWindowDelegate());
 
     auto menu = make<OmegaWTK::Menu>(OmegaWTK::Menu("MyMenu",{
         OmegaWTK::CategoricalMenu("BasicAppTest",{
@@ -58,15 +58,15 @@ int omegaWTKMain(OmegaWTK::AppInst *app){
         })
     }));
 
-    MyWidget widget(OmegaWTK::Core::Rect {{0,0},400,400},nullptr);
+    auto widget = make<MyWidget>(OmegaWTK::Core::Rect {{0,0},400,400},nullptr);
 
-    window.add(&widget);
-    window.setMenu(menu);
+    window->add(widget);
+    window->setMenu(menu);
 
 
     auto & windowManager = app->windowManager;
 
-    windowManager->setRootWindow(&window);
+    windowManager->setRootWindow(window);
     windowManager->displayRootWindow();
 
     return OmegaWTK::AppInst::start();

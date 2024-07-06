@@ -83,7 +83,7 @@ struct ID2D1Device;
  class OMEGAWTK_EXPORT  TextRect {
  public:
     struct BitmapRes {
-        OmegaGTE::SharedHandle<OmegaGTE::GETexture> s;
+        SharedHandle<OmegaGTE::GETexture> s;
         Core::SharedPtr<OmegaGTE::GEFence> textureFence;
         };
      virtual BitmapRes toBitmap() = 0;
