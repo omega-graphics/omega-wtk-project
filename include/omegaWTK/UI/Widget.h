@@ -16,13 +16,22 @@ class AppWindowManager;
 
 class View;
 typedef View CanvasView;
+OMEGACOMMON_SHARED_CLASS(CanvasView);
 class VideoView;
+OMEGACOMMON_SHARED_CLASS(VideoView);
 class SVGView;
+OMEGACOMMON_SHARED_CLASS(SVGView);
 class TextView;
+OMEGACOMMON_SHARED_CLASS(TextView);
 class ScrollView;
+OMEGACOMMON_SHARED_CLASS(ScrollView);
 
 class WidgetObserver;
 class WidgetTreeHost;
+class Widget;
+OMEGACOMMON_SHARED_CLASS(Widget);
+OMEGACOMMON_SHARED_CLASS(WidgetObserver);
+
 
 /**
  @brief A moduler UI component. 
@@ -40,7 +49,7 @@ class OMEGAWTK_EXPORT  Widget : public Native::NativeThemeObserver {
 protected:
 
     SharedHandle<CanvasView> rootView;
-    Widget * parent;
+    WidgetPtr parent;
     SharedHandle<Composition::LayerTree> layerTree;
     /**
      The WidgetTreeHost that hosts this widget.
@@ -52,7 +61,7 @@ protected:
      @param parent The Parent View (NOTE: This view MUST be within this widget's view heirarchy)
      @returns A standard View
      */
-    SharedHandle<CanvasView> makeCanvasView(const Core::Rect & rect,View *parent);
+    CanvasViewPtr makeCanvasView(const Core::Rect & rect,View *parent);
 
        /**
      Makes a Canvas View attached to this widget and returns it.
@@ -60,7 +69,7 @@ protected:
      @param parent The Parent View (NOTE: This view MUST be within this widget's view heirarchy)
      @returns A standard View
      */
-    SharedHandle<TextView> makeTextView(const Core::Rect & rect,View *parent);
+    TextViewPtr makeTextView(const Core::Rect & rect,View *parent);
 
     /**
      Makes an SVG View attached to this widget and returns it.
@@ -68,7 +77,7 @@ protected:
      @param parent The Parent View (NOTE: This view MUST be within this widget's view heirarchy)
      @returns A Video View
      */
-    SharedHandle<SVGView> makeSVGView(const Core::Rect & rect,View *parent);
+    SVGViewPtr makeSVGView(const Core::Rect & rect,View *parent);
 
     /**
      Makes a Video View attached to this widget and returns it.
@@ -76,14 +85,14 @@ protected:
      @param parent The Parent View (NOTE: This view MUST be within this widget's view heirarchy)
      @returns A Video View
      */
-    SharedHandle<VideoView> makeVideoView(const Core::Rect & rect,View *parent);
+    VideoViewPtr makeVideoView(const Core::Rect & rect,View *parent);
     
 private:
-    OmegaCommon::Vector<Widget *> children;
+    OmegaCommon::Vector<WidgetPtr> children;
     void setTreeHostRecurse(WidgetTreeHost *host);
-    void removeChildWidget(Widget *ptr);
+    void removeChildWidget(WidgetPtr ptr);
     /// Observers
-    OmegaCommon::Vector<WidgetObserver *> observers;
+    OmegaCommon::Vector<WidgetObserverPtr> observers;
 protected:
     typedef enum : OPT_PARAM {
         Resize,
@@ -111,11 +120,12 @@ public:
     /**
      Add a WidgetObserver to be notified.
     */
-    void addObserver(WidgetObserver * observer);
+    void addObserver(WidgetObserverPtr observer);
     /**
      Remove a WidgetObserver from the list of observers currently listening.
+     @note RARELY USED
     */
-    void removeObserver(WidgetObserver *observerPtr);
+    void removeObserver(WidgetObserverPtr observerPtr);
     // bool & isResizable();
     void resize(Core::Rect & newRect){
         // std::cout << "THIS WIDGET IS NOT RESIZABLE" << std::endl;

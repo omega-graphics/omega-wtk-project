@@ -13,6 +13,7 @@ namespace OmegaWTK {
 
     class AppWindow;
     class Widget;
+    OMEGACOMMON_SHARED_CLASS(Widget);
     /**
      @brief Owns a widget tree. (Owns the Widget tree's Compositor, and the Compositor's Scheduler)
      @paragraph An instance of this class gets attached to an AppWindow directly and the root widget
@@ -27,7 +28,7 @@ namespace OmegaWTK {
          */
         Composition::Compositor * compositor;
         /// The Root Widget
-        Widget * root;
+        OMEGACOMMON_SHARED(Widget) root;
 
         bool attachedToWindow;
 
@@ -41,7 +42,7 @@ namespace OmegaWTK {
         void initWidgetTree();
         Composition::Compositor *compPtr(){return compositor;};
     public:
-        OMEGACOMMON_CLASS("OmegaWTK.WidgetTreeHost")
+        OMEGACOMMON_CLASS("OmegaWTK.UI.WidgetTreeHost")
 
 
         static SharedHandle<WidgetTreeHost> Create();

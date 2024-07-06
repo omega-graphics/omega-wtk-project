@@ -5,11 +5,17 @@
 
 namespace OmegaWTK::Native {
 
-    class NativeNoteCenter {
-        
+    struct NativeNote {
+        OmegaCommon::String title;
+         OmegaCommon::String body;
     };
 
-    typedef SharedHandle<NativeNoteCenter> NNCP;
+    INTERFACE NativeNoteCenter {
+        INTERFACE_METHOD void sendNativeNote(NativeNote & note) ABSTRACT;
+    };
+
+    using NNCP = SharedHandle<NativeNoteCenter>;
+
     NNCP make_native_note_center();
 
 }

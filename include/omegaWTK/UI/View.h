@@ -27,6 +27,9 @@ namespace OmegaWTK {
     class AppInst;
     class ViewDelegate;
     class ScrollView;
+    class View;
+    OMEGACOMMON_SHARED_CLASS(View);
+    
 
     /**
         @brief Controls all the basic functionality of a Widget!
@@ -34,7 +37,7 @@ namespace OmegaWTK {
         @relates Widget
      */ 
     class OMEGAWTK_EXPORT View : public Native::NativeEventEmitter {
-        OmegaCommon::Vector<SharedHandle<View>> subviews;
+        OmegaCommon::Vector<ViewPtr> subviews;
     protected:
         SharedHandle<Composition::ViewRenderTarget> renderTarget;
         friend class Widget;

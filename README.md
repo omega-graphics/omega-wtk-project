@@ -1,10 +1,14 @@
 # OmegaWTK (Omega Widget ToolKit)
- A cross-platform widget toolkit written in c++
-    
+ A cross-platform UI written in c++
+
+## Why Re-Invent The Wheel?
+
+Many of the current cross-platform user interface engines such as QT or even Chrome either use a native to web based language bridge such as JavaScript or use outdated 3D pipelines, causing performance delays and an incoherent interface. 
+
+OmegaWTK is a native object oriented interface written entirely in native code that is designed to be not only easy to use but also maxmise performance for the programmer.
 
 ---
 
-### Build 
 
 
 ##### Requirements:
