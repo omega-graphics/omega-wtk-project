@@ -1,6 +1,7 @@
 
 #include "omegaWTK/Core/Core.h"
 #include "omegaWTK/Native/NativeTheme.h"
+#include "omegaWTK/Composition/Canvas.h"
 
 #ifndef OMEGAWTK_UI_WIDGET_H
 #define OMEGAWTK_UI_WIDGET_H
@@ -21,10 +22,10 @@ class VideoView;
 OMEGACOMMON_SHARED_CLASS(VideoView);
 class SVGView;
 OMEGACOMMON_SHARED_CLASS(SVGView);
-class TextView;
-OMEGACOMMON_SHARED_CLASS(TextView);
-class ScrollView;
-OMEGACOMMON_SHARED_CLASS(ScrollView);
+class UIView;
+OMEGACOMMON_SHARED_CLASS(UIView);
+
+typedef Composition::CanvasElementTag UIViewTag;
 
 class WidgetObserver;
 class WidgetTreeHost;
@@ -63,13 +64,13 @@ protected:
      */
     CanvasViewPtr makeCanvasView(const Core::Rect & rect,View *parent);
 
-       /**
-     Makes a Canvas View attached to this widget and returns it.
-     @param rect The Rectangle to use
-     @param parent The Parent View (NOTE: This view MUST be within this widget's view heirarchy)
-     @returns A standard View
-     */
-    TextViewPtr makeTextView(const Core::Rect & rect,View *parent);
+    //    /**
+    //  Makes a Canvas View attached to this widget and returns it.
+    //  @param rect The Rectangle to use
+    //  @param parent The Parent View (NOTE: This view MUST be within this widget's view heirarchy)
+    //  @returns A standard View
+    //  */
+    // TextViewPtr makeTextView(const Core::Rect & rect,View *parent);
 
     /**
      Makes an SVG View attached to this widget and returns it.
@@ -86,6 +87,14 @@ protected:
      @returns A Video View
      */
     VideoViewPtr makeVideoView(const Core::Rect & rect,View *parent);
+
+     /**
+     Makes a UI View attached to this widget and returns it.
+     @param rect The Rectangle to use
+     @param parent The Parent View (NOTE: This view MUST be within this widget's view heirarchy)
+     @returns A Video View
+     */
+    UIViewPtr makeUIView(const Core::Rect & rect,View *parent,UIViewTag tag = "");
     
 private:
     OmegaCommon::Vector<WidgetPtr> children;
@@ -195,7 +204,7 @@ protected:
 
 
 template<class Ty>
-class WidgetState {
+class OMEGAWTK_EXPORT WidgetState {
     Core::Optional<Ty> val;
     OmegaCommon::Vector<WidgetStateObserver<WidgetState<Ty>> *> observers;
 public: 
@@ -229,6 +238,17 @@ public:
             ++ob_it;
         };
     };
+};
+
+/**
+ * @brief A single view widget responsible for managiing one view's capability.
+ * 
+ */
+ template<class ViewT>
+class OMEGAWTK_EXPORT WrapperWidget {
+public:
+    static SharedHandle<WrapperWidget<ViewT>> Create(const Core::Rect & rect,WidgetPtr parent);
+    SharedHandle<ViewT> getUnderlyingView();
 };
 
 };

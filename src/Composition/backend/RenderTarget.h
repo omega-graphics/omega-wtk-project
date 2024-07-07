@@ -9,25 +9,25 @@ namespace OmegaWTK::Composition {
 
     INTERFACE BackendCanvasEffectProcessor {
     public:
-        explicit BackendCanvasEffectProcessor(OmegaGTE::SharedHandle<OmegaGTE::GEFence> & fence):fence(fence){
+        explicit BackendCanvasEffectProcessor(SharedHandle<OmegaGTE::GEFence> & fence):fence(fence){
 
         };
-        OmegaGTE::SharedHandle<OmegaGTE::GEFence> fence;
-      INTERFACE_METHOD void applyEffects(OmegaGTE::SharedHandle<OmegaGTE::GETexture> & dest,SharedHandle<OmegaGTE::GETextureRenderTarget> & textureTarget,OmegaCommon::Vector<std::pair<CanvasEffect::Type,void *>> & effects) ABSTRACT;
-      static SharedHandle<BackendCanvasEffectProcessor> Create(OmegaGTE::SharedHandle<OmegaGTE::GEFence> & fence);
+        SharedHandle<OmegaGTE::GEFence> fence;
+      INTERFACE_METHOD void applyEffects(SharedHandle<OmegaGTE::GETexture> & dest,SharedHandle<OmegaGTE::GETextureRenderTarget> & textureTarget,OmegaCommon::Vector<std::pair<CanvasEffect::Type,void *>> & effects) ABSTRACT;
+      static SharedHandle<BackendCanvasEffectProcessor> Create(SharedHandle<OmegaGTE::GEFence> & fence);
       virtual ~BackendCanvasEffectProcessor() = default;
     };
 
     class BackendRenderTargetContext {
-        OmegaGTE::SharedHandle<OmegaGTE::GETexture> targetTexture;
-        OmegaGTE::SharedHandle<OmegaGTE::GEFence> fence;
-        OmegaGTE::SharedHandle<OmegaGTE::GETextureRenderTarget> preEffectTarget;
-        OmegaGTE::SharedHandle<OmegaGTE::GENativeRenderTarget> renderTarget;
-        OmegaGTE::SharedHandle<OmegaGTE::OmegaTessellationEngineContext> tessellationEngineContext;
+        SharedHandle<OmegaGTE::GETexture> targetTexture;
+        SharedHandle<OmegaGTE::GEFence> fence;
+        SharedHandle<OmegaGTE::GETextureRenderTarget> preEffectTarget;
+        SharedHandle<OmegaGTE::GENativeRenderTarget> renderTarget;
+        SharedHandle<OmegaGTE::OmegaTessellationEngineContext> tessellationEngineContext;
         SharedHandle<BackendCanvasEffectProcessor> imageProcessor;
         Core::Rect renderTargetSize;
         OmegaCommon::Vector<std::pair<CanvasEffect::Type,void *>> effectQueue;
-        void createGradientTexture(bool linearOrRadial,Gradient & gradient,OmegaGTE::GRect & rect,OmegaGTE::SharedHandle<OmegaGTE::GETexture> & dest);
+        void createGradientTexture(bool linearOrRadial,Gradient & gradient,OmegaGTE::GRect & rect,SharedHandle<OmegaGTE::GETexture> & dest);
     public:
         void clear(float r,float g,float b,float a);
         void renderToTarget(VisualCommand::Type type,void *params);
@@ -42,7 +42,7 @@ namespace OmegaWTK::Composition {
             Create a BackendRenderTarget Context
             @param renderTarget
         */
-        explicit BackendRenderTargetContext(Core::Rect & rect,OmegaGTE::SharedHandle<OmegaGTE::GENativeRenderTarget> & renderTarget);
+        explicit BackendRenderTargetContext(Core::Rect & rect,SharedHandle<OmegaGTE::GENativeRenderTarget> & renderTarget);
     };
 
     class BackendVisualTree;

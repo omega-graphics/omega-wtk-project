@@ -14,7 +14,7 @@ namespace OmegaWTK {
     class OMEGAWTK_EXPORT SVGView : public View {
         SharedHandle<Composition::ViewAnimator> svgAnimator;
     private:
-        explicit SVGView(const Core::Rect & rect,Composition::LayerTree *layerTree,View * parent);
+        explicit SVGView(const Core::Rect & rect,Composition::LayerTree *layerTree,ViewPtr parent);
         friend class Widget;
         friend class SVGSession;
     public:

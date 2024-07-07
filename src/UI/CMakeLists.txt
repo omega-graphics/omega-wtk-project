@@ -12,7 +12,8 @@ add_omega_wtk_lib(
     "Menu.cpp"
     "AppWindow.cpp"
     "Text.cpp"
-    "Layout.cpp"
+    "UIView.cpp"
+    "Notification.cpp"
     HEADERS 
     "Widget.h"
     "WidgetTreeHost.h"
@@ -25,6 +26,8 @@ add_omega_wtk_lib(
     "Stack.h"
     "Text.h"
     "Layout.h"
+    "UIView.h"
+    "Notification.h"
     LINK_LIBS 
     "omegaWTKCore"
     "omegaWTKNative"

@@ -7,7 +7,7 @@
 namespace OmegaWTK {
 
 
-    View::View(const Core::Rect & rect,Composition::LayerTree *layerTree,View *parent):
+    View::View(const Core::Rect & rect,Composition::LayerTree *layerTree,ViewPtr parent):
         renderTarget(std::make_shared<Composition::ViewRenderTarget>(Native::make_native_item(rect))),
         proxy(std::static_pointer_cast<Composition::CompositionRenderTarget>(renderTarget)),
         widgetLayerTree(layerTree),
@@ -67,7 +67,7 @@ namespace OmegaWTK {
         renderTarget->getNativePtr()->resize(newRect);
     };
 
-View::View(const Core::Rect & rect,Native::NativeItemPtr nativeItem,Composition::LayerTree *layerTree,View *parent):
+View::View(const Core::Rect & rect,Native::NativeItemPtr nativeItem,Composition::LayerTree *layerTree,ViewPtr parent):
 rect(rect),
 widgetLayerTree(layerTree),
 renderTarget(std::make_shared<Composition::ViewRenderTarget>(nativeItem)),

@@ -12,6 +12,7 @@ namespace OmegaWTK {
 
 
     class AppWindow;
+    OMEGACOMMON_SHARED_CLASS(AppWindow);
     class Widget;
     OMEGACOMMON_SHARED_CLASS(Widget);
     /**
@@ -28,7 +29,7 @@ namespace OmegaWTK {
          */
         Composition::Compositor * compositor;
         /// The Root Widget
-        OMEGACOMMON_SHARED(Widget) root;
+        WidgetPtr root;
 
         bool attachedToWindow;
 
@@ -51,7 +52,7 @@ namespace OmegaWTK {
          @brief Set the root of the Widget tree.
          @param[in] widget The root of the Widget Tree
         */
-        void setRoot(Widget * widget);
+        void setRoot(WidgetPtr widget);
 
         /**
          @brief Attach this host to an AppWindow

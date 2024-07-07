@@ -29,7 +29,10 @@ namespace OmegaWTK::Native::Cocoa {
         
     };
 
+}
+
+namespace OmegaWTK::Native {
     NNCP make_native_note_center(){
-        return (NNCP)new CocoaNoteCenter();
+        return (NNCP) make<Cocoa::CocoaNoteCenter>();
     }
 }

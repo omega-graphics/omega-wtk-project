@@ -91,7 +91,7 @@ namespace OmegaWTK {
         };
     };
 
-    SVGView::SVGView(const Core::Rect &rect,Composition::LayerTree *layerTree, View *parent) :
+    SVGView::SVGView(const Core::Rect &rect,Composition::LayerTree *layerTree, ViewPtr parent) :
     View(rect,layerTree,parent) {
 
     }

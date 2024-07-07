@@ -11,6 +11,7 @@ namespace OmegaWTK::Native {
     };
 
     INTERFACE NativeNoteCenter {
+    public:
         INTERFACE_METHOD void sendNativeNote(NativeNote & note) ABSTRACT;
     };
 

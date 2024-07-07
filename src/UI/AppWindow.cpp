@@ -54,7 +54,7 @@ void AppWindow::_add_widget(Widget *widget){
     layer->native_window_ptr->addNativeItem(widget->rootView->renderTarget->getNativePtr());
 }
 
-void AppWindow::add(Widget *widget){
+void AppWindow::add(WidgetPtr widget){
     auto treeHost = WidgetTreeHost::Create();
     treeHost->setRoot(widget);
     treeHost->attachToWindow(this);

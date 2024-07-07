@@ -22,25 +22,25 @@ namespace OmegaWTK {
     void WidgetTreeHost::initWidgetRecurse(Widget *parent){
         parent->init();
         for(auto & child : parent->children){
-            initWidgetRecurse(child);
+            initWidgetRecurse(child.get());
         }
     }
 
     void WidgetTreeHost::initWidgetTree(){
         root->setTreeHostRecurse(this);
-        initWidgetRecurse(root);
+        initWidgetRecurse(root.get());
     }
 
     void WidgetTreeHost::attachToWindow(AppWindow * window){
         if(!attachedToWindow) {
             attachedToWindow = true;
-            window->_add_widget(root);
+            window->_add_widget(root.get());
             if(window->widgetTreeHosts.size() == 1)
                 window->proxy.setFrontendPtr(compositor);
         }
     };
 
-    void WidgetTreeHost::setRoot(Widget * widget){
+    void WidgetTreeHost::setRoot(WidgetPtr widget){
         root = widget;
     };
 };
