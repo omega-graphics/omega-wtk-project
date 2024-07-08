@@ -9,6 +9,16 @@ OmegaWTK is a native object oriented interface written entirely in native code t
 
 ---
 
+## Want to Contribute?
+
+Omega Graphics is a growing open source project always looking for new members and contributions.
+Fill out the quick form here:
+
+https://forms.gle/3akUSgjMj3txz2jD8
+
+And you will be given access to our libraries.
+
+
 
 
 ##### Requirements:

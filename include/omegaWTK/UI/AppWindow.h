@@ -61,8 +61,11 @@ class AppWindowDelegate;
         OMEGACOMMON_CLASS("OmegaWTK.AppWindow")
 
         void add(WidgetPtr widget);
+
+    #ifndef TARGET_MOBILE
         void setMenu(SharedHandle<Menu> & menu);
         void setEnableWindowHeader(bool enable);
+    #endif
 #ifdef TARGET_WIN32
         SharedHandle<View> getExitButton();
         SharedHandle<View> getMaxmizeButton();
@@ -71,26 +74,64 @@ class AppWindowDelegate;
         void setTitle(OmegaCommon::StrRef title);
         SharedHandle<Composition::WindowLayer> & getLayer();
         void close();
+
+
+        #ifdef TARGET_MOBILE
+
+        SharedHandle<Native::NativeFS> openFSDialog(const Native::NativeFSDialog::Descriptor & desc);
+        SharedHandle<Native::NativeNoteDialog> openNoteDialog(const Native::NativeNoteDialog::Descriptor & desc);
+
+        #else
+
         SharedHandle<Native::NativeFSDialog> openFSDialog(const Native::NativeFSDialog::Descriptor & desc);
         SharedHandle<Native::NativeNoteDialog> openNoteDialog(const Native::NativeNoteDialog::Descriptor & desc);
+
+        #endif
         
         explicit AppWindow(Core::Rect rect,AppWindowDelegate * delegate = nullptr);
         ~AppWindow() override;
     };
 /**
  @brief Manages the displaying of AppWindows as well as the window heirarchy for a single application.
+ Desktop Apps: All windows are seperate entiityes
+ Mobile Apps: All windows are share the same screen. (The transition and position is determined by)
 */
 class OMEGAWTK_EXPORT  AppWindowManager : public Native::NativeThemeObserver {
         AppWindowPtr rootWindow;
+
+        OmegaCommon::Vector<AppWindowPtr> windows;
 
         void closeAllWindows();
 
         friend class AppInst;
         void onThemeSet(Native::ThemeDesc &desc) override;
         public:
+        /**
+         * @brief  USE make<> to create this.
+         * 
+         */
         AppWindowManager();
+
+        typedef unsigned WindowIndex;
+
+        /**
+         * @brief Add an AppWindow to the manager (No priority for it. 
+         The order in which it was placed determines the priority.)
+         * 
+         * @param handle 
+         * @return The index of the window
+         */
+        WindowIndex addWindow(AppWindowPtr handle);
+
+        /**
+         * @brief Set the Root Window object
+         * 
+         * @param handle 
+         */
         void setRootWindow(AppWindowPtr handle);
+
         AppWindowPtr getRootWindow();
+
         void displayRootWindow();
         ~AppWindowManager() override = default;
     };
@@ -113,5 +154,11 @@ INTERFACE OMEGAWTK_EXPORT  AppWindowDelegate : public Native::NativeEventProcess
 
 
 }
+
+#ifdef TARGET_MOBILE
+class OMEGAWTK_EXPORT StoryBoard {
+
+};
+#endif
 
 #endif

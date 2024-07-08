@@ -58,7 +58,7 @@ namespace OmegaWTK {
     struct OMEGAWTK_EXPORT StyleSheet {
 
         struct Entry {
-            CanvasViewTag tag;
+            UIViewTag tag;
         };
         
         OmegaCommon::Vector<Entry> entries;
@@ -81,7 +81,7 @@ namespace OmegaWTK {
          * @return StyleSheetPtr 
          */
         StyleSheetPtr backgroundColor(
-            CanvasViewTag tag,
+            UIViewTag tag,
             const Composition::Color &color,
             bool transition = false,
             float duration = 0.f
@@ -93,19 +93,19 @@ namespace OmegaWTK {
          * @return StyleSheetPtr 
          */
         StyleSheetPtr border(
-            CanvasViewTag tag,
+            UIViewTag tag,
             bool use
             );
 
         StyleSheetPtr borderColor(
-            CanvasViewTag tag,
+            UIViewTag tag,
             const Composition::Color &color,
             bool transition = false,
             float duration = 0.f
             );
 
         StyleSheetPtr borderWidth(
-            CanvasViewTag tag,
+            UIViewTag tag,
             float width,
             bool transition = false,
             float duration = 0.f
@@ -176,7 +176,7 @@ namespace OmegaWTK {
             Core::Optional<OmegaCommon::UString> str;
             Core::Optional<Shape> shape;
         };
-        OmegaCommon::Vector<Element> content;
+        OmegaCommon::Vector<Element> _content;
     public:
     /**
      * @brief Adds a text element. If the text element already exists, it will update with the new `content` parameter.
@@ -191,7 +191,7 @@ namespace OmegaWTK {
      * @param tag 
      * @param content 
      */
-        void shape(Composition::CanvasElementTag tag);
+        void shape(Composition::CanvasElementTag tag,Shape & shape);
     };
 
     INTERFACE LayoutUser {
@@ -211,7 +211,7 @@ namespace OmegaWTK {
      * 
      */
     class OMEGAWTK_EXPORT UIView : public CanvasView, LayoutUser, StyleSheetUser {
-        CanvasViewTag tag;
+        UIViewTag tag;
     public:
 
         explicit UIView(const Core::Rect & rect,Composition::LayerTree * layerTree,ViewPtr parent,UIViewTag tag);
